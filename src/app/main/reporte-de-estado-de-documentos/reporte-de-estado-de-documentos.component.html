@@ -1,0 +1,110 @@
+<div id="clientes" class="page-layout simple fullwidth docs">
+
+    <!-- HEADER -->
+    <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+
+        <div class="hero-text content">
+            <h1>Reporte de estado de documentos</h1>
+            <h3>Búsqueda de documentos</h3>
+        </div>
+
+    </div>
+    <!-- / HEADER -->
+
+    <mat-vertical-stepper [linear]="isLinear" #stepper>
+        <mat-step [stepControl]="firstFormGroup">
+            <form [formGroup]="firstFormGroup">
+                <ng-template matStepLabel>Búsqueda de documentos</ng-template>
+                <section class="container">
+                    <div class="column">
+                        <div class="select">
+                            <p class="tag">Estatus</p>
+                            <mat-form-field appearance="fill" class="input">
+                                <mat-label>Vigente/no Vigente</mat-label>
+                                <mat-select formControlName="vigente" [(ngModel)]="vigenteBusqueda">
+                                    <mat-option value="true">Vigente</mat-option>
+                                    <mat-option value="false">No Vigente</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        
+
+
+                    </div>
+                    <div class="column">
+                        
+                        <div class="select">
+                            <p class="tag">Tipo de información</p>
+                            <mat-form-field appearance="fill" class="input">
+                                <mat-label>Seleccionar</mat-label>
+                                <mat-select formControlName="informacion" [(ngModel)]="selectedInformacion" name="informacion">
+                                    <mat-option *ngFor="let informacion of arrInformacion" [value]="informacion.cDescripcionVisibilidad">
+                                        {{informacion.cDescripcionVisibilidad}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="select buttons">
+                            <button  mat-raised-button matStepperNext color="warn"
+                                (click)="filterDatatable()" class="btn-search">Consultar</button>
+                            <button  mat-raised-button color="warn"
+                                class="btn-search" (click)="borrarFiltros()">Borrar</button>
+                        </div>
+                    </div>
+                </section>
+
+            </form>
+        </mat-step>
+     
+        <mat-step [stepControl]="secondFormGroup">
+            
+            <form [formGroup]="secondFormGroup">
+                <ng-template matStepLabel>Resultado de búsqueda</ng-template>
+                <div class="margin-right">
+                    <div class="buttons select">
+                        <button mat-raised-button matStepperNext color="warn" (click)="generaReport()" class="btn-search">Descargar</button>
+                    </div>
+                </div>
+                <div class="content p-24" align="right" style="border: 1px" id="reporteData5">
+                    <div class="content">
+                        
+                        <!-- Data table-->
+                        <ngx-datatable class="material shadow-none" [rows]="documentos" [loadingIndicator]="loadingIndicator"
+                            [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                            [reorderable]="reorderable" [limit]="10" [scrollbarH]="true" >
+                            <ngx-datatable-column name="Id. documento" prop="id"></ngx-datatable-column>
+                            <ngx-datatable-column name="Documento" prop="cNombreDocumento"></ngx-datatable-column>
+                            <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
+                            <ngx-datatable-column name="Tipo de información" prop="informacion"></ngx-datatable-column>
+                            <ngx-datatable-column name="Páginas" prop="paginas"></ngx-datatable-column>
+                            <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion"></ngx-datatable-column>
+                            <ngx-datatable-column name="Fecha de carga" prop="fechaCarga"></ngx-datatable-column>
+                            <ngx-datatable-column name="Fecha de modificación" prop="fechaModificacion">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Versión" prop="version"></ngx-datatable-column>
+                            <ngx-datatable-column name="Clasificación" prop="clasificacion"></ngx-datatable-column>
+                            <ngx-datatable-column name="Ente" prop="ente.cDescripcionEnte"></ngx-datatable-column>
+                            <ngx-datatable-column name="Tipo de expediente"
+                                prop="tipo_de_expediente.cDescripcionTipoExpediente"></ngx-datatable-column>
+                            <ngx-datatable-column name="Folio de expediente" prop="folioExpediente">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Estatus" sortable="false">
+                                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                    <mat-icon *ngIf="row.bActivo" color="accent" class="material-icons">check_circle
+                                    </mat-icon>
+                                    <mat-icon *ngIf="!row.bActivo" color="warn" class="material-icons">remove_circle
+                                    </mat-icon>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                        </ngx-datatable>
+                    </div>
+                </div>
+                <div class="select buttons">
+                    <button mat-raised-button matStepperPrevious color="warn" class="btn-search">Volver</button>
+                </div>
+            </form>
+        </mat-step>
+    </mat-vertical-stepper>
+
+</div>

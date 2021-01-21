@@ -1,0 +1,56 @@
+
+
+<div id="clientes" class="page-layout simple fullwidth docs">
+
+    <!-- HEADER -->
+    <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+
+        <div class="hero-text content">
+            <h1>Notificaciones</h1>
+            <h3>Listado de notificaciones</h3>
+        </div>
+
+    </div>
+    <!-- / HEADER -->
+
+   
+
+
+    <div class="content p-24" align="center" style="border: 1px">
+        <div class="content">
+            <!-- Data table-->
+
+      
+
+            <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="historial"
+            [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50"
+            rowHeight="auto" [reorderable]="reorderable" [limit]="10">
+            <ngx-datatable-column name="Fecha" prop="fecha"></ngx-datatable-column>
+            <ngx-datatable-column name="Hora" prop="hora"></ngx-datatable-column>
+            <ngx-datatable-column name="Autor" prop="usuario"></ngx-datatable-column>
+            <ngx-datatable-column name="Acción" prop="movimiento"></ngx-datatable-column>
+            <ngx-datatable-column name="Documento" prop="cNombreDocumento"></ngx-datatable-column>
+            <ngx-datatable-column name="Acciones" sortable="false" prop="id">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+
+                    <a (click)="borrarNotificacion(row)">
+                        <mat-icon color="warn" class="material-icons" matTooltip="Clic para eliminar">delete
+                        </mat-icon>
+                    </a>
+
+                    <!-- <a *ngIf="row.movimiento!='Actual'" (click)="restaurarVersion(row)">
+                        <mat-icon color="primary" class="material-icons" matTooltip="Clic para editar">swap_vert
+                        </mat-icon>
+                    </a>
+                    -->
+                </ng-template>
+            </ngx-datatable-column>
+        </ngx-datatable>
+        </div>
+    </div>
+</div>
+
+
+
+
+

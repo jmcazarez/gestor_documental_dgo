@@ -1,0 +1,38 @@
+.tab-search{
+  width: 100% !important;
+  height: auto !important;
+  box-shadow: none !important;
+}
+
+.example-container {
+  height: 400px;
+  width: 550px;
+  max-width: 100%;
+  overflow: auto;
+}
+
+td.mat-column-star {
+  width: 20px;
+}
+
+td{
+  padding: 0 10px !important;
+  text-align: center !important;
+}
+
+th{
+  padding: 0 10px !important;
+  text-align: center !important;
+}
+
+.margin-left-none{
+  margin-left: 0 !important;
+}
+
+.mat-table-sticky:first-child {
+  border-right: 1px solid #e0e0e0;
+}
+
+.mat-table-sticky:last-child {
+  border-left: 1px solid #e0e0e0;
+}

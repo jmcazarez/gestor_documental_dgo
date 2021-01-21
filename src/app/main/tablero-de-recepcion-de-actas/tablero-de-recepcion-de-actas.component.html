@@ -1,0 +1,59 @@
+<ngx-spinner></ngx-spinner>
+
+
+
+<div id="clientes" class="page-layout simple fullwidth docs">
+
+    <!-- HEADER -->
+    <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+        <div class="hero-text content">
+            <h1>Tablero de recepción de actas</h1>
+            <h3>Listado de recepción de actas</h3>
+        </div>
+
+    </div>
+    <!-- / HEADER -->
+    <ngx-spinner></ngx-spinner>
+   
+
+
+    <div class="content p-24" align="center" style="border: 1px">
+        <div class="content">
+            <!-- Data table-->
+            <div class="buscador">
+                <mat-form-field class="buscar">
+                    <mat-label>Buscar una recepción de actas</mat-label>
+                    <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)' [(ngModel)]="valueBuscador">
+                </mat-form-field>
+                <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevaRecepcionDeActas()" class="button">
+                    <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un documento">post_add
+                    </mat-icon>
+                    Agregar recepción
+                </button>
+                
+            </div>
+
+            <ngx-datatable class="material shadow-none" [rows]="recepcionDeActas" [loadingIndicator]="loadingIndicator"
+                [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
+                <ngx-datatable-column name="Id. Sesíon" prop="id"></ngx-datatable-column>
+                <ngx-datatable-column name="Fecha" prop="fechaCreacionText"></ngx-datatable-column>
+                <ngx-datatable-column name="Hora" prop="hora"></ngx-datatable-column>
+                <ngx-datatable-column name="Legislatura" prop="descripcionLegislatura"></ngx-datatable-column>      
+                <ngx-datatable-column name="Estatus" prop="estatus"></ngx-datatable-column>        
+                <ngx-datatable-column name="Acciones" sortable="false" prop="id">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+           
+                        <a 
+                        (click)="editarRecepcionDeActas(row)">
+                        <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">edit
+                        </mat-icon>
+                    </a>
+                     
+
+                    </ng-template>
+                </ngx-datatable-column>
+            </ngx-datatable>
+        </div>
+    </div>
+</div>

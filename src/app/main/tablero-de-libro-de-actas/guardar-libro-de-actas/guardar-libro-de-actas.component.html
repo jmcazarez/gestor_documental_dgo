@@ -1,0 +1,65 @@
+<ngx-spinner></ngx-spinner>
+<div class="modal" fxLayout="column" fxLayoutAlign="start" fxLayout.gt-md="row">
+    <!-- REACTIVE FORM EXAMPLE -->
+
+
+    <form class="mat-card mat-elevation-z4" fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form"
+        [formGroup]="form">
+
+        <div class="h2 mb-24">Registro de recepción de acta</div>
+
+        <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
+            <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+                <mat-label>Legislatura</mat-label>
+                <mat-select formControlName="legislatura" [(ngModel)]="selectLegislatura" name="legislatura">
+                    <mat-option *ngFor="let legislatura of arrLegislaturas" [value]="legislatura.id">
+                        {{legislatura.cLegislatura}}
+                    </mat-option>
+                </mat-select>
+                <mat-error>La legislatura es requerida</mat-error>
+            </mat-form-field>
+
+        </div>
+        <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+            <mat-label>Fecha de inicio de sesiones integradas</mat-label>
+            <input matInput [matDatepicker]="picker1" formControlName="fechaDeInicio" [max]="maxDate">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+            <mat-error>La fecha de inicio del registro no es valida ej. 28/11/2020</mat-error>
+
+        </mat-form-field>
+        <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+            <mat-label>Fecha de fin de sesiones integradas</mat-label>
+            <input matInput [matDatepicker]="picker2" formControlName="fechaDeFin" [max]="maxDate">
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+            <mat-error>La fecha de fin del registro no es valida ej. 28/11/2020</mat-error>
+
+        </mat-form-field>
+    </form>
+</div>
+<div class="content p-24" align="center" style="border: 1px">
+    <h3>Lista de actas de sesión</h3>
+    <div class="content">      
+        <ngx-datatable class="material shadow-none" [rows]="recepcionDeActas" [loadingIndicator]="loadingIndicator"
+            [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+            [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
+            <ngx-datatable-column name="Id. Sesíon" prop="id"></ngx-datatable-column>
+            <ngx-datatable-column name="Fecha" prop="fechaCreacionText"></ngx-datatable-column>
+            <ngx-datatable-column name="Hora" prop="hora"></ngx-datatable-column>
+            <ngx-datatable-column name="Legislatura" prop="legislatura.cLegislatura"></ngx-datatable-column>      
+            <ngx-datatable-column name="Añadir" sortable="false" prop="id">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                    <mat-checkbox class="example-margin" [(ngModel)]="row.selected">
+                    </mat-checkbox>
+                </ng-template>
+            </ngx-datatable-column>      
+        </ngx-datatable>
+    </div>
+</div>
+
+<mat-dialog-actions align="end" class="buttons">
+    <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
+    <button [disabled]="form.invalid" mat-raised-button color="accent" (click)="guardar()">Guardar</button>
+    <!--<button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
+</mat-dialog-actions>

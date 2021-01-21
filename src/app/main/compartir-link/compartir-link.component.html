@@ -1,0 +1,12 @@
+<ngx-spinner></ngx-spinner>
+<div class="container" class="content" layout="column" layout-align="center center">
+<pdf-viewer [render-text]="true" [original-size]="false" [autoresize]="true" [src]="pdfSrc"></pdf-viewer>
+</div>
+
+<div class="container" class="descarga" layout="column">
+    <button mat-flat-button color="cyan" (click)="documentoYaDescargado()" class="button" layout="row" layout-align="end start">
+        Click para descargar documento
+        <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para descargar">
+            cloud_download</mat-icon>
+    </button>
+</div>

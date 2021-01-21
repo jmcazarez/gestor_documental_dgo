@@ -1,0 +1,107 @@
+<ngx-spinner></ngx-spinner>
+<div id="clientes" class="page-layout simple fullwidth docs">
+
+    <!-- HEADER -->
+    <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+
+        <div class="hero-text content">
+            <h1>Reporte de movimiento de documentos por fecha</h1>
+            <h3>Búsqueda de documentos</h3>
+        </div>
+
+    </div>
+    <!-- / HEADER -->
+
+    <mat-vertical-stepper [linear]="isLinear" #stepper>
+        <mat-step [stepControl]="firstFormGroup">
+            <form [formGroup]="firstFormGroup">
+                <ng-template matStepLabel>Búsqueda de documentos</ng-template>
+                <section class="container">
+                    <div class="column">
+                        <div class="select">
+                            <p class="tag">Fecha de inicio</p>
+                            <mat-form-field appearance="fill" class="input">
+                              <mat-label>Seleccione una Fecha</mat-label>
+                              <input matInput [matDatepicker]="pickerFechaInicial">
+                              <mat-datepicker-toggle matSuffix [for]="pickerFechaInicial"></mat-datepicker-toggle>
+                              <mat-datepicker #pickerFechaInicial></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        
+
+
+                    </div>
+                    <div class="column">
+                        
+                        <div class="select">
+                            <p class="tag">Fecha de fin</p>
+                            <mat-form-field appearance="fill" class="input">
+                              <mat-label>Seleccione una Fecha</mat-label>
+                              <input matInput [matDatepicker]="pickerFechaFinal">
+                              <mat-datepicker-toggle matSuffix [for]="pickerFechaFinal"></mat-datepicker-toggle>
+                              <mat-datepicker #pickerFechaFinal></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="select buttons">
+                            <button  mat-raised-button matStepperNext color="warn"
+                                (click)="filterDatatable()" class="btn-search">Consultar</button>
+                            <button  mat-raised-button color="warn"
+                                class="btn-search" (click)="borrarFiltros()">Borrar</button>
+                        </div>
+                    </div>
+                </section>
+
+            </form>
+        </mat-step>
+     
+        <mat-step [stepControl]="secondFormGroup">
+            
+            <form [formGroup]="secondFormGroup">
+                <ng-template matStepLabel>Resultado de búsqueda</ng-template>
+                <div class="margin-right">
+                    <div class="buttons select">
+                        <button mat-raised-button matStepperNext color="warn" (click)="generaReport()" class="btn-search">Descargar</button>
+                    </div>
+                </div>
+                <div class="content p-24" align="right" style="border: 1px" id="reporteData5">
+                    <div class="content">
+                        
+                        <!-- Data table-->
+                        
+                        <ngx-datatable class="material shadow-none" [rows]="documentos" [loadingIndicator]="loadingIndicator"
+                            [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                            [reorderable]="reorderable" [limit]="10" [scrollbarH]="true" >
+                            <ngx-datatable-column name="Fecha" prop="fechaModificacion"></ngx-datatable-column>
+                            <ngx-datatable-column name="Acción" prop="cAccion"></ngx-datatable-column>
+                            <ngx-datatable-column name="Usuario" prop="cNombreUsuario"></ngx-datatable-column>
+                            <ngx-datatable-column name="Documento" prop="cNombreDocumento"></ngx-datatable-column>
+                            <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
+                            <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion"></ngx-datatable-column>
+                            <ngx-datatable-column name="Fecha de carga" prop="fechaCarga"></ngx-datatable-column>
+                            <ngx-datatable-column name="Fecha de modificación" prop="fechaModificacion"></ngx-datatable-column>
+                            <ngx-datatable-column name="Tipo de información" prop="tipoInformacion"></ngx-datatable-column>
+                            <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
+                            <ngx-datatable-column name="Tipo de expediente" prop="tipoExpediente"></ngx-datatable-column>
+                            
+                            <ngx-datatable-column name="Folio de expediente" prop="folioExpediente">
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Estatus" sortable="false">
+                                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                    <mat-icon *ngIf="row.bActivo" color="accent" class="material-icons">check_circle
+                                    </mat-icon>
+                                    <mat-icon *ngIf="!row.bActivo" color="warn" class="material-icons">remove_circle
+                                    </mat-icon>
+                                </ng-template>
+                            </ngx-datatable-column>
+
+                        </ngx-datatable>
+                    </div>
+                </div>
+                <div class="select buttons">
+                    <button mat-raised-button matStepperPrevious color="warn" class="btn-search">Volver</button>
+                </div>
+            </form>
+        </mat-step>
+    </mat-vertical-stepper>
+
+</div>

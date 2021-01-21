@@ -1,0 +1,434 @@
+<div id="clientes" class="page-layout simple fullwidth docs">
+    <ngx-spinner></ngx-spinner>
+    <!-- HEADER -->
+    <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+
+        <div class="hero-text content">
+            <h1>Tablero de carga y descarga masiva</h1>
+            <h3>Carga y descarga masiva de documentos digitales</h3>
+        </div>
+
+    </div>
+    <!-- / HEADER -->
+
+
+    <div class="content p-24 mt-20" align="center">
+        <mat-tab-group mat-align-tabs="center">
+            <mat-tab label="Carga masiva">
+                <mat-vertical-stepper [linear]="isLinear" #stepper>
+                    <mat-step [stepControl]="firstFormGroup">
+                        <form [formGroup]="firstFormGroup">
+                            <ng-template matStepLabel>Carga de documentos</ng-template>
+
+                            <section class="container carga">
+                                <div class="select ">
+                                    <p class="tag">Cargas masivas pendientes</p>
+                                    <mat-form-field appearance="fill" class="input corte">
+                                        <mat-label>Seleccionar</mat-label>
+                                        <mat-select formControlName="historial" [(ngModel)]="selectedHistorial"
+                                            name="historial">
+                                            <mat-option *ngFor="let historial of arrHistorialCarga"
+                                                [value]="historial.id">
+                                                {{historial.id}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div>
+                                    <button mat-raised-button matStepperNext color="accent" class="btn-search"
+                                        (click)="add()">Cargar documentos
+                                        <mat-icon>add</mat-icon>
+                                    </button>
+
+                                </div>
+                                <input type="file" #fileInput id="fileUpload" name="fileUpload" multiple="multiple"
+                                    accept="pdf/*" style="display:none;" />
+                            </section>
+
+                        </form>
+                    </mat-step>
+                    <mat-step [stepControl]="secondFormGroup">
+                        <form [formGroup]="secondFormGroup">
+                            <ng-template matStepLabel>Listado de documentos</ng-template>
+                            <div class="content p-24" align="center" style="border: 1px">
+                                <div class="content">
+                                    <!-- Data table *ngIf="documentos.length>0"-->
+
+                                    <section class="container">
+                                        <button [disabled]="this.documentos.length === 0" mat-raised-button
+                                            matStepperNext color="accent" class="btn-width"
+                                            (click)="descargarFormatoExcel()">Descargar formato de carga
+                                            <mat-icon>file_copy</mat-icon>
+                                        </button>
+                                        <button [disabled]="this.documentos.length === 0" mat-raised-button
+                                            matStepperNext color="warn" class="btn-width" (click)="subirExcel()">Cargar
+                                            formato de carga
+                                            <mat-icon>attach_file</mat-icon>
+                                        </button>
+                                        <input type="file" (change)="onFileChange($event)" #excelInput id="excelUpload"
+                                            name="excelUpload" multiple="multiple" accept="pdf/*"
+                                            style="display:none;" />
+                                    </section>
+
+                                    <ngx-datatable class="material shadow-none" [rows]="documentos"
+                                        [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50"
+                                        [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable"
+                                        [limit]="10" [scrollbarH]="true">
+                                        <ngx-datatable-column name="Valido" sortable="false" [width]="100">
+                                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                                <mat-icon *ngIf="row.valido" color="accent" class="material-icons">
+                                                    check_circle
+                                                </mat-icon>
+                                                <mat-icon *ngIf="!row.valido" (click)="mensajeError(row)" color="warn"
+                                                    class="material-icons">
+                                                    remove_circle
+                                                </mat-icon>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+                                        <!--<ngx-datatable-column name="Id. documento" prop="id">
+                                        </ngx-datatable-column>
+                                        -->
+                                        <ngx-datatable-column name="Id. Archivo" prop="documento">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Documento" prop="cNombreDocumento">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Tipo de información" prop="informacion">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Páginas" prop="paginas" [width]="100">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Fecha de carga" prop="fechaCarga">
+                                        </ngx-datatable-column>
+
+                                        <ngx-datatable-column name="Versión" prop="version" [width]="100">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Clasificación" prop="clasificacion">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Ente" prop="ente.cDescripcionEnte">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Tipo de expediente" prop="expediente">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Folio de expediente" prop="folioExpediente">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Estatus" sortable="false" [width]="100">
+                                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                                <mat-icon *ngIf="row.bActivo" color="accent" class="material-icons">
+                                                    check_circle
+                                                </mat-icon>
+                                                <mat-icon *ngIf="!row.bActivo" color="warn" class="material-icons">
+                                                    remove_circle
+                                                </mat-icon>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+
+
+                                    </ngx-datatable>
+                                </div>
+                            </div>
+                            <div class="select buttons">
+                                <button mat-raised-button [disabled]="selectedHistorial === ''" color="warn"
+                                    class="btn-search" (click)="eliminarHistorialCarga()">Eliminar carga masiva
+                                    pendiente
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                                <button mat-raised-button matStepperPrevious color="warn" class="btn-search"
+                                    (click)="limpiar()">Volver</button>
+                                <button [disabled]="!validarGuardado" mat-raised-button color="accent"
+                                    class="btn-search" (click)="guardarDocumento()">Guardar</button>
+                            </div>
+                        </form>
+                    </mat-step>
+                </mat-vertical-stepper>
+            </mat-tab>
+            <mat-tab label="Descarga masiva">
+                <mat-vertical-stepper [linear]="isLinear" #stepper>
+                    <mat-step [stepControl]="firstFormGroup">
+                        <form [formGroup]="firstFormGroup">
+                            <ng-template matStepLabel>Búsqueda de documentos</ng-template>
+                            <section class="container">
+                                <div class="column">
+
+                                    <div class="select">
+                                        <p class="tag">Id. Documento</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <input matInput formControlName="documento" [(ngModel)]="documentoBusqueda"
+                                                placeholder="Nombre">
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="select">
+                                        <p class="tag">Estatus</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Vigente/no Vigente</mat-label>
+                                            <mat-select formControlName="vigente" [(ngModel)]="vigenteBusqueda">
+                                                <mat-option value="true">Vigente</mat-option>
+                                                <mat-option value="false">No Vigente</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="select">
+                                        <p class="tag">Tipo de información</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Seleccionar</mat-label>
+                                            <mat-select formControlName="informacion" [(ngModel)]="selectedInformacion"
+                                                name="informacion">
+                                                <mat-option *ngFor="let informacion of arrInformacion"
+                                                    [value]="informacion.cDescripcionVisibilidad">
+                                                    {{informacion.cDescripcionVisibilidad}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="select">
+                                        <p class="tag">Fecha de creación</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Seleccione una Fecha</mat-label>
+                                            <input matInput [matDatepicker]="picker" formControlName="fechaCreacion"
+                                                [(ngModel)]="fechaCreacion" [max]="maxDate">
+                                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="select">
+                                        <p class="tag">Fecha de carga</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Seleccione una Fecha</mat-label>
+                                            <input matInput [matDatepicker]="picker1" formControlName="fechaCarga"
+                                                [(ngModel)]="fechaCarga" [max]="maxDate">
+                                            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker1></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="select">
+                                        <p class="tag">Fecha de ultima modificación</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Seleccione una Fecha</mat-label>
+                                            <input matInput [matDatepicker]="picker2"
+                                                formControlName="fechaModificacion" [(ngModel)]="fechaModificacion"
+                                                [max]="maxDate">
+                                            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker2></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="select">
+                                        <p class="tag">Tipo de documento</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Seleccionar</mat-label>
+                                            <mat-select formControlName="tipoDocumentos"
+                                                [(ngModel)]="selectTipoDocumento" name="tipoDocumento">
+                                                <mat-option *ngFor="let tipoDocumento of arrTipoDocumentos"
+                                                    [value]="tipoDocumento.id">
+                                                    {{tipoDocumento.cDescripcionTipoDocumento}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="select">
+                                        <p class="tag">Ente</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Seleccionar</mat-label>
+                                            <mat-select formControlName="entes" [(ngModel)]="selectedEntes"
+                                                name="entes">
+                                                <mat-option *ngFor="let ente of arrEntes" [value]="ente.id">
+                                                    {{ente.cDescripcionEnte}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+
+                                </div>
+                                <div class="column">
+
+                                    <div class="select">
+                                        <p class="tag">Tipo de expediente</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Seleccionar</mat-label>
+                                            <mat-select formControlName="expediente" [(ngModel)]="selectedExpediente"
+                                                name="expediente">
+                                                <mat-option *ngFor="let expediente of arrExpediente"
+                                                    [value]="expediente.id">
+                                                    {{expediente.cDescripcionTipoExpediente}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="select">
+                                        <p class="tag">Folio de expediente</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <input matInput placeholder="Folio" formControlName="folioExpediente"
+                                                [(ngModel)]="selectedFolioExpediente">
+                                        </mat-form-field>
+                                    </div>
+                                    <form #formRef="ngForm">
+                                        <div *ngFor="let meta of arrMetacatalogos; let in=index" class="col-sm-3">
+                                            <div class="form-group">
+                                                <div class="select"
+                                                    *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Numérico'">
+                                                    <p class="tag">{{arrMetacatalogos[in].cDescripcionMetacatalogo}}</p>
+                                                    <mat-form-field appearance="fill" class="input">
+                                                        <mat-label>Capture un numero</mat-label>
+                                                        <input type="number"
+                                                            *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Numérico'"
+                                                            matInput [(ngModel)]="meta.text"
+                                                            name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}">
+                                                    </mat-form-field>
+                                                </div>
+                                                <div class="select"
+                                                    *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Texto'">
+                                                    <p class="tag">{{arrMetacatalogos[in].cDescripcionMetacatalogo}}</p>
+                                                    <mat-form-field appearance="fill" class="input">
+                                                        <mat-label>Capture un texto</mat-label>
+                                                        <input *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Texto'"
+                                                            matInput [(ngModel)]="meta.text"
+                                                            name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}">
+                                                    </mat-form-field>
+                                                </div>
+                                                <div class="select"
+                                                    *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Fecha'">
+                                                    <p class="tag">{{arrMetacatalogos[in].cDescripcionMetacatalogo}}</p>
+                                                    <mat-form-field appearance="fill" class="input">
+                                                        <mat-label>Seleccione una Fecha</mat-label>
+                                                        <input *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Fecha'"
+                                                            matInput [(ngModel)]="meta.text"
+                                                            name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}"
+                                                            [matDatepicker]="picker2"
+                                                            [required]="arrMetacatalogos[in].bOligatorio">
+                                                        <mat-datepicker-toggle matSuffix [for]="picker2">
+                                                        </mat-datepicker-toggle>
+                                                        <mat-datepicker #picker2></mat-datepicker>
+                                                    </mat-form-field>
+                                                </div>
+
+                                                <div class="select"
+                                                    *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Sí o no'">
+                                                    <p class="tag">{{arrMetacatalogos[in].cDescripcionMetacatalogo}}</p>
+                                                    <mat-form-field appearance="fill" class="input">
+                                                        <mat-label>Si/No</mat-label>
+                                                        <mat-select [(ngModel)]="meta.text"
+                                                            name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}">
+                                                            <mat-option value="Sí">Sí</mat-option>
+                                                            <mat-option value="No">No</mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </form>
+
+                                    <div class="select buttons">
+                                        <button mat-raised-button matStepperNext color="warn" (click)="filter()"
+                                            class="btn-search">Consultar</button>
+                                        <button mat-raised-button color="warn" (click)="borrarFiltros()"
+                                            class="btn-search">Borrar</button>
+                                    </div>
+                                </div>
+                            </section>
+
+                        </form>
+                    </mat-step>
+
+                    <mat-step [stepControl]="secondFormGroup">
+
+                        <form [formGroup]="secondFormGroup">
+                            <ng-template matStepLabel>búsqueda</ng-template>
+                            <div class="content p-24" align="center" style="border: 1px">
+                                <div class="content">
+                                    <!-- Data table-->
+                                    <ngx-datatable class="material shadow-none" [rows]="documentos"
+                                        [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50"
+                                        [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable"
+                                        [limit]="10" [scrollbarH]="true" [selectionType]="'checkbox'">
+                                        <ngx-datatable-column [width]="48" [canAutoResize]="false" [sortable]="false">
+                                            <ng-template ngx-datatable-header-template let-value="value"
+                                                let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+                                                <mat-checkbox [checked]="allRowsSelected"
+                                                    (change)="selectFn(!allRowsSelected)"
+                                                    (change)="selectAll(!allRowsSelected)"></mat-checkbox>
+                                            </ng-template>
+
+                                            <ng-template ngx-datatable-cell-template let-row="row" let-value="value"
+                                                let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+                                                <mat-checkbox [checked]="isSelected" formControlName="selected"
+                                                    [(ngModel)]="row.selected" (change)="onCheckboxChangeFn($event)">
+                                                </mat-checkbox>
+                                            </ng-template>
+
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Id. documento" prop="id"></ngx-datatable-column>
+                                        <ngx-datatable-column name="Documento" prop="cNombreDocumento">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Tipo de información" prop="informacion">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Páginas" prop="paginas" [width]="100">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Fecha de carga" prop="fechaCarga">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Fecha de modificación" prop="fechaModificacion">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Versión" prop="version" [width]="100">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Clasificación" prop="clasificacion">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Ente" prop="ente.cDescripcionEnte">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Tipo de expediente" prop="descripcionExpediente">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Folio de expediente" prop="folioExpediente">
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="Estatus" sortable="false" [width]="100">
+                                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                                <mat-icon *ngIf="row.bActivo" color="accent" class="material-icons">
+                                                    check_circle
+                                                </mat-icon>
+                                                <mat-icon *ngIf="!row.bActivo" color="warn" class="material-icons">
+                                                    remove_circle
+                                                </mat-icon>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+                                        <ngx-datatable-column name="Acciones" sortable="false" prop="id" [width]="100">
+                                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+
+                                                <a target="_self" *ngIf="row.idDocumento && row.Consultar"
+                                                    (click)="descargarDocumento(row)">
+                                                    <mat-icon color="primary" class="material-icons pointer"
+                                                        matTooltip="Clic para descargar">
+                                                        cloud_download</mat-icon>
+
+                                                </a>
+
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+                                    </ngx-datatable>
+                                </div>
+                            </div>
+                            <div class="select buttons">
+                                <button mat-raised-button matStepperPrevious color="warn"
+                                    class="btn-search">Volver</button>
+                                <button mat-raised-button (click)="descargarDocumentos()" class="button"> Descargar
+                                    <mat-icon color="primary" class="material-icons pointer"
+                                        matTooltip="Clic para descargar">
+                                        cloud_download</mat-icon>
+                                </button>
+                            </div>
+
+                        </form>
+                    </mat-step>
+                </mat-vertical-stepper>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+
+
+
+</div>
