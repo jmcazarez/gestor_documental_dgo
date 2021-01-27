@@ -31,8 +31,8 @@ export class UploadFileService {
                 const formData: FormData = new FormData();
                 // Enviamos la imagen
                 formData.append('files', file, file.name);
-               // formData.append('base64', base64);
-               
+                // formData.append('base64', base64);
+
                 this.http.post(this.urlCms + this.urlUpload, formData, this.httpOptions).subscribe(
                     (res) => {
 
@@ -49,25 +49,32 @@ export class UploadFileService {
     }
 
     subirArchivo(file: any, base64: any): Promise<any> {
+        let options = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+
+            }),
+        };
         return new Promise(resolve => {
             {
+
                 const formData: FormData = new FormData();
                 const data = {
                     name: file.name
-                  };
+                };
                 // Enviamos la imagen
-                
+
                 formData.append('data', JSON.stringify(data));
-                formData.append('files', file, data.name);
-        //formData.append('base64', base64);
-            
+                formData.append('files', file, data.name);                           
+                formData.append('base64', base64);
+
                 this.http.post(this.urlApi + this.urlUpload, formData, this.httpOptions).subscribe(
-                        (res) => {                            
-                            resolve(res);
-                        },
-                        (err) => {
-                            resolve(err);
-                        });
+                    (res) => {
+                        resolve(res);
+                    },
+                    (err) => {
+                        resolve(err);
+                    });
             }
         });
 
@@ -76,7 +83,7 @@ export class UploadFileService {
         file: any): { [key: string]: { progress: Observable<number> } } {
         // this will be the our resulting map
         const status: { [key: string]: { progress: Observable<number> } } = {};
-        
+
         // create a new multipart-form for every file
         const formData: FormData = new FormData();
         formData.append('files', file, file.name);

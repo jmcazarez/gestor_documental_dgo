@@ -181,7 +181,6 @@ export class GuardarDocumentosComponent implements OnInit {
             // Subimos archivo
             await this.upload();
 
-
         }
 
         if (this.documentos.documento === '') {
@@ -351,9 +350,10 @@ export class GuardarDocumentosComponent implements OnInit {
         // const resp = await this.uploadService.uploadFile(this.files[0].data);
 
         const resp = await this.uploadService.subirArchivo(this.fileInput.nativeElement.files[0], this.base64);
+        console.log(resp);
         if (resp.error) {
             Swal.fire('Error', 'Ocurrió un error al subir el documento. ' + resp.error.error, 'error');
-
+            this.documentos.documento = '';
         } else {
             // La peticion nos retorna el id del documento y lo seteamos al usuario
             if (resp.data) {

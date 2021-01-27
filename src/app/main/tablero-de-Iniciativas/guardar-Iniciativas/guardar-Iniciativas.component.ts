@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, Valid
 import Swal from 'sweetalert2';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DocumentosModel } from 'models/documento.models';
-import { TableroDeIniciativasComponent } from '../tablero-de-Iniciativas.component';
+import { TableroDeIniciativasComponent } from '../tablero-de-iniciativas.component';
 import { Subject } from 'rxjs';
 import { MenuService } from 'services/menu.service';
 import { UploadFileService } from 'services/upload.service';

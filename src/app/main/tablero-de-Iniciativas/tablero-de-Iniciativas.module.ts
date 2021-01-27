@@ -6,7 +6,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SeguridadGuard } from 'guards/seguridad.guard';
-import { TableroDeIniciativasComponent } from './tablero-de-Iniciativas.component';
+import { TableroDeIniciativasComponent } from './tablero-de-iniciativas.component';
 import {MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';

@@ -59,8 +59,8 @@ import { EmpleadosDelCongresoModule } from './main/empleados-del-congreso/emplea
 import { GuardarEmpleadoModule } from './main/empleados-del-congreso/guardar-empleado/guardar-empleado.module';
 import { MesasDirectivasModule } from './main/mesas-directivas/mesas-directivas.module';
 import { GuardarMesaModule } from './main/mesas-directivas/guardar-mesa/guardar-mesa.module';
-import { TableroDeIniciativasModule } from './main/tablero-de-Iniciativas/tablero-de-Iniciativas.module';
-import { GuardarIniciativasModule } from './main/tablero-de-Iniciativas/guardar-Iniciativas/guardar-Iniciativas.module';
+import { TableroDeIniciativasModule } from './main/tablero-de-iniciativas/tablero-de-iniciativas.module';
+import { GuardarIniciativasModule } from './main/tablero-de-iniciativas/guardar-iniciativas/guardar-iniciativas.module';
 import { ConfiguracionFirmasPorEtapaModule } from './main/configuracion-de-firmas-por-etapa/configuracion-de-firmas-por-etapa.module';
 import { GuardarConfiguracionFirmasPorEtapaModule } from './main/configuracion-de-firmas-por-etapa/guardar-configuracion-de-firmas-por-etapa/guardar-configuracion-de-firmas-por-etapa.module';
 import { GuardarParticipantesModule } from './main/mesas-directivas/guardar-mesa/guardar-participantes/guardar-participantes.module';
@@ -72,6 +72,7 @@ import { GuardarRecepcionDeExpedienteModule } from './main/tablero-de-recepcion-
 import { TableroDeLibroDeActasModule } from './main/tablero-de-libro-de-actas/tablero-de-libro-de-actas.module';
 import { GuardarlibroDeActasModule } from './main/tablero-de-libro-de-actas/guardar-libro-de-actas/guardar-libro-de-actas.module';
 import { TableroDePrestamosDeDocumentosModule } from './main/tablero-de-prestamos-de-documentos/tablero-de-prestamos-de-documentos.module';
+import { GuardarPrestamoModule } from './main/tablero-de-prestamos-de-documentos/guardar-prestamo/guardar-prestamo.module';
 
 const appRoutes: Routes = [
     {
@@ -167,9 +168,9 @@ const appRoutes: Routes = [
         GuardarRecepcionDeExpedienteModule,
         TableroDeLibroDeActasModule,
         GuardarlibroDeActasModule,
-        TableroDePrestamosDeDocumentosModule
-    ],
-                          
+        TableroDePrestamosDeDocumentosModule,
+        GuardarPrestamoModule
+    ],             
     bootstrap   : [
         AppComponent
     ]

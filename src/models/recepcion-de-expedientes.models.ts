@@ -1,4 +1,3 @@
-
 export class RecepcionDeExpedientesModels {
     id: string;
     idExpediente: string;

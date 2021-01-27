@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { GuardarIniciativasComponent } from './guardar-Iniciativas/guardar-Iniciativas.component';
+import { GuardarIniciativasComponent } from './guardar-iniciativas/guardar-iniciativas.component';
 import { IniciativasModel } from 'models/iniciativas.models';
 import { IniciativasService } from 'services/iniciativas.service';
 import { MenuService } from 'services/menu.service';

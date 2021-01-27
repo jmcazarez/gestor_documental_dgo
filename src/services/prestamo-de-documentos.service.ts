@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environments/environment';
-import { RecepcionDeActasModel } from 'models/recepcion-de-actas.models';
+import { PrestamoDeDocumentosModels } from 'models/prestamo-de-documentos.models';
 
 @Injectable({
     providedIn: 'root'
@@ -25,12 +25,12 @@ export class PrestamosDeDocumentosService {
         return this.http.get(this.baseUrl + this.urlPrestamoDocumentos, this.httpOptions);
     }
 
-    actualizarPrestamosDeDocumentos(partidosPoliticos: RecepcionDeActasModel): any {
-        return this.http.put(this.baseUrl + this.urlPrestamoDocumentos + '/' + partidosPoliticos.id, partidosPoliticos, this.httpOptions);
+    actualizarPrestamosDeDocumentos(prestamoDocumento: PrestamoDeDocumentosModels): any {
+        return this.http.put(this.baseUrl + this.urlPrestamoDocumentos + '/' + prestamoDocumento.id, prestamoDocumento, this.httpOptions);
     }
 
-    guardarPrestamosDeDocumentos(partidosPoliticos: RecepcionDeActasModel): any {
-        return this.http.post(this.baseUrl + this.urlPrestamoDocumentos, partidosPoliticos, this.httpOptions);
+    guardarPrestamosDeDocumentos(prestamoDocumento: PrestamoDeDocumentosModels): any {
+        return this.http.post(this.baseUrl + this.urlPrestamoDocumentos, prestamoDocumento, this.httpOptions);
     }
 
     eliminarPrestamosDeDocumentos(id: string): any {

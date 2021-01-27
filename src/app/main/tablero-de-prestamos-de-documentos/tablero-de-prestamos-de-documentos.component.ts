@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-//import { GuardarlibroDeActasComponent } from './guardar-libro-de-actas/guardar-libro-de-actas.component';
+import { GuardarPrestamoComponent } from './guardar-prestamo/guardar-prestamo.component';
 import { MenuService } from 'services/menu.service';
 import { Router } from '@angular/router';
 import { DatePipe } from '@angular/common';
@@ -8,7 +8,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { PrestamosDeDocumentosService } from 'services/prestamo-de-documentos.service';
-import { LibroDeActasModel } from 'models/libro-de-actas.models';
+import { PrestamoDeDocumentosModels } from 'models/prestamo-de-documentos.models';
 
 @Component({
   selector: 'app-tablero-de-prestamos-de-documentos',
@@ -37,7 +37,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
         private menuService: MenuService,
     ) {
         // Obtenemos recepcion de actas
-        this.obtenerLibroDeActas();
+        this.obtenerPrestamosDeDocumentos();
 
     }
 
@@ -45,7 +45,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
 
     }
 
-    obtenerLibroDeActas(): void {
+    obtenerPrestamosDeDocumentos(): void {
         this.spinner.show();
         this.valueBuscador = '';
         this.loadingIndicator = true;
@@ -65,11 +65,11 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
             if (this.optConsultar) {
                 if (resp) {
                     for (const prestamos of resp) {
-                        console.log(prestamos);
+                        //console.log(prestamos);
                         prestamosTemp.push({
                             id: prestamos.id,
-                            dFechaSolicitud: prestamos.dFechaSolicitud + 'T16:00:00.000Z',
-                            dFechaDevolucion: prestamos.dFechaDevolucion + 'T16:00:00.000Z',
+                            dFechaSolicitud: prestamos.dFechaSolicitud,
+                            dFechaDevolucion: prestamos.dFechaDevolucion,
                             dFechaSolicitudT: this.datePipe.transform(prestamos.dFechaSolicitud, 'dd-MM-yyyy'),
                             dFechaDevolucionT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
                             cSolicitante: prestamos.cSolicitante,
@@ -78,7 +78,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
                             cIdExpediente: prestamos.cIdExpediente,
                             hora: prestamos.hora,
                             horaDev: prestamos.horaDev,
-                            bActivo: prestamos.bActivo,
+                            cEstatus: prestamos.cEstatus,
                         });
                     }
                 }
@@ -94,11 +94,32 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
     }
 
     nuevoPrestamo(): void {
+        // Abrimos modal de guardar recepcion de actas
+        const dialogRef = this.dialog.open(GuardarPrestamoComponent, {
+            width: '50%',
+            height: '90%',
+            disableClose: true,
+            data: new PrestamoDeDocumentosModels(),
 
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            this.obtenerPrestamosDeDocumentos();
+        });
     }
 
-    editarPrestamo(libro: LibroDeActasModel): void {
+    editarPrestamo(prestamo: PrestamoDeDocumentosModels): void {
+        // Abrimos modal de guardar recepcion de actas
+        const dialogRef = this.dialog.open(GuardarPrestamoComponent, {
+            width: '60%',
+            height: '80%',
+            disableClose: true,
+            data: prestamo,
+        });
 
+        dialogRef.afterClosed().subscribe(result => {
+            this.obtenerPrestamosDeDocumentos();
+        });
     }
     
     eliminarPrestamo(row): void {
@@ -115,7 +136,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
                 // realizamos delete
                 this.prestamosDeDocumentosService.eliminarPrestamosDeDocumentos(row).subscribe((resp: any) => {
                     Swal.fire('Eliminado', 'El libro de actas ha sido eliminado.', 'success');
-                    this.obtenerLibroDeActas();
+                    this.obtenerPrestamosDeDocumentos();
                 }, err => {
                     this.cargando = false;
                     Swal.fire(
@@ -135,11 +156,19 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
             this.prestamoDocumentos = this.prestamoDocumentosTemp;
         } else {
             const val = value.target.value.toLowerCase();
-            const temp = this.prestamoDocumentos.filter((d) => d.fechaDeInicio.toLowerCase().indexOf(val) !== -1 || !val ||
-                d.fechaDeFin.toLowerCase().indexOf(val) !== - 1 || d.legislatura.cLegislatura.toLowerCase().indexOf(val) !== - 1);
+            const temp = this.prestamoDocumentos.filter((d) => d.id.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.dFechaSolicitudT.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.dFechaDevolucionT.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.cSolicitante.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.cTipoPrestamo.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.cTipoExpediente.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.hora.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.horaDev.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.cIdExpediente.toLowerCase().indexOf(val) !== -1);
 
             this.prestamoDocumentos = temp;
         }
     }
 
 }
+

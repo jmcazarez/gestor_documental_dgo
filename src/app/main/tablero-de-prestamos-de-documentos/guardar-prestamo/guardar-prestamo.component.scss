@@ -1,0 +1,31 @@
+.modal{
+    z-index: 100000000 !important;
+    width: 100%;
+  
+    .mat-card{
+      padding: 20px;
+      box-shadow: none;
+    }
+  }
+  
+  .buttons{
+    margin-bottom: 30px;
+  }
+  
+  .button{
+    border-radius: 5px;
+    width: 200px;
+  }
+
+.time-picker{
+  position:absolute;
+  z-index : 99999999;
+}
+
+.timepicker-overlay{
+  z-index: 99999999 !important;
+}
+
+.timepicker-backdrop-overlay{
+  z-index: 99999999 !important;
+}
