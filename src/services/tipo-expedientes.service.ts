@@ -35,6 +35,6 @@ export class TipoExpedientesService {
 
     eliminarTipoExpedientes(ruta: string): any {
 
-        return this.http.delete(this.baseUrl + this.urlTipoExpedientes + '/' + ruta);
+        return this.http.delete(this.baseUrl + this.urlTipoExpedientes + '/' + ruta, this.httpOptions);
     }
 }

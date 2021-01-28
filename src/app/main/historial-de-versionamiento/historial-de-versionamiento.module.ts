@@ -28,7 +28,7 @@ import { HistorialDeVersionamientoComponent } from './historial-de-versionamient
 
 const routes = [
     {
-        path     : 'historial-de-versionamiento-reporte',
+        path     : 'historial-de-versionamiento',
         component: HistorialDeVersionamientoComponent,
         canActivate: [SeguridadGuard],
         

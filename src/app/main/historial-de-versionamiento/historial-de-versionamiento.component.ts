@@ -16,21 +16,13 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
-    selector: 'app-historial-de-versionamiento',
-    templateUrl: './historial-de-versionamiento.component.html',
-    styleUrls: ['./historial-de-versionamiento.component.scss'],
-    providers: [DatePipe]
+   selector: 'app-historial-de-versionamiento',
+   templateUrl: './historial-de-versionamiento.component.html',
+   styleUrls: ['./historial-de-versionamiento.component.scss'],
+   providers: [DatePipe]
 })
 export class HistorialDeVersionamientoComponent implements OnInit {
 
-
-    displayedColumns: string[] = ['position', 'name', 'weight'];
-    dataSource = new MatTableDataSource<PeriodicElement>(ELEMENT_DATA);
-
-    @ViewChild(MatPaginator) paginator: MatPaginator;
-    ngAfterViewInit() {
-        this.dataSource.paginator = this.paginator;
-    }
 
     documentoBusqueda: string;
     vigenteBusqueda: string;
@@ -544,17 +536,3 @@ export class HistorialDeVersionamientoComponent implements OnInit {
     }
 }
 
-
-export interface PeriodicElement {
-    name: string;
-    position: number;
-    weight: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-    { position: 1, name: 'dd/mm/aa', weight: 'Ana Lara' },
-    { position: 2, name: 'dd/mm/aa', weight: 'Ana Lara' },
-    { position: 3, name: 'dd/mm/aa', weight: 'Ana Lara' },
-    { position: 4, name: 'dd/mm/aa', weight: 'Ana Lara' },
-
-];

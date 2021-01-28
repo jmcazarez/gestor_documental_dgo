@@ -164,7 +164,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
 
         this.form = this.formBuilder.group({
-            entes: [{ value: this.documento.ente, disabled: this.documento.disabled }, [Validators.required]],
+            entes: [{ value: this.documento.ente, disabled: this.documento.disabled }],
             secretarias: [{ value: this.documento.secretaria, disabled: this.documento.disabled }, [Validators.required]],
             expediente: [{ value: this.documento.tipo_de_expediente, disabled: this.documento.disabled }, [Validators.required]],
             direcciones: [{ value: this.documento.direccione, disabled: this.documento.disabled }, [Validators.required]],
@@ -344,7 +344,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
     async guardar(): Promise<void> {
         // Asignamos valores a objeto
-        this.documento.ente = this.selectedEntes;
+        // this.documento.ente = this.selectedEntes;
         // this.documento.secretaria = this.selectedSecretaria;
         // this.documento.direccione = this.selectedDireccion;
         // this.documento.departamento = this.selectedDepartamento;
@@ -358,7 +358,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             this.documento.fechaCarga = this.documento.fechaCarga + 'T16:00:00.000Z';
             this.documento.fechaCreacion = this.documento.fechaCreacion + 'T16:00:00.000Z';
         }
-        this.documento.tipo_de_expediente = this.selectedExpediente;
+         this.documento.tipo_de_expediente = this.selectedExpediente;
         if (this.documento.id) {
             if (this.documento.disabled) {
                 this.cerrar(true);

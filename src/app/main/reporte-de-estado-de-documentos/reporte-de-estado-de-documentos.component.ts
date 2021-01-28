@@ -48,12 +48,14 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
         private usuariosService: UsuariosService,
         private router: Router,
         private documentoService: DocumentosService,
-        private menuService: MenuService) {
+        private menuServices: MenuService) {
         this.imageBase64 = environment.imageBase64;
     }
 
     ngOnInit(): void {
-
+   
+        this.arrInformacion = this.menuServices.tipoInformacion;
+       console.log(this.arrInformacion );
         // Formulario reactivo
         this.firstFormGroup = this._formBuilder.group({
             vigente: [''],
@@ -66,8 +68,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
             usuario: ['', Validators.required],
         });
 
-       //  this.arrInformacion = this.menuService.tipoInformacion;
-
+     
       //  this.obtenerDocumentos();
     }
 
@@ -125,7 +126,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
         this.documentoService.obtenerDocumentoReporte(filtroReporte).subscribe((resp: any) => {
 
             // Buscamos permisos
-            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
+            const opciones = this.menuServices.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
             this.optAgregar = opciones.Agregar;
             this.optEditar = opciones.Editar;
             this.optConsultar = opciones.Consultar;
@@ -137,10 +138,10 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
                     idDocumento = '';
                     // Validamos permisos
                     if (documento.tipo_de_documento) {
-                        const encontro = this.menuService.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento.id);
+                        const encontro = this.menuServices.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento.id);
 
                         if (documento.visibilidade) {
-                            info = this.menuService.tipoInformacion.find((tipo: { id: string; }) => tipo.id === documento.visibilidade.id);
+                            info = this.menuServices.tipoInformacion.find((tipo: { id: string; }) => tipo.id === documento.visibilidade.id);
                         }
                         if (encontro) {
                             if (documento.tipo_de_documento.bActivo && encontro.Consultar && info) {

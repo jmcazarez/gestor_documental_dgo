@@ -715,7 +715,16 @@ export class TableroDeCargaMasivaComponent implements OnInit {
             // tslint:disable-next-line: prefer-for-of
             for (let index = 0; index < fileInput.files.length; index++) {
                 const file = fileInput.files[index];
-                const resultado = await this.uploadService.subirArchivo(file, '');
+                let base64: any;
+                const reader2 = new FileReader();
+                reader2.readAsDataURL(file);
+                reader2.onloadend = () => {
+                    //me.modelvalue = reader.result;
+                    base64 = reader2.result.toString();
+                    console.log(base64);
+                };
+                const resultado = await this.uploadService.subirArchivo(file, base64);
+                
 
                 if (resultado.error) {
                     this.spinner.hide();

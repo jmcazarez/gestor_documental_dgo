@@ -83,13 +83,14 @@ export class TableroDeDocumentosComponent implements OnInit {
         this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
 
             // Buscamos permisos
+            console.log(this.menuService.opcionesPerfil);
             const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
+            console.log(this.optConsultar);
             this.optAgregar = opciones.Agregar;
             this.optEditar = opciones.Editar;
             this.optConsultar = opciones.Consultar;
             this.optEliminar = opciones.Eliminar;
 
-            console.log(resp);
             // Si tiene permisos para consultar
             if (this.optConsultar) {
 
@@ -167,7 +168,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                                         idDocumento: idDocumento,
                                         version: parseFloat(documento.version).toFixed(1),
                                         documento: documento.documento,
-                                        ente: documento.ente,
+                                        //ente: documento.ente,
                                         // secretaria: documento.secretaria,
                                         // direccione: documento.direccione,
                                         // departamento: documento.departamento,
@@ -186,7 +187,6 @@ export class TableroDeDocumentosComponent implements OnInit {
                         }
                     }
                 }
-
                 this.documentos = documentosTemp;
                 this.documentosTemporal = this.documentos;
             }

@@ -18,7 +18,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 
 const routes = [
     {
-        path     : 'catalogo-de-secretarias',
+        path     : 'secretarias',
         component: SecretariasComponent,
         canActivate: [SeguridadGuard],
     }

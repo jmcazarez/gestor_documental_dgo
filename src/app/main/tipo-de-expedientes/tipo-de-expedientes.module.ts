@@ -12,7 +12,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatDividerModule} from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
-
+import { NgxSpinnerModule } from 'ngx-spinner';
 const routes = [
     {
         path     : 'tipo-de-expedientes',
@@ -39,6 +39,7 @@ const routes = [
         MatIconModule,
         MatDividerModule,
         MatInputModule ,
+        NgxSpinnerModule
     ],
     providers: [
         {

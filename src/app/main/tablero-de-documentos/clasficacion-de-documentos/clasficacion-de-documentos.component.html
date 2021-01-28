@@ -1,55 +1,55 @@
 <mat-drawer-container class="example-container">
 
-    <mat-drawer *ngIf="this.documento.documento.ext === '.pdf'" mode="side" opened
-        position="start" [style.width]="'55%'">
+    <mat-drawer *ngIf="this.documento.documento.ext === '.pdf'" mode="side" opened position="start"
+        [style.width]="'55%'">
 
-        <pdf-viewer *ngIf="this.documento.documento.ext === '.pdf' && this.ocultarPreview === false" [render-text]="true" [original-size]="false"
-            [autoresize]="true" [src]="pdfSrc"></pdf-viewer>
+        <pdf-viewer *ngIf="this.documento.documento.ext === '.pdf' && this.ocultarPreview === false"
+            [render-text]="true" [original-size]="false" [autoresize]="true" [src]="pdfSrc"></pdf-viewer>
         <div *ngIf="this.ocultarPreview" class="container">
             <div class="lista">
                 <h3 class="encabezado">Hoy</h3>
 
-                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="hoy" [loadingIndicator]="loadingIndicator" [columns]="columns"
-                    [headerHeight]="50" [footerHeight]="50" rowHeight="auto"
-                    [reorderable]="reorderable">
+                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="hoy"
+                    [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50"
+                    rowHeight="auto" [reorderable]="reorderable">
                 </ngx-datatable>
                 <h3 class="encabezado">Ayer</h3>
 
-                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="ayer" [loadingIndicator]="loadingIndicator" [columns]="columns"
-                    [headerHeight]="50" [footerHeight]="50" rowHeight="auto"
-                    [reorderable]="reorderable">      
+                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="ayer"
+                    [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50"
+                    rowHeight="auto" [reorderable]="reorderable">
                 </ngx-datatable>
                 <h3 class="encabezado">Esta semana</h3>
 
-                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="semanaActual" [loadingIndicator]="loadingIndicator" [columns]="columns"
-                    [headerHeight]="50" [footerHeight]="50" rowHeight="auto"
-                    [reorderable]="reorderable">
+                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="semanaActual"
+                    [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50"
+                    rowHeight="auto" [reorderable]="reorderable">
                 </ngx-datatable>
                 <h3 class="encabezado">La semana pasada</h3>
 
-                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="semanaPasada" [loadingIndicator]="loadingIndicator" [columns]="columns"
-                    [headerHeight]="50" [footerHeight]="50" rowHeight="auto"
-                    [reorderable]="reorderable">
+                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="semanaPasada"
+                    [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50"
+                    rowHeight="auto" [reorderable]="reorderable">
                 </ngx-datatable>
 
                 <h3 class="encabezado">Hace dos semanas</h3>
 
-                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="semanaAntepasada" [loadingIndicator]="loadingIndicator" [columns]="columns"
-                    [headerHeight]="50" [footerHeight]="50" rowHeight="auto"
-                    [reorderable]="reorderable">
+                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="semanaAntepasada"
+                    [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50"
+                    rowHeight="auto" [reorderable]="reorderable">
                 </ngx-datatable>
 
                 <h3 class="encabezado">El mes pasado</h3>
 
-                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="mesPasado" [loadingIndicator]="loadingIndicator" [columns]="columns"
-                    [headerHeight]="50" [footerHeight]="50" rowHeight="auto"
-                    [reorderable]="reorderable">
+                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="mesPasado"
+                    [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50"
+                    rowHeight="auto" [reorderable]="reorderable">
                 </ngx-datatable>
                 <h3 class="encabezado">Más antiguo</h3>
 
-                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="masAntiguo" [loadingIndicator]="loadingIndicator" [columns]="columns"
-                    [headerHeight]="50" [footerHeight]="50" rowHeight="auto"
-                    [reorderable]="reorderable">
+                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="masAntiguo"
+                    [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50"
+                    rowHeight="auto" [reorderable]="reorderable">
                 </ngx-datatable>
             </div>
         </div>
@@ -64,7 +64,7 @@
                 <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para descargar">
                     cloud_download</mat-icon>
             </button>
-            <button  mat-fab color="green" (click)="linkPublico()" class="button">
+            <button mat-fab color="green" (click)="linkPublico()" class="button">
                 <mat-icon color="primary" class="material-icons pointer"
                     matTooltip="Clic ver el historial de versionamiento">
                     folder_shared</mat-icon>
@@ -74,7 +74,7 @@
                     matTooltip="Clic ver la trazabilidad del documento">
                     timeline</mat-icon>
             </button>
-            <button  mat-fab color="accent" (click)="historialVersionamiento()" class="button">
+            <button mat-fab color="accent" (click)="historialVersionamiento()" class="button">
                 <mat-icon color="primary" class="material-icons pointer"
                     matTooltip="Clic ver el historial de versionamiento">
                     history</mat-icon>
@@ -86,15 +86,15 @@
             <!--<button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
         </mat-dialog-actions>
         <div class="contentInfo border-button">
-            <form class="mat-card " fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto"
-                name="form" [formGroup]="form">
+            <form class="mat-card " fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form"
+                [formGroup]="form">
                 <h3>Información general</h3>
                 <div fxLayout="row" fxFlex="100">
                     <div fxLayout="row" fxFlex="40">
                         <p class="info">Documento:</p>
                     </div>
                     <div fxLayout="row" fxFlex="60">
-                        <p  >{{this.documento.cNombreDocumento}}</p>
+                        <p>{{this.documento.cNombreDocumento}}</p>
                     </div>
                 </div>
                 <div fxFlex="100">
@@ -102,14 +102,14 @@
                         <p class="info">Estatus:</p>
                     </div>
                     <div fxFlex="30">
-                        <p *ngIf="this.documento.bActivo"  >Vigente</p>
-                        <p *ngIf="!this.documento.bActivo"  >No Vigente</p>
+                        <p *ngIf="this.documento.bActivo">Vigente</p>
+                        <p *ngIf="!this.documento.bActivo">No Vigente</p>
                     </div>
                     <div fxLayout="row" fxFlex="20">
                         <p class="info">Formato:</p>
                     </div>
                     <div fxLayout="row" fxFlex="30">
-                        <p  >{{this.documento.documento.ext}}</p>
+                        <p>{{this.documento.documento.ext}}</p>
                     </div>
                 </div>
 
@@ -118,13 +118,13 @@
                         <p class="info">Páginas:</p>
                     </div>
                     <div fxLayout="row" fxFlex="30">
-                        <p  >{{this.documento.paginas}}</p>
+                        <p>{{this.documento.paginas}}</p>
                     </div>
                     <div fxLayout="row" fxFlex="20">
                         <p class="info">Versión:</p>
                     </div>
                     <div fxLayout="row" fxFlex="30">
-                        <p  > {{this.documento.version}}</p>
+                        <p> {{this.documento.version}}</p>
                     </div>
                 </div>
                 <div fxLayout="row" fxFlex="100">
@@ -132,7 +132,7 @@
                         <p class="info">Tipo de documento:</p>
                     </div>
                     <div fxLayout="row" fxFlex="60">
-                        <p  > {{this.documento.tipo_de_documento.cDescripcionTipoDocumento}}</p>
+                        <p> {{this.documento.tipo_de_documento.cDescripcionTipoDocumento}}</p>
                     </div>
                 </div>
                 <!--<div fxLayout="row" fxFlex="100">
@@ -149,7 +149,7 @@
                         <p class="info">Fecha de creación:</p>
                     </div>
                     <div fxLayout="row" fxFlex="60">
-                        <p  > {{this.documento.fechaCreacion}}</p>
+                        <p> {{this.documento.fechaCreacion}}</p>
                     </div>
                 </div>
                 <div fxLayout="row" fxFlex="100">
@@ -162,11 +162,12 @@
                 </div>
             </form>
         </div>
-  
+
         <div class="contentInfo">
-            <form class="mat-card " fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto"
-                name="form" [formGroup]="form">
+            <form class="mat-card " fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form"
+                [formGroup]="form">
                 <h1>Clasificación de documentos</h1>
+                <!--   
                 <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="100">
                         <mat-label>Entes</mat-label>
@@ -178,7 +179,7 @@
                         <mat-error>El ente es requerida</mat-error>
                     </mat-form-field>
                 </div>
-
+-->
                 <!--   <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="100">
                         <mat-label>Secretarías</mat-label>
@@ -190,6 +191,8 @@
                         <mat-error>La secretaría es requerida</mat-error>
                     </mat-form-field>
                 </div>
+
+                
                 <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="100">
                         <mat-label>Direcciones</mat-label>
@@ -238,15 +241,14 @@
                     </mat-form-field>
                 </div>
 
-          
+
                 <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-                <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
-                    <mat-label>Folio de expediente</mat-label>
-                    <input  matInput formControlName="folioExpediente" name="folioExpediente"
-                      >
-                    <mat-icon matSuffix class="secondary-text">account_circle</mat-icon>
-                </mat-form-field>
-            </div>
+                    <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
+                        <mat-label>Folio de expediente</mat-label>
+                        <input matInput formControlName="folioExpediente" name="folioExpediente">
+                        <mat-icon matSuffix class="secondary-text">account_circle</mat-icon>
+                    </mat-form-field>
+                </div>
                 <!-- 
                   <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-chip-list [disabled]="this.documento.disabled" #chipList aria-label="Metacatalogos">
@@ -319,8 +321,8 @@
 
         <mat-dialog-actions align="end" class="mat-card">
             <button mat-raised-button color="warn" (click)="cerrar(true)">Cerrar</button>
-            <button [disabled]="form.invalid || disabledGuardar" [disabled]="!formRef.form.valid || disabledGuardar" [disabled]="disabledGuardar" mat-raised-button color="accent"
-                (click)="guardar()">Guardar</button>
+            <button [disabled]="form.invalid || disabledGuardar" [disabled]="!formRef.form.valid || disabledGuardar"
+                [disabled]="disabledGuardar" mat-raised-button color="accent" (click)="guardar()">Guardar</button>
             <!--<button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
         </mat-dialog-actions>
     </mat-drawer-content>

@@ -6,7 +6,7 @@ import { MenuService } from 'services/menu.service';
 import { TipoExpedientesService } from 'services/tipo-expedientes.service';
 import Swal from 'sweetalert2';
 import { GuardarTipoDeExpedientesComponent } from './guardar-tipo-de-expedientes/guardar-tipo-de-expedientes.component';
-
+import { NgxSpinnerService } from 'ngx-spinner';
 @Component({
     selector: 'app-tipo-de-expedientes',
     templateUrl: './tipo-de-expedientes.component.html',
@@ -24,6 +24,7 @@ export class TipoDeExpedientesComponent implements OnInit {
     optEliminar: boolean;
     searchText: string;
     constructor(
+        private spinner: NgxSpinnerService,
         private router: Router,
         public dialog: MatDialog,
         private menuService: MenuService,
@@ -36,7 +37,7 @@ export class TipoDeExpedientesComponent implements OnInit {
 
 
     obtenerTiposExpedientes(): void {
-
+        this.spinner.show();
         this.loadingIndicator = true;
         // Obtenemos los documentos
         this.tipoExpedientesService.obtenerTipoExpedientes().subscribe((resp: any) => {
@@ -53,8 +54,10 @@ export class TipoDeExpedientesComponent implements OnInit {
                 this.tipoExpedientesTemp = this.tipoExpedientes;
             }
             this.loadingIndicator = false;
+            this.spinner.hide();
         }, err => {
             this.loadingIndicator = false;
+            this.spinner.hide();
         });
     }
 

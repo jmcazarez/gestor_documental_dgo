@@ -11,7 +11,7 @@ import { SecretariasModel } from 'models/secretarias.models';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
-    selector: 'app-catalogo-secretarias',
+    selector: 'app-secretarias',
     templateUrl: './secretarias.component.html',
     styleUrls: ['./secretarias.component.scss']
 })
