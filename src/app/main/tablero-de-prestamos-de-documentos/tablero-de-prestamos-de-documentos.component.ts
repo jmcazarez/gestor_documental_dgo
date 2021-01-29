@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { PrestamosDeDocumentosService } from 'services/prestamo-de-documentos.service';
 import { PrestamoDeDocumentosModels } from 'models/prestamo-de-documentos.models';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-tablero-de-prestamos-de-documentos',
@@ -55,7 +56,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
         this.prestamosDeDocumentosService.obtenerPrestamosDeDocumentos().subscribe((resp: any) => {
 
             // Buscamos permisos
-            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === 'tablero-de-libro-de-actas');
+            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === 'tablero-de-prestamos-de-documentos');
 
             this.optAgregar = opciones.Agregar;
             this.optEditar = opciones.Editar;
@@ -70,15 +71,20 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
                             id: prestamos.id,
                             dFechaSolicitud: prestamos.dFechaSolicitud,
                             dFechaDevolucion: prestamos.dFechaDevolucion,
+                            dFechaDocEntregado: prestamos.dFechaDocEntregado,
                             dFechaSolicitudT: this.datePipe.transform(prestamos.dFechaSolicitud, 'dd-MM-yyyy'),
                             dFechaDevolucionT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
+                            dFechaDocEntregadoT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
                             cSolicitante: prestamos.cSolicitante,
                             cTipoPrestamo: prestamos.cTipoPrestamo,
                             cTipoExpediente: prestamos.cTipoExpediente,
                             cIdExpediente: prestamos.cIdExpediente,
-                            hora: prestamos.hora,
-                            horaDev: prestamos.horaDev,
+                            hora: moment(prestamos.dFechaSolicitud).format('HH:mm'),
+                            horaDev: moment(prestamos.dFechaDevolucion).format('HH:mm'),
+                            horaDocEntregado: moment(prestamos.dFechaDocEntregado).format('HH:mm'),
+                            cNotas: prestamos.cNotas,
                             cEstatus: prestamos.cEstatus,
+                            cTipoDanio: prestamos.cTipoDanio
                         });
                     }
                 }

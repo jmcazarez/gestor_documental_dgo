@@ -1,0 +1,44 @@
+<ngx-spinner></ngx-spinner>
+<div id="clientes" class="page-layout simple fullwidth docs">
+
+    <!-- HEADER -->
+    <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+        <div class="hero-text content">
+            <h1>Tablero de daño de documentos</h1>
+            <h3>Listado de daño de documentos</h3>
+        </div>
+
+    </div>
+    <!-- / HEADER -->
+    <ngx-spinner></ngx-spinner>
+   
+
+
+    <div class="content p-24" align="center" style="border: 1px">
+        <div class="content">
+            <!-- Data table-->
+            <div class="buscador">
+                <mat-form-field class="buscar">
+                    <mat-label>Buscar un documento dañado</mat-label>
+                    <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)' [(ngModel)]="valueBuscador">
+                </mat-form-field>
+
+                
+            </div>
+
+            <ngx-datatable class="material shadow-none" [rows]="prestamoDocumentos" [loadingIndicator]="loadingIndicator"
+                [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
+                <ngx-datatable-column name="Id. Préstamo" prop="id"></ngx-datatable-column>
+                <ngx-datatable-column name="Fecha de préstamo" prop="dFechaSolicitudT"></ngx-datatable-column>
+                <ngx-datatable-column name="Hora" prop="hora"></ngx-datatable-column>
+                <ngx-datatable-column name="Solicitante" prop="cSolicitante"></ngx-datatable-column>
+                <ngx-datatable-column name="Tipo de préstamo" prop="cTipoPrestamo"></ngx-datatable-column>     
+                <ngx-datatable-column name="Tipo de expediente" prop="cTipoExpediente"></ngx-datatable-column>
+                <ngx-datatable-column name="Id. Expediente" prop="cIdExpediente"></ngx-datatable-column>         
+                <ngx-datatable-column name="Tipo de daño" prop="cTipoDanio"></ngx-datatable-column>                                     
+              
+            </ngx-datatable>
+        </div>
+    </div>
+</div>

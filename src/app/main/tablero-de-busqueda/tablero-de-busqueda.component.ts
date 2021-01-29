@@ -479,7 +479,8 @@ export class TableroDeBusquedaComponent implements OnInit {
             await this.documentoService.obtenerDocumentoPorTexto(this.selectedTextoDocumento).subscribe((resp: any) => {
                 console.log('entro');
 
-                this.arrDocumentosTexto = resp;            
+                this.arrDocumentosTexto = resp;         
+                console.log(resp);   
                 this.arrDocumentosTexto.forEach((row) => {                    
       
                    this.documentos.forEach((doc) =>{

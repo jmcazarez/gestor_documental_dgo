@@ -6,9 +6,13 @@ export class PrestamoDeDocumentosModels {
     dFechaDevolucion: any;
     dFechaDevolucionT: any;
     horaDev: any;
+    dFechaDocEntregado: any;
+    horaDocEntregado: any;
     cSolicitante: string;
     cTipoPrestamo: string;
     cTipoExpediente: string;
     cIdExpediente: string;
+    cNotas: string;
     cEstatus: string;
+    cTipoDanio: string;
 }

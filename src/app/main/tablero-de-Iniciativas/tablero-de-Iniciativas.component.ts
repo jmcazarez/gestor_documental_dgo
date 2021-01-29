@@ -15,6 +15,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
     styleUrls: ['./tablero-de-iniciativas.component.scss'],
     providers: [DatePipe]
 })
+
 export class TableroDeIniciativasComponent implements OnInit {
     filterName: string;
     fileUrl: any;

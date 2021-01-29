@@ -6,7 +6,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SeguridadGuard } from 'guards/seguridad.guard';
-import { TableroDeRecepcionDeActasComponent } from './tablero-de-recepcion-de-actas.component';
+import { TableroDeDanoDeDocumentosComponent } from './tablero-de-dano-de-documentos.component';
 import {MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,20 +16,19 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSortModule } from "@angular/material/sort";
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
-
 import { NgxSpinnerModule } from 'ngx-spinner';
+
 const routes = [
     {
-       
-        path     : 'tablero-de-prestamos-de-documentos',
-        component: TableroDeRecepcionDeActasComponent,
+        path     : 'tablero-de-daño-de-documentos',
+        component: TableroDeDanoDeDocumentosComponent,
         canActivate: [SeguridadGuard],
     }
 ];
 
 @NgModule({
     declarations: [
-        TableroDeRecepcionDeActasComponent,
+        TableroDeDanoDeDocumentosComponent,
         // SafePipePipe
     ],
     imports     : [
@@ -57,10 +56,10 @@ const routes = [
         }
     ],
     exports     : [
-        TableroDeRecepcionDeActasComponent
+        TableroDeDanoDeDocumentosComponent
     ]
 })
 
-export class TableroDeRecepcionDeActasModule
+export class TableroDeDanoDeDocumentosModule
 {
 }

@@ -1,7 +1,3 @@
-<link href="//cdn.rawgit.com/indrimuska/angular-moment-picker/master/dist/angular-moment-picker.min.css" rel="stylesheet">
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment-with-locales.js"></script>
-<script src="//cdn.rawgit.com/indrimuska/angular-moment-picker/master/dist/angular-moment-picker.min.js"></script>
 <ngx-spinner></ngx-spinner>
 <div class="modal" fxLayout="column" fxLayoutAlign="start" fxLayout.gt-md="row">
     <!-- REACTIVE FORM EXAMPLE -->
@@ -74,8 +70,8 @@
         </div>
 
         <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-            <mat-label>Fecha</mat-label>
-            <input matInput [matDatepicker]="picker1" formControlName="dFechaDevolucion" >
+            <mat-label>Fecha devolución</mat-label>
+            <input matInput [matDatepicker]="picker1" formControlName="dFechaDevolucion" [min]="maxDate">
             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
             <mat-datepicker #picker1></mat-datepicker>
             <mat-error>La fecha del registro no es valida ej. 28/11/2020</mat-error>
@@ -84,6 +80,20 @@
         <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
             <mat-label>Hora devolución</mat-label>
             <input matInput type="time" atp-time-picker value="00:00" formControlName="horaDevolucion"/>
+            <mat-error>La fecha del registro no es valida ej. 28/11/2020</mat-error>
+        </mat-form-field>
+
+        <mat-form-field  *ngIf="this.prestamo.id" appearance="outline" fxFlex="1 0 auto" class="pl-4">
+            <mat-label>Fecha entrega de documento</mat-label>
+            <input matInput [matDatepicker]="picker2" formControlName="dFechaDocEntregado" [min]="maxDate">
+            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+            <mat-datepicker #picker2></mat-datepicker>
+            <mat-error>La fecha del registro no es valida ej. 28/11/2020</mat-error>
+        </mat-form-field>
+
+        <mat-form-field  *ngIf="this.prestamo.id" appearance="outline" fxFlex="1 0 auto" class="pl-4">
+            <mat-label>Hora de entrega de documento</mat-label>
+            <input matInput type="time" atp-time-picker formControlName="horaDocEntregado"/>
             <mat-error>La fecha del registro no es valida ej. 28/11/2020</mat-error>
         </mat-form-field>
 
@@ -96,6 +106,26 @@
                     </mat-option>
                 </mat-select>
                 <mat-error>El tipo de prestamo es requerido.</mat-error>
+            </mat-form-field>
+        </div>
+
+        <div *ngIf="this.prestamo.id" fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
+            <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+                <mat-label>Tipo de daño</mat-label>
+                <mat-select formControlName="cTipoDanio" [(ngModel)]="selectDanio" name="danio">
+                    <mat-option *ngFor="let danio of tipoDanio" [value]="danio.descripcion">
+                        {{danio.descripcion}}
+                    </mat-option>
+                </mat-select>
+                <mat-error>El tipo de prestamo es requerido.</mat-error>
+            </mat-form-field>
+        </div>
+
+        <div *ngIf="this.prestamo.id" fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+            <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+                <mat-label>Notas</mat-label>
+                <textarea matInput formControlName="cNotas" name="notas" #inputTarget></textarea>
+                <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
             </mat-form-field>
         </div>
     </form>

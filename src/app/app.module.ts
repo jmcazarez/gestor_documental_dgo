@@ -73,6 +73,7 @@ import { TableroDeLibroDeActasModule } from './main/tablero-de-libro-de-actas/ta
 import { GuardarlibroDeActasModule } from './main/tablero-de-libro-de-actas/guardar-libro-de-actas/guardar-libro-de-actas.module';
 import { TableroDePrestamosDeDocumentosModule } from './main/tablero-de-prestamos-de-documentos/tablero-de-prestamos-de-documentos.module';
 import { GuardarPrestamoModule } from './main/tablero-de-prestamos-de-documentos/guardar-prestamo/guardar-prestamo.module';
+import { TableroDeDanoDeDocumentosModule } from './main/tablero-de-dano-de-documentos/tablero-de-dano-de-documentos.module';
 
 const appRoutes: Routes = [
     {
@@ -169,7 +170,8 @@ const appRoutes: Routes = [
         TableroDeLibroDeActasModule,
         GuardarlibroDeActasModule,
         TableroDePrestamosDeDocumentosModule,
-        GuardarPrestamoModule
+        GuardarPrestamoModule,
+        TableroDeDanoDeDocumentosModule
     ],             
     bootstrap   : [
         AppComponent
