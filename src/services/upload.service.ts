@@ -55,6 +55,7 @@ export class UploadFileService {
 
             }),
         };
+        console.log(base64);
         return new Promise(resolve => {
             {
 

@@ -19,6 +19,7 @@ import * as moment from 'moment';
 })
 
 export class TableroDePrestamosDeDocumentosComponent implements OnInit {
+
     valueBuscador: string;
     loadingIndicator: boolean;
     reorderable: boolean;
@@ -111,6 +112,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             this.obtenerPrestamosDeDocumentos();
+            this.limpiar();
         });
     }
 
@@ -125,13 +127,14 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             this.obtenerPrestamosDeDocumentos();
+            this.limpiar();
         });
     }
     
     eliminarPrestamo(row): void {
         // Eliminamos recepcion de actas
         Swal.fire({
-            title: '¿Está seguro que desea eliminar el libro de actas?',
+            title: '¿Está seguro que desea eliminar el prestamo de documentos?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Si',
@@ -141,13 +144,14 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
 
                 // realizamos delete
                 this.prestamosDeDocumentosService.eliminarPrestamosDeDocumentos(row).subscribe((resp: any) => {
-                    Swal.fire('Eliminado', 'El libro de actas ha sido eliminado.', 'success');
+                    Swal.fire('Eliminado', 'El prestamo ha sido eliminado.', 'success');
                     this.obtenerPrestamosDeDocumentos();
+                    this.limpiar();
                 }, err => {
                     this.cargando = false;
                     Swal.fire(
                         'Error',
-                        'Ocurrió un error al eliminar el libro de actas.' + err,
+                        'Ocurrió un error al eliminar el prestamo de documentos.' + err,
                         'error'
                     );
                 });
@@ -176,5 +180,10 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
         }
     }
 
+    limpiar(): void{
+        //Limpiamos buscador
+        this.valueBuscador = '';
+        //console.log('buscador' + this.valueBuscador);
+    }
 }
 

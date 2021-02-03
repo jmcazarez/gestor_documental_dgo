@@ -261,6 +261,9 @@ export class DashboardDeIndicadoresComponent implements OnInit {
         this.docConsultadosAyer = 0;
         this.docEliminadosAyer = 0;
         this.docExpedientesAyer = 0;
+        this.docExpedientes7dias = 0;
+        this.docEliminados7dias = 0;
+        this.docConsultados7dias = 0;
         this.arrCreacionGraficaAyer = [];
         this.arrCreacionGraficaMes = [];
         this.arrConsultaGraficaMes = [];
@@ -275,9 +278,13 @@ export class DashboardDeIndicadoresComponent implements OnInit {
         const primerDia = new Date(date.getFullYear(), date.getMonth(), 1);
         const ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
-        const diaFin7Dias = this.datePipe.transform(date, 'dd-MM-yyyy');
+        const diaFin7Dias = this.datePipe.transform(date, 'MM-dd-yyyy');
         date.setDate(date.getDate() - 6);
-        const diaIni7Dias = this.datePipe.transform(date, 'dd-MM-yyyy');
+        const diaIni7Dias = this.datePipe.transform(date, 'MM-dd-yyyy');
+       
+        let fechaInicial = new Date(diaIni7Dias);
+       
+        let fechaFinal = new Date(diaFin7Dias);
         let filtroReporte = '';
         if (this.vigenteBusqueda !== undefined && this.vigenteBusqueda !== '') {
             filtroReporte = 'documento.bActivo=' + this.vigenteBusqueda + '&';
@@ -309,10 +316,10 @@ export class DashboardDeIndicadoresComponent implements OnInit {
 
         if (filtroReporte === '') {
             // tslint:disable-next-line: max-line-length
-            filtroReporte = 'createdAt_gte=' + fechaAnio + '-' + fechaMes + '-' + ('0000' + primerDia.getDate()).slice(-2) + 'T01:00:00.000Z&createdAt_lte=' + fechaAnio + '-' + fechaMes + '-' + ("0000" + ultimoDia.getDate()).slice(-2) + 'T24:00:00.000Z&_limit=-1';
+            filtroReporte = 'createdAt_gte=' + fechaAnio + '-' + ("0000" + fechaMes).slice(-2) + '-' + ('0000' + primerDia.getDate()).slice(-2) + 'T01:00:00.000Z&createdAt_lte=' + fechaAnio + '-' + ("0000" + fechaMes).slice(-2) + '-' + ("0000" + ultimoDia.getDate()).slice(-2) + 'T24:00:00.000Z&_limit=-1';
         } else {
             // tslint:disable-next-line: max-line-length
-            filtroReporte = filtroReporte + '&createdAt_gte=' + fechaAnio + '-' + fechaMes + '-' + ('0000' + primerDia.getDate()).slice(-2) + 'T01:00:00.000Z&createdAt_lte=' + fechaAnio + '-' + fechaMes + '-' + ("0000" + ultimoDia.getDate()).slice(-2) + 'T24:00:00.000Z&_limit=-1';
+            filtroReporte = filtroReporte + '&createdAt_gte=' + fechaAnio + '-' + ("0000" + fechaMes).slice(-2) + '-' + ('0000' + primerDia.getDate()).slice(-2) + 'T01:00:00.000Z&createdAt_lte=' + fechaAnio + '-' + ("0000" + fechaMes).slice(-2) + '-' + ("0000" + ultimoDia.getDate()).slice(-2) + 'T24:00:00.000Z&_limit=-1';
         }
         // Obtenemos los entes
         this.trazabilidad.obtenerTrazabilidadFiltrado(filtroReporte).subscribe((resp: any) => {
@@ -320,15 +327,41 @@ export class DashboardDeIndicadoresComponent implements OnInit {
 
             arrDocumentosIngresados7diasFiltro = resp.ultimos7Dias;
 
-            this.arrDocumentosIngresados7dias = arrDocumentosIngresados7diasFiltro.filter((d) => (d['fecha'] >= diaIni7Dias && d['fecha'] <= diaFin7Dias));
+           // this.arrDocumentosIngresados7dias = arrDocumentosIngresados7diasFiltro.filter((d) => (d['fecha'] >= diaIni7Dias && d['fecha'] <= diaFin7Dias));
+            arrDocumentosIngresados7diasFiltro.forEach(element => {
+                let fecha = new Date(element.fechaFiltro);
+               
+               
+                if (fecha.getTime() >= fechaInicial.getTime()) {
+                    if (fecha.getTime() <= fechaFinal.getTime()) {
+                    
+                        this.arrDocumentosIngresados7dias.push(element);
+                    }
+                }
+
+            });
             this.docCargados7dias = this.arrDocumentosIngresados7dias.filter((d) => d['movimiento'] === 'Creación').length;
+            console.log( this.arrDocumentosIngresados7dias);
             this.docExpedientes7dias = this.arrDocumentosIngresados7dias.filter((d) => d['movimiento'] === 'Creación' && d['folioExpediente'] !== '').length;
             this.docConsultados7dias = this.arrDocumentosIngresados7dias.filter((d) => d['movimiento'] === 'Consulto').length;
             this.docEliminados7dias = this.arrDocumentosIngresados7dias.filter((d) => d['movimiento'] === 'Borro' || d['movimiento'] === 'Cancelo').length;
 
             arrDocumentosIngresadosMesFiltro = resp.ultimoMes;
             // tslint:disable-next-line: max-line-length
-            this.arrDocumentosIngresadosMes = arrDocumentosIngresadosMesFiltro.filter((d) => (d['fecha'] >= this.datePipe.transform(primerDia, 'dd-MM-yyyy') && d['fecha'] <= this.datePipe.transform(ultimoDia, 'dd-MM-yyyy')));
+            this.arrDocumentosIngresadosMes = [];
+            arrDocumentosIngresadosMesFiltro.forEach(element => {
+                let fecha = new Date(element.fechaFiltro);
+             
+                if (fecha.getTime() >= primerDia.getTime()) {
+                    if (fecha.getTime() <= ultimoDia.getTime()) {
+                        console.log(element);
+                        this.arrDocumentosIngresadosMes.push(element);
+                    }
+                }
+
+            });
+           
+            // this.arrDocumentosIngresadosMes = arrDocumentosIngresadosMesFiltro.filter((d) => (d['fechaFiltro'] >= this.datePipe.transform(primerDia, 'dd-MM-yyyy') && d['fecha'] <= this.datePipe.transform(ultimoDia, 'dd-MM-yyyy')));
             this.docCargadosMes = this.arrDocumentosIngresadosMes.filter((d) => d['movimiento'] === 'Creación').length;
             this.docExpedientesMes = this.arrDocumentosIngresadosMes.filter((d) => d['movimiento'] === 'Creación' && d['folioExpediente'] !== '').length;
             this.docConsultadosMes = this.arrDocumentosIngresadosMes.filter((d) => d['movimiento'] === 'Consulto').length;
@@ -1046,9 +1079,9 @@ export class DashboardDeIndicadoresComponent implements OnInit {
         let ini = new Date(this.fechaIni);
         const fin = new Date(this.fechaFin);
         const fMesFin = fin.getMonth() + 1;
-        let inicialFiltro = this.datePipe.transform(this.fechaIni, 'dd-MM-yyyy');
+        let inicialFiltro = this.datePipe.transform(this.fechaIni, 'MM-dd-yyyy');
         inicial = this.datePipe.transform(this.fechaIni, 'dd-MM-yyyy');
-        final = this.datePipe.transform(this.fechaFin, 'dd-MM-yyyy');
+        final = this.datePipe.transform(this.fechaFin, 'MM-dd-yyyy');
         this.spinner.show();
 
         if (ini > fin) {
@@ -1114,12 +1147,24 @@ export class DashboardDeIndicadoresComponent implements OnInit {
             // Obtenemos los entes
 
             this.trazabilidad.obtenerTrazabilidadFiltrado(filtroReporte).subscribe((resp: any) => {
-
+                let fechaInicial = new Date(inicialFiltro);
+                let fechaFinal = new Date(final);
                 arrDocumentosIngresadosFechasFiltrado = resp.ultimoMes;
+                arrDocumentosIngresadosFechasFiltrado.forEach(element => {
+                    let fecha = new Date(element.fechaFiltro);
+        
+                    if (fecha.getTime() >= fechaInicial.getTime()) {
+                        if (fecha.getTime() <= fechaFinal.getTime()) {
+                            this.arrDocumentosIngresadosFechas.push(element)
+                        }
+                    }
 
-                this.arrDocumentosIngresadosFechas = arrDocumentosIngresadosFechasFiltrado.filter((d) => (d['fecha'] >= inicialFiltro && d['fecha'] <= final));
+                });
+
+                console.log(this.arrDocumentosIngresadosFechas);
 
                 this.docCargadosFechas = this.arrDocumentosIngresadosFechas.filter((d) => d['movimiento'] === 'Creación').length;
+                console.log(this.docCargadosFechas);
                 this.docExpedientesFechas = this.arrDocumentosIngresadosFechas.filter((d) => d['movimiento'] === 'Creación' && d['folioExpediente'] !== '').length;
                 this.docConsultadosFechas = this.arrDocumentosIngresadosFechas.filter((d) => d['movimiento'] === 'Consulto').length;
                 // tslint:disable-next-line: max-line-length

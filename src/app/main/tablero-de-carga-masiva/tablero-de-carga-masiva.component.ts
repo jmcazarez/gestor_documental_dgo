@@ -66,6 +66,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
     fileName: string;
     validarGuardado: boolean;
     historialEncabezado: HistorialCargaEncabezadoModel;
+    base64: any;
 
     constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe,
         private usuariosService: UsuariosService,
@@ -307,7 +308,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                 filtroReporte = filtroReporte + '&tipo_de_documento.id=' + this.selectTipoDocumento;
             }
         }
-
+/*
         if (this.selectedEntes !== undefined && this.selectedEntes !== '') {
             if (filtroReporte === '') {
                 filtroReporte = 'ente.id=' + this.selectedEntes;
@@ -315,7 +316,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                 filtroReporte = filtroReporte + '&ente.id=' + this.selectedEntes;
             }
         }
-
+*/
         if (this.selectedExpediente !== undefined && this.selectedExpediente !== '') {
             if (filtroReporte === '') {
                 filtroReporte = 'tipo_de_expediente.id=' + this.selectedExpediente;
@@ -497,7 +498,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
         // Descargamos el documento
         this.documentoService.dowloadDocument(row.idDocumento, row.id, this.menuService.usuario, row.cNombreDocumento).subscribe((resp: any) => {
 
-            const linkSource = 'data:application/octet-stream;base64,' +resp.data;
+            const linkSource = 'data:application/octet-stream;base64,' + resp.data;
             const downloadLink = document.createElement('a');
             const fileName = row.idDocumento;
 
@@ -568,8 +569,9 @@ export class TableroDeCargaMasivaComponent implements OnInit {
     async obtenerHistorialCarga(): Promise<void> {
         this.spinner.show();
         // Obtenemos el historial de carga
+        
         this.historialCarga.obtenerHistorialCarga(this.menuService.usuario).subscribe((resp: any) => {
-
+            
             this.arrHistorialCarga = resp;
             this.spinner.hide();
         }, err => {
@@ -660,12 +662,12 @@ export class TableroDeCargaMasivaComponent implements OnInit {
             }
             this.documentos = temp;
         }
-
+/*
         if (this.selectedEntes !== '' && this.selectedEntes !== undefined && this.selectedEntes !== null) {
             temp = this.documentos.filter((d) => d.idEnte.toLowerCase().indexOf(this.selectedEntes.toLowerCase()) !== -1 || !this.selectedEntes);
             this.documentos = temp;
         }
-
+*/
         if (this.selectedExpediente !== '' && this.selectedExpediente !== undefined && this.selectedExpediente !== null) {
             temp = this.documentos.filter((d) => d.idExpediente === this.selectedExpediente);
             this.documentos = temp;
@@ -715,91 +717,84 @@ export class TableroDeCargaMasivaComponent implements OnInit {
             // tslint:disable-next-line: prefer-for-of
             for (let index = 0; index < fileInput.files.length; index++) {
                 const file = fileInput.files[index];
-                let base64: any;
-                const reader2 = new FileReader();
-                reader2.readAsDataURL(file);
-                reader2.onloadend = () => {
-                    //me.modelvalue = reader.result;
-                    base64 = reader2.result.toString();
-                    console.log(base64);
-                };
-                const resultado = await this.uploadService.subirArchivo(file, base64);
-                
+                this.base64 = await this.readAsDataURL(file);
+                if (this.base64.data) {
+                    const resultado = await this.uploadService.subirArchivo(file, this.base64.data);
 
-                if (resultado.error) {
-                    this.spinner.hide();
-                    Swal.fire(
-                        'Error',
-                        resultado.error.error + ' archivo: ' + file.name,
-                        'error'
-                    );
-                } else {
-
-
-                    // Obtenemos el historial de carga
-
-
-                    const hCarga = await this.historialCarga.guardarHistorialDetalle({ documento: resultado.data[0].id, historial_carga_encabezados: [this.selectedHistorial] })
-                    if (hCarga.error) {
+                    if (resultado.error) {
                         this.spinner.hide();
                         Swal.fire(
                             'Error',
-                            hCarga.error.error,
+                            resultado.error.error + ' archivo: ' + file.name,
                             'error'
                         );
                     } else {
-                        this.documentos.push({
-                            documento: resultado.data[0].id,
-                            cNombreDocumento: file.name,
-                            fechaCarga: fechaActual,
-                            version: '1',
-                            valido: false,
-                            errorText: '',
-                            idEncabezado: this.selectedHistorial,
-                            idDetalle: hCarga.data.id
+
+
+                        // Obtenemos el historial de carga
+
+
+                        const hCarga = await this.historialCarga.guardarHistorialDetalle({ documento: resultado.data[0].id, historial_carga_encabezados: [this.selectedHistorial] })
+                        if (hCarga.error) {
+                            this.spinner.hide();
+                            Swal.fire(
+                                'Error',
+                                hCarga.error.error,
+                                'error'
+                            );
+                        } else {
+                            this.documentos.push({
+                                documento: resultado.data[0].id,
+                                cNombreDocumento: file.name,
+                                fechaCarga: fechaActual,
+                                version: '1',
+                                valido: false,
+                                errorText: '',
+                                idEncabezado: this.selectedHistorial,
+                                idDetalle: hCarga.data.id
+                            });
+                        }
+
+                        this.documentosTemporal.push({
+                            'Documento': resultado.data[0].id,
+                            'Nombre del documento': file.name,
+                            'Tipo de documento': '',
+                            'Tipo de información': '',
+                            'Páginas': '',
+                            'Fecha de creación': '',
+                            'Ente': '',
+                            'Tipo de expediente': '',
+                            'Folio de expediente': '',
+                            'Estatus': '',
+                            'Meta_1': '',
+                            'Meta_2': '',
+                            'Meta_3': '',
+                            'Meta_4': '',
+                            'Meta_5': '',
+                            'Meta_6': ''
                         });
+                        this.obtenerHistorialCarga();
+                        this.documentos = [...this.documentos];
+                        this.documentosTemporal = [...this.documentosTemporal];
+
+
                     }
+                    this.fileName = file.name;
+                    this.files.push({ data: file, inProgress: false, progress: 0 });
 
-                    this.documentosTemporal.push({
-                        'Documento': resultado.data[0].id,
-                        'Nombre del documento': file.name,
-                        'Tipo de documento': '',
-                        'Tipo de información': '',
-                        'Páginas': '',
-                        'Fecha de creación': '',
-                        'Ente': '',
-                        'Tipo de expediente': '',
-                        'Folio de expediente': '',
-                        'Estatus': '',
-                        'Meta_1': '',
-                        'Meta_2': '',
-                        'Meta_3': '',
-                        'Meta_4': '',
-                        'Meta_5': '',
-                        'Meta_6': ''
-                    });
-                    this.obtenerHistorialCarga();
-                    this.documentos = [...this.documentos];
-                    this.documentosTemporal = [...this.documentosTemporal];
+                    const reader = new FileReader();
+                    reader.readAsBinaryString(file);
+                    reader.onloadend = () => {
+                        // Obtenemos el # de paginas del documento
+                        base64Result = reader.result.toString();
+                        base64Result = base64Result.slice(base64Result.search('/Count'), base64Result.search('/Count') + 10).replace('/Count ', '');
+                        this.paginasEditar = false;
+                        // paginasInput.value = this.getNumbersInString(base64Result);
 
+                    };
 
+                    this.cambioFile = true;
                 }
-                this.fileName = file.name;
-                this.files.push({ data: file, inProgress: false, progress: 0 });
-
-                const reader = new FileReader();
-                reader.readAsBinaryString(file);
-                reader.onloadend = () => {
-                    // Obtenemos el # de paginas del documento
-                    base64Result = reader.result.toString();
-                    base64Result = base64Result.slice(base64Result.search('/Count'), base64Result.search('/Count') + 10).replace('/Count ', '');
-                    this.paginasEditar = false;
-                    // paginasInput.value = this.getNumbersInString(base64Result);
-
-                };
-
-                this.cambioFile = true;
-
             }
             this.loadingIndicator = false;
             this.spinner.hide();
@@ -911,7 +906,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                     textError = textError + ', el tipo de documento es obligatorio';
                                 }
                             }
-
+/*
                             if (row['Ente'] && row['Ente'].length > 0) {
                                 const encontro = this.arrEntes.find((ente: { cDescripcionEnte: string; }) =>
                                     ente.cDescripcionEnte === row['Ente']);
@@ -934,7 +929,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                     textError = textError + ', el ente es obligatorio';
                                 }
                             }
-
+ */
                             if (Number(row['Páginas'])) {
                                 this.documentos[x].paginas = Number(row['Páginas']);
                             } else {
@@ -1218,11 +1213,15 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                 this.obtenerHistorialCarga();
                             }, err => {
                                 this.spinner.hide();
-                                Swal.fire(
-                                    'Error',
-                                    'Ocurrió un error al guardar el historial de cargas.' + err.error,
-                                    'error'
-                                );
+                                console.log(err);
+                              
+                                if (err.error) {
+                                    Swal.fire(
+                                        'Error',
+                                        'Ocurrió un error al guardar el historial de cargas.' +   JSON.stringify(err.error),
+                                        'error'
+                                    );
+                                }
                             });
                             this.spinner.hide();
                             this.loadingIndicator = false;
@@ -1236,7 +1235,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                 }, (err: any) => {
                     console.log(err);
                     this.spinner.hide();
-                    Swal.fire('Error', 'Ocurrió un error al guardar. ' + err.error.error, 'error');
+                    Swal.fire('Error', 'Ocurrió un error al guardar. ' +   JSON.stringify(err.error), 'error');
                 });
             }
         });
@@ -1309,4 +1308,13 @@ export class TableroDeCargaMasivaComponent implements OnInit {
         });
     }
 
+    async readAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+            let fileReader = new FileReader();
+            fileReader.onload = function () {
+                return resolve({ data: fileReader.result.toString(), name: file.name, size: file.size, type: file.type });
+            }
+            fileReader.readAsDataURL(file);
+        });
+    }
 }
