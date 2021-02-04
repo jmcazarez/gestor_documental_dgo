@@ -10,16 +10,17 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { InventarioFisicoService } from 'services/inventario-fisico.service';
 import { InventarioFisicoModels } from 'models/inventario-fisico.models';
 import * as moment from 'moment';
+import { GuardarInventarioFisicoComponent } from './guardar-inventario-fisico/guardar-inventario-fisico.component';
 
 @Component({
-  selector: 'app-tablero-de-inventario-fisico',
-  templateUrl: './tablero-de-inventario-fisico.component.html',
-  styleUrls: ['./tablero-de-inventario-fisico.component.scss'],
-  providers: [DatePipe]
+    selector: 'app-tablero-de-inventario-fisico',
+    templateUrl: './tablero-de-inventario-fisico.component.html',
+    styleUrls: ['./tablero-de-inventario-fisico.component.scss'],
+    providers: [DatePipe]
 })
 
 export class TableroDeInventarioFisicoComponent implements OnInit {
-    
+
     valueBuscador: string;
     loadingIndicator: boolean;
     reorderable: boolean;
@@ -67,14 +68,18 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
             if (this.optConsultar) {
                 if (resp) {
                     for (const inventario of resp) {
-                        //console.log(prestamos);
+                        
                         inventariosTemp.push({
                             id: inventario.id,
-                            legislatura: inventario.legislatura.cLegislatura,
-                            cTipoExpediente: inventario.cTipoExpediente,
+                            legislatura: inventario.legislatura,
+                            cLegislatura: inventario.legislatura.cLegislatura,
+                            tipo_de_expediente: inventario.tipo_de_expediente,
+                            cTipoExpediente: inventario.tipo_de_expediente.cDescripcionTipoExpediente,
                             cIdExpedienteIni: inventario.cIdExpedienteIni,
                             cIdExpedienteFin: inventario.cIdExpedienteFin,
-                            dFechaAuditoria: this.datePipe.transform(inventario.dFechaAuditoria, 'dd-MM-yyyy'),
+                            dFechaAuditoria: inventario.dFechaAuditoria,
+                            notas: inventario.notas,
+                            dFechaAuditoriaText: this.datePipe.transform(inventario.dFechaAuditoria, 'dd-MM-yyyy'),
                         });
                     }
                 }
@@ -90,16 +95,37 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
     }
 
     nuevoPrestamo(): void {
-  
+              // Abrimos modal de guardar recepcion de actas
+              const dialogRef = this.dialog.open(GuardarInventarioFisicoComponent, {
+                width: '50%',
+                height: '90%',
+                disableClose: true,
+                data: new InventarioFisicoModels(),
+    
+            });
+    
+            dialogRef.afterClosed().subscribe(result => {
+                this.obtenerPrestamosDeDocumentos();
+            });
 
     }
 
     editarPrestamo(prestamo: InventarioFisicoModels): void {
+        // Abrimos modal de guardar inventario fisico
+        const dialogRef = this.dialog.open(GuardarInventarioFisicoComponent, {
+            width: '60%',
+            height: '80%',
+            disableClose: true,
+            data: prestamo,
+        });
 
+        dialogRef.afterClosed().subscribe(result => {
+            this.obtenerPrestamosDeDocumentos();
+        });
     }
-    
+
     eliminarPrestamo(row): void {
-        
+
         Swal.fire({
             title: '¿Está seguro que desea eliminar el prestamo de documentos?',
             icon: 'warning',
@@ -133,18 +159,18 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
             this.inventario = this.inventarioTemp;
         } else {
             const val = value.target.value.toLowerCase();
-            const temp = this.inventario.filter((d) => d.id.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.legislatura.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.cTipoExpediente.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.cIdExpedienteIni.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.cIdExpedienteFin.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.dFechaAuditoria.toLowerCase().indexOf(val) !== -1);
+            const temp = this.inventario.filter((d) => d.id.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.legislatura.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.cTipoExpediente.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.cIdExpedienteIni.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.cIdExpedienteFin.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.dFechaAuditoria.toLowerCase().indexOf(val) !== -1);
 
             this.inventario = temp;
         }
     }
 
-    limpiar(): void{
+    limpiar(): void {
         //Limpiamos buscador
         this.valueBuscador = '';
         //console.log('buscador' + this.valueBuscador);

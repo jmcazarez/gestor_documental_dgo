@@ -1,17 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-
 import { TranslateModule } from '@ngx-translate/core';
-
 import { FuseSharedModule } from '@fuse/shared.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SeguridadGuard } from 'guards/seguridad.guard';
-
 import {MatDialogModule, MatDialogRef} from '@angular/material/dialog';
-
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatMenuModule} from '@angular/material/menu';

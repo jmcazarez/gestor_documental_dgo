@@ -33,7 +33,8 @@ import { GuardarTipoDeDocumentosModule } from './main/tipo-de-expedientes/guarda
 import { DependenciasModule } from './main/dependencias/dependencias.module';
 import { GuardarDependenciaModule } from './main/dependencias/guardar-dependencia/guardar-dependencia.module';
 import { ReporteDeEstadoDeDocumentosModule } from './main/reporte-de-estado-de-documentos/reporte-de-estado-de-documentos.module';
-import { HistorialDeVersionamientoModule } from './main/tablero-de-documentos/clasficacion-de-documentos/historial-de-versionamiento/historial-de-versionamiento.module';
+import { HistorialDeVersionamientoDocumentosModule } from './main/tablero-de-documentos/clasficacion-de-documentos/historial-de-versionamiento/historial-de-versionamiento.module';
+//import { HistorialDeVersionamientoModule } from './main/historial-de-versionamiento/historial-de-versionamiento.module';
 import { DashboardDeIndicadoresModule } from './main/dashboard-de-indicadores/dashboard-de-indicadores.module';
 import { TableroDeCargaMasivaModule } from './main/tablero-de-carga-masiva/tablero-de-carga-masiva.module';
 import { ReporteDeDocumentoPorFechaModule } from './main/reporte-de-documento-por-fecha/reporte-de-documento-por-fecha.module';
@@ -75,6 +76,7 @@ import { TableroDePrestamosDeDocumentosModule } from './main/tablero-de-prestamo
 import { GuardarPrestamoModule } from './main/tablero-de-prestamos-de-documentos/guardar-prestamo/guardar-prestamo.module';
 import { TableroDeDanoDeDocumentosModule } from './main/tablero-de-dano-de-documentos/tablero-de-dano-de-documentos.module';
 import { TableroDeInventarioFisicoModule } from './main/tablero-de-inventario-fisico/tablero-de-inventario-fisico.module';
+import { GuardarInventarioFisicoModule } from './main/tablero-de-inventario-fisico/guardar-inventario-fisico/guardar-inventario-fisico.module';
 
 const appRoutes: Routes = [
     {
@@ -134,7 +136,8 @@ const appRoutes: Routes = [
         GuardarDependenciaModule,
         ReporteDeEstadoDeDocumentosModule,
         GuardarDependenciaModule,
-        HistorialDeVersionamientoModule,
+        HistorialDeVersionamientoDocumentosModule,
+        //HistorialDeVersionamientoModule,
         DashboardDeIndicadoresModule,
         TableroDeCargaMasivaModule,
         ReporteDeDocumentoPorFechaModule,
@@ -173,7 +176,8 @@ const appRoutes: Routes = [
         TableroDePrestamosDeDocumentosModule,
         GuardarPrestamoModule,
         TableroDeDanoDeDocumentosModule,
-        TableroDeInventarioFisicoModule
+        TableroDeInventarioFisicoModule,
+        GuardarInventarioFisicoModule
     ],             
     bootstrap   : [
         AppComponent

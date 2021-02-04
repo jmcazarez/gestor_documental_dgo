@@ -8,28 +8,24 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { FuseSharedModule } from '@fuse/shared.module';
-import { GuardarPrestamoComponent } from './guardar-prestamo.component';
+import { GuardarInventarioFisicoComponent } from './guardar-inventario-fisico.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { MatChipsModule } from '@angular/material/chips';
-import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
-import { AmazingTimePickerModule } from 'amazing-time-picker';
-import { DpDatePickerModule } from 'ng2-date-picker';
-
+import {MatChipsModule} from '@angular/material/chips';
 const routes: Routes = [
     {
-        path: 'guardar-recepcion-de-actas',
-        component: GuardarPrestamoComponent
+        path: 'guardar-inventario-fisico',
+        component: GuardarInventarioFisicoComponent
     }
 ];
 
 @NgModule({
     declarations: [
-        GuardarPrestamoComponent
+        GuardarInventarioFisicoComponent
     ],
     imports: [
         RouterModule.forChild(routes),
@@ -47,11 +43,9 @@ const routes: Routes = [
         MatSlideToggleModule,
         MatDatepickerModule,
         NgxSpinnerModule,
-        MatChipsModule,
-        NgxMaterialTimepickerModule,
-        AmazingTimePickerModule,
-        DpDatePickerModule
+        MatChipsModule
+        
     ]
 })
-export class GuardarPrestamoModule {
+export class GuardarInventarioFisicoModule {
 }

@@ -29,3 +29,8 @@
 .timepicker-backdrop-overlay{
   z-index: 99999999 !important;
 }
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  background: none; 
+  display:none;
+}

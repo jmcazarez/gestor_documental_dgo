@@ -67,28 +67,28 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
             if (this.optConsultar) {
                 if (resp) {
                     for (const prestamos of resp) {
-                        //console.log(prestamos);
                         prestamosTemp.push({
                             id: prestamos.id,
                             dFechaSolicitud: prestamos.dFechaSolicitud,
                             dFechaDevolucion: prestamos.dFechaDevolucion,
                             dFechaDocEntregado: prestamos.dFechaDocEntregado,
-                            dFechaSolicitudT: this.datePipe.transform(prestamos.dFechaSolicitud, 'dd-MM-yyyy'),
+                            dFechaSolicitudT: moment(prestamos.dFechaSolicitud).format('DD-MM-YYYY'),
                             dFechaDevolucionT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
                             dFechaDocEntregadoT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
                             cSolicitante: prestamos.cSolicitante,
                             cTipoPrestamo: prestamos.cTipoPrestamo,
                             cTipoExpediente: prestamos.cTipoExpediente,
                             cIdExpediente: prestamos.cIdExpediente,
-                            hora: moment(prestamos.dFechaSolicitud).format('HH:mm'),
-                            horaDev: moment(prestamos.dFechaDevolucion).format('HH:mm'),
-                            horaDocEntregado: moment(prestamos.dFechaDocEntregado).format('HH:mm'),
+                            tHoraSolicitud: moment(prestamos.tHoraSolicitud, 'h:mm').format('HH:mm'),
+                            tHoraDevolucion: moment(prestamos.tHoraDevolucion, 'h:mm').format('HH:mm'),
+                            tHoraDocEntregado: moment(prestamos.tHoraDocEntregado, 'h:mm').format('HH:mm'),
                             cNotas: prestamos.cNotas,
                             cEstatus: prestamos.cEstatus,
                             cTipoDanio: prestamos.cTipoDanio
                         });
                     }
                 }
+                console.log(prestamosTemp);
                 this.prestamoDocumentos = prestamosTemp;
                 this.prestamoDocumentosTemp = this.prestamoDocumentos;
             }
@@ -174,6 +174,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
             d.cTipoExpediente.toLowerCase().indexOf(val) !== -1 || !val || 
             d.hora.toLowerCase().indexOf(val) !== -1 || !val || 
             d.horaDev.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.cEstatus.toLowerCase().indexOf(val) !== -1 || !val || 
             d.cIdExpediente.toLowerCase().indexOf(val) !== -1);
 
             this.prestamoDocumentos = temp;

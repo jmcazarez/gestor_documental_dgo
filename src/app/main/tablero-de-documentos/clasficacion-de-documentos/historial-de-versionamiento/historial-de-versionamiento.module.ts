@@ -23,7 +23,7 @@ import { HistorialDeVersionamientoComponent } from './historial-de-versionamient
 
 const routes = [
     {
-        path     : 'historial-de-versionamiento',
+        path     : 'historial-de-versionamientoo',
         component: HistorialDeVersionamientoComponent,
         canActivate: [SeguridadGuard],
         
@@ -67,6 +67,6 @@ const routes = [
     ]
 })
 
-export class HistorialDeVersionamientoModule
+export class HistorialDeVersionamientoDocumentosModule
 {
 }

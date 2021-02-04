@@ -1,8 +1,9 @@
 export class InventarioFisicoModels {
     id: string;
     legislatura: any;
-    cTipoExpediente: string;
+    tipo_de_expediente: any;
     cIdExpedienteIni: string;    
     cIdExpedienteFin: string;
     dFechaAuditoria: any;
+    notas: string;
 }
