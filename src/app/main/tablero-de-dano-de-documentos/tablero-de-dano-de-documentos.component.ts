@@ -1,4 +1,3 @@
-
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MenuService } from 'services/menu.service';
@@ -74,9 +73,9 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
                                 cTipoPrestamo: prestamos.cTipoPrestamo,
                                 cTipoExpediente: prestamos.cTipoExpediente,
                                 cIdExpediente: prestamos.cIdExpediente,
-                                tHoraSolicitud: moment(prestamos.tHoraSolicitud, 'h:mm').format('HH:mm'),
-                                tHoraDevolucion: moment(prestamos.tHoraDevolucion, 'h:mm').format('HH:mm'),
-                                tHoraDocEntregado: moment(prestamos.tHoraDocEntregado, 'h:mm').format('HH:mm'),
+                                 tHoraSolicitud: moment(prestamos.tHoraSolicitud, 'h:mm').format('HH:mm'),
+                                 tHoraDevolucion: moment(prestamos.tHoraDevolucion, 'h:mm').format('HH:mm'),
+                                 tHoraDocEntregado: moment(prestamos.tHoraDocEntregado, 'h:mm').format('HH:mm'),
                                 cNotas: prestamos.cNotas,
                                 cEstatus: prestamos.cEstatus,
                                 cTipoDanio: prestamos.cTipoDanio
