@@ -68,27 +68,25 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
             if (this.optConsultar) {
                 if (resp) {
                     for (const prestamos of resp) {
-                        if(prestamos.cTipoDanio === 'Perdida de documentos' || prestamos.cTipoDanio === 'Deterioro de documentos' || prestamos.cEstatus === 'Pendiente'){
-                            prestamosTemp.push({
-                                id: prestamos.id,
-                                dFechaSolicitud: prestamos.dFechaSolicitud,
-                                dFechaDevolucion: prestamos.dFechaDevolucion,
-                                dFechaDocEntregado: prestamos.dFechaDocEntregado,
-                                dFechaSolicitudT: moment(prestamos.dFechaSolicitud).format('DD-MM-YYYY'),
-                                dFechaDevolucionT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
-                                dFechaDocEntregadoT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
-                                cSolicitante: prestamos.cSolicitante,
-                                cTipoPrestamo: prestamos.cTipoPrestamo,
-                                cTipoExpediente: prestamos.cTipoExpediente,
-                                cIdExpediente: prestamos.cIdExpediente,
-                                tHoraSolicitud: moment(prestamos.tHoraSolicitud, 'h:mm').format('HH:mm'),
-                                tHoraDevolucion: moment(prestamos.tHoraDevolucion, 'h:mm').format('HH:mm'),
-                                tHoraDocEntregado: moment(prestamos.tHoraDocEntregado, 'h:mm').format('HH:mm'),
-                                cNotas: prestamos.cNotas,
-                                cEstatus: prestamos.cEstatus,
-                                cTipoDanio: prestamos.cTipoDanio
-                            });
-                        }
+                        prestamosTemp.push({
+                            id: prestamos.id,
+                            dFechaSolicitud: prestamos.dFechaSolicitud,
+                            dFechaDevolucion: prestamos.dFechaDevolucion,
+                            dFechaDocEntregado: prestamos.dFechaDocEntregado,
+                            dFechaSolicitudT: moment(prestamos.dFechaSolicitud).format('DD-MM-YYYY'),
+                            dFechaDevolucionT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
+                            dFechaDocEntregadoT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
+                            cSolicitante: prestamos.cSolicitante,
+                            cTipoPrestamo: prestamos.cTipoPrestamo,
+                            cTipoExpediente: prestamos.cTipoExpediente,
+                            cIdExpediente: prestamos.cIdExpediente,
+                            tHoraSolicitud: moment(prestamos.tHoraSolicitud, 'h:mm').format('HH:mm'),
+                            tHoraDevolucion: moment(prestamos.tHoraDevolucion, 'h:mm').format('HH:mm'),
+                            tHoraDocEntregado: moment(prestamos.tHoraDocEntregado, 'h:mm').format('HH:mm'),
+                            cNotas: prestamos.cNotas,
+                            cEstatus: prestamos.cEstatus,
+                            cTipoDanio: prestamos.cTipoDanio
+                        });
                     }
                 }
                 //console.log(prestamosTemp);

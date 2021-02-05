@@ -54,7 +54,7 @@
         <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
             <mat-label>Hora solicitud</mat-label>
             <input matInput type="time" atp-time-picker formControlName="tHoraSolicitud"/>
-            <mat-error>La fecha del registro no es valida ej. 28/11/2020</mat-error>
+            <mat-error>La hora del registro no es valida ej. 28/11/2020</mat-error>
         </mat-form-field>
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
@@ -85,13 +85,13 @@
             <input matInput [matDatepicker]="picker1" formControlName="dFechaDevolucion" [min]="maxDate">
             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
             <mat-datepicker #picker1></mat-datepicker>
-            <mat-error>La fecha del registro no es valida ej. 28/11/2020</mat-error>
+            <mat-error>La fecha de devolución no es valida ej. 28/11/2020</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
             <mat-label>Hora devolución</mat-label>
             <input matInput type="time" atp-time-picker value="00:00" formControlName="tHoraDevolucion"/>
-            <mat-error>La fecha del registro no es valida ej. 28/11/2020</mat-error>
+            <mat-error>La hora del devolución no es valida ej. 28/11/2020</mat-error>
         </mat-form-field>
 
         <mat-form-field  *ngIf="this.prestamo.id" appearance="outline" fxFlex="1 0 auto" class="pl-4">
@@ -99,13 +99,13 @@
             <input matInput [matDatepicker]="picker2" formControlName="dFechaDocEntregado" [min]="maxDate">
             <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
             <mat-datepicker #picker2></mat-datepicker>
-            <mat-error>La fecha del registro no es valida ej. 28/11/2020</mat-error>
+            <mat-error>La fecha de entrega de documentos no es valida ej. 28/11/2020</mat-error>
         </mat-form-field>
 
         <mat-form-field  *ngIf="this.prestamo.id" appearance="outline" fxFlex="1 0 auto" class="pl-4">
             <mat-label>Hora de entrega de documento</mat-label>
             <input matInput type="time" atp-time-picker formControlName="tHoraDocEntregado"/>
-            <mat-error>La fecha del registro no es valida ej. 28/11/2020</mat-error>
+            <mat-error>La hora de entrega de documentos no es valida ej. 28/11/2020</mat-error>
         </mat-form-field>
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">

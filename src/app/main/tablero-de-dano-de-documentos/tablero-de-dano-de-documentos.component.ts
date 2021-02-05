@@ -1,3 +1,4 @@
+
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MenuService } from 'services/menu.service';
@@ -56,11 +57,11 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
             this.optEditar = opciones.Editar;
             this.optConsultar = opciones.Consultar;
             this.optEliminar = opciones.Eliminar;
-            // Si tiene permisos para consultar
+            // Si tiene permisos para consultar 
             if (this.optConsultar) {
                 if (resp) {
                     for (const prestamos of resp) {         
-                        if (prestamos.cTipoDanio !== undefined) {
+                        if (prestamos.cTipoDanio === 'Perdida de documentos' || prestamos.cTipoDanio === 'Deterioro de documentos') {
                             prestamosTemp.push({
                                 id: prestamos.id,
                                 dFechaSolicitud: prestamos.dFechaSolicitud,
@@ -73,9 +74,9 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
                                 cTipoPrestamo: prestamos.cTipoPrestamo,
                                 cTipoExpediente: prestamos.cTipoExpediente,
                                 cIdExpediente: prestamos.cIdExpediente,
-                                hora: moment(prestamos.dFechaSolicitud).format('HH:mm'),
-                                horaDev: moment(prestamos.dFechaDevolucion).format('HH:mm'),
-                                horaDocEntregado: moment(prestamos.dFechaDocEntregado).format('HH:mm'),
+                                tHoraSolicitud: moment(prestamos.tHoraSolicitud, 'h:mm').format('HH:mm'),
+                                tHoraDevolucion: moment(prestamos.tHoraDevolucion, 'h:mm').format('HH:mm'),
+                                tHoraDocEntregado: moment(prestamos.tHoraDocEntregado, 'h:mm').format('HH:mm'),
                                 cNotas: prestamos.cNotas,
                                 cEstatus: prestamos.cEstatus,
                                 cTipoDanio: prestamos.cTipoDanio
@@ -100,14 +101,13 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
             this.prestamoDocumentos = this.prestamoDocumentosTemp;
         } else {
             const val = value.target.value.toLowerCase();
-            const temp = this.prestamoDocumentos.filter((d) => d.id.toLowerCase().indexOf(val) !== -1 || !val ||
-                d.dFechaSolicitudT.toLowerCase().indexOf(val) !== -1 || !val ||
+            const temp = this.prestamoDocumentos.filter((d) => d.dFechaSolicitudT.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.dFechaDevolucionT.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.cSolicitante.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.cTipoPrestamo.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.cTipoExpediente.toLowerCase().indexOf(val) !== -1 || !val ||
-                d.hora.toLowerCase().indexOf(val) !== -1 || !val ||
-                d.horaDev.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.tHoraSolicitud.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.tHoraDevolucion.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.cIdExpediente.toLowerCase().indexOf(val) !== -1||
                 d.cTipoDanio.toLowerCase().indexOf(val) !== -1);
 
