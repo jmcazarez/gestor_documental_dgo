@@ -74,7 +74,8 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
 
                               if (inventario.tipo_de_expediente) {
                                   cDescripcionTipoExpediente =
-                                      inventario.legislatura.cLegislatura;
+                                      inventario.tipo_de_expediente
+                                          .cDescripcionTipoExpediente;
                               }
                             inventariosTemp.push({
                                 id: inventario.id,
