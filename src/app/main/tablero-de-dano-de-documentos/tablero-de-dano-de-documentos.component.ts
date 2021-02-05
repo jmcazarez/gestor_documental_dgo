@@ -61,6 +61,7 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
                 if (resp) {
                     for (const prestamos of resp) {         
                         if (prestamos.cTipoDanio === 'Perdida de documentos' || prestamos.cTipoDanio === 'Deterioro de documentos') {
+                            console.log(prestamos);
                             prestamosTemp.push({
                                 id: prestamos.id,
                                 dFechaSolicitud: prestamos.dFechaSolicitud,
