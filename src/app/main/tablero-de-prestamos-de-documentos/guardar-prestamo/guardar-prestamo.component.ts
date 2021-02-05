@@ -1,3 +1,4 @@
+
 import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import Swal from 'sweetalert2';
@@ -111,9 +112,11 @@ export class GuardarPrestamoComponent implements OnInit {
             this.selectExpediente = this.prestamo.cTipoExpediente;
             this.selectEstado = this.prestamo.cEstatus;
             this.selectDanio = this.prestamo.cTipoDanio;
-            this.prestamo.dFechaSolicitud =  this.prestamo.dFechaSolicitud;
-            this.prestamo.dFechaDevolucion =  this.prestamo.dFechaDevolucion;
-            this.prestamo.dFechaDocEntregado = this.prestamo.dFechaDocEntregado;
+
+            //fechas en formato iso para que las fechas en el material picker no queden con un dia atras.
+            this.prestamo.dFechaSolicitud =  this.prestamo.dFechaSolicitud + 'T16:00:00.000Z';
+            this.prestamo.dFechaDevolucion =  this.prestamo.dFechaDevolucion + 'T16:00:00.000Z';
+            this.prestamo.dFechaDocEntregado = this.prestamo.dFechaDocEntregado + 'T16:00:00.000Z';
             console.log(this.prestamo);
 
               this.estatusPrestamo.push({
@@ -163,6 +166,7 @@ export class GuardarPrestamoComponent implements OnInit {
         // Form reativo
         if(this.prestamo.id){
             this.form = this.formBuilder.group({
+                cId: [ {value: this.prestamo.id, disabled: true}, [Validators.minLength(3), Validators.maxLength(100)]],
                 cSolicitante: [ {value: this.prestamo.cSolicitante, disabled: true}, [Validators.minLength(3), Validators.maxLength(100)]],
                 cTipoPrestamo: [{ value: this.prestamo.cTipoPrestamo, disabled: true }, Validators.required],
                 dFechaSolicitud: [{ value: this.prestamo.dFechaSolicitud, disabled: true }, Validators.required],
@@ -203,7 +207,7 @@ export class GuardarPrestamoComponent implements OnInit {
             const dFechaDevolucion = this.form.get('dFechaDevolucion').value;
             const dFechaDocEntregado = this.form.get('dFechaDocEntregado').value;
             const horaSolicitud = this.form.get('tHoraSolicitud').value;
-            let horaDevolucion = this.form.get('tHoraDevolucion').value;
+            const horaDevolucion = this.form.get('tHoraDevolucion').value;
             const horaDocEntregado = this.form.get('tHoraDocEntregado').value;
             this.prestamo.cTipoExpediente = this.form.get('cTipoExpediente').value;
             this.prestamo.cIdExpediente = this.form.get('cIdExpediente').value;
@@ -211,15 +215,15 @@ export class GuardarPrestamoComponent implements OnInit {
             this.prestamo.cEstatus = this.form.get('cEstatus').value;
             this.prestamo.cTipoDanio = this.form.get('cTipoDanio').value;
             this.prestamo.cNotas = this.form.get('cNotas').value;
-            console.log('hora dev '+horaDevolucion);
+            //console.log('hora dev '+horaDevolucion);
 
             const fechaSolicitud = moment(dFechaSolicitud).format('YYYY-MM-DD');
             const fechaDevolucion = moment(dFechaDevolucion).format('YYYY-MM-DD');
             const fechaDocEntregado = moment(dFechaDocEntregado).format('YYYY-MM-DD');
 
-            this.prestamo.dFechaSolicitud = fechaSolicitud + 'T' + horaSolicitud + ':00.000Z';
-            this.prestamo.dFechaDevolucion = fechaDevolucion + 'T' + horaDevolucion + ':00.000Z';
-            this.prestamo.dFechaDocEntregado = fechaDocEntregado + 'T' + horaDocEntregado + ':00.000Z';
+            this.prestamo.dFechaSolicitud = fechaSolicitud;
+            this.prestamo.dFechaDevolucion = fechaDevolucion;
+            this.prestamo.dFechaDocEntregado = fechaDocEntregado;
             this.prestamo.tHoraSolicitud = horaSolicitud + ':00.000';
             this.prestamo.tHoraDevolucion = horaDevolucion + ':00.000';
             this.prestamo.tHoraDocEntregado = horaDocEntregado + ':00.000';
@@ -246,8 +250,8 @@ export class GuardarPrestamoComponent implements OnInit {
             const fechaSolicitud = moment(dFechaSolicitud).subtract(1, 'day').format('YYYY-MM-DD');
             const fechaDevolucion = moment(dFechaDevolucion).format('YYYY-MM-DD');
 
-            this.prestamo.dFechaSolicitud = fechaSolicitud + 'T' + this.prestamo.tHoraSolicitud + ':00.000Z';
-            this.prestamo.dFechaDevolucion = fechaDevolucion + 'T' + horaDevolucion + ':00.000Z';
+            this.prestamo.dFechaSolicitud = fechaSolicitud;
+            this.prestamo.dFechaDevolucion = fechaDevolucion;
             this.prestamo.tHoraSolicitud = horaSolicitud + ':00.000';
             this.prestamo.tHoraDevolucion = horaDevolucion + ':00.000';
 

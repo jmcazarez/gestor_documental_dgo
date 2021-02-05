@@ -7,11 +7,18 @@
         [formGroup]="form">
 
         <div *ngIf="!this.prestamo.id" class="h2 mb-24">Registro de préstamo de documentos</div>
-        <div *ngIf="this.prestamo.id" class="h2 mb-24">Devolución de documentos<br>
-            <p *ngIf="this.prestamo.id" class="h4 mb-24">{{this.prestamo.id}}</p>
-        </div>
+        <div *ngIf="this.prestamo.id" class="h2 mb-24">Devolución de documentos</div>
         
-
+        <div *ngIf="this.prestamo.id" fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+            <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+                <mat-label>Id. préstamo</mat-label>
+                <input matInput formControlName="cId" >
+                <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
+                <mat-error *ngIf="form.get('cId').hasError('required')">El id es requerido</mat-error>
+                <mat-error *ngIf="form.get('cId').hasError('minlength') || form.get('cId').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
+                    y el máximo son 100 </mat-error>
+            </mat-form-field>
+        </div>
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">

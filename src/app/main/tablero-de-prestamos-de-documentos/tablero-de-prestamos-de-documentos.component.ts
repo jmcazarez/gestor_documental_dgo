@@ -1,3 +1,4 @@
+
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GuardarPrestamoComponent } from './guardar-prestamo/guardar-prestamo.component';
@@ -67,28 +68,30 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
             if (this.optConsultar) {
                 if (resp) {
                     for (const prestamos of resp) {
-                        prestamosTemp.push({
-                            id: prestamos.id,
-                            dFechaSolicitud: prestamos.dFechaSolicitud,
-                            dFechaDevolucion: prestamos.dFechaDevolucion,
-                            dFechaDocEntregado: prestamos.dFechaDocEntregado,
-                            dFechaSolicitudT: moment(prestamos.dFechaSolicitud).format('DD-MM-YYYY'),
-                            dFechaDevolucionT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
-                            dFechaDocEntregadoT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
-                            cSolicitante: prestamos.cSolicitante,
-                            cTipoPrestamo: prestamos.cTipoPrestamo,
-                            cTipoExpediente: prestamos.cTipoExpediente,
-                            cIdExpediente: prestamos.cIdExpediente,
-                            tHoraSolicitud: moment(prestamos.tHoraSolicitud, 'h:mm').format('HH:mm'),
-                            tHoraDevolucion: moment(prestamos.tHoraDevolucion, 'h:mm').format('HH:mm'),
-                            tHoraDocEntregado: moment(prestamos.tHoraDocEntregado, 'h:mm').format('HH:mm'),
-                            cNotas: prestamos.cNotas,
-                            cEstatus: prestamos.cEstatus,
-                            cTipoDanio: prestamos.cTipoDanio
-                        });
+                        if(prestamos.cTipoDanio === 'Perdida de documentos' || prestamos.cTipoDanio === 'Deterioro de documentos' || prestamos.cEstatus === 'Pendiente'){
+                            prestamosTemp.push({
+                                id: prestamos.id,
+                                dFechaSolicitud: prestamos.dFechaSolicitud,
+                                dFechaDevolucion: prestamos.dFechaDevolucion,
+                                dFechaDocEntregado: prestamos.dFechaDocEntregado,
+                                dFechaSolicitudT: moment(prestamos.dFechaSolicitud).format('DD-MM-YYYY'),
+                                dFechaDevolucionT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
+                                dFechaDocEntregadoT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
+                                cSolicitante: prestamos.cSolicitante,
+                                cTipoPrestamo: prestamos.cTipoPrestamo,
+                                cTipoExpediente: prestamos.cTipoExpediente,
+                                cIdExpediente: prestamos.cIdExpediente,
+                                tHoraSolicitud: moment(prestamos.tHoraSolicitud, 'h:mm').format('HH:mm'),
+                                tHoraDevolucion: moment(prestamos.tHoraDevolucion, 'h:mm').format('HH:mm'),
+                                tHoraDocEntregado: moment(prestamos.tHoraDocEntregado, 'h:mm').format('HH:mm'),
+                                cNotas: prestamos.cNotas,
+                                cEstatus: prestamos.cEstatus,
+                                cTipoDanio: prestamos.cTipoDanio
+                            });
+                        }
                     }
                 }
-                console.log(prestamosTemp);
+                //console.log(prestamosTemp);
                 this.prestamoDocumentos = prestamosTemp;
                 this.prestamoDocumentosTemp = this.prestamoDocumentos;
             }
@@ -166,14 +169,13 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
             this.prestamoDocumentos = this.prestamoDocumentosTemp;
         } else {
             const val = value.target.value.toLowerCase();
-            const temp = this.prestamoDocumentos.filter((d) => d.id.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.dFechaSolicitudT.toLowerCase().indexOf(val) !== -1 || !val || 
+            const temp = this.prestamoDocumentos.filter((d) => d.dFechaSolicitudT.toLowerCase().indexOf(val) !== -1 || !val || 
             d.dFechaDevolucionT.toLowerCase().indexOf(val) !== -1 || !val || 
             d.cSolicitante.toLowerCase().indexOf(val) !== -1 || !val || 
             d.cTipoPrestamo.toLowerCase().indexOf(val) !== -1 || !val || 
             d.cTipoExpediente.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.hora.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.horaDev.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.tHoraSolicitud.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.tHoraDevolucion.toLowerCase().indexOf(val) !== -1 || !val || 
             d.cEstatus.toLowerCase().indexOf(val) !== -1 || !val || 
             d.cIdExpediente.toLowerCase().indexOf(val) !== -1);
 
