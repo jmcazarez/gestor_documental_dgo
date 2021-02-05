@@ -7,7 +7,10 @@
         [formGroup]="form">
 
         <div *ngIf="!this.prestamo.id" class="h2 mb-24">Registro de préstamo de documentos</div>
-        <div *ngIf="this.prestamo.id" class="h2 mb-24">Devolución de documentos</div>
+        <div *ngIf="this.prestamo.id" class="h2 mb-24">Devolución de documentos<br>
+            <p *ngIf="this.prestamo.id" class="h4 mb-24">{{this.prestamo.id}}</p>
+        </div>
+        
 
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
