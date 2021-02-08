@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { DocumentosService } from 'services/documentos.service';
 import { MenuService } from 'services/menu.service';
 import { UsuariosService } from 'services/usuarios.service';
-import { PdfMakeWrapper, Table, Img, Txt, Stack } from 'pdfmake-wrapper';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;  // fonts provided for pdfmake
@@ -39,11 +38,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
     arrBody: any[] = [];
     arr: any[] = [];
     imageBase64: any;
-    externalDataRetrievedFromServer = [
-        { name: 'Bartek', age: 34 },
-        { name: 'John', age: 27 },
-        { name: 'Elizabeth', age: 30 },
-    ];
+
     constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe,
         private usuariosService: UsuariosService,
         private router: Router,
