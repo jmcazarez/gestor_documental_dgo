@@ -25,7 +25,9 @@ export class FirmasPorEtapaService {
     obtenerFirmasPorEtapa(): any {
         return this.http.get(this.baseUrl + this.urlFirmasPorEtapa, this.httpOptions);
     }
-
+    obtenerFirmaPorEtapa(id: string): any {
+        return this.http.get(this.baseUrl + this.urlFirmasPorEtapa + '/' + id, this.httpOptions);
+    }
     actualizarFirmasPorEtapa(firmasPorEtapa: FirmasPorEtapaModel): any {
         return this.http.put(this.baseUrl + this.urlFirmasPorEtapa + '/' + firmasPorEtapa.id, firmasPorEtapa, this.httpOptions);
     }

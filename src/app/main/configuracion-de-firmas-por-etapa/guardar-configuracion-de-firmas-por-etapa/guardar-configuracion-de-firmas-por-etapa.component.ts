@@ -206,8 +206,8 @@ export class GuardarConfiguracionFirmasPorEtapaComponent implements OnInit {
             cancelButtonText: 'No'
         }).then((result) => {
             if (result.value) {
-                const i = this.arrParticipantes.findIndex((std: { id: string; }) => std.id === row.id);
-                this.arrParticipantes.splice(i, 1);
+                this.arrParticipantes = this.arrParticipantes.filter((std: { id: string; }) => std.id !== row.id);
+           
                 this.arrParticipantesTemporal = this.arrParticipantes;
             }
         });

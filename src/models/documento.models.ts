@@ -20,4 +20,8 @@ export class DocumentosModel {
     tipo_de_expediente: any;
     usuario: any;
     textoOcr: string;
+    iniciativas: boolean;
+    legislatura: any;
+    iniciativa: any;
+    estatus:string;
 }

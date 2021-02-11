@@ -3,10 +3,20 @@
     <!-- REACTIVE FORM EXAMPLE -->
 
 
-    <form class="mat-card mat-elevation-z4" fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form" [formGroup]="form">
+    <form class="mat-card mat-elevation-z4" fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form"
+        [formGroup]="form">
 
-        <div class="h2 mb-24">Registro de recepción de iniciativa</div>
 
+        <div layout="row">
+            <div fxFlex="90">
+                <div class="h2 mb-24">Registro de recepción de iniciativa</div>
+            </div>
+            <div fxFlex="10">
+                <button *ngIf="this.iniciativa.formatosTipoIniciativa.length > 0" mat-raised-button color="warn" align="end"  (click)="clasificarDocumento()">Vista
+                    previa</button>
+            </div>
+
+        </div>
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
                 <mat-label>Tipo</mat-label>
@@ -34,7 +44,8 @@
             </mat-form-field>
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
                 <mat-label>Fecha de registro</mat-label>
-                <input matInput [matDatepicker]="picker2" formControlName="fechaRegistro" (change)="change()" [max]="maxDate">
+                <input matInput [matDatepicker]="picker2" formControlName="fechaRegistro" (change)="change()"
+                    [max]="maxDate">
                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                 <mat-datepicker #picker2></mat-datepicker>
                 <mat-error>La fecha del registro no es valida ej. 28/11/2020</mat-error>
@@ -47,7 +58,8 @@
 
             <mat-form-field appearance="outline" fxFlex="30" class="pl-4">
                 <mat-label>Fecha de iniciativa</mat-label>
-                <input matInput [matDatepicker]="picker1" formControlName="fechaIniciativa" (change)="change()" [max]="maxDate">
+                <input matInput [matDatepicker]="picker1" formControlName="fechaIniciativa" (change)="change()"
+                    [max]="maxDate">
                 <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                 <mat-datepicker #picker1></mat-datepicker>
                 <mat-error>La fecha de la iniciativa no es valida ej. 28/11/2020</mat-error>
@@ -58,21 +70,27 @@
         <mat-form-field>
             <mat-label>Autor (s)</mat-label>
             <mat-chip-list #chipList aria-label="Selección de autores">
-                <mat-chip *ngFor="let autor of autores" [selectable]="selectable" [removable]="removable" (removed)="eliminarAutor(autor)">
+                <mat-chip *ngFor="let autor of autores" [selectable]="selectable" [removable]="removable"
+                    (removed)="eliminarAutor(autor)">
                     {{autor.name}}
                     <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
                 </mat-chip>
-                <input matInput formControlName="autores" placeholder="Nuevo autor..." [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur" (matChipInputTokenEnd)="agregarAutor($event)">
+                <input matInput formControlName="autores" placeholder="Nuevo autor..." [matChipInputFor]="chipList"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur"
+                    (matChipInputTokenEnd)="agregarAutor($event)">
             </mat-chip-list>
         </mat-form-field>
         <mat-form-field class="example-chip-list">
             <mat-label>Tema</mat-label>
             <mat-chip-list #chipList2 aria-label="Selección de temas">
-                <mat-chip *ngFor="let tema of temas" [selectable]="selectable2" [removable]="removable2" (removed)="eliminarTema(tema)">
+                <mat-chip *ngFor="let tema of temas" [selectable]="selectable2" [removable]="removable2"
+                    (removed)="eliminarTema(tema)">
                     {{tema.name}}
                     <mat-icon matChipRemove *ngIf="removable2">cancel</mat-icon>
                 </mat-chip>
-                <input matInput formControlName="tema" placeholder="Nuevo tema..." [matChipInputFor]="chipList2" [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur2" (matChipInputTokenEnd)="agregarTema($event)">
+                <input matInput formControlName="tema" placeholder="Nuevo tema..." [matChipInputFor]="chipList2"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur2"
+                    (matChipInputTokenEnd)="agregarTema($event)">
             </mat-chip-list>
         </mat-form-field>
 
@@ -87,7 +105,8 @@
                     <mat-icon>add</mat-icon>
                 </button>
             </section>
-            <input type="file" #fileInput id="fileUpload" name="fileUpload" multiple="multiple" accept="application/pdf" style="display:none;" />
+            <input type="file" #fileInput id="fileUpload" name="fileUpload" multiple="multiple" accept="application/pdf"
+                style="display:none;" />
         </div>
 
     </form>
@@ -96,7 +115,9 @@
 
 <div class="content">
 
-    <ngx-datatable class="material shadow-none" [rows]="files" [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
+    <ngx-datatable class="material shadow-none" [rows]="files" [loadingIndicator]="loadingIndicator"
+        [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable"
+        [limit]="10" [scrollbarH]="true">
         <ngx-datatable-column name="Documentos" prop="filename"></ngx-datatable-column>
         <ngx-datatable-column name="Acciones" sortable="false" prop="id">
             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
@@ -107,8 +128,9 @@
 </div>
 
 <mat-dialog-actions align="end" class="buttons">
-    <button mat-raised-button color="warn" (click)="generaReport()">Documento</button>
+    <!-- <button mat-raised-button color="warn" (click)="generaReport()">Documento</button>-->
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
-    <button [disabled]="form.invalid || this.temas.length === 0 || this.autores.length === 0 " mat-raised-button color="accent" (click)="guardar()">Guardar</button>
+    <button [disabled]="form.invalid || this.temas.length === 0 || this.autores.length === 0 " mat-raised-button
+        color="accent" (click)="guardar()">Guardar</button>
     <!--<button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
 </mat-dialog-actions>

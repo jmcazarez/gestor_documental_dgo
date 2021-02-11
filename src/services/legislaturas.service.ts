@@ -34,7 +34,6 @@ export class LegislaturaService {
     }
 
     eliminarLegislatura(id: string): any {
-
         return this.http.delete(this.baseUrl + this.urlLegislatura + '/' + id, this.httpOptions);
     }
 }

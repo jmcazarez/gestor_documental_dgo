@@ -55,16 +55,33 @@
         </div>
     </mat-drawer>
     <mat-drawer-content>
+       
         <mat-dialog-actions align="end" class="mat-dialog-icons">
+            <button *ngIf="this.documento.iniciativas" mat-raised-button color="warn"  [matMenuTriggerFor]="menu">Documento</button>
+           
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item>
+                  <mat-icon>verified_user</mat-icon>
+                  <span>Autorizar</span>
+                </button>
+                <button mat-menu-item (click)="descargar()">
+                  <mat-icon>cloud_download</mat-icon>
+                  <span>Descargar</span>
+                </button>
+                <button mat-menu-item (click)="turnarIniciativa()">
+                  <mat-icon>keyboard_tab</mat-icon>
+                  <span>Turnar</span>
+                </button>
+              </mat-menu>
             <button *ngIf="this.documento.Eliminar" mat-fab color="warn" (click)="eliminar()" class="button">
                 <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para eliminar">delete
                 </mat-icon>
             </button>
-            <button mat-fab color="cyan" (click)="descargar()" class="button">
+            <button *ngIf="!this.documento.iniciativas" mat-fab color="cyan" (click)="descargar()" class="button">
                 <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para descargar">
                     cloud_download</mat-icon>
             </button>
-            <button mat-fab color="green" (click)="linkPublico()" class="button">
+            <button *ngIf="!this.documento.iniciativas" mat-fab color="green" (click)="linkPublico()" class="button">
                 <mat-icon color="primary" class="material-icons pointer"
                     matTooltip="Clic ver el historial de versionamiento">
                     folder_shared</mat-icon>
@@ -74,7 +91,7 @@
                     matTooltip="Clic ver la trazabilidad del documento">
                     timeline</mat-icon>
             </button>
-            <button mat-fab color="accent" (click)="historialVersionamiento()" class="button">
+            <button *ngIf="!this.documento.iniciativas" mat-fab color="accent" (click)="historialVersionamiento()" class="button">
                 <mat-icon color="primary" class="material-icons pointer"
                     matTooltip="Clic ver el historial de versionamiento">
                     history</mat-icon>
@@ -217,6 +234,17 @@
                     </mat-form-field>
                 </div>
                 -->
+                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                    <mat-form-field appearance="outline" fxFlex="100">
+                        <mat-label>Legislatura</mat-label>
+                        <mat-select formControlName="legislatura" [(ngModel)]="selectedLegislaturas" name="legislatura">
+                            <mat-option *ngFor="let legislatura of arrLegislaturas" [value]="legislatura.id">
+                                {{legislatura.cLegislatura}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error>La legislatura es requerido</mat-error>
+                    </mat-form-field>
+                </div>
                 <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="100">
                         <mat-label>Tipo de información</mat-label>

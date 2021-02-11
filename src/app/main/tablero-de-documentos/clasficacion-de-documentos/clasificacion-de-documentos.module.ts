@@ -19,6 +19,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatChipsModule } from '@angular/material/chips';
+import {MatMenuModule} from '@angular/material/menu';
 const routes: Routes = [
     {
         path: 'clasificacion-documentos',
@@ -49,7 +50,8 @@ const routes: Routes = [
         MatGridListModule,
         MatListModule,
         MatSidenavModule,
-        MatChipsModule
+        MatChipsModule,
+        MatMenuModule
         
     ]
 })

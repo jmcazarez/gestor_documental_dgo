@@ -55,7 +55,7 @@ export class UploadFileService {
 
             }),
         };
-        console.log(base64);
+      
         return new Promise(resolve => {
             {
 
@@ -66,7 +66,7 @@ export class UploadFileService {
                 // Enviamos la imagen
 
                 formData.append('data', JSON.stringify(data));
-                formData.append('files', file, data.name);                           
+                // formData.append('files', file, data.name);                           
                 formData.append('base64', base64);
 
                 this.http.post(this.urlApi + this.urlUpload, formData, this.httpOptions).subscribe(

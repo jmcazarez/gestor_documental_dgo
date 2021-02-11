@@ -57,6 +57,7 @@ export class TableroDeIniciativasComponent implements OnInit {
             disableClose: true,
             data: new IniciativasModel(),
 
+
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -85,12 +86,13 @@ export class TableroDeIniciativasComponent implements OnInit {
             // Si tiene permisos para consultar
             if (this.optConsultar) {
                 if (resp) {
+                    console.log(resp);
                     for (const ini of resp) {
                         autores = '';
                         temas = '';
-                       
+
                         for (const aut of ini.autores) {
-                           
+
                             if (autores === '') {
                                 autores = aut.name;
                             } else {
@@ -99,7 +101,7 @@ export class TableroDeIniciativasComponent implements OnInit {
                         }
 
                         for (const tem of ini.tema) {
-                           
+
                             if (temas === '') {
                                 temas = tem.name;
                             } else {
@@ -116,6 +118,7 @@ export class TableroDeIniciativasComponent implements OnInit {
                             estatus: ini.estatus,
                             tipo_de_iniciativa: ini.tipo_de_iniciativa,
                             documentos: ini.documentos,
+                            formatosTipoIniciativa: ini.formatosTipoIniciativa,
                             fechaIniciativa: this.datePipe.transform(ini.fechaIniciativa, 'yyyy-MM-dd'),
                             fechaCreacion: this.datePipe.transform(ini.fechaCreacion, 'yyyy-MM-dd'),
                             fechaIniciativaText: this.datePipe.transform(ini.fechaIniciativa, 'dd-MM-yyyy'),
@@ -135,18 +138,20 @@ export class TableroDeIniciativasComponent implements OnInit {
     }
 
 
-    editarIniciativa(iniciativa: IniciativasModel): void {        
+    editarIniciativa(iniciativa: IniciativasModel): void {
         // Abrimos modal de guardar perfil
-        const dialogRef = this.dialog.open(GuardarIniciativasComponent, {
-            width: '60%',
-            height: '80%',
-            disableClose: true,
-            data: iniciativa,
-        });
+        if (iniciativa.estatus == 'Registrada') {
+            const dialogRef = this.dialog.open(GuardarIniciativasComponent, {
+                width: '60%',
+                height: '80%',
+                disableClose: true,
+                data: iniciativa,
+            });
 
-        dialogRef.afterClosed().subscribe(result => {
-            this.obtenerIniciativas();
-        });
+            dialogRef.afterClosed().subscribe(result => {
+                this.obtenerIniciativas();
+            });
+        }
     }
 
 
@@ -163,7 +168,7 @@ export class TableroDeIniciativasComponent implements OnInit {
 
                 // realizamos delete
                 this.iniciativasService.eliminarIniciativa(row).subscribe((resp: any) => {
-                    Swal.fire('Eliminado', 'La iniciativa ha sido eliminado.', 'success');                    
+                    Swal.fire('Eliminado', 'La iniciativa ha sido eliminado.', 'success');
                     this.obtenerIniciativas();
                 }, err => {
                     this.cargando = false;
@@ -210,7 +215,7 @@ export class TableroDeIniciativasComponent implements OnInit {
                 d.fechaIniciativa.toLowerCase().indexOf(val) !== - 1 || d.fechaCreacion.toLowerCase().indexOf(val) !== - 1 ||
                 d.estatus.toLowerCase().indexOf(val) !== - 1 || d.autoresText.toLowerCase().indexOf(val) !== - 1 ||
                 d.temaText.toLowerCase().indexOf(val) !== - 1);
-         
+
             this.iniciativas = temp;
         }
     }

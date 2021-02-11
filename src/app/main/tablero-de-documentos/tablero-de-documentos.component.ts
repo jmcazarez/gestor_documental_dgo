@@ -83,9 +83,9 @@ export class TableroDeDocumentosComponent implements OnInit {
         this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
 
             // Buscamos permisos
-            console.log(this.menuService.opcionesPerfil);
+      
             const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
-            console.log(this.optConsultar);
+         
             this.optAgregar = opciones.Agregar;
             this.optEditar = opciones.Editar;
             this.optConsultar = opciones.Consultar;

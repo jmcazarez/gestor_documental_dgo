@@ -249,7 +249,6 @@ export class GuardarDocumentosComponent implements OnInit {
                 this.documentos.version = 1;
                 this.documentos.usuario = this.menu.usuario;
                 // Guardamos documento
-                console.log(this.documentos);
                 this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
 
                     if (resp) {
@@ -344,13 +343,11 @@ export class GuardarDocumentosComponent implements OnInit {
     }
 
     async upload(): Promise<void> {
-
-
         // Subimos documento
         // const resp = await this.uploadService.uploadFile(this.files[0].data);
 
         const resp = await this.uploadService.subirArchivo(this.fileInput.nativeElement.files[0], this.base64);
-        console.log(resp);
+        
         if (resp.error) {
             Swal.fire('Error', 'Ocurrió un error al subir el documento. ' + resp.error.error, 'error');
             this.documentos.documento = '';

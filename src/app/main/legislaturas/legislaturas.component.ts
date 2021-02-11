@@ -50,6 +50,7 @@ export class LegislaturaComponent implements OnInit {
             this.optEliminar = opciones.Eliminar;
             // Si tiene permisos para consultar
             if (this.optConsultar) {
+                console.log(resp);
                 this.legislatura = resp;
                 this.legislaturaTemp = this.legislatura;
             }
