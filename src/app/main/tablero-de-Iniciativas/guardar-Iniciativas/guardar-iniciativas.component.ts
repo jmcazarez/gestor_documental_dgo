@@ -77,6 +77,7 @@ export class GuardarIniciativasComponent implements OnInit {
     legislatura: any[] = [];
     imageBase64: any;
     documentos: DocumentosModel = new DocumentosModel();
+    documentosTemp: DocumentosModel = new DocumentosModel();
     constructor(
         private spinner: NgxSpinnerService,
         private formBuilder: FormBuilder,
@@ -468,8 +469,7 @@ export class GuardarIniciativasComponent implements OnInit {
 
             const fecha = new Date(); // Fecha actual
             let mes: any = fecha.getMonth() + 1; // obteniendo mes
-            let dia: any = fecha.getDate(); // obteniendo dia
-            dia = dia + 1;
+            let dia: any = fecha.getDate(); // obteniendo dia           
             const anio = fecha.getFullYear(); // obteniendo año
             let cAutores = '';
             let cTemas = '';
@@ -558,7 +558,7 @@ export class GuardarIniciativasComponent implements OnInit {
 
             presente.push({
                 text:
-                    "Sin más por el momento, le envió un saludo fraterno y patentizo las seguridades de mi consideración y respeto.",
+                    "Sin más por el momento, le envío un saludo fraterno y patentizo las seguridades de mi consideración y respeto.",
                 fontSize: 12,
                 bold: false,
                 alignment: "justify",
@@ -574,7 +574,7 @@ export class GuardarIniciativasComponent implements OnInit {
             });
 
             presente.push({
-                text: "SUFRAGIO EFECTTIVO, NO REELECIÒN",
+                text: "SUFRAGIO EFECTIVO, NO REELECIÒN",
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
@@ -779,7 +779,7 @@ export class GuardarIniciativasComponent implements OnInit {
                         this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
                         this.spinner.hide();
                         this.iniciativa.formatosTipoIniciativa = [this.documentos.id];
-                        // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
+                        Swal.fire('Éxito', 'Iniciativa guardada correctamente.', 'success');
 
                         resolve(this.documentos.id);
                         // this.clasificarDocumento(this.documentos)
@@ -803,7 +803,7 @@ export class GuardarIniciativasComponent implements OnInit {
         let mes: any = fecha.getMonth() + 1; // obteniendo mes
         let dia: any = fecha.getDate(); // obteniendo dia
 
-        const ano = fecha.getFullYear(); // obteniendo año
+        const anio = fecha.getFullYear(); // obteniendo año
 
         if (dia < 10) {
             dia = '0' + dia; // agrega cero si el menor de 10
@@ -811,7 +811,7 @@ export class GuardarIniciativasComponent implements OnInit {
         if (mes < 10) {
             mes = '0' + mes; // agrega cero si el menor de 10
         }
-        const fechaActual = ano + '-' + mes + '-' + dia;
+        const fechaActual = dia + '/' + mes + '/' + anio;
         this.documentos.bActivo = true;
 
         this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
@@ -844,32 +844,32 @@ export class GuardarIniciativasComponent implements OnInit {
         this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
             if (resp) {
 
-                this.documentos = resp.data;
-                this.documentos.iniciativas = true;
-                this.documentos.iniciativa = this.iniciativa;
+                this.documentosTemp = resp.data;
+                this.documentosTemp.iniciativas = true;
+                this.documentosTemp.iniciativa = this.iniciativa;
                 if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
-                    this.documentos.estatus = 'Turnado de iniciativa a comisión';
+                    this.documentosTemp.estatus = 'Turnado de iniciativa a comisión';
                 } else {
-                    this.documentos.estatus = 'Turnado de iniciativa a EASE';
+                    this.documentosTemp.estatus = 'Turnado de iniciativa a EASE';
                 }
               
 
-                this.documentos.fechaCreacion = fechaActual;
-                this.documentos.fechaCarga = fechaActual;
+                this.documentosTemp.fechaCreacion = fechaActual;
+                this.documentosTemp.fechaCarga = fechaActual;
 
                 this.spinner.hide();
-                console.log(this.documentos);
+                
                 const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
                     width: '100%',
                     height: '90%',
                     disableClose: true,
-                    data: this.documentos,
+                    data: this.documentosTemp,
 
                 });
 
                 // tslint:disable-next-line: no-shadowed-variable
                 dialogRef.afterClosed().subscribe(result => {
-                    console.log(result);
+                 
                     if (result == '0') {
                         this.cerrar('');
                         // this.obtenerDocumentos();

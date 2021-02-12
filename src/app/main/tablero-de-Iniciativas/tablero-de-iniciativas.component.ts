@@ -207,6 +207,7 @@ export class TableroDeIniciativasComponent implements OnInit {
 
     filterDatatable(value): void {
         // Filtramos tabla
+        this.iniciativas = this.iniciativasTemporal;
         if (value.target.value === '') {
             this.iniciativas = this.iniciativasTemporal;
         } else {
