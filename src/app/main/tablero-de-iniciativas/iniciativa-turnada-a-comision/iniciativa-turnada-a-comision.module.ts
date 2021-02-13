@@ -8,7 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { FuseSharedModule } from '@fuse/shared.module';
-import { GuardarPrestamoComponent } from './guardar-prestamo.component';
+import { IniciativaTurnadaAComisionComponent } from './iniciativa-turnada-a-comision.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -16,20 +16,18 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { MatChipsModule } from '@angular/material/chips';
-//import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { AmazingTimePickerModule } from 'amazing-time-picker';
-import { DpDatePickerModule } from 'ng2-date-picker';
 
 const routes: Routes = [
     {
-        path: 'guardar-recepcion-de-actas',
-        component: GuardarPrestamoComponent
+        path: 'iniciativa-turnada-a-comisión',
+        component: IniciativaTurnadaAComisionComponent
     }
 ];
 
 @NgModule({
     declarations: [
-        GuardarPrestamoComponent
+        IniciativaTurnadaAComisionComponent
     ],
     imports: [
         RouterModule.forChild(routes),
@@ -48,9 +46,8 @@ const routes: Routes = [
         MatDatepickerModule,
         NgxSpinnerModule,
         MatChipsModule,
-        AmazingTimePickerModule,
-        DpDatePickerModule
+        AmazingTimePickerModule
     ]
 })
-export class GuardarPrestamoModule {
+export class IniciativaTurnadaAComisionModule {
 }

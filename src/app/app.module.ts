@@ -77,6 +77,7 @@ import { GuardarPrestamoModule } from './main/tablero-de-prestamos-de-documentos
 import { TableroDeDanoDeDocumentosModule } from './main/tablero-de-dano-de-documentos/tablero-de-dano-de-documentos.module';
 import { TableroDeInventarioFisicoModule } from './main/tablero-de-inventario-fisico/tablero-de-inventario-fisico.module';
 import { GuardarInventarioFisicoModule } from './main/tablero-de-inventario-fisico/guardar-inventario-fisico/guardar-inventario-fisico.module';
+import { IniciativaTurnadaAComisionModule } from './main/tablero-de-iniciativas/iniciativa-turnada-a-comision/iniciativa-turnada-a-comision.module';
 
 const appRoutes: Routes = [
     {
@@ -85,8 +86,6 @@ const appRoutes: Routes = [
     } 
 
 ];
-
-
 
 @NgModule({
     declarations: [
@@ -177,7 +176,8 @@ const appRoutes: Routes = [
         GuardarPrestamoModule,
         TableroDeDanoDeDocumentosModule,
         TableroDeInventarioFisicoModule,
-        GuardarInventarioFisicoModule
+        GuardarInventarioFisicoModule,
+        IniciativaTurnadaAComisionModule
     ],             
     bootstrap   : [
         AppComponent

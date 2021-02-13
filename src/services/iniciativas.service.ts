@@ -26,7 +26,7 @@ export class IniciativasService {
         return this.http.get(this.baseUrl + this.urlIniciativas, this.httpOptions);
     }
 
-    actualizarIniciativa(iniciativa: IniciativasModel): any {
+    actualizarIniciativa(iniciativa): any {
         return this.http.put(this.baseUrl + this.urlIniciativas + '/' + iniciativa.id, iniciativa, this.httpOptions);
     }
 

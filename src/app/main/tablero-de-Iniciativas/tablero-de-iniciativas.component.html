@@ -39,12 +39,17 @@
                 <ngx-datatable-column name="Fecha de creación" prop="fechaCreacionText"></ngx-datatable-column>
                 <ngx-datatable-column name="Estatus" prop="estatus"></ngx-datatable-column>
                 <ngx-datatable-column name="Autores" prop="autoresText"></ngx-datatable-column>
-                <ngx-datatable-column name="Tema" prop="autoresText"></ngx-datatable-column>
+                <ngx-datatable-column name="Tema" prop="temaText"></ngx-datatable-column>
                 <ngx-datatable-column name="Acciones" sortable="false" prop="id">
                     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                         
-                        <a  (click)="editarIniciativa(row)">
+                        <a  *ngIf="row.estatus==='Registrada'" (click)="editarIniciativa(row)">
                             <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">edit
+                            </mat-icon>
+                        </a>
+
+                        <a  *ngIf="row.estatus!=='Registrada'" (click)="iniciativaTurnada(row)">
+                            <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para ver iniciativa turnada">assignment_turned_in
                             </mat-icon>
                         </a>
 

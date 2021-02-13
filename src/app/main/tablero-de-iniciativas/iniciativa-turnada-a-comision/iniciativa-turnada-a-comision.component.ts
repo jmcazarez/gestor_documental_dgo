@@ -30,6 +30,10 @@ import { FirmasPorEtapaService } from "services/configuracion-de-firmas-por-etap
 import { DocumentosModel } from "models/documento.models";
 import { ClasficacionDeDocumentosComponent } from "app/main/tablero-de-documentos/clasficacion-de-documentos/clasficacion-de-documentos.component";
 import { DocumentosService } from "services/documentos.service";
+import { ComisionesService } from 'services/comisiones.service';
+import { ActasSesionsService } from 'services/actas-sesions.service';
+import { AmazingTimePickerService } from 'amazing-time-picker';
+import * as moment from 'moment';
 
 export interface Autores {
     name: string;
@@ -38,23 +42,38 @@ export interface Autores {
 export interface Temas {
     name: string;
 }
+
+export interface Clasificaciones {
+    name: string;
+}
+
+export interface Estado {
+    id: string;
+    descripcion: string;
+}
+
 @Component({
-    selector: "guardar-iniciativas",
-    templateUrl: "./guardar-iniciativas.component.html",
-    styleUrls: ["./guardar-iniciativas.component.scss"],
+    selector: 'app-iniciativa-turnada-a-comision',
+    templateUrl: './iniciativa-turnada-a-comision.component.html',
+    styleUrls: ['./iniciativa-turnada-a-comision.component.scss'],
     providers: [DatePipe],
 })
-export class GuardarIniciativasComponent implements OnInit {
-    @ViewChild("fileInput", { static: false }) fileInput: ElementRef;
-    @ViewChild("paginasInput", { static: false }) paginasInput: ElementRef;
+
+export class IniciativaTurnadaAComisionComponent implements OnInit {
+    @ViewChild("fileOficio", { static: false }) fileOficio: ElementRef;
+    @ViewChild("fileInforme", { static: false }) fileInforme: ElementRef;
+
     form: FormGroup;
     selectTipo: any;
     arrTipo: any[] = [];
-    files = [];
-    fileName: string;
+    filesOficio = [];
+    filesInforme = [];
+    fileOficioName: string;
+    fileInformeName: string;
     cambioFile: boolean;
     date = new Date(2020, 1, 1);
-    cambioDocumento: boolean;
+    cambioInforme: boolean;
+    cambioOficio: boolean;
     base64: string;
     loadingIndicator: boolean;
     reorderable: boolean;
@@ -69,15 +88,23 @@ export class GuardarIniciativasComponent implements OnInit {
     removable2 = true;
     addOnBlur = true;
     addOnBlur2 = true;
+    addOnBlur3 = true;
 
     firstFormGroup: FormGroup;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     autores: Autores[] = [];
     temas: Temas[] = [];
+    clasificaciones: Clasificaciones[] = [];
     legislatura: any[] = [];
+    comisiones: any[] = [];
+    tipoSesion: Estado[] = [];
+    anexos: string[] = [];
+    selectedComision: any;
+    selectedLegislatura: any;
+    selectedSesion: any;
     imageBase64: any;
     documentos: DocumentosModel = new DocumentosModel();
-    documentosTemp: DocumentosModel = new DocumentosModel();
+
     constructor(
         private spinner: NgxSpinnerService,
         private formBuilder: FormBuilder,
@@ -86,11 +113,14 @@ export class GuardarIniciativasComponent implements OnInit {
         private dialogRef: MatDialogRef<TableroDeIniciativasComponent>,
         private legislaturaService: LegislaturaService,
         private iniciativaService: IniciativasService,
+        private comisionesService: ComisionesService,
+        private actasSesionsService: ActasSesionsService,
         private parametros: ParametrosService,
         private firmas: FirmasPorEtapaService,
         private documentoService: DocumentosService,
         public dialog: MatDialog,
         private uploadService: UploadFileService,
+        private atp: AmazingTimePickerService,
 
         @Inject(MAT_DIALOG_DATA) public iniciativa: IniciativasModel,
 
@@ -107,9 +137,38 @@ export class GuardarIniciativasComponent implements OnInit {
 
     ngOnInit(): void {
         this.obtenerTiposIniciativas();
+        this.obtenerComisiones();
+        this.obtenerLegislatura();
+        let validatos = [
+        ];
+        this.tipoSesion.push({
+            id: '001',
+            descripcion: 'Ordinaria'
+        });
+        this.tipoSesion.push({
+            id: '002',
+            descripcion: 'Extraordinaria'
+        });
+        this.tipoSesion.push({
+            id: '002',
+            descripcion: 'Especial'
+        });
+        this.tipoSesion.push({
+            id: '002',
+            descripcion: 'Informativas'
+        });
+        this.tipoSesion.push({
+            id: '002',
+            descripcion: 'Asambleas'
+        });
+        if (this.iniciativa.anexosTipoCuentaPublica.length>0) {
+            this.fileInformeName = this.iniciativa.anexosTipoCuentaPublica[0].name;
+            this.fileOficioName = this.iniciativa.anexosTipoCuentaPublica[1].name;
+        } else {
+            this.fileInformeName = "";
+            this.fileOficioName = "";
+        }
 
-        console.log(this.iniciativa)
-        this.fileName = "";
         const fecha = new Date(); // Fecha actual
         let mes: any = fecha.getMonth() + 1; // obteniendo mes
         let dia: any = fecha.getDate(); // obteniendo dia
@@ -128,6 +187,11 @@ export class GuardarIniciativasComponent implements OnInit {
             this.selectTipo = this.iniciativa.tipo_de_iniciativa.id;
             this.autores = this.iniciativa.autores;
             this.temas = this.iniciativa.tema;
+            if (this.iniciativa.clasificaciones) {
+                this.clasificaciones = this.iniciativa.clasificaciones;
+            } else {
+                this.clasificaciones = [];
+            }
             this.iniciativa.fechaCreacion =
                 this.iniciativa.fechaCreacion + "T16:00:00.000Z";
             this.iniciativa.fechaIniciativa =
@@ -138,15 +202,45 @@ export class GuardarIniciativasComponent implements OnInit {
             this.iniciativa.fechaCreacion = ano + "-" + mes + "-" + dia;
         }
 
+        if (this.iniciativa.comisiones) {
+            console.log('haycomision');
+            this.iniciativa.actasSesion[0].fechaSesion =
+                moment(this.iniciativa.actasSesion[0].fechaSesion).format('YYYY-MM-DD') + "T16:00:00.000Z";
+            this.iniciativa.actasSesion[0].horaSesion =
+                moment(this.iniciativa.actasSesion[0].horaSesion, 'h:mm').format('HH:mm');
+            this.selectedComision = this.iniciativa.comisiones.id;
+            this.selectedLegislatura = this.iniciativa.actasSesion[0].legislatura;
+            this.selectedSesion = this.iniciativa.actasSesion[0].tipoSesion;
+        } else {
+            /*let fecha;
+            let hora;
+            console.log('nohaycomision');
+            fecha = 
+                moment(fecha).format('YYYY-MM-DD') + "T16:00:00.000Z";
+            hora = 
+                moment('0100', 'h:mm').format('HH:mm');*/
+
+            this.iniciativa.actasSesion.push({
+                fechaSesion: '',
+                horaSesion: ''
+            });
+        }
+        if (this.iniciativa.estatus === 'Turnado de iniciativa a comisión') {
+            validatos = [
+                Validators.required
+            ];
+
+        }
+
         // Form reativo
         this.form = this.formBuilder.group({
             id: [{ value: this.iniciativa.id, disabled: true }],
             tipo: [
-                { value: this.iniciativa.tipo_de_iniciativa, disabled: false },
+                { value: this.iniciativa.tipo_de_iniciativa, disabled: true },
                 Validators.required,
             ],
             fechaIniciativa: [
-                { value: this.iniciativa.fechaIniciativa, disabled: false },
+                { value: this.iniciativa.fechaIniciativa, disabled: true },
                 Validators.required,
             ],
             fechaRegistro: [
@@ -157,104 +251,168 @@ export class GuardarIniciativasComponent implements OnInit {
                 { value: this.iniciativa.estatus, disabled: true },
                 Validators.required,
             ],
-            autores: [""],
-            etiquetasAutores: [{ value: "", disabled: false }],
-            tema: [""],
-            etiquetasTema: [{ value: "", disabled: false }],
+
+
+            autores: [{ value: "", disabled: true }],
+            etiquetasAutores: [{ value: "", disabled: true }],
+            tema: [{ value: "", disabled: true }],
+            etiquetasTema: [{ value: "", disabled: true }],
+            clasificaciones: [""],
+            etiquetasClasificaciones: [{ value: "", disabled: false }],
+            comision: [{ value: this.comisiones, disabled: false }, validatos],
+            legislatura: [{ value: this.selectedLegislatura }, validatos],
+            tipoSesion: [{ value: this.selectedSesion }, validatos],
+            fechaSesion: [{ value: this.iniciativa.actasSesion[0].fechaSesion, disabled: false }, validatos],
+            horaSesion: [{ value: this.iniciativa.actasSesion[0].horaSesion, disabled: false }, validatos],
         });
+
+
     }
 
     async guardar(): Promise<void> {
 
+        let legislatura;
+        let tipoSesion;
+        let fechaSesion;
+        let hora;
+        let horaSesion;
 
         this.spinner.show();
-        const fecha = new Date(); // Fecha actual
-        let mes: any = fecha.getMonth() + 1; // obteniendo mes
-        let dia: any = fecha.getDate(); // obteniendo dia
-        const ano = fecha.getFullYear(); // obteniendo año
-        if (dia < 10) {
-            dia = "0" + dia; // agrega cero si el menor de 10
-        }
-        if (mes < 10) {
-            mes = "0" + mes; // agrega cero si el menor de 10
-        }
-        const fechaActual = ano + "-" + mes + "-" + dia;
 
-        // Guardamos Iniciativa
+        this.iniciativa.clasificaciones = this.clasificaciones;
+        this.iniciativa.comisiones = this.selectedComision;
+        legislatura = this.selectedLegislatura;
+        tipoSesion = this.form.get('tipoSesion').value;;
+        fechaSesion = moment(this.form.get('fechaSesion').value).format('YYYY-MM-DD');
+        hora = this.form.get('horaSesion').value;
 
-        // Asignamos valores a objeto
-        this.iniciativa.tipo_de_iniciativa = this.selectTipo;
-        this.iniciativa.autores = this.autores;
-        this.iniciativa.tema = this.temas;
-        this.iniciativa.fechaIniciativa = this.form.get(
-            "fechaIniciativa"
-        ).value;
-        this.iniciativa.estatus = this.form.get("estatus").value;
+        horaSesion = hora + ':00.000';
+
+
         if (this.iniciativa.id) {
-            // Actualizamos la iniciativa
-            if (this.iniciativa.estatus == 'Registrada') {
-                await this.generaReport();
-            }
-            if (this.iniciativa.formatosTipoIniciativa) {
+            console.log(this.iniciativa.actasSesion[0].id);
+            if (this.iniciativa.actasSesion[0].id) {
+                // Actualizamos la comision 
+                this.actasSesionsService.actualizarActasSesions({
+                    id: this.iniciativa.actasSesion[0].id,
+                    legislatura: legislatura,
+                    tipoSesion: tipoSesion,
+                    fechaSesion: fechaSesion,
+                    horaSesion: horaSesion
+                }).subscribe((resp: any) => {
+                    if (resp) {
+                        this.iniciativa.actasSesion = [resp.data.id];
 
-                this.iniciativaService
-                    .actualizarIniciativa(this.iniciativa)
-                    .subscribe(
-                        (resp: any) => {
-                            if (resp.data) {
-                                Swal.fire(
-                                    "Éxito",
-                                    "Iniciativa actualizada correctamente.",
-                                    "success"
-                                );
-                                this.iniciativa = resp.data;
+                        console.log('con acta de sesion');
+                        console.log(this.iniciativa);
+                        this.iniciativaService.actualizarIniciativa(this.iniciativa).subscribe((resp: any) => {
+                            if (resp) {
                                 this.spinner.hide();
+                                Swal.fire('Éxito', 'Iniciativa actualizada correctamente.', 'success');
+                                this.iniciativa = resp.data;
+
                                 this.cerrar(this.iniciativa);
                             } else {
                                 this.spinner.hide();
-                                Swal.fire(
-                                    "Error",
-                                    "Ocurrió un error al guardar. " +
-                                    resp.error.data,
-                                    "error"
-                                );
+                                Swal.fire('Error', 'Ocurrió un error al actualizar. ' + resp.error.data, 'error');
                             }
-                        },
-                        (err) => {
+                        }, err => {
                             this.spinner.hide();
-                            Swal.fire(
-                                "Error",
-                                "Ocurrió un error al guardar." + err.error.data,
-                                "error"
-                            );
-                        }
-                    );
+                            Swal.fire('Error', 'Ocurrió un error al actualizar.' + err.error.data, 'error');
+                        });
+
+                    } else {
+                        this.spinner.hide();
+                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                    }
+                }, err => {
+                    this.spinner.hide();
+                    Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                });
             } else {
-                this.spinner.hide();
-                Swal.fire(
-                    "Error",
-                    "Ocurrió un error al generar el documento SPP 01. ",
-                    "error"
-                );
+
+                this.actasSesionsService.guardarActasSesions({
+                    legislatura: legislatura,
+                    tipoSesion: tipoSesion,
+                    fechaSesion: fechaSesion,
+                    horaSesion: horaSesion
+                }).subscribe((resp: any) => {
+                    if (resp) {
+                        this.iniciativa.actasSesion = [resp.data.id];
+                        console.log('sin acta de sesion');
+                        console.log(this.iniciativa);
+                        this.iniciativaService.actualizarIniciativa(this.iniciativa).subscribe((resp: any) => {
+                            if (resp) {
+                                this.spinner.hide();
+                                Swal.fire('Éxito', 'Iniciativa actualizada correctamente.', 'success');
+                                this.iniciativa = resp.data;
+
+                                this.cerrar(this.iniciativa);
+                            } else {
+                                this.spinner.hide();
+                                Swal.fire('Error', 'Ocurrió un error al actualizar. ' + resp.error.data, 'error');
+                            }
+                        }, err => {
+                            this.spinner.hide();
+                            Swal.fire('Error', 'Ocurrió un error al actualizar.' + err.error.data, 'error');
+                        });
+
+                    } else {
+                        this.spinner.hide();
+                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                    }
+                }, err => {
+                    this.spinner.hide();
+                    Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                });
+
             }
+
+        }
+
+
+    }
+
+    async guardarAnexos(): Promise<void> {
+        let resultado: any;
+        this.spinner.show();
+        if (this.cambioInforme) {
+            await this.subirAnexos(this.filesInforme);
         } else {
-            // Guardamos la iniciativa
-            if (this.iniciativa.estatus == 'Registrada') {
-                await this.generaReport();
-                this.iniciativa.formatosTipoIniciativa = [this.documentos.id];
+            if (this.iniciativa.anexosTipoCuentaPublica[0]) {
+                this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[0]);
             }
-            this.iniciativaService.guardarIniciativa(this.iniciativa).subscribe(
-                async (resp: any) => {
+        }
+        if (this.cambioOficio) {
+            await this.subirAnexos(this.filesOficio);
+        } else {
+            if (this.iniciativa.anexosTipoCuentaPublica[1]) {
+                this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[1]);
+            }
+        }
+      
+
+        this.iniciativa.anexosTipoCuentaPublica = this.anexos;
+        
+        this.iniciativaService
+            .actualizarIniciativa({ id: this.iniciativa.id, anexosTipoCuentaPublica: this.iniciativa.anexosTipoCuentaPublica })
+            .subscribe(
+                (resp: any) => {
                     if (resp.data) {
-
+                        Swal.fire(
+                            "Éxito",
+                            "Iniciativa actualizada correctamente.",
+                            "success"
+                        );
                         this.iniciativa = resp.data;
-
+                        this.spinner.hide();
                         this.cerrar(this.iniciativa);
                     } else {
                         this.spinner.hide();
                         Swal.fire(
                             "Error",
-                            "Ocurrió un error al guardar. " + resp.error.data,
+                            "Ocurrió un error al guardar. " +
+                            resp.error.data,
                             "error"
                         );
                     }
@@ -268,11 +426,25 @@ export class GuardarIniciativasComponent implements OnInit {
                     );
                 }
             );
-        }
-
 
     }
 
+
+    subirAnexos(elemento: any): Promise<void> {
+        return new Promise(async (resolve) => {
+            {
+                let resultado: any;
+                let id: string;
+                elemento.forEach(async (element) => {
+                    resultado = await this.uploadService.subirArchivo(element.data, element.base64);
+                    id = resultado.data[0].id
+                    this.anexos.push(id);
+                    resolve(resultado)
+                });
+
+            }
+        });
+    }
     cerrar(doc: any): void {
         if (doc) {
             this.dialogRef.close(doc);
@@ -300,9 +472,7 @@ export class GuardarIniciativasComponent implements OnInit {
         );
     }
 
-    change(): void {
-        this.cambioDocumento = true;
-    }
+
 
     agregarAutor(event: MatChipInputEvent): void {
         const input = event.input;
@@ -348,34 +518,93 @@ export class GuardarIniciativasComponent implements OnInit {
         }
     }
 
-    add(): void {
+    agregarClasificacion(event: MatChipInputEvent): void {
+        const input = event.input;
+        const value = event.value;
+
+        if ((value || "").trim()) {
+            this.clasificaciones.push({ name: value.trim() });
+        }
+
+        // Reset the input value
+        if (input) {
+            input.value = "";
+        }
+    }
+
+    eliminarClasificacion(clasificaciones: Clasificaciones): void {
+        const index = this.clasificaciones.indexOf(clasificaciones);
+
+        if (index >= 0) {
+            this.clasificaciones.splice(index, 1);
+        }
+    }
+
+
+    addOficio(): void {
         // Agregamos elemento file
+
         let base64Result: string;
-        const fileInput = this.fileInput.nativeElement;
+        this.filesOficio = [];
+        const fileInput = this.fileOficio.nativeElement;
         fileInput.onchange = () => {
+            this.cambioOficio = true;
             // tslint:disable-next-line: prefer-for-of
             for (let index = 0; index < fileInput.files.length; index++) {
                 const file = fileInput.files[index];
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
                 reader.onloadend = () => {
-                    this.files.push({
+                    this.fileOficioName = file.name;
+                    this.filesOficio.push({
                         data: file,
                         base64: reader.result.toString(),
                         filename: file.name,
                         inProgress: false,
                         progress: 0,
                     });
-                    this.files = [...this.files];
+                    this.filesOficio = [...this.filesOficio];
                 };
-                this.cambioFile = true;
+
             }
 
             //  this.upload();
         };
         fileInput.click();
     }
+    addInforme(): void {
+        // Agregamos elemento file
+        let base64Result: string;
+        this.filesInforme = [];
+        const fileInputInforme = this.fileOficio.nativeElement;
+        fileInputInforme.onchange = () => {
+            this.cambioInforme = true;
+            // tslint:disable-next-line: prefer-for-of
+            for (let index = 0; index < fileInputInforme.files.length; index++) {
+                const file = fileInputInforme.files[index];
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onloadend = () => {
 
+                    this.fileInformeName = file.name;
+                    this.filesInforme.push({
+                        data: file,
+                        base64: reader.result.toString(),
+                        filename: file.name,
+                        inProgress: false,
+                        progress: 0,
+                    });
+                    this.filesInforme = [...this.filesInforme];
+                };
+
+            }
+
+            //  this.upload();
+        };
+
+        console.log(this.filesInforme);
+        fileInputInforme.click();
+    }
     getNumbersInString(string: string): string {
         const tmp = string.split("");
         // tslint:disable-next-line: only-arrow-functions
@@ -421,6 +650,33 @@ export class GuardarIniciativasComponent implements OnInit {
             }
         });
     }
+
+    async obtenerComisiones(): Promise<void> {
+        return new Promise((resolve) => {
+            {
+                this.comisionesService.obtenerComisiones().subscribe(
+                    (resp: any) => {
+                        for (const comisiones of resp) {
+                            if (comisiones.activo) {
+                                this.comisiones.push(comisiones);
+                            }
+                        }
+                        resolve(resp);
+                    },
+                    (err) => {
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al obtener las comisiones." +
+                            err,
+                            "error"
+                        );
+                        resolve(err);
+                    }
+                );
+            }
+        });
+    }
+
     async obtenerFirma(id: string): Promise<void> {
         return new Promise((resolve) => {
             {
@@ -469,7 +725,8 @@ export class GuardarIniciativasComponent implements OnInit {
 
             const fecha = new Date(); // Fecha actual
             let mes: any = fecha.getMonth() + 1; // obteniendo mes
-            let dia: any = fecha.getDate(); // obteniendo dia           
+            let dia: any = fecha.getDate(); // obteniendo dia
+            dia = dia + 1;
             const anio = fecha.getFullYear(); // obteniendo año
             let cAutores = '';
             let cTemas = '';
@@ -490,7 +747,6 @@ export class GuardarIniciativasComponent implements OnInit {
             let idFirmasPorEtapas = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Firmas');
             let idPuesto = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Puesto');
             let firmasPorEtapas = await this.obtenerFirma(idFirmasPorEtapas[0]['cValor']);
-            
             let puesto = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === idPuesto[0]['cValor']);
             let puestoSecretario = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === puestoSecretarioGeneral[0].cValor);
             let tipoIniciativa = this.arrTipo.filter((d) => d['id'] === this.selectTipo);
@@ -520,15 +776,13 @@ export class GuardarIniciativasComponent implements OnInit {
 
             header = this.configuraHeaderReport(legislaturas[0]["cLegislatura"] + ' LEGISLATURA');
 
-            if (puesto[0]) {
-                presente.push({
-                    text: "Lic. " + puesto[0]['nombre'] + ' ' + puesto[0]['apellidoPaterno'] + ' ' + puesto[0]['apellidoMaterno'],
-                    fontSize: 14,
-                    bold: true,
-                    alignment: "left",
-                    margin: [0, 10, 0, 0],
-                });
-            }
+            presente.push({
+                text: "Lic. " + puesto[0]['nombre'] + ' ' + puesto[0]['apellidoMaterno'] + ' ' + puesto[0]['apellidoPaterno'],
+                fontSize: 14,
+                bold: true,
+                alignment: "left",
+                margin: [0, 10, 0, 0],
+            });
             presente.push({
                 text: "Secretaria de Servicios Parlamentarios",
                 fontSize: 14,
@@ -561,7 +815,7 @@ export class GuardarIniciativasComponent implements OnInit {
 
             presente.push({
                 text:
-                    "Sin más por el momento, le envío un saludo fraterno y patentizo las seguridades de mi consideración y respeto.",
+                    "Sin más por el momento, le envió un saludo fraterno y patentizo las seguridades de mi consideración y respeto.",
                 fontSize: 12,
                 bold: false,
                 alignment: "justify",
@@ -577,7 +831,7 @@ export class GuardarIniciativasComponent implements OnInit {
             });
 
             presente.push({
-                text: "SUFRAGIO EFECTIVO, NO REELECIÒN",
+                text: "SUFRAGIO EFECTTIVO, NO REELECIÒN",
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
@@ -589,31 +843,22 @@ export class GuardarIniciativasComponent implements OnInit {
                 bold: true,
                 alignment: "center",
             });
-            if (puestoSecretario[0]) {
-                presente.push({
-                    text: "Lic. " + puestoSecretario[0]['nombre'] + ' ' + puestoSecretario[0]['apellidoPaterno'] + ' ' + puestoSecretario[0]['apellidoMaterno'],
-                    fontSize: 12,
-                    bold: true,
-                    alignment: "center",
-                    margin: [0, 80, 0, 0],
-                });
-                presente.push({
-                    text: "SECRETARIO GENERAL DEL H. CONGRESO DEL ESTADO",
-                    fontSize: 12,
-                    bold: true,
-                    alignment: "center",
-                });
-            }else{
-                presente.push({
-                    text: "SECRETARIO GENERAL DEL H. CONGRESO DEL ESTADO",
-                    fontSize: 12,
-                    bold: true,
-                    alignment: "center",
-                    margin: [0, 80, 0, 0],
-                });
-    
-            }
-            
+
+            presente.push({
+                text: "Lic. " + puestoSecretario[0]['nombre'] + ' ' + puestoSecretario[0]['apellidoMaterno'] + ' ' + puestoSecretario[0]['apellidoPaterno'],
+                fontSize: 12,
+                bold: true,
+                alignment: "center",
+                margin: [0, 80, 0, 0],
+            });
+
+            presente.push({
+                text: "SECRETARIO GENERAL DEL H. CONGRESO DEL ESTADO",
+                fontSize: 12,
+                bold: true,
+                alignment: "center",
+            });
+
 
             const dd = {
                 header: {
@@ -668,7 +913,7 @@ export class GuardarIniciativasComponent implements OnInit {
             const pdfDocGenerator = pdfMake.createPdf(dd);
             let base64 = await this.pdfBase64(pdfDocGenerator);
 
-            await this.upload(base64, 'SP001.pdf');
+            await this.upload(base64, 'Prueba.pdf');
             await this.guardarDocumento(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
             resolve('ok');
         });
@@ -765,7 +1010,7 @@ export class GuardarIniciativasComponent implements OnInit {
                 this.documentos.id = this.iniciativa.formatosTipoIniciativa[0].id
                 this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
 
-                    if (resp.data) {
+                    if (resp) {
                         this.documentos = resp.data;
                         this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
                         this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
@@ -791,7 +1036,7 @@ export class GuardarIniciativasComponent implements OnInit {
                         this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
                         this.spinner.hide();
                         this.iniciativa.formatosTipoIniciativa = [this.documentos.id];
-                        Swal.fire('Éxito', 'Iniciativa guardada correctamente.', 'success');
+                        // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
 
                         resolve(this.documentos.id);
                         // this.clasificarDocumento(this.documentos)
@@ -815,7 +1060,7 @@ export class GuardarIniciativasComponent implements OnInit {
         let mes: any = fecha.getMonth() + 1; // obteniendo mes
         let dia: any = fecha.getDate(); // obteniendo dia
 
-        const anio = fecha.getFullYear(); // obteniendo año
+        const ano = fecha.getFullYear(); // obteniendo año
 
         if (dia < 10) {
             dia = '0' + dia; // agrega cero si el menor de 10
@@ -823,7 +1068,7 @@ export class GuardarIniciativasComponent implements OnInit {
         if (mes < 10) {
             mes = '0' + mes; // agrega cero si el menor de 10
         }
-        const fechaActual = dia + '/' + mes + '/' + anio;
+        const fechaActual = ano + '-' + mes + '-' + dia;
         this.documentos.bActivo = true;
 
         this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
@@ -854,34 +1099,34 @@ export class GuardarIniciativasComponent implements OnInit {
             }
         ]
         this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
-            if (resp.data) {
+            if (resp) {
 
-                this.documentosTemp = resp.data;
-                this.documentosTemp.iniciativas = true;
-                this.documentosTemp.iniciativa = this.iniciativa;
+                this.documentos = resp.data;
+                this.documentos.iniciativas = true;
+                this.documentos.iniciativa = this.iniciativa;
                 if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
-                    this.documentosTemp.estatus = 'Turnado de iniciativa a comisión';
+                    this.documentos.estatus = 'Turnado de iniciativa a comisión';
                 } else {
-                    this.documentosTemp.estatus = 'Turnado de iniciativa a EASE';
+                    this.documentos.estatus = 'Turnado de iniciativa a EASE';
                 }
 
 
-                this.documentosTemp.fechaCreacion = fechaActual;
-                this.documentosTemp.fechaCarga = fechaActual;
+                this.documentos.fechaCreacion = fechaActual;
+                this.documentos.fechaCarga = fechaActual;
 
                 this.spinner.hide();
-
+                console.log(this.documentos);
                 const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
                     width: '100%',
                     height: '90%',
                     disableClose: true,
-                    data: this.documentosTemp,
+                    data: this.documentos,
 
                 });
 
                 // tslint:disable-next-line: no-shadowed-variable
                 dialogRef.afterClosed().subscribe(result => {
-
+                    console.log(result);
                     if (result == '0') {
                         this.cerrar('');
                         // this.obtenerDocumentos();
@@ -899,4 +1144,23 @@ export class GuardarIniciativasComponent implements OnInit {
 
     }
 
+    open() {
+        const amazingTimePicker = this.atp.open();
+        amazingTimePicker.afterClose().subscribe(time => {
+            console.log('hola');
+            console.log(time);
+        })
+    }
+
+
+    changeOficio(): void {
+        console.log('change');
+        this.cambioOficio = true;
+    }
+
+
+    changeInforme(): void {
+        console.log('change');
+        this.cambioInforme = true;
+    }
 }

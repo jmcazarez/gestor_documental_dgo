@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GuardarIniciativasComponent } from './guardar-iniciativas/guardar-iniciativas.component';
+import { IniciativaTurnadaAComisionComponent } from './iniciativa-turnada-a-comision/iniciativa-turnada-a-comision.component';
 import { IniciativasModel } from 'models/iniciativas.models';
 import { IniciativasService } from 'services/iniciativas.service';
 import { MenuService } from 'services/menu.service';
@@ -9,6 +10,7 @@ import { DatePipe } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import { NgxSpinnerService } from 'ngx-spinner';
+
 @Component({
     selector: 'app-tablero-de-iniciativas',
     templateUrl: './tablero-de-iniciativas.component.html',
@@ -73,6 +75,7 @@ export class TableroDeIniciativasComponent implements OnInit {
         const iniciativasTemp: any[] = [];
         let autores: string;
         let temas: string;
+        let clasificaciones: any;
         // Obtenemos los iniciativas
         this.iniciativasService.obtenerIniciativas().subscribe((resp: any) => {
 
@@ -90,6 +93,7 @@ export class TableroDeIniciativasComponent implements OnInit {
                     for (const ini of resp) {
                         autores = '';
                         temas = '';
+                        clasificaciones = '';
 
                         for (const aut of ini.autores) {
 
@@ -109,12 +113,27 @@ export class TableroDeIniciativasComponent implements OnInit {
                             }
                         }
 
+                        if(ini.clasificaciones){
+                            for (const clasf of ini.clasificaciones) {
+
+                                if (clasificaciones === '') {
+                                    clasificaciones = clasf.name;
+                                } else {
+                                    clasificaciones = clasificaciones + ' , ' + clasf.name;
+                                }
+                            }
+                        }else{
+                            clasificaciones = [];
+                        }
+
                         iniciativasTemp.push({
                             id: ini.id,
                             autores: ini.autores,
                             autoresText: autores,
                             tema: ini.tema,
                             temaText: temas,
+                            clasificaciones: ini.clasificaciones,
+                            clasificacionesText: clasificaciones,
                             estatus: ini.estatus,
                             tipo_de_iniciativa: ini.tipo_de_iniciativa,
                             documentos: ini.documentos,
@@ -123,6 +142,10 @@ export class TableroDeIniciativasComponent implements OnInit {
                             fechaCreacion: this.datePipe.transform(ini.fechaCreacion, 'yyyy-MM-dd'),
                             fechaIniciativaText: this.datePipe.transform(ini.fechaIniciativa, 'dd-MM-yyyy'),
                             fechaCreacionText: this.datePipe.transform(ini.fechaCreacion, 'dd-MM-yyyy'),
+                            actasSesion: ini.actasSesion,
+                            comisiones: ini.comisiones,
+                            anexosTipoCuentaPublica: ini.anexosTipoCuentaPublica,
+                            anexosTipoIniciativa: ini.anexosTipoIniciativa
                         });
                     }
                 }
@@ -154,6 +177,21 @@ export class TableroDeIniciativasComponent implements OnInit {
         }
     }
 
+    iniciativaTurnada(iniciativa: IniciativasModel): void {
+        // Abrimos modal de guardar perfil
+       // if (iniciativa.estatus == 'Turnado de iniciativa a comisión') {
+            const dialogRef = this.dialog.open(IniciativaTurnadaAComisionComponent, {
+                width: '60%',
+                height: '80%',
+                disableClose: true,
+                data: iniciativa,
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                this.obtenerIniciativas();
+            });
+        //}
+    }
 
     eliminarIniciativa(row): void {
         // Eliminamos iniciativa

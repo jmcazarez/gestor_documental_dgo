@@ -18,6 +18,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { IniciativaTurnadaAComisionComponent } from './iniciativa-turnada-a-comision/iniciativa-turnada-a-comision.component';
 const routes = [
     {
        
