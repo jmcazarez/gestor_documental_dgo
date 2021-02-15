@@ -84,8 +84,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     visible = true;
     selectable = true;
     selectable2 = true;
+     selectable3 = true;
     removable = true;
     removable2 = true;
+    removable3 = true;
     addOnBlur = true;
     addOnBlur2 = true;
     addOnBlur3 = true;
@@ -125,7 +127,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public iniciativa: IniciativasModel,
 
     ) {
-        console.log(this.iniciativa)
         if (this.iniciativa.documentos == undefined) {
             this.iniciativa.documentos = [];
         }
@@ -252,7 +253,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 Validators.required,
             ],
 
-
             autores: [{ value: "", disabled: true }],
             etiquetasAutores: [{ value: "", disabled: true }],
             tema: [{ value: "", disabled: true }],
@@ -260,10 +260,25 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             clasificaciones: [""],
             etiquetasClasificaciones: [{ value: "", disabled: false }],
             comision: [{ value: this.comisiones, disabled: false }, validatos],
-            legislatura: [{ value: this.selectedLegislatura }, validatos],
-            tipoSesion: [{ value: this.selectedSesion }, validatos],
-            fechaSesion: [{ value: this.iniciativa.actasSesion[0].fechaSesion, disabled: false }, validatos],
-            horaSesion: [{ value: this.iniciativa.actasSesion[0].horaSesion, disabled: false }, validatos],
+            legislatura: [
+                { value: this.selectedLegislatura },
+                [Validators.required],
+            ],
+            tipoSesion: [{ value: this.selectedSesion }, [Validators.required]],
+            fechaSesion: [
+                {
+                    value: this.iniciativa.actasSesion[0].fechaSesion,
+                    disabled: false,
+                },
+                [Validators.required],
+            ],
+            horaSesion: [
+                {
+                    value: this.iniciativa.actasSesion[0].horaSesion,
+                    disabled: false,
+                },
+                [Validators.required],
+            ],
         });
 
 
@@ -278,7 +293,22 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         let horaSesion;
 
         this.spinner.show();
+           if (this.cambioInforme) {
+               await this.subirAnexos(this.filesInforme);
+           } else {
+               if (this.iniciativa.anexosTipoCuentaPublica[0]) {
+                   this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[0]);
+               }
+           }
+           if (this.cambioOficio) {
+               await this.subirAnexos(this.filesOficio);
+           } else {
+               if (this.iniciativa.anexosTipoCuentaPublica[1]) {
+                   this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[1]);
+               }
+           }
 
+           this.iniciativa.anexosTipoCuentaPublica = this.anexos;
         this.iniciativa.clasificaciones = this.clasificaciones;
         this.iniciativa.comisiones = this.selectedComision;
         legislatura = this.selectedLegislatura;
@@ -405,8 +435,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             "success"
                         );
                         this.iniciativa = resp.data;
-                        this.spinner.hide();
-                        this.cerrar(this.iniciativa);
+                        
                     } else {
                         this.spinner.hide();
                         Swal.fire(
