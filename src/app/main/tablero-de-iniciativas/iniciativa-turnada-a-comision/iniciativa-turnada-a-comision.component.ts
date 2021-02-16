@@ -165,10 +165,15 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             descripcion: 'Asambleas'
         });
         if (this.iniciativa) {
-            if (this.iniciativa.anexosTipoCuentaPublica.length > 0) {
-                this.fileInformeName = this.iniciativa.anexosTipoCuentaPublica[0].name;
-                this.fileOficioName = this.iniciativa.anexosTipoCuentaPublica[1].name;
-            } else {
+            if (this.iniciativa.anexosTipoCuentaPublica !== undefined) {
+                if (this.iniciativa.anexosTipoCuentaPublica.length > 0) {
+                    this.fileInformeName = this.iniciativa.anexosTipoCuentaPublica[0].name;
+                    this.fileOficioName = this.iniciativa.anexosTipoCuentaPublica[1].name;
+                } else {
+                    this.fileInformeName = "";
+                    this.fileOficioName = "";
+                }
+            }else{
                 this.fileInformeName = "";
                 this.fileOficioName = "";
             }
