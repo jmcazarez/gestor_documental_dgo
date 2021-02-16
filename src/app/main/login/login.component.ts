@@ -103,9 +103,10 @@ export class LoginComponent implements OnInit
             this.cargando = false;
         }, err => {
          
-            Swal.fire('Eliminado', err.error.message, 'error');
+           
             this.error = true;
-            this.cargando = false;            
+            this.cargando = false;       
+            Swal.fire('Eliminado', err.error.message, 'error');     
         });
     
     }
