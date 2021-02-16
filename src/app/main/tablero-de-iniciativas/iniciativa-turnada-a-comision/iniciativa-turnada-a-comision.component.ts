@@ -84,7 +84,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     visible = true;
     selectable = true;
     selectable2 = true;
-     selectable3 = true;
+    selectable3 = true;
     removable = true;
     removable2 = true;
     removable3 = true;
@@ -141,6 +141,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         this.obtenerComisiones();
         this.obtenerLegislatura();
         console.log('dps');
+        console.log(this.iniciativa);
         let validatos = [
         ];
         this.tipoSesion.push({
@@ -163,14 +164,15 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             id: '002',
             descripcion: 'Asambleas'
         });
-        if (this.iniciativa.anexosTipoCuentaPublica.length>0) {
-            this.fileInformeName = this.iniciativa.anexosTipoCuentaPublica[0].name;
-            this.fileOficioName = this.iniciativa.anexosTipoCuentaPublica[1].name;
-        } else {
-            this.fileInformeName = "";
-            this.fileOficioName = "";
+        if (this.iniciativa) {
+            if (this.iniciativa.anexosTipoCuentaPublica.length > 0) {
+                this.fileInformeName = this.iniciativa.anexosTipoCuentaPublica[0].name;
+                this.fileOficioName = this.iniciativa.anexosTipoCuentaPublica[1].name;
+            } else {
+                this.fileInformeName = "";
+                this.fileOficioName = "";
+            }
         }
-
         const fecha = new Date(); // Fecha actual
         let mes: any = fecha.getMonth() + 1; // obteniendo mes
         let dia: any = fecha.getDate(); // obteniendo dia
@@ -294,22 +296,22 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         let horaSesion;
 
         this.spinner.show();
-           if (this.cambioInforme) {
-               await this.subirAnexos(this.filesInforme);
-           } else {
-               if (this.iniciativa.anexosTipoCuentaPublica[0]) {
-                   this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[0]);
-               }
-           }
-           if (this.cambioOficio) {
-               await this.subirAnexos(this.filesOficio);
-           } else {
-               if (this.iniciativa.anexosTipoCuentaPublica[1]) {
-                   this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[1]);
-               }
-           }
+        if (this.cambioInforme) {
+            await this.subirAnexos(this.filesInforme);
+        } else {
+            if (this.iniciativa.anexosTipoCuentaPublica[0]) {
+                this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[0]);
+            }
+        }
+        if (this.cambioOficio) {
+            await this.subirAnexos(this.filesOficio);
+        } else {
+            if (this.iniciativa.anexosTipoCuentaPublica[1]) {
+                this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[1]);
+            }
+        }
 
-           this.iniciativa.anexosTipoCuentaPublica = this.anexos;
+        this.iniciativa.anexosTipoCuentaPublica = this.anexos;
         this.iniciativa.clasificaciones = this.clasificaciones;
         this.iniciativa.comisiones = this.selectedComision;
         legislatura = this.selectedLegislatura;
@@ -421,10 +423,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[1]);
             }
         }
-      
+
 
         this.iniciativa.anexosTipoCuentaPublica = this.anexos;
-        
+
         this.iniciativaService
             .actualizarIniciativa({ id: this.iniciativa.id, anexosTipoCuentaPublica: this.iniciativa.anexosTipoCuentaPublica })
             .subscribe(
@@ -436,7 +438,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             "success"
                         );
                         this.iniciativa = resp.data;
-                        
+
                     } else {
                         this.spinner.hide();
                         Swal.fire(
