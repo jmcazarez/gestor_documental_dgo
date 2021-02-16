@@ -84,10 +84,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     visible = true;
     selectable = true;
     selectable2 = true;
-    selectable3 = true;
     removable = true;
     removable2 = true;
-    removable3 = true;
     addOnBlur = true;
     addOnBlur2 = true;
     addOnBlur3 = true;
@@ -127,11 +125,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public iniciativa: IniciativasModel,
 
     ) {
-        console.log(iniciativa);
-         this.obtenerTiposIniciativas();
-         this.obtenerComisiones();
-         this.obtenerLegislatura();
-        this.tipoSesion = [];
+        this.obtenerTiposIniciativas();
+        this.obtenerComisiones();
+        this.obtenerLegislatura();
+     
         this.tipoSesion.push({
             id: '001',
             descripcion: 'Ordinaria'
@@ -141,16 +138,16 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             descripcion: 'Extraordinaria'
         });
         this.tipoSesion.push({
-            id: '002',
+            id: '003',
             descripcion: 'Especial'
         });
         this.tipoSesion.push({
-            id: '002',
+            id: '004',
             descripcion: 'Informativas'
         });
         this.tipoSesion.push({
-            id: '002',
-            descripcion: 'Asambleas'
+            id: '005',
+            descripcion: 'Asambleas legislativas'
         });
         if (this.iniciativa.documentos == undefined) {
             this.iniciativa.documentos = [];
@@ -161,28 +158,22 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         this.imageBase64 = environment.imageBase64;
     }
 
-    async ngOnInit(): Promise<void> {
-     
-      
-        console.log('dps');
-        console.log(this.iniciativa);
+    ngOnInit(): void {
         let validatos = [
         ];
-      
-        if (this.iniciativa) {
-            if (this.iniciativa.anexosTipoCuentaPublica !== undefined) {
-                if (this.iniciativa.anexosTipoCuentaPublica.length > 0) {
-                    this.fileInformeName = this.iniciativa.anexosTipoCuentaPublica[0].name;
-                    this.fileOficioName = this.iniciativa.anexosTipoCuentaPublica[1].name;
-                } else {
-                    this.fileInformeName = "";
-                    this.fileOficioName = "";
-                }
+        if (this.iniciativa.anexosTipoCuentaPublica !== undefined) {
+            if (this.iniciativa.anexosTipoCuentaPublica.length > 0) {
+                this.fileInformeName = this.iniciativa.anexosTipoCuentaPublica[0].name;
+                this.fileOficioName = this.iniciativa.anexosTipoCuentaPublica[1].name;
             } else {
                 this.fileInformeName = "";
                 this.fileOficioName = "";
             }
+        } else {
+            this.fileInformeName = "";
+            this.fileOficioName = "";
         }
+
         const fecha = new Date(); // Fecha actual
         let mes: any = fecha.getMonth() + 1; // obteniendo mes
         let dia: any = fecha.getDate(); // obteniendo dia
@@ -246,7 +237,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
         }
 
-        
         // Form reativo
         this.form = this.formBuilder.group({
             id: [{ value: this.iniciativa.id, disabled: true }],
@@ -267,32 +257,18 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 Validators.required,
             ],
 
+
             autores: [{ value: "", disabled: true }],
             etiquetasAutores: [{ value: "", disabled: true }],
             tema: [{ value: "", disabled: true }],
             etiquetasTema: [{ value: "", disabled: true }],
-            clasificaciones: [""],
+            clasificaciones: [{ value: "", disabled: false }, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
             etiquetasClasificaciones: [{ value: "", disabled: false }],
-            comision: [{ value: this.comisiones, disabled: false }],
-            legislatura: [
-                { value: this.selectedLegislatura },
-                [Validators.required],
-            ],
-            tipoSesion: [{ value: this.selectedSesion }, [Validators.required]],
-            fechaSesion: [
-                {
-                    value: this.iniciativa.actasSesion[0].fechaSesion,
-                    disabled: false,
-                },
-                [Validators.required],
-            ],
-            horaSesion: [
-                {
-                    value: this.iniciativa.actasSesion[0].horaSesion,
-                    disabled: false,
-                },
-                [Validators.required],
-            ],
+            comision: [{ value: this.comisiones, disabled: false }, validatos],
+            legislatura: [{ value: this.selectedLegislatura }, validatos],
+            tipoSesion: [{ value: this.selectedSesion }, validatos],
+            fechaSesion: [{ value: this.iniciativa.actasSesion[0].fechaSesion, disabled: false }, validatos],
+            horaSesion: [{ value: this.iniciativa.actasSesion[0].horaSesion, disabled: false }, validatos],
         });
 
 
@@ -307,22 +283,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         let horaSesion;
 
         this.spinner.show();
-        if (this.cambioInforme) {
-            await this.subirAnexos(this.filesInforme);
-        } else {
-            if (this.iniciativa.anexosTipoCuentaPublica[0]) {
-                this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[0]);
-            }
-        }
-        if (this.cambioOficio) {
-            await this.subirAnexos(this.filesOficio);
-        } else {
-            if (this.iniciativa.anexosTipoCuentaPublica[1]) {
-                this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[1]);
-            }
-        }
 
-        this.iniciativa.anexosTipoCuentaPublica = this.anexos;
         this.iniciativa.clasificaciones = this.clasificaciones;
         this.iniciativa.comisiones = this.selectedComision;
         legislatura = this.selectedLegislatura;
@@ -449,7 +410,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             "success"
                         );
                         this.iniciativa = resp.data;
-
+                        this.spinner.hide();
+                        this.cerrar(this.iniciativa);
                     } else {
                         this.spinner.hide();
                         Swal.fire(
@@ -497,27 +459,22 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     }
 
     async obtenerTiposIniciativas(): Promise<void> {
-        return new Promise(async (resolve) => {
-            {
-                // Obtenemos Distritos
-                this.spinner.show();
-                await this.iniciativaService.obtenerTiposIniciativas().subscribe(
-                    (resp: any) => {
-                        this.arrTipo = resp;
-                        this.spinner.hide();
-                        resolve(resp)
-                    },
-                    (err) => {
-                        Swal.fire(
-                            "Error",
-                            "Ocurrió un error obtener los tipos de iniciativas." + err,
-                            "error"
-                        );
-                        this.spinner.hide();
-                    }
+        // Obtenemos Distritos
+        this.spinner.show();
+        await this.iniciativaService.obtenerTiposIniciativas().subscribe(
+            (resp: any) => {
+                this.arrTipo = resp;
+                this.spinner.hide();
+            },
+            (err) => {
+                Swal.fire(
+                    "Error",
+                    "Ocurrió un error obtener los tipos de iniciativas." + err,
+                    "error"
                 );
+                this.spinner.hide();
             }
-        });
+        );
     }
 
 
@@ -798,6 +755,9 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             let puesto = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === idPuesto[0]['cValor']);
             let puestoSecretario = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === puestoSecretarioGeneral[0].cValor);
             let tipoIniciativa = this.arrTipo.filter((d) => d['id'] === this.selectTipo);
+            let comision = this.comisiones.filter((d) => d['id'] === this.selectTipo);
+            let tipoSesion = this.selectedSesion;
+            let fechaSesion = moment(this.form.get('fechaSesion').value).format('DD-MM-YYYY');
             let tipoDocumento = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Tipo-de-Documento');
             let tipoExpediente = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Tipo-de-Expediente');
             let tipoInformacion = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Tipo-de-Informacion');
@@ -847,27 +807,21 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             presente.push({
                 text:
                     [
-                        'Con fundamento en lo dispuesto por el artículo 102  de la Ley Orgánica del Congreso del Estado de Durango, me permito remitirle ',
-                        { text: tipoIniciativa['0']['descripcion'], bold: true },
-                        ' presentada por los ',
+                        'Por instrucciones del COLOCAR NOMBRE MESA DIRECTIVA presidente de la mesa directiva, en sesión',
+                        { text: tipoSesion, bold: true },
+                        ' verificada el ',
+                        { text: fechaSesion, bold: true },
+                        ' se acordó turnar a la comisión de ',
+                        { text: comision, bold: true },
+                        ', iniciativa, presentada por ',
                         { text: cAutores, bold: true },
-                        ' de la coalición parlamentaria “cuarta transformación”, que contiene ',
-                        { text: cTemas, bold: true },
-                        ' siga su trámite legislativo correspondiente ante el Pleno Legislativo. '
+                        ', que contiene ',
+                        { text: cTemas, bold: true }
                     ],
                 fontSize: 12,
                 bold: false,
                 alignment: "justify",
                 margin: [0, 50, 5, 5],
-            });
-
-            presente.push({
-                text:
-                    "Sin más por el momento, le envió un saludo fraterno y patentizo las seguridades de mi consideración y respeto.",
-                fontSize: 12,
-                bold: false,
-                alignment: "justify",
-                margin: [0, 20, 5, 5],
             });
 
             presente.push({
@@ -879,7 +833,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             });
 
             presente.push({
-                text: "SUFRAGIO EFECTTIVO, NO REELECIÒN",
+                text: "SUFRAGIO EFECTTIVO, NO REELECCIÒN",
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
@@ -956,7 +910,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 },
             };
 
-            // pdfMake.createPdf(dd).open();
+            pdfMake.createPdf(dd).open();
 
             const pdfDocGenerator = pdfMake.createPdf(dd);
             let base64 = await this.pdfBase64(pdfDocGenerator);

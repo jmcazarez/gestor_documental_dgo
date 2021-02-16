@@ -78,6 +78,7 @@ import { TableroDeDanoDeDocumentosModule } from './main/tablero-de-dano-de-docum
 import { TableroDeInventarioFisicoModule } from './main/tablero-de-inventario-fisico/tablero-de-inventario-fisico.module';
 import { GuardarInventarioFisicoModule } from './main/tablero-de-inventario-fisico/guardar-inventario-fisico/guardar-inventario-fisico.module';
 import { IniciativaTurnadaAComisionModule } from './main/tablero-de-iniciativas/iniciativa-turnada-a-comision/iniciativa-turnada-a-comision.module';
+import { TableroDeCentroDeInvestigacionesYEstudiosLegislativosModule } from './main/tablero-de-centro-de-investigaciones-y-estudios-legislativos/tablero-de-centro-de-investigaciones-y-estudios-legislativos.module';
 
 const appRoutes: Routes = [
     {
@@ -89,7 +90,7 @@ const appRoutes: Routes = [
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
     ],
     imports     : [
         BrowserModule,
@@ -177,7 +178,8 @@ const appRoutes: Routes = [
         TableroDeDanoDeDocumentosModule,
         TableroDeInventarioFisicoModule,
         GuardarInventarioFisicoModule,
-        IniciativaTurnadaAComisionModule
+        IniciativaTurnadaAComisionModule,
+        TableroDeCentroDeInvestigacionesYEstudiosLegislativosModule
     ],             
     bootstrap   : [
         AppComponent

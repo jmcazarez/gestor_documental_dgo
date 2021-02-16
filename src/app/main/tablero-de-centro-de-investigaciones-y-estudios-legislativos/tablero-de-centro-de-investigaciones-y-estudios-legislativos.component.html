@@ -1,0 +1,63 @@
+<ngx-spinner></ngx-spinner>
+<div id="clientes" class="page-layout simple fullwidth docs">
+
+    <!-- HEADER -->
+    <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+
+        <div class="hero-text content">
+            <h2>Tablero de centro de investigaciones y estudios legislativos</h2>
+
+        </div>
+
+    </div>
+    <!-- / HEADER -->
+    <ngx-spinner></ngx-spinner>
+
+
+
+    <div class="content p-24" align="center" style="border: 1px">
+        <div class="content">
+            <!-- Data table-->
+
+            <div class="buscador">
+                <mat-form-field class="buscar">
+                    <mat-label>Buscar un iniciativa</mat-label>
+                    <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)'>
+                </mat-form-field>
+                <!-- <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevaIniciativa()" class="button">
+                    <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un documento">post_add
+                    </mat-icon>
+                    Agregar nueva iniciativa
+                </button> -->
+
+            </div>
+
+            <ngx-datatable class="material shadow-none" [rows]="iniciativas" [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
+                <ngx-datatable-column name="Folio" prop="id"></ngx-datatable-column>
+                <ngx-datatable-column name="Tipo" prop="tipo_de_iniciativa.descripcion"></ngx-datatable-column>
+                <ngx-datatable-column name="Fecha de turno" prop="fechaIniciativaText"></ngx-datatable-column>
+                <ngx-datatable-column name="Asunto" prop="comisiones"></ngx-datatable-column>
+                <ngx-datatable-column name="Remitente" prop="autoresText"></ngx-datatable-column>
+                <ngx-datatable-column name="Fecha recepción" prop="fechaRecepcion"></ngx-datatable-column>
+                <ngx-datatable-column name="Recibido por" prop="receptor"></ngx-datatable-column>
+                <ngx-datatable-column name="Estatus" prop="estatus"></ngx-datatable-column>
+                <!-- <ngx-datatable-column name="Acciones" sortable="false" prop="id">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        
+                        <a (click)="editarIniciativa(row)">
+                            <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">edit
+                            </mat-icon>
+                        </a>
+
+                        <a (click)="iniciativaTurnada(row)">
+                            <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para ver iniciativa turnada">assignment_turned_in
+                            </mat-icon>
+                        </a>
+
+
+                    </ng-template>
+                </ngx-datatable-column> -->
+            </ngx-datatable>
+        </div>
+    </div>
+</div>

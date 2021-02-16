@@ -160,7 +160,6 @@ export class TableroDeIniciativasComponent implements OnInit {
         });
     }
 
-
     editarIniciativa(iniciativa: IniciativasModel): void {
         // Abrimos modal de guardar perfil
         if (iniciativa.estatus == 'Registrada') {
