@@ -246,6 +246,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
         }
 
+        
         // Form reativo
         this.form = this.formBuilder.group({
             id: [{ value: this.iniciativa.id, disabled: true }],
