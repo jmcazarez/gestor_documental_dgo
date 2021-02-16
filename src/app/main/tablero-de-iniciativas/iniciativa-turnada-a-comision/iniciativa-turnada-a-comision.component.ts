@@ -127,23 +127,11 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public iniciativa: IniciativasModel,
 
     ) {
-        if (this.iniciativa.documentos == undefined) {
-            this.iniciativa.documentos = [];
-        }
-        if (this.iniciativa.formatosTipoIniciativa == undefined) {
-            this.iniciativa.formatosTipoIniciativa = [];
-        }
-        this.imageBase64 = environment.imageBase64;
-    }
-
-    ngOnInit(): void {
-        this.obtenerTiposIniciativas();
-        this.obtenerComisiones();
-        this.obtenerLegislatura();
-        console.log('dps');
-        console.log(this.iniciativa);
-        let validatos = [
-        ];
+        console.log(iniciativa);
+         this.obtenerTiposIniciativas();
+         this.obtenerComisiones();
+         this.obtenerLegislatura();
+        this.tipoSesion = [];
         this.tipoSesion.push({
             id: '001',
             descripcion: 'Ordinaria'
@@ -164,6 +152,23 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             id: '002',
             descripcion: 'Asambleas'
         });
+        if (this.iniciativa.documentos == undefined) {
+            this.iniciativa.documentos = [];
+        }
+        if (this.iniciativa.formatosTipoIniciativa == undefined) {
+            this.iniciativa.formatosTipoIniciativa = [];
+        }
+        this.imageBase64 = environment.imageBase64;
+    }
+
+    async ngOnInit(): Promise<void> {
+     
+      
+        console.log('dps');
+        console.log(this.iniciativa);
+        let validatos = [
+        ];
+      
         if (this.iniciativa) {
             if (this.iniciativa.anexosTipoCuentaPublica !== undefined) {
                 if (this.iniciativa.anexosTipoCuentaPublica.length > 0) {
@@ -173,7 +178,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     this.fileInformeName = "";
                     this.fileOficioName = "";
                 }
-            }else{
+            } else {
                 this.fileInformeName = "";
                 this.fileOficioName = "";
             }
@@ -491,22 +496,27 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     }
 
     async obtenerTiposIniciativas(): Promise<void> {
-        // Obtenemos Distritos
-        this.spinner.show();
-        await this.iniciativaService.obtenerTiposIniciativas().subscribe(
-            (resp: any) => {
-                this.arrTipo = resp;
-                this.spinner.hide();
-            },
-            (err) => {
-                Swal.fire(
-                    "Error",
-                    "Ocurrió un error obtener los tipos de iniciativas." + err,
-                    "error"
+        return new Promise(async (resolve) => {
+            {
+                // Obtenemos Distritos
+                this.spinner.show();
+                await this.iniciativaService.obtenerTiposIniciativas().subscribe(
+                    (resp: any) => {
+                        this.arrTipo = resp;
+                        this.spinner.hide();
+                        resolve(resp)
+                    },
+                    (err) => {
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error obtener los tipos de iniciativas." + err,
+                            "error"
+                        );
+                        this.spinner.hide();
+                    }
                 );
-                this.spinner.hide();
             }
-        );
+        });
     }
 
 
