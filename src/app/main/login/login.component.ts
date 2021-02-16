@@ -8,7 +8,7 @@ import { UsuarioLoginModel } from 'models/usuario-login.model';
 import { Router } from '@angular/router';
 import { UsuarioLoginService } from 'services/usuario-login.service';
 import { MenuService } from 'services/menu.service';
-
+import Swal from 'sweetalert2';
 @Component({
     selector     : 'login',
     templateUrl  : './login.component.html',
@@ -102,7 +102,8 @@ export class LoginComponent implements OnInit
             this._router.navigate(['home']);
             this.cargando = false;
         }, err => {
-            console.log('Error');
+         
+            Swal.fire('Eliminado', err.error.message, 'error');
             this.error = true;
             this.cargando = false;            
         });
