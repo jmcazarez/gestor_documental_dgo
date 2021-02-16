@@ -140,6 +140,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         this.obtenerTiposIniciativas();
         this.obtenerComisiones();
         this.obtenerLegislatura();
+        console.log('dps');
         let validatos = [
         ];
         this.tipoSesion.push({
@@ -259,7 +260,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             etiquetasTema: [{ value: "", disabled: true }],
             clasificaciones: [""],
             etiquetasClasificaciones: [{ value: "", disabled: false }],
-            comision: [{ value: this.comisiones, disabled: false }, validatos],
+            comision: [{ value: this.comisiones, disabled: false }],
             legislatura: [
                 { value: this.selectedLegislatura },
                 [Validators.required],

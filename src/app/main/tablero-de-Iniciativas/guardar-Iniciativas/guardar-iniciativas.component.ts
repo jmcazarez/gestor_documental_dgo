@@ -755,6 +755,7 @@ export class GuardarIniciativasComponent implements OnInit {
             }
         }
     }
+    
     async pdfBase64(pdf: any): Promise<[]> {
         return new Promise((resolve) => {
             {
