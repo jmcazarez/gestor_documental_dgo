@@ -125,10 +125,11 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public iniciativa: IniciativasModel,
 
     ) {
+        this.tipoSesion = [];
         this.obtenerTiposIniciativas();
         this.obtenerComisiones();
         this.obtenerLegislatura();
-     
+        
         this.tipoSesion.push({
             id: '001',
             descripcion: 'Ordinaria'
@@ -459,22 +460,27 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     }
 
     async obtenerTiposIniciativas(): Promise<void> {
-        // Obtenemos Distritos
-        this.spinner.show();
-        await this.iniciativaService.obtenerTiposIniciativas().subscribe(
-            (resp: any) => {
-                this.arrTipo = resp;
-                this.spinner.hide();
-            },
-            (err) => {
-                Swal.fire(
-                    "Error",
-                    "Ocurrió un error obtener los tipos de iniciativas." + err,
-                    "error"
+        return new Promise(async (resolve) => {
+            {
+                // Obtenemos Distritos
+                this.spinner.show();
+                await this.iniciativaService.obtenerTiposIniciativas().subscribe(
+                    (resp: any) => {
+                        this.arrTipo = resp;
+                        this.spinner.hide();
+                        resolve(resp);
+                    },
+                    (err) => {
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error obtener los tipos de iniciativas." + err,
+                            "error"
+                        );
+                        this.spinner.hide();
+                    }
                 );
-                this.spinner.hide();
             }
-        );
+        });
     }
 
 
