@@ -36,7 +36,7 @@
                 <!--   <ngx-datatable-column name="Id. iniciativa" prop="id"></ngx-datatable-column>-->
                 <ngx-datatable-column name="Tipo" prop="tipo_de_iniciativa.descripcion"></ngx-datatable-column>
                 <ngx-datatable-column name="Fecha de iniciativa" prop="fechaIniciativaText"></ngx-datatable-column>
-                <ngx-datatable-column name="Fecha de creación" prop="fechaCreacionText"></ngx-datatable-column>
+                <ngx-datatable-column name="Fecha de estatus" prop="fechaCreacionText"></ngx-datatable-column>
                 <ngx-datatable-column name="Estatus" prop="estatus"></ngx-datatable-column>
                 <ngx-datatable-column name="Autores" prop="autoresText"></ngx-datatable-column>
                 <ngx-datatable-column name="Tema" prop="temaText"></ngx-datatable-column>
@@ -48,11 +48,11 @@
                             </mat-icon>
                         </a>
 
-                        <a  *ngIf="row.estatus==='Turnado de iniciativa a comisión' || row.estatus==='Turnado de iniciativa a EASE'" (click)="iniciativaTurnada(row)">
+                        <a  *ngIf="row.estatus==='Turnado de iniciativa a comisión' || row.estatus==='Turnar cuanta publica a EASE'" (click)="iniciativaTurnada(row)">
                             <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para ver iniciativa turnada">assignment_turned_in
                             </mat-icon>
                         </a>
-                        <mat-icon *ngIf="row.estatus==='Turnar iniciativa a CIEL' || row.estatus==='Turnar cuenta pública a EASE'" color="accent" class="material-icons">check_circle</mat-icon>
+                        <mat-icon *ngIf="row.estatus==='Turnar iniciativa a CIEL' || row.estatus==='Turnar dictamen a secretaría de servicios parlamentarios'" color="accent" class="material-icons">check_circle</mat-icon>
 
                     </ng-template>
                 </ngx-datatable-column>

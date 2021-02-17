@@ -183,7 +183,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         }
         let validatos = [
         ];
-      
+
         if (this.iniciativa.anexosTipoCuentaPublica !== undefined) {
             if (this.iniciativa.anexosTipoCuentaPublica.length > 0) {
                 this.fileInformeName = this.iniciativa.anexosTipoCuentaPublica[0].name;
@@ -230,7 +230,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.iniciativa.estatus = "Registrada";
             this.iniciativa.fechaCreacion = ano + "-" + mes + "-" + dia;
         }
-     
+
         if (this.iniciativa.actasSesion[0] !== undefined) {
             console.log('haycomision');
             this.iniciativa.actasSesion[0].fechaSesion =
@@ -238,76 +238,76 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.iniciativa.actasSesion[0].horaSesion =
                 moment(this.iniciativa.actasSesion[0].horaSesion, 'h:mm').format('HH:mm');
             this.selectedComision = this.iniciativa.comisiones.id;
-           
+
             this.selectedLegislatura = this.iniciativa.actasSesion[0].legislatura;
             this.selectedSesion = this.iniciativa.actasSesion[0].tipoSesion;
-              // Form reativo
-        this.form = this.formBuilder.group({
-            id: [{ value: this.iniciativa.id, disabled: true }],
-            tipo: [
-                { value: this.iniciativa.tipo_de_iniciativa, disabled: true },
-                Validators.required,
-            ],
-            fechaIniciativa: [
-                { value: this.iniciativa.fechaIniciativa, disabled: true },
-                Validators.required,
-            ],
-            fechaRegistro: [
-                { value: this.iniciativa.fechaCreacion, disabled: true },
-                Validators.required,
-            ],
-            estatus: [
-                { value: this.iniciativa.estatus, disabled: true },
-                Validators.required,
-            ],
+            // Form reativo
+            this.form = this.formBuilder.group({
+                id: [{ value: this.iniciativa.id, disabled: true }],
+                tipo: [
+                    { value: this.iniciativa.tipo_de_iniciativa, disabled: true },
+                    Validators.required,
+                ],
+                fechaIniciativa: [
+                    { value: this.iniciativa.fechaIniciativa, disabled: true },
+                    Validators.required,
+                ],
+                fechaRegistro: [
+                    { value: this.iniciativa.fechaCreacion, disabled: true },
+                    Validators.required,
+                ],
+                estatus: [
+                    { value: this.iniciativa.estatus, disabled: true },
+                    Validators.required,
+                ],
 
 
-            autores: [{ value: "", disabled: true }],
-            etiquetasAutores: [{ value: "", disabled: true }],
-            tema: [{ value: "", disabled: true }],
-            etiquetasTema: [{ value: "", disabled: true }],
-            clasificaciones: [{ value: "", disabled: false }, validatos],
-            etiquetasClasificaciones: [{ value: "", disabled: false }],
-            comision: [{ value: this.comisiones, disabled: false }, validatos],
-            legislatura: [{ value: this.selectedLegislatura },  [ Validators.required]],
-            tipoSesion: [{ value: this.selectedSesion },  [ Validators.required]],
-            fechaSesion: [{ value: this.iniciativa.actasSesion[0].fechaSesion, disabled: false },  [ Validators.required]],
-            horaSesion: [{ value: this.iniciativa.actasSesion[0].horaSesion, disabled: false },  [ Validators.required]],
-        });
-        }else{
-              // Form reativo
-        this.form = this.formBuilder.group({
-            id: [{ value: this.iniciativa.id, disabled: true }],
-            tipo: [
-                { value: this.iniciativa.tipo_de_iniciativa, disabled: true },
-                Validators.required,
-            ],
-            fechaIniciativa: [
-                { value: this.iniciativa.fechaIniciativa, disabled: true },
-                Validators.required,
-            ],
-            fechaRegistro: [
-                { value: this.iniciativa.fechaCreacion, disabled: true },
-                Validators.required,
-            ],
-            estatus: [
-                { value: this.iniciativa.estatus, disabled: true },
-                Validators.required,
-            ],
+                autores: [{ value: "", disabled: true }],
+                etiquetasAutores: [{ value: "", disabled: true }],
+                tema: [{ value: "", disabled: true }],
+                etiquetasTema: [{ value: "", disabled: true }],
+                clasificaciones: [{ value: "", disabled: false }, validatos],
+                etiquetasClasificaciones: [{ value: "", disabled: false }],
+                comision: [{ value: this.comisiones, disabled: false }, validatos],
+                legislatura: [{ value: this.selectedLegislatura }, [Validators.required]],
+                tipoSesion: [{ value: this.selectedSesion }, [Validators.required]],
+                fechaSesion: [{ value: this.iniciativa.actasSesion[0].fechaSesion, disabled: false }, [Validators.required]],
+                horaSesion: [{ value: this.iniciativa.actasSesion[0].horaSesion, disabled: false }, [Validators.required]],
+            });
+        } else {
+            // Form reativo
+            this.form = this.formBuilder.group({
+                id: [{ value: this.iniciativa.id, disabled: true }],
+                tipo: [
+                    { value: this.iniciativa.tipo_de_iniciativa, disabled: true },
+                    Validators.required,
+                ],
+                fechaIniciativa: [
+                    { value: this.iniciativa.fechaIniciativa, disabled: true },
+                    Validators.required,
+                ],
+                fechaRegistro: [
+                    { value: this.iniciativa.fechaCreacion, disabled: true },
+                    Validators.required,
+                ],
+                estatus: [
+                    { value: this.iniciativa.estatus, disabled: true },
+                    Validators.required,
+                ],
 
 
-            autores: [{ value: "", disabled: true }],
-            etiquetasAutores: [{ value: "", disabled: true }],
-            tema: [{ value: "", disabled: true }],
-            etiquetasTema: [{ value: "", disabled: true }],
-            clasificaciones: [{ value: "", disabled: false }, validatos],
-            etiquetasClasificaciones: [{ value: "", disabled: false }],
-            comision: [{ value: this.comisiones, disabled: false }, validatos],
-            legislatura: [{ value: this.selectedLegislatura },  [ Validators.required]],
-            tipoSesion: [{ value: this.selectedSesion },  [ Validators.required]],
-            fechaSesion: [{ value: '', disabled: false },  [ Validators.required]],
-            horaSesion: [{ value: '', disabled: false },  [ Validators.required]],
-        });
+                autores: [{ value: "", disabled: true }],
+                etiquetasAutores: [{ value: "", disabled: true }],
+                tema: [{ value: "", disabled: true }],
+                etiquetasTema: [{ value: "", disabled: true }],
+                clasificaciones: [{ value: "", disabled: false }, validatos],
+                etiquetasClasificaciones: [{ value: "", disabled: false }],
+                comision: [{ value: this.comisiones, disabled: false }, validatos],
+                legislatura: [{ value: this.selectedLegislatura }, [Validators.required]],
+                tipoSesion: [{ value: this.selectedSesion }, [Validators.required]],
+                fechaSesion: [{ value: '', disabled: false }, [Validators.required]],
+                horaSesion: [{ value: '', disabled: false }, [Validators.required]],
+            });
         }
         if (this.iniciativa.estatus === 'Turnado de iniciativa a comisión') {
             validatos = [
@@ -316,7 +316,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
         }
 
-      
+
 
 
     }
@@ -958,37 +958,67 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 bold: true,
                 alignment: "left",
             });
+            if (this.iniciativa.estatus === 'Turnado de iniciativa a comisión') {
+                presente.push({
+                    text:
+                        [
+                            'Por instrucciones del ',
+                            { text: detalle_mesa[0].presidentes[0].nombre, bold: true },
+                            'presidente de la mesa directiva, en sesión',
+                            { text: tipoSesion, bold: true },
+                            ' verificada el ',
+                            { text: fechaSesion, bold: true },
+                            ' se acordó turnar a la comisión de',
+                            { text: comision, bold: true },
+                            ', iniciativa, presentada por ',
+                            { text: cAutores, bold: true },
+                            ', que contiene ',
+                            { text: cTemas, bold: true }
+                        ],
+                    fontSize: 12,
+                    bold: false,
+                    alignment: "justify",
+                    margin: [0, 50, 5, 5],
+                });
 
-            presente.push({
-                text:
-                    [
-                        'Por instrucciones del ', 
-                        { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
-                        'presidente de la mesa directiva, en sesión',
-                        { text: tipoSesion, bold: true },
-                        ' verificada el ',
-                        { text: fechaSesion, bold: true },
-                        ' se acordó turnar a la comisión de',
-                        { text: comision, bold: true },
-                        ', iniciativa, presentada por ',
-                        { text: cAutores, bold: true },
-                        ', que contiene ',
-                        { text: cTemas, bold: true }
-                    ],
-                fontSize: 12,
-                bold: false,
-                alignment: "justify",
-                margin: [0, 50, 5, 5],
-            });
+                presente.push({
+                    text: "ATENTAMENTE",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 120, 0, 0],
+                });
+            } else {
+                presente.push({
+                    text:
+                        [
+                            'Por instrucciones del ',
+                            { text: detalle_mesa[0].presidentes[0].nombre, bold: true },
+                            'presidente de la mesa directiva, en sesión',
+                            { text: tipoSesion, bold: true },
+                            ' verificada el ',
+                            { text: fechaSesion, bold: true },
+                            ' se acordó turnar a la Entidad de',
+                            { text: comision, bold: true },
+                            ', Auditoria Superior del Estado de Durango, Cuenta pública, presentada por el cc. ',
+                            { text: cAutores, bold: true },
+                            ', Dgo., que contiene ',
+                            { text: cTemas, bold: true }
+                        ],
+                    fontSize: 12,
+                    bold: false,
+                    alignment: "justify",
+                    margin: [0, 50, 5, 5],
+                });
 
-            presente.push({
-                text: "ATENTAMENTE",
-                fontSize: 12,
-                bold: true,
-                alignment: "center",
-                margin: [0, 120, 0, 0],
-            });
-
+                presente.push({
+                    text: "ATENTAMENTE",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 120, 0, 0],
+                });
+            }
             presente.push({
                 text: "SUFRAGIO EFECTTIVO, NO REELECCIÒN",
                 fontSize: 12,
@@ -1272,7 +1302,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
                         this.documentos.estatus = 'Turnar iniciativa a CIEL';
                     } else {
-                        this.documentos.estatus = 'Turnar cuenta pública a EASE';
+                        this.documentos.estatus = 'Turnar dictamen a secretaría de servicios parlamentarios';
                     }
 
 

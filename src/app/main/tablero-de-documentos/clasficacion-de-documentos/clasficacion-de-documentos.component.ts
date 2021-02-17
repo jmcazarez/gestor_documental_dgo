@@ -677,8 +677,8 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         let iniciativa = this.documento.iniciativa;
         console.log(this.documento);
         iniciativa.estatus = this.estatusIniciativa;
-        iniciativa.fechaIniciativa = fechaActual + 'T16:00:00.000Z';
-        this.iniciativaService.actualizarIniciativa({id: iniciativa.id, fechaIniciativa: iniciativa.fechaIniciativa, estatus: iniciativa.estatus}).subscribe((resp: any) => {
+        iniciativa.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+        this.iniciativaService.actualizarIniciativa({id: iniciativa.id, fechaCreacion: iniciativa.fechaCreacion, estatus: iniciativa.estatus}).subscribe((resp: any) => {
             if (resp) {
                 this.version = resp.version;
                 Swal.fire('Éxito', 'Iniciativa turnada correctamente.', 'success');
