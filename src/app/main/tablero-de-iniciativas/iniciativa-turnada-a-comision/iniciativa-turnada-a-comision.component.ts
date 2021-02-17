@@ -175,7 +175,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         }
         let validatos = [
         ];
-        console.log(this.iniciativa.formatosTipoIniciativa);
+      
         if (this.iniciativa.anexosTipoCuentaPublica !== undefined) {
             if (this.iniciativa.anexosTipoCuentaPublica.length > 0) {
                 this.fileInformeName = this.iniciativa.anexosTipoCuentaPublica[0].name;
@@ -280,11 +280,11 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             etiquetasTema: [{ value: "", disabled: true }],
             clasificaciones: [{ value: "", disabled: false }, validatos],
             etiquetasClasificaciones: [{ value: "", disabled: false }],
-            comision: [{ value: this.comisiones, disabled: false }, validatos],
-            legislatura: [{ value: this.selectedLegislatura }, validatos],
-            tipoSesion: [{ value: this.selectedSesion }, validatos],
-            fechaSesion: [{ value: this.iniciativa.actasSesion[0].fechaSesion, disabled: false }, validatos],
-            horaSesion: [{ value: this.iniciativa.actasSesion[0].horaSesion, disabled: false }, validatos],
+            comision: [{ value: this.comisiones, disabled: false }, [ Validators.required]],
+            legislatura: [{ value: this.selectedLegislatura },  [ Validators.required]],
+            tipoSesion: [{ value: this.selectedSesion },  [ Validators.required]],
+            fechaSesion: [{ value: this.iniciativa.actasSesion[0].fechaSesion, disabled: false },  [ Validators.required]],
+            horaSesion: [{ value: this.iniciativa.actasSesion[0].horaSesion, disabled: false },  [ Validators.required]],
         });
 
 
