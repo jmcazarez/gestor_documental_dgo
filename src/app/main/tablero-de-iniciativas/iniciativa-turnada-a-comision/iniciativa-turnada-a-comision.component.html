@@ -124,7 +124,7 @@
             </mat-form-field>
         </div>
 
-        <div layout="row" *ngIf="iniciativa.estatus==='Turnado de iniciativa a comisión'">
+        <div layout="row" >
             <div fxFlex="90">
                 <div class="h2 mb-24">Actas de sesión</div>
             </div>
@@ -216,11 +216,11 @@
 
     <!--  <button mat-raised-button color="warn" (click)="generaReport()">Documento</button>-->
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
-    <button 
+    <button *ngIf="iniciativa.estatus ==='Turnado de iniciativa a comisión'"
         [disabled]="form.invalid"
         mat-raised-button color="accent" (click)="guardar()">Guardar</button>
-       <!--   <button *ngIf="iniciativa.estatus!=='Turnado de iniciativa a comisión'"
+         <button *ngIf="iniciativa.estatus!=='Turnado de iniciativa a comisión'"
         [disabled]="form.invalid  || fileInformeName.length === 0 || fileOficioName.length === 0"
-        mat-raised-button color="accent" (click)="guardarAnexos()">Guardar</button>
-  <button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
+        mat-raised-button color="accent" (click)="guardar()">Guardar</button>
+  <!-- <button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
 </mat-dialog-actions>

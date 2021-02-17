@@ -223,7 +223,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.iniciativa.fechaCreacion = ano + "-" + mes + "-" + dia;
         }
      
-        if (this.iniciativa.actasSesion[0]) {
+        if (this.iniciativa.actasSesion[0] !== undefined) {
             console.log('haycomision');
             this.iniciativa.actasSesion[0].fechaSesion =
                 moment(this.iniciativa.actasSesion[0].fechaSesion).format('YYYY-MM-DD') + "T16:00:00.000Z";
@@ -233,15 +233,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
            
             this.selectedLegislatura = this.iniciativa.actasSesion[0].legislatura;
             this.selectedSesion = this.iniciativa.actasSesion[0].tipoSesion;
-        }
-        if (this.iniciativa.estatus === 'Turnado de iniciativa a comisión') {
-            validatos = [
-                Validators.required
-            ];
-
-        }
-
-        // Form reativo
+              // Form reativo
         this.form = this.formBuilder.group({
             id: [{ value: this.iniciativa.id, disabled: true }],
             tipo: [
@@ -274,6 +266,49 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             fechaSesion: [{ value: this.iniciativa.actasSesion[0].fechaSesion, disabled: false },  [ Validators.required]],
             horaSesion: [{ value: this.iniciativa.actasSesion[0].horaSesion, disabled: false },  [ Validators.required]],
         });
+        }else{
+              // Form reativo
+        this.form = this.formBuilder.group({
+            id: [{ value: this.iniciativa.id, disabled: true }],
+            tipo: [
+                { value: this.iniciativa.tipo_de_iniciativa, disabled: true },
+                Validators.required,
+            ],
+            fechaIniciativa: [
+                { value: this.iniciativa.fechaIniciativa, disabled: true },
+                Validators.required,
+            ],
+            fechaRegistro: [
+                { value: this.iniciativa.fechaCreacion, disabled: true },
+                Validators.required,
+            ],
+            estatus: [
+                { value: this.iniciativa.estatus, disabled: true },
+                Validators.required,
+            ],
+
+
+            autores: [{ value: "", disabled: true }],
+            etiquetasAutores: [{ value: "", disabled: true }],
+            tema: [{ value: "", disabled: true }],
+            etiquetasTema: [{ value: "", disabled: true }],
+            clasificaciones: [{ value: "", disabled: false }, validatos],
+            etiquetasClasificaciones: [{ value: "", disabled: false }],
+            comision: [{ value: this.comisiones, disabled: false }, validatos],
+            legislatura: [{ value: this.selectedLegislatura },  [ Validators.required]],
+            tipoSesion: [{ value: this.selectedSesion },  [ Validators.required]],
+            fechaSesion: [{ value: '', disabled: false },  [ Validators.required]],
+            horaSesion: [{ value: '', disabled: false },  [ Validators.required]],
+        });
+        }
+        if (this.iniciativa.estatus === 'Turnado de iniciativa a comisión') {
+            validatos = [
+                Validators.required
+            ];
+
+        }
+
+      
 
 
     }
@@ -317,7 +352,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
         if (this.iniciativa.id) {
             await this.generaReport();
-            if (this.iniciativa.actasSesion[0].id) {
+            if (this.iniciativa.actasSesion.lenght > 0) {
                 // Actualizamos la comision 
                 this.actasSesionsService.actualizarActasSesions({
                     id: this.iniciativa.actasSesion[0].id,
@@ -963,7 +998,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             const pdfDocGenerator = pdfMake.createPdf(dd);
             let base64 = await this.pdfBase64(pdfDocGenerator);
 
-            await this.upload(base64, 'Prueba.pdf');
+            await this.upload(base64, 'SSP 04.pdf');
             await this.guardarDocumento(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
             resolve('ok');
         });
