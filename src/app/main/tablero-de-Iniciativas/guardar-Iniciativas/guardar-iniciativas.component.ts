@@ -211,7 +211,7 @@ export class GuardarIniciativasComponent implements OnInit {
                                 Swal.fire(
                                     "Error",
                                     "Ocurrió un error al guardar. " +
-                                        resp.error.data,
+                                    resp.error.data,
                                     "error"
                                 );
                             }
@@ -405,7 +405,7 @@ export class GuardarIniciativasComponent implements OnInit {
                         Swal.fire(
                             "Error",
                             "Ocurrió un error al obtener las legislatura." +
-                                err,
+                            err,
                             "error"
                         );
                         resolve(err);
@@ -425,7 +425,7 @@ export class GuardarIniciativasComponent implements OnInit {
                         Swal.fire(
                             "Error",
                             "Ocurrió un error al obtener las firmas por etapas." +
-                                err,
+                            err,
                             "error"
                         );
                         resolve(err);
@@ -755,7 +755,7 @@ export class GuardarIniciativasComponent implements OnInit {
             }
         }
     }
-    
+
     async pdfBase64(pdf: any): Promise<[]> {
         return new Promise((resolve) => {
             {
@@ -789,15 +789,23 @@ export class GuardarIniciativasComponent implements OnInit {
             const fechaActual = ano + "-" + mes + "-" + dia;
             this.documentos.bActivo = true;
             this.documentos.cNombreDocumento = "Formato SSP 01 de" + tema;
-            (this.documentos.fechaCreacion = this.datePipe.transform(
-                this.documentos.fechaCreacion,
-                "dd-MM-yyy"
-            )),
-                (this.documentos.fechaCarga = this.datePipe.transform(
+            if (this.documentos.fechaCreacion) {
+                this.documentos.fechaCreacion = this.datePipe.transform(
+                    this.documentos.fechaCreacion,
+                    "dd-MM-yyy"
+                )
+            } else {
+                this.documentos.fechaCreacion = fechaActual;
+            }
+            if (this.documentos.fechaCarga) {
+                this.documentos.fechaCarga = this.datePipe.transform(
                     this.documentos.fechaCarga,
                     "dd-MM-yyy"
-                )),
-                (this.documentos.version = 1);
+                )
+            } else {
+                this.documentos.fechaCarga = fechaActual;
+            }
+            (this.documentos.version = 1);
             this.documentos.paginas = 1;
             this.documentos.usuario = this.menu.usuario;
             this.documentos.tipo_de_documento = tipoDocumento;
@@ -811,10 +819,10 @@ export class GuardarIniciativasComponent implements OnInit {
                     "-" +
                     Number(legislatura.documentos + 1);
             }
-            
+
             if (this.iniciativa.formatosTipoIniciativa.length > 0) {
                 this.documentos.id = this.iniciativa.formatosTipoIniciativa[0].id;
-             
+
                 this.documentoService
                     .actualizarDocumentos(this.documentos)
                     .subscribe(
@@ -839,7 +847,7 @@ export class GuardarIniciativasComponent implements OnInit {
                                 Swal.fire(
                                     "Error",
                                     "Ocurrió un error al guardar. " +
-                                        JSON.stringify(resp.error.data),
+                                    JSON.stringify(resp.error.data),
                                     "error"
                                 );
                             }
@@ -850,7 +858,7 @@ export class GuardarIniciativasComponent implements OnInit {
                             Swal.fire(
                                 "Error",
                                 "Ocurrió un error al guardar." +
-                                    JSON.stringify(err.error.data),
+                                JSON.stringify(err.error.data),
                                 "error"
                             );
                         }
@@ -888,7 +896,7 @@ export class GuardarIniciativasComponent implements OnInit {
                                 Swal.fire(
                                     "Error",
                                     "Ocurrió un error al guardar. " +
-                                        JSON.stringify(resp.error.data),
+                                    JSON.stringify(resp.error.data),
                                     "error"
                                 );
                             }
@@ -899,7 +907,7 @@ export class GuardarIniciativasComponent implements OnInit {
                             Swal.fire(
                                 "Error",
                                 "Ocurrió un error al guardar." +
-                                    JSON.stringify(err.error.data),
+                                JSON.stringify(err.error.data),
                                 "error"
                             );
                         }
@@ -927,7 +935,7 @@ export class GuardarIniciativasComponent implements OnInit {
 
         // this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
         // this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
- 
+
         console.log(this.documentos);
         let cAutores = "";
         this.autores.forEach((element) => {
@@ -960,15 +968,15 @@ export class GuardarIniciativasComponent implements OnInit {
                     if (resp.data) {
                         console.log(resp.data);
                         this.documentosTemp = resp.data;
-                            this.documentosTemp.fechaCreacion = this.datePipe.transform(
-                                this.documentos.fechaCreacion,
-                                "dd-MM-yyy"
-                            );
-                            this.documentosTemp.fechaCarga = this.datePipe.transform(
-                                this.documentos.fechaCarga,
-                                "dd-MM-yyy"
-                            );
-                            console.log(this.documentosTemp);
+                        this.documentosTemp.fechaCreacion = this.datePipe.transform(
+                            this.documentos.fechaCreacion,
+                            "dd-MM-yyy"
+                        );
+                        this.documentosTemp.fechaCarga = this.datePipe.transform(
+                            this.documentos.fechaCarga,
+                            "dd-MM-yyy"
+                        );
+                        console.log(this.documentosTemp);
                         this.documentosTemp.iniciativas = true;
                         this.documentosTemp.iniciativa = this.iniciativa;
                         if (

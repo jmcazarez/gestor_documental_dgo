@@ -22,7 +22,7 @@
             <div class="buscador">
                 <mat-form-field class="buscar">
                     <mat-label>Buscar un iniciativa</mat-label>
-                    <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)'>
+                    <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)' [(ngModel)]="valueBuscador">
                 </mat-form-field>
                 <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevaIniciativa()" class="button">
                     <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un documento">post_add
@@ -48,11 +48,11 @@
                             </mat-icon>
                         </a>
 
-                        <a  *ngIf="row.estatus!=='Registrada'" (click)="iniciativaTurnada(row)">
+                        <a  *ngIf="row.estatus==='Turnado de iniciativa a comisión' || row.estatus==='Turnado de iniciativa a EASE'" (click)="iniciativaTurnada(row)">
                             <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para ver iniciativa turnada">assignment_turned_in
                             </mat-icon>
                         </a>
-
+                        <mat-icon *ngIf="row.estatus==='Turnar iniciativa a CIEL' || row.estatus==='Turnar cuenta pública a EASE'" color="accent" class="material-icons">check_circle</mat-icon>
 
                     </ng-template>
                 </ngx-datatable-column>

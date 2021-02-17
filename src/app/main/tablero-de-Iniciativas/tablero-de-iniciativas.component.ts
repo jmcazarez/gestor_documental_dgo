@@ -31,6 +31,7 @@ export class TableroDeIniciativasComponent implements OnInit {
     optEditar: boolean;
     optEliminar: boolean;
     fileBase64: any;
+    valueBuscador = '';
     constructor(
         private spinner: NgxSpinnerService,
         private datePipe: DatePipe,
@@ -50,6 +51,7 @@ export class TableroDeIniciativasComponent implements OnInit {
     }
 
     nuevaIniciativa(): void {
+        this.valueBuscador = '';
         // Abrimos modal de guardar usuario
         const dialogRef = this.dialog.open(GuardarIniciativasComponent, {
             width: '50%',
@@ -161,6 +163,7 @@ export class TableroDeIniciativasComponent implements OnInit {
     }
 
     editarIniciativa(iniciativa: IniciativasModel): void {
+        this.valueBuscador = '';
         // Abrimos modal de guardar perfil
         if (iniciativa.estatus == 'Registrada') {
             const dialogRef = this.dialog.open(GuardarIniciativasComponent, {

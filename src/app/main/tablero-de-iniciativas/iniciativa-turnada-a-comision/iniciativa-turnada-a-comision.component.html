@@ -12,7 +12,7 @@
                 <div class="h2 mb-24">Turno</div>
             </div>
             <div fxFlex="10">
-                <button *ngIf="this.iniciativa.formatosTipoIniciativa.length > 0" mat-raised-button color="warn"
+                <button *ngIf="this.iniciativa.formatosTipoIniciativa.length > 1" mat-raised-button color="warn"
                     align="end" (click)="clasificarDocumento()">Vista
                     previa</button>
             </div>
@@ -130,7 +130,7 @@
             </div>
         </div>
 
-        <div fxLayout="row" fxLayoutAlign="start center" *ngIf="iniciativa.estatus==='Turnado de iniciativa a comisión'"
+        <div fxLayout="row" fxLayoutAlign="start center" 
             fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="100">
                 <mat-label>Legislatura</mat-label>
@@ -143,7 +143,7 @@
             </mat-form-field>
         </div>
 
-        <div fxLayout="row" *ngIf="iniciativa.estatus==='Turnado de iniciativa a comisión'" fxLayoutAlign="start center"
+        <div fxLayout="row" fxLayoutAlign="start center"
             fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="100">
                 <mat-label>Tipo de sesión</mat-label>
@@ -156,7 +156,7 @@
             </mat-form-field>
         </div>
 
-        <mat-form-field appearance="outline" *ngIf="iniciativa.estatus==='Turnado de iniciativa a comisión'"
+        <mat-form-field appearance="outline" 
             fxFlex="1 0 auto" class="pl-4">
             <mat-label>Fecha de sesión</mat-label>
             <input matInput [matDatepicker]="picker" formControlName="fechaSesion">
@@ -165,7 +165,7 @@
             <mat-error>La fecha de sesión no es valida ej. 28/11/2020</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" *ngIf="iniciativa.estatus==='Turnado de iniciativa a comisión'"
+        <mat-form-field appearance="outline" 
             fxFlex="1 0 auto" class="pl-4">
             <mat-label>Hora de sesión</mat-label>
             <input matInput type="time" atp-time-picker formControlName="horaSesion" />
@@ -214,13 +214,13 @@
 
 <mat-dialog-actions align="end" class="buttons">
 
-    <button mat-raised-button color="warn" (click)="generaReport()">Documento</button>
+    <!--  <button mat-raised-button color="warn" (click)="generaReport()">Documento</button>-->
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
-    <button *ngIf="iniciativa.estatus==='Turnado de iniciativa a comisión'"
+    <button 
         [disabled]="form.invalid"
         mat-raised-button color="accent" (click)="guardar()">Guardar</button>
-        <button *ngIf="iniciativa.estatus!=='Turnado de iniciativa a comisión'"
+       <!--   <button *ngIf="iniciativa.estatus!=='Turnado de iniciativa a comisión'"
         [disabled]="form.invalid  || fileInformeName.length === 0 || fileOficioName.length === 0"
         mat-raised-button color="accent" (click)="guardarAnexos()">Guardar</button>
-    <!--<button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
+  <button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
 </mat-dialog-actions>

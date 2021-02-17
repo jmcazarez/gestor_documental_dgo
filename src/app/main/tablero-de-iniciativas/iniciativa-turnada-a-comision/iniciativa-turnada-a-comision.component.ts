@@ -129,7 +129,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         this.obtenerTiposIniciativas();
         this.obtenerComisiones();
         this.obtenerLegislatura();
-        
+        console.log(this.iniciativa.formatosTipoIniciativa);
         this.tipoSesion.push({
             id: '001',
             descripcion: 'Ordinaria'
@@ -160,8 +160,22 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        console.log(this.iniciativa);
+        if (this.iniciativa.actasSesion === undefined) {
+            this.iniciativa.actasSesion = [];
+        }
+        if (this.iniciativa.anexosTipoIniciativa === undefined) {
+            this.iniciativa.anexosTipoIniciativa = [];
+        }
+        if (this.iniciativa.comisiones === undefined) {
+            this.iniciativa.comisiones = "";
+        }
+        if (this.iniciativa.clasificaciones === undefined) {
+            this.iniciativa.clasificaciones = "";
+        }
         let validatos = [
         ];
+        console.log(this.iniciativa.formatosTipoIniciativa);
         if (this.iniciativa.anexosTipoCuentaPublica !== undefined) {
             if (this.iniciativa.anexosTipoCuentaPublica.length > 0) {
                 this.fileInformeName = this.iniciativa.anexosTipoCuentaPublica[0].name;
@@ -171,6 +185,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 this.fileOficioName = "";
             }
         } else {
+            this.iniciativa.anexosTipoCuentaPublica = [];
             this.fileInformeName = "";
             this.fileOficioName = "";
         }
@@ -263,7 +278,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             etiquetasAutores: [{ value: "", disabled: true }],
             tema: [{ value: "", disabled: true }],
             etiquetasTema: [{ value: "", disabled: true }],
-            clasificaciones: [{ value: "", disabled: false }, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+            clasificaciones: [{ value: "", disabled: false }, validatos],
             etiquetasClasificaciones: [{ value: "", disabled: false }],
             comision: [{ value: this.comisiones, disabled: false }, validatos],
             legislatura: [{ value: this.selectedLegislatura }, validatos],
@@ -285,6 +300,23 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
         this.spinner.show();
 
+        if (this.cambioInforme) {
+            await this.subirAnexos(this.filesInforme);
+        } else {
+            if (this.iniciativa.anexosTipoCuentaPublica[0]) {
+                this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[0]);
+            }
+        }
+        if (this.cambioOficio) {
+            await this.subirAnexos(this.filesOficio);
+        } else {
+            if (this.iniciativa.anexosTipoCuentaPublica[1]) {
+                this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[1]);
+            }
+        }
+
+        this.iniciativa.anexosTipoCuentaPublica = this.anexos;
+
         this.iniciativa.clasificaciones = this.clasificaciones;
         this.iniciativa.comisiones = this.selectedComision;
         legislatura = this.selectedLegislatura;
@@ -296,7 +328,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
 
         if (this.iniciativa.id) {
-            console.log(this.iniciativa.actasSesion[0].id);
+            await this.generaReport();
             if (this.iniciativa.actasSesion[0].id) {
                 // Actualizamos la comision 
                 this.actasSesionsService.actualizarActasSesions({
@@ -411,6 +443,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             "success"
                         );
                         this.iniciativa = resp.data;
+                        console.log(this.iniciativa);
                         this.spinner.hide();
                         this.cerrar(this.iniciativa);
                     } else {
@@ -732,7 +765,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
     async generaReport(): Promise<string> {
         return new Promise(async (resolve) => {
-
+            console.log('reporte');
 
             const fecha = new Date(); // Fecha actual
             let mes: any = fecha.getMonth() + 1; // obteniendo mes
@@ -743,6 +776,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             let cTemas = '';
             let header: any[] = [];
             let presente: any[] = [];
+            let idPuesto: any[] = [];
             if (dia < 10) {
                 dia = '0' + dia; // agrega cero si el menor de 10
             }
@@ -753,12 +787,21 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             let puestoSecretarioGeneral: any[];
             let legislaturas = await this.obtenerLegislatura();
             let parametrosSSP001 = await this.obtenerParametros('SSP-001');
+            let parametrosSSP004 = await this.obtenerParametros('SSP-004');
             puestoSecretarioGeneral = await this.obtenerParametros('Id-Puesto-Secretario-General');
 
-            let idFirmasPorEtapas = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Firmas');
-            let idPuesto = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Puesto');
+            let idFirmasPorEtapas = parametrosSSP004.filter((d) => d['cParametroAdministrado'] === 'SSP-004-Firmas');
+            console.log(idFirmasPorEtapas);
+            if (this.iniciativa.estatus === 'Turnado de iniciativa a comisión') {
+                idPuesto = parametrosSSP004.filter((d) => d['cParametroAdministrado'] === 'SSP-004-Iniciativa-Puesto');
+            } else {
+                idPuesto = parametrosSSP004.filter((d) => d['cParametroAdministrado'] === 'SSP-004-EASE-Puesto');
+
+            }
+
             let firmasPorEtapas = await this.obtenerFirma(idFirmasPorEtapas[0]['cValor']);
             let puesto = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === idPuesto[0]['cValor']);
+
             let puestoSecretario = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === puestoSecretarioGeneral[0].cValor);
             let tipoIniciativa = this.arrTipo.filter((d) => d['id'] === this.selectTipo);
             let comision = this.comisiones.filter((d) => d['id'] === this.selectTipo);
@@ -797,12 +840,23 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 alignment: "left",
                 margin: [0, 10, 0, 0],
             });
-            presente.push({
-                text: "Secretaria de Servicios Parlamentarios",
-                fontSize: 14,
-                bold: true,
-                alignment: "left",
-            });
+            if (this.iniciativa.estatus === 'Turnado de iniciativa a comisión') {
+                presente.push({
+                    text: "Director del Centro de Investigación y Estudios Legislativos",
+                    fontSize: 14,
+                    bold: true,
+                    alignment: "left",
+                });
+            } else {
+                presente.push({
+                    text: "Auditor Superior del Estado de Durango PRESENTE",
+                    fontSize: 14,
+                    bold: true,
+                    alignment: "left",
+                });
+
+            }
+
             presente.push({
                 text: "H. Congreso del Estado",
                 fontSize: 14,
@@ -916,7 +970,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 },
             };
 
-            pdfMake.createPdf(dd).open();
+            // pdfMake.createPdf(dd).open();
 
             const pdfDocGenerator = pdfMake.createPdf(dd);
             let base64 = await this.pdfBase64(pdfDocGenerator);
@@ -997,9 +1051,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             if (mes < 10) {
                 mes = '0' + mes; // agrega cero si el menor de 10
             }
+
             const fechaActual = ano + '-' + mes + '-' + dia;
             this.documentos.bActivo = true;
-            this.documentos.cNombreDocumento = 'Formato SSP 01 de' + tema;
+            this.documentos.cNombreDocumento = 'Formato SSP 04 de' + tema;
             this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
             this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
             this.documentos.version = 1;
@@ -1013,9 +1068,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 this.documentos.legislatura = legislatura.id;
                 this.documentos.folioExpediente = legislatura.cLegislatura + '-' + Number(legislatura.documentos + 1);
             }
-            if (this.iniciativa.formatosTipoIniciativa.length > 0) {
+            console.log(this.iniciativa.formatosTipoIniciativa);
+            if (this.iniciativa.formatosTipoIniciativa.length > 1) {
 
-                this.documentos.id = this.iniciativa.formatosTipoIniciativa[0].id
+                this.documentos.id = this.iniciativa.formatosTipoIniciativa[1].id
                 this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
 
                     if (resp) {
@@ -1023,7 +1079,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                         this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
                         this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
                         this.spinner.hide();
-                        this.iniciativa.formatosTipoIniciativa = [this.documentos.id];
+                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.documentos.id];
                         resolve(this.documentos.id);
                     } else {
                         this.spinner.hide();
@@ -1043,7 +1099,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                         this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
                         this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
                         this.spinner.hide();
-                        this.iniciativa.formatosTipoIniciativa = [this.documentos.id];
+                        console.log(this.documentos.id);
+                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.documentos.id];
                         // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
 
                         resolve(this.documentos.id);
@@ -1063,92 +1120,98 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     }
 
     clasificarDocumento(): void {
-        this.spinner.show();
-        const fecha = new Date(); // Fecha actual
-        let mes: any = fecha.getMonth() + 1; // obteniendo mes
-        let dia: any = fecha.getDate(); // obteniendo dia
+        if (this.iniciativa.formatosTipoIniciativa[1]) {
+            this.spinner.show();
+            const fecha = new Date(); // Fecha actual
+            let mes: any = fecha.getMonth() + 1; // obteniendo mes
+            let dia: any = fecha.getDate(); // obteniendo dia
 
-        const ano = fecha.getFullYear(); // obteniendo año
+            const ano = fecha.getFullYear(); // obteniendo año
 
-        if (dia < 10) {
-            dia = '0' + dia; // agrega cero si el menor de 10
-        }
-        if (mes < 10) {
-            mes = '0' + mes; // agrega cero si el menor de 10
-        }
-        const fechaActual = ano + '-' + mes + '-' + dia;
-        this.documentos.bActivo = true;
-
-        this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
-        this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
-        let cAutores = '';
-        this.autores.forEach(element => {
-            if (cAutores === '') {
-                cAutores = element.name;
-            } else {
-                cAutores = cAutores + ', ' + element.name;
+            if (dia < 10) {
+                dia = '0' + dia; // agrega cero si el menor de 10
             }
-
-        });
-        this.documentos = this.iniciativa.formatosTipoIniciativa[0];
-        this.documentos.metacatalogos = [
-
-            {
-                "cDescripcionMetacatalogo": "Fecha",
-                "bOligatorio": true,
-                "cTipoMetacatalogo": "Fecha",
-                "text": this.documentos.fechaCarga
-            },
-            {
-                "cDescripcionMetacatalogo": "Documento",
-                "bOligatorio": true,
-                "cTipoMetacatalogo": "Texto",
-                "text": cAutores
+            if (mes < 10) {
+                mes = '0' + mes; // agrega cero si el menor de 10
             }
-        ]
-        this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
-            if (resp) {
+            const fechaActual = ano + '-' + mes + '-' + dia;
+            this.documentos.bActivo = true;
 
-                this.documentos = resp.data;
-                this.documentos.iniciativas = true;
-                this.documentos.iniciativa = this.iniciativa;
-                if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
-                    this.documentos.estatus = 'Turnado de iniciativa a comisión';
+            this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+            this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
+            let cAutores = '';
+            this.autores.forEach(element => {
+                if (cAutores === '') {
+                    cAutores = element.name;
                 } else {
-                    this.documentos.estatus = 'Turnado de iniciativa a EASE';
+                    cAutores = cAutores + ', ' + element.name;
                 }
 
+            });
 
-                this.documentos.fechaCreacion = fechaActual;
-                this.documentos.fechaCarga = fechaActual;
+            this.documentos = this.iniciativa.formatosTipoIniciativa[1];
+            console.log(this.documentos);
+            this.documentos.metacatalogos = [
 
-                this.spinner.hide();
-                console.log(this.documentos);
-                const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
-                    width: '100%',
-                    height: '90%',
-                    disableClose: true,
-                    data: this.documentos,
+                {
+                    "cDescripcionMetacatalogo": "Fecha",
+                    "bOligatorio": true,
+                    "cTipoMetacatalogo": "Fecha",
+                    "text": this.documentos.fechaCarga
+                },
+                {
+                    "cDescripcionMetacatalogo": "Documento",
+                    "bOligatorio": true,
+                    "cTipoMetacatalogo": "Texto",
+                    "text": cAutores
+                }
+            ]
+            this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
+                if (resp) {
 
-                });
-
-                // tslint:disable-next-line: no-shadowed-variable
-                dialogRef.afterClosed().subscribe(result => {
-                    console.log(result);
-                    if (result == '0') {
-                        this.cerrar('');
-                        // this.obtenerDocumentos();
+                    this.documentos = resp.data;
+                    this.documentos.iniciativas = true;
+                    this.documentos.iniciativa = this.iniciativa;
+                    if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
+                        this.documentos.estatus = 'Turnar iniciativa a CIEL';
+                    } else {
+                        this.documentos.estatus = 'Turnar cuenta pública a EASE';
                     }
-                });
-            } else {
+
+
+                    this.documentos.fechaCreacion = fechaActual;
+                    this.documentos.fechaCarga = fechaActual;
+
+                    this.spinner.hide();
+
+                    const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
+                        width: '100%',
+                        height: '90%',
+                        disableClose: true,
+                        data: this.documentos,
+
+                    });
+
+                    // tslint:disable-next-line: no-shadowed-variable
+                    dialogRef.afterClosed().subscribe(result => {
+                        console.log(result);
+                        if (result == '0') {
+                            this.cerrar('');
+                            // this.obtenerDocumentos();
+                        }
+                    });
+                } else {
+                    this.spinner.hide();
+                    Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                }
+            }, err => {
                 this.spinner.hide();
-                Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
-            }
-        }, err => {
-            this.spinner.hide();
-            console.log(err);
-            Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
-        });
+                console.log(err);
+                Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+            });
+        } else {
+            Swal.fire('Error', 'Ocurrió un error al generar el documento SSP 04.', 'error');
+        }
 
     }
 
