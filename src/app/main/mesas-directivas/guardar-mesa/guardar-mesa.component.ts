@@ -206,6 +206,7 @@ export class GuardarMesaComponent implements OnInit {
         this.spinner.show();
         await this.legislaturasService.obtenerLegislatura().subscribe((resp: any) => {
             this.arrLegislaturas = resp;
+            console.log(this.arrLegislaturas);
             this.spinner.hide();
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener las legislaturas.' + err, 'error');

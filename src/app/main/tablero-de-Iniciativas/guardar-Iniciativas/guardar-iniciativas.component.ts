@@ -788,7 +788,7 @@ export class GuardarIniciativasComponent implements OnInit {
             }
             const fechaActual = ano + "-" + mes + "-" + dia;
             this.documentos.bActivo = true;
-            this.documentos.cNombreDocumento = "Formato SSP 01 de" + tema;
+            this.documentos.cNombreDocumento = "Formato SSP 01 de " + tema;
             if (this.documentos.fechaCreacion) {
                 this.documentos.fechaCreacion = this.datePipe.transform(
                     this.documentos.fechaCreacion,

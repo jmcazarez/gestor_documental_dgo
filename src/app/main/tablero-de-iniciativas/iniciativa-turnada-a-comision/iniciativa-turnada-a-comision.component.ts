@@ -26,6 +26,8 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs; // fonts provided for pdfmake
 import { environment } from "../../../../environments/environment";
 import { LegislaturaService } from "services/legislaturas.service";
 import { ParametrosService } from "services/parametros.service";
+import { MesasDirectivasService } from 'services/mesas-directivas.service';
+import { DetalleMesaService } from 'services/detalle-mesa-directiva.service';
 import { FirmasPorEtapaService } from "services/configuracion-de-firmas-por-etapa.service";
 import { DocumentosModel } from "models/documento.models";
 import { ClasficacionDeDocumentosComponent } from "app/main/tablero-de-documentos/clasficacion-de-documentos/clasficacion-de-documentos.component";
@@ -66,6 +68,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     form: FormGroup;
     selectTipo: any;
     arrTipo: any[] = [];
+    arrMesas: any[] = [];
+    arrDetalleMesas: any[] = [];
     filesOficio = [];
     filesInforme = [];
     fileOficioName: string;
@@ -118,6 +122,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         private parametros: ParametrosService,
         private firmas: FirmasPorEtapaService,
         private documentoService: DocumentosService,
+        private mesasDirectivasService: MesasDirectivasService,
+        private detalleMesaService: DetalleMesaService,
         public dialog: MatDialog,
         private uploadService: UploadFileService,
         private atp: AmazingTimePickerService,
@@ -129,6 +135,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         this.obtenerTiposIniciativas();
         this.obtenerComisiones();
         this.obtenerLegislatura();
+        this.obtenerMesaDirectiva();
+        this.obtenerDetalleMesa();
         console.log(this.iniciativa.formatosTipoIniciativa);
         this.tipoSesion.push({
             id: '001',
@@ -703,11 +711,68 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             }
                         }
                         resolve(resp);
+                        console.log(this.legislatura);
+                        //seleccionamos legislatura por default
+                        this.selectedLegislatura = this.legislatura[0].id;
                     },
                     (err) => {
                         Swal.fire(
                             "Error",
                             "Ocurrió un error al obtener las legislatura." +
+                            err,
+                            "error"
+                        );
+                        resolve(err);
+                    }
+                );
+            }
+        });
+    }
+
+    async obtenerMesaDirectiva(): Promise<void> {
+        return new Promise((resolve) => {
+            {
+                this.mesasDirectivasService.obtenerMesas().subscribe(
+                    (resp: any) => {
+                        for (const mesa_directiva of resp) {
+                            if (mesa_directiva.activo) {
+                                this.arrMesas.push(mesa_directiva);
+                            }
+                        }
+                        resolve(resp);
+                        console.log(this.arrMesas);
+                    },
+                    (err) => {
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al obtener las mesas directivas." +
+                            err,
+                            "error"
+                        );
+                        resolve(err);
+                    }
+                );
+            }
+        });
+    }
+
+    async obtenerDetalleMesa(): Promise<void> {
+        return new Promise((resolve) => {
+            {
+                this.detalleMesaService.obtenerDetalleMesa().subscribe(
+                    (resp: any) => {
+                        for (const detalle_mesa of resp) {
+                            if (detalle_mesa.activo) {
+                                this.arrDetalleMesas.push(detalle_mesa);
+                            }
+                        }
+                        resolve(resp);
+                        console.log(this.arrMesas);
+                    },
+                    (err) => {
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al obtener las el detalle de las mesas directivas." +
                             err,
                             "error"
                         );
@@ -828,6 +893,13 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             let puestoSecretario = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === puestoSecretarioGeneral[0].cValor);
             let tipoIniciativa = this.arrTipo.filter((d) => d['id'] === this.selectTipo);
             let comision = this.comisiones.filter((d) => d['id'] === this.selectTipo);
+            //console.log(this.arrMesas);
+            let mesa_directiva: any = this.arrMesas.filter(meta => meta.legislatura.id === this.selectedLegislatura);
+            console.log(mesa_directiva[0].id);
+            console.log(this.arrDetalleMesas);
+            let detalle_mesa: any = this.arrDetalleMesas.filter(meta => meta.mesas_directiva === mesa_directiva[0].id);
+            console.log('detalleMesa');
+            console.log(detalle_mesa);
             let tipoSesion = this.selectedSesion;
             let fechaSesion = moment(this.form.get('fechaSesion').value).format('DD-MM-YYYY');
             let tipoDocumento = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Tipo-de-Documento');
@@ -890,11 +962,13 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             presente.push({
                 text:
                     [
-                        'Por instrucciones del COLOCAR NOMBRE MESA DIRECTIVA presidente de la mesa directiva, en sesión',
+                        'Por instrucciones del ', 
+                        { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
+                        'presidente de la mesa directiva, en sesión',
                         { text: tipoSesion, bold: true },
                         ' verificada el ',
                         { text: fechaSesion, bold: true },
-                        ' se acordó turnar a la comisión de ',
+                        ' se acordó turnar a la comisión de',
                         { text: comision, bold: true },
                         ', iniciativa, presentada por ',
                         { text: cAutores, bold: true },
@@ -1077,7 +1151,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             const fechaActual = ano + '-' + mes + '-' + dia;
             this.documentos.bActivo = true;
-            this.documentos.cNombreDocumento = 'Formato SSP 04 de' + tema;
+            this.documentos.cNombreDocumento = 'Formato SSP 04 de ' + tema;
             this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
             this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
             this.documentos.version = 1;
