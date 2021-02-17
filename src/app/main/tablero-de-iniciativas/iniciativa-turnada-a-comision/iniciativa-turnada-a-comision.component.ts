@@ -222,29 +222,17 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.iniciativa.estatus = "Registrada";
             this.iniciativa.fechaCreacion = ano + "-" + mes + "-" + dia;
         }
-
-        if (this.iniciativa.comisiones) {
+     
+        if (this.iniciativa.actasSesion[0]) {
             console.log('haycomision');
             this.iniciativa.actasSesion[0].fechaSesion =
                 moment(this.iniciativa.actasSesion[0].fechaSesion).format('YYYY-MM-DD') + "T16:00:00.000Z";
             this.iniciativa.actasSesion[0].horaSesion =
                 moment(this.iniciativa.actasSesion[0].horaSesion, 'h:mm').format('HH:mm');
             this.selectedComision = this.iniciativa.comisiones.id;
+           
             this.selectedLegislatura = this.iniciativa.actasSesion[0].legislatura;
             this.selectedSesion = this.iniciativa.actasSesion[0].tipoSesion;
-        } else {
-            /*let fecha;
-            let hora;
-            console.log('nohaycomision');
-            fecha = 
-                moment(fecha).format('YYYY-MM-DD') + "T16:00:00.000Z";
-            hora = 
-                moment('0100', 'h:mm').format('HH:mm');*/
-
-            this.iniciativa.actasSesion.push({
-                fechaSesion: '',
-                horaSesion: ''
-            });
         }
         if (this.iniciativa.estatus === 'Turnado de iniciativa a comisión') {
             validatos = [
@@ -280,7 +268,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             etiquetasTema: [{ value: "", disabled: true }],
             clasificaciones: [{ value: "", disabled: false }, validatos],
             etiquetasClasificaciones: [{ value: "", disabled: false }],
-            comision: [{ value: this.comisiones, disabled: false }, [ Validators.required]],
+            comision: [{ value: this.comisiones, disabled: false }, validatos],
             legislatura: [{ value: this.selectedLegislatura },  [ Validators.required]],
             tipoSesion: [{ value: this.selectedSesion },  [ Validators.required]],
             fechaSesion: [{ value: this.iniciativa.actasSesion[0].fechaSesion, disabled: false },  [ Validators.required]],
