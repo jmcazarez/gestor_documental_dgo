@@ -776,7 +776,7 @@ export class GuardarIniciativasComponent implements OnInit {
         return new Promise(async (resolve) => {
             const fecha = new Date(); // Fecha actual
             let mes: any = fecha.getMonth() + 1; // obteniendo mes
-            let dia: any = fecha.getDate(); // obteniendo dia
+            let dia: any = fecha.getDate() + 1; // obteniendo dia
 
             const ano = fecha.getFullYear(); // obteniendo año
 
@@ -819,7 +819,7 @@ export class GuardarIniciativasComponent implements OnInit {
                     "-" +
                     Number(legislatura.documentos + 1);
             }
-
+console.log(this.iniciativa.formatosTipoIniciativa);
             if (this.iniciativa.formatosTipoIniciativa.length > 0) {
                 this.documentos.id = this.iniciativa.formatosTipoIniciativa[0].id;
 
@@ -932,9 +932,9 @@ export class GuardarIniciativasComponent implements OnInit {
         }
         const fechaActual = dia + "/" + mes + "/" + anio;
         this.documentos.bActivo = true;
-
-        // this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
-        // this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
+        console.log( this.documentos);
+         this.documentos.fechaCreacion =  this.documentos.fechaCreacion + 'T16:00:00.000Z';
+         this.documentos.fechaCarga =  this.documentos.fechaCreacion + 'T16:00:00.000Z';
 
         console.log(this.documentos);
         let cAutores = "";
