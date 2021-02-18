@@ -987,7 +987,7 @@ export class GuardarIniciativasComponent implements OnInit {
                                 "Turnado de iniciativa a comisión";
                         } else {
                             this.documentosTemp.estatus =
-                            "Turnar cuanta publica a EASE"
+                            "Turnar cuanta pública a EASE"
                                 ;
                         }
 
