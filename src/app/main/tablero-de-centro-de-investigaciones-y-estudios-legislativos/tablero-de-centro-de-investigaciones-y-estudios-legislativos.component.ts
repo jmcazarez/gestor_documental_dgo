@@ -67,6 +67,7 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
         let pendiente: string;
         let receptor: string;
         let fechaRecepcion: any;
+        let receptorId: string;
         // Obtenemos los iniciativas
         this.iniciativasService.obtenerIniciativas().subscribe((resp: any) => {
 
@@ -126,6 +127,7 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
                           receptor = '';
                         }else{
                           console.log('hay receptor');
+                          receptorId = ini.receptor[0].id;
                           receptor = ini.receptor[0].nombre + ' ' + ini.receptor[0].apellidoPaterno + ' ' + ini.receptor[0].apellidoMaterno;
                         }
 
@@ -156,7 +158,8 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
                               comisiones: ini.comisiones,
                               asunto: ini.comisiones.descripcion + ', ' + temas,
                               fechaRecepcion: fechaRecepcion,
-                              receptor: receptor
+                              receptor: receptor,
+                              receptorId: receptorId
                         });
                       }
                     }

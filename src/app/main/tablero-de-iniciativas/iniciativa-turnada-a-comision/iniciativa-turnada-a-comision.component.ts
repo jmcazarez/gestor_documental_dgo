@@ -940,7 +940,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 alignment: "left",
                 margin: [0, 10, 0, 0],
             });
-            if (this.iniciativa.estatus === 'Turnar iniciativa a comisión') {
+            if (this.iniciativa.estatus === 'Turnar iniciativa a comisión' || this.iniciativa.estatus === '') {
                 presente.push({
                     text: "Director del Centro de Investigación y Estudios Legislativos",
                     fontSize: 14,
@@ -973,7 +973,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                         [
                             'Por instrucciones del C. ', 
                             { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
-                            'presidente de la mesa directiva, en sesión',
+                            'presidente de la mesa directiva, en sesión ',
                             { text: tipoSesion, bold: true },
                             ' verificada el ',
                             { text: fechaSesion, bold: true },
@@ -982,20 +982,22 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             ', iniciativa, presentada por el C. ',
                             { text: cAutores, bold: true },
                             ', que contiene ',
-                            { text: cTemas, bold: true }
+                            { text: cTemas, bold: true },
+                            '.'
                         ],
                     fontSize: 12,
                     bold: false,
                     alignment: "justify",
                     margin: [0, 50, 5, 5],
                 });
-            }else{
+            }if(this.autores.length >= 2){
+
                 presente.push({
                     text:
                         [
                             'Por instrucciones del C. ', 
                             { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
-                            'presidente de la mesa directiva, en sesión',
+                            'presidente de la mesa directiva, en sesión ',
                             { text: tipoSesion, bold: true },
                             ' verificada el ',
                             { text: fechaSesion, bold: true },
@@ -1004,7 +1006,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             ', iniciativa, presentada por los CC. ',
                             { text: cAutores, bold: true },
                             ', que contiene ',
-                            { text: cTemas, bold: true }
+                            { text: cTemas, bold: true },
+                            '.'
                         ],
                     fontSize: 12,
                     bold: false,
@@ -1012,12 +1015,61 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     margin: [0, 50, 5, 5],
                 });
             }
+            }else{
+                console.log('turnada a ciel');
+                if(this.autores.length <= 1){
+                    presente.push({
+                        text:
+                            [
+                                'Por instrucciones del C. ', 
+                                { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
+                                'presidente de la mesa directiva, en sesión ',
+                                { text: tipoSesion, bold: true },
+                                ' verificada el ',
+                                { text: fechaSesion, bold: true },
+                                ' se acordó turnar a la Entidad de Auditoria Superior del Estado de Durango, Cuenta pública, presentada por el C. ',
+                                { text: cAutores, bold: true },
+                                ', que contiene ',
+                                { text: cTemas, bold: true },
+                                '.'
+                            ],
+                        fontSize: 12,
+                        bold: false,
+                        alignment: "justify",
+                        margin: [0, 50, 5, 5],
+                    });
+                }if(this.autores.length >= 2){
+    
+                    presente.push({
+                        text:
+                            [
+                                'Por instrucciones del C. ', 
+                                { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
+                                'presidente de la mesa directiva, en sesión ',
+                                { text: tipoSesion, bold: true },
+                                ' verificada el ',
+                                { text: fechaSesion, bold: true },
+                                ' se acordó turnar a la Entidad de Auditoria Superior del Estado de Durango, Cuenta pública, presentada por los CC. ',
+                                { text: cAutores, bold: true },
+                                ', que contiene ',
+                                { text: cTemas, bold: true },
+                                '.'
+                            ],
+                        fontSize: 12,
+                        bold: false,
+                        alignment: "justify",
+                        margin: [0, 50, 5, 5],
+                    });
+                }
+            }
+
+            
             presente.push({
                 text: "SUFRAGIO EFECTTIVO, NO REELECCIÒN",
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
-                margin: [0, 50 , 0, 0],
+                margin: [0,  100, 0, 0],
             });
 
             presente.push({
@@ -1099,7 +1151,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             await this.upload(base64, 'SSP 04.pdf');
             await this.guardarDocumento(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
             resolve('ok');
-        }
         });
     }
 

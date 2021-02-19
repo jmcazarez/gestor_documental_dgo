@@ -15,4 +15,6 @@ export class IniciativasModel {
     comisiones: any;
     anexosTipoCuentaPublica: any;
     anexosTipoIniciativa: any;
+    receptor: any;
+    receptorId: any;
 }

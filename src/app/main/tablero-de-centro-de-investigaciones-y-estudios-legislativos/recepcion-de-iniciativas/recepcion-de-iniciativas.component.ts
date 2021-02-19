@@ -188,16 +188,15 @@ export class RecepcionDeIniciativasComponent implements OnInit {
       let validatos = [
       ];
     
-      if (this.iniciativa.anexosTipoCuentaPublica !== undefined) {
-          if (this.iniciativa.anexosTipoCuentaPublica.length > 0) {
-              this.fileInformeName = this.iniciativa.anexosTipoCuentaPublica[0].name;
-              this.fileOficioName = this.iniciativa.anexosTipoCuentaPublica[1].name;
+      if (this.iniciativa.anexosTipoIniciativa !== undefined) {
+          if (this.iniciativa.anexosTipoIniciativa.length > 0) {
+              this.fileInformeName = this.iniciativa.anexosTipoIniciativa[0].name;
           } else {
               this.fileInformeName = "";
               this.fileOficioName = "";
           }
       } else {
-          this.iniciativa.anexosTipoCuentaPublica = [];
+          this.iniciativa.anexosTipoIniciativa = [];
           this.fileInformeName = "";
           this.fileOficioName = "";
       }
@@ -245,6 +244,7 @@ export class RecepcionDeIniciativasComponent implements OnInit {
          
           this.selectedLegislatura = this.iniciativa.actasSesion[0].legislatura;
           this.selectedSesion = this.iniciativa.actasSesion[0].tipoSesion;
+          this.selectedEmpleado = this.iniciativa.receptorId;
             // Form reativo
       this.form = this.formBuilder.group({
           id: [{ value: this.iniciativa.id, disabled: true }],
@@ -325,9 +325,6 @@ export class RecepcionDeIniciativasComponent implements OnInit {
 
   async guardar(): Promise<void> {
 
-      let legislatura;
-      let tipoSesion;
-      let fechaSesion;
       let fechaRecepcion;
       let hora;
       let horaSesion;
@@ -338,110 +335,39 @@ export class RecepcionDeIniciativasComponent implements OnInit {
       if (this.cambioDocumento) {
           await this.subirAnexos(this.filesOficio);
       } else {
-          if (this.iniciativa.anexosTipoCuentaPublica[2]) {
-              this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[2]);
+          if (this.iniciativa.anexosTipoIniciativa[0]) {
+              this.anexos.push(this.iniciativa.anexosTipoIniciativa[0]);
           }
       }
 
-      this.iniciativa.anexosTipoCuentaPublica = this.anexos;
+      this.iniciativa.anexosTipoIniciativa = this.anexos;
 
       this.iniciativa.clasificaciones = this.clasificaciones;
       this.iniciativa.comisiones = this.selectedComision;
-      legislatura = this.selectedLegislatura;
-      receptor = this.selectedEmpleado;
-      tipoSesion = this.form.get('tipoSesion').value;;
-      fechaSesion = moment(this.form.get('fechaSesion').value).format('YYYY-MM-DD');
-      fechaRecepcion = moment(this.form.get('fechaRecepcion').value).format('YYYY-MM-DD');
+      this.iniciativa.receptor = [this.selectedEmpleado];
+      this.iniciativa.fechaRecepcion = moment(this.form.get('fechaRecepcion').value).format('YYYY-MM-DD');
       hora = this.form.get('horaSesion').value;
-
+      this.iniciativa.estatus = 'Turnada a dictamen';
       horaSesion = hora + ':00.000';
 
+      console.log(this.iniciativa);
 
-      if (this.iniciativa.id) {
-          if (this.iniciativa.actasSesion.lenght > 0) {
-              // Actualizamos la comision 
-              this.actasSesionsService.actualizarActasSesions({
-                  id: this.iniciativa.actasSesion[0].id,
-                  legislatura: legislatura,
-                  tipoSesion: tipoSesion,
-                  fechaSesion: fechaSesion,
-                  horaSesion: horaSesion,
-                  receptor: receptor,
-                  fechaRecepcion: fechaRecepcion
-              }).subscribe((resp: any) => {
-                  if (resp) {
-                      this.iniciativa.actasSesion = [resp.data.id];
-
-                      console.log('con acta de sesion');
-                      console.log(this.iniciativa);
-                      this.iniciativaService.actualizarIniciativa(this.iniciativa).subscribe((resp: any) => {
-                          if (resp) {
-                              this.spinner.hide();
-                              Swal.fire('Éxito', 'Iniciativa actualizada correctamente.', 'success');
-                              this.iniciativa = resp.data;
-
-                              this.cerrar(this.iniciativa);
-                          } else {
-                              this.spinner.hide();
-                              Swal.fire('Error', 'Ocurrió un error al actualizar. ' + resp.error.data, 'error');
-                          }
-                      }, err => {
-                          this.spinner.hide();
-                          Swal.fire('Error', 'Ocurrió un error al actualizar.' + err.error.data, 'error');
-                      });
-
-                  } else {
-                      this.spinner.hide();
-                      Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
-                  }
-              }, err => {
-                  this.spinner.hide();
-                  Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
-              });
-          } else {
-
-              this.actasSesionsService.guardarActasSesions({
-                  legislatura: legislatura,
-                  tipoSesion: tipoSesion,
-                  fechaSesion: fechaSesion,
-                  horaSesion: horaSesion,
-                  receptor: receptor,
-                  fechaRecepcion: fechaRecepcion
-              }).subscribe((resp: any) => {
-                  if (resp) {
-                      this.iniciativa.actasSesion = [resp.data.id];
-                      console.log('sin acta de sesion');
-                      console.log(this.iniciativa);
-                      this.iniciativaService.actualizarIniciativa(this.iniciativa).subscribe((resp: any) => {
-                          if (resp) {
-                              this.spinner.hide();
-                              Swal.fire('Éxito', 'Iniciativa actualizada correctamente.', 'success');
-                              this.iniciativa = resp.data;
-
-                              this.cerrar(this.iniciativa);
-                          } else {
-                              this.spinner.hide();
-                              Swal.fire('Error', 'Ocurrió un error al actualizar. ' + resp.error.data, 'error');
-                          }
-                      }, err => {
-                          this.spinner.hide();
-                          Swal.fire('Error', 'Ocurrió un error al actualizar.' + err.error.data, 'error');
-                      });
-
-                  } else {
-                      this.spinner.hide();
-                      Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
-                  }
-              }, err => {
-                  this.spinner.hide();
-                  Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
-              });
-
-          }
-
-      }
-
-
+        // Actualizamos la iniciativa
+        this.iniciativaService.actualizarIniciativa(this.iniciativa).subscribe((resp: any) => {
+            if (resp) {
+                this.spinner.hide();
+                Swal.fire('Éxito', 'Iniciativa actualizada correctamente.', 'success');
+                this.iniciativa = resp.data;
+             
+                this.cerrar(this.legislatura);
+            } else {
+                this.spinner.hide();
+                Swal.fire('Error', 'Ocurrió un error al actualizar. ' + resp.error.data, 'error');
+            }
+        }, err => {
+            this.spinner.hide();
+            Swal.fire('Error', 'Ocurrió un error al actualizar.' + err.error.data, 'error');
+        });
   }
 
   async guardarAnexos(): Promise<void> {
@@ -450,16 +376,16 @@ export class RecepcionDeIniciativasComponent implements OnInit {
       if (this.cambioDocumento) {
           await this.subirAnexos(this.filesOficio);
       } else {
-          if (this.iniciativa.anexosTipoCuentaPublica[2]) {
-              this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[2]);
+          if (this.iniciativa.anexosTipoIniciativa[0]) {
+              this.anexos.push(this.iniciativa.anexosTipoIniciativa[0]);
           }
       }
 
 
-      this.iniciativa.anexosTipoCuentaPublica = this.anexos;
+      this.iniciativa.anexosTipoIniciativa = this.anexos;
 
       this.iniciativaService
-          .actualizarIniciativa({ id: this.iniciativa.id, anexosTipoCuentaPublica: this.iniciativa.anexosTipoCuentaPublica })
+          .actualizarIniciativa({ id: this.iniciativa.id, anexosTipoIniciativa: this.iniciativa.anexosTipoIniciativa })
           .subscribe(
               (resp: any) => {
                   if (resp.data) {
@@ -476,7 +402,7 @@ export class RecepcionDeIniciativasComponent implements OnInit {
                       this.spinner.hide();
                       Swal.fire(
                           "Error",
-                          "Ocurrió un error al guardar. " +
+                          "Ocurrió un error al actualizar. " +
                           resp.error.data,
                           "error"
                       );
@@ -486,7 +412,7 @@ export class RecepcionDeIniciativasComponent implements OnInit {
                   this.spinner.hide();
                   Swal.fire(
                       "Error",
-                      "Ocurrió un error al guardar." + err.error.data,
+                      "Ocurrió un error al actualizar." + err.error.data,
                       "error"
                   );
               }
