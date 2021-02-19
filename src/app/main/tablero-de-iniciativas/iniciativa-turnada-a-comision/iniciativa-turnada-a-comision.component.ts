@@ -961,6 +961,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     alignment: "left",
                 })
                 
+
+                
             }
 
      
