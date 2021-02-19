@@ -9,6 +9,7 @@ export class IniciativasModel {
     documentos : any; 
     fechaIniciativa : any; 
     fechaCreacion : any; 
+    fechaRecepcion: any;
     formatosTipoIniciativa: any;
     actasSesion: any;
     comisiones: any;

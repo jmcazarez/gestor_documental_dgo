@@ -566,11 +566,11 @@ export class GuardarIniciativasComponent implements OnInit {
                 text: [
                     "Con fundamento en lo dispuesto por el artículo 102  de la Ley Orgánica del Congreso del Estado de Durango, me permito remitirle ",
                     { text: tipoIniciativa["0"]["descripcion"], bold: true },
-                    " presentada por los ",
+                    " presentada por los CC. ",
                     { text: cAutores, bold: true },
                     " de la coalición parlamentaria “cuarta transformación”, que contiene ",
                     { text: cTemas, bold: true },
-                    " siga su trámite legislativo correspondiente ante el Pleno Legislativo. ",
+                    ", siga su trámite legislativo correspondiente ante el Pleno Legislativo. ",
                 ],
                 fontSize: 12,
                 bold: false,
@@ -984,10 +984,10 @@ console.log(this.iniciativa.formatosTipoIniciativa);
                             "Iniciativa"
                         ) {
                             this.documentosTemp.estatus =
-                                "Turnado de iniciativa a comisión";
+                                "Turnar iniciativa a comisión";
                         } else {
                             this.documentosTemp.estatus =
-                            "Turnar cuanta pública a EASE"
+                            "Turnar cuenta pública a EASE"
                                 ;
                         }
 

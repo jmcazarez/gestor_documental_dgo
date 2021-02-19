@@ -17,6 +17,7 @@ import { MatSortModule } from "@angular/material/sort";
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { RecepcionDeIniciativasComponent } from './recepcion-de-iniciativas/recepcion-de-iniciativas.component';
 
 const routes = [
     {

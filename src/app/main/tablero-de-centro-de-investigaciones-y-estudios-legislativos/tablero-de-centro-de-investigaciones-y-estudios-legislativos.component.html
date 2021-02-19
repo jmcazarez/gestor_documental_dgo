@@ -36,27 +36,21 @@
                 <ngx-datatable-column name="Folio" prop="id"></ngx-datatable-column>
                 <ngx-datatable-column name="Tipo" prop="tipo_de_iniciativa.descripcion"></ngx-datatable-column>
                 <ngx-datatable-column name="Fecha de turno" prop="fechaIniciativaText"></ngx-datatable-column>
-                <ngx-datatable-column name="Asunto" prop="comisiones"></ngx-datatable-column>
+                <ngx-datatable-column name="Asunto" prop="asunto"></ngx-datatable-column>
                 <ngx-datatable-column name="Remitente" prop="autoresText"></ngx-datatable-column>
                 <ngx-datatable-column name="Fecha recepción" prop="fechaRecepcion"></ngx-datatable-column>
                 <ngx-datatable-column name="Recibido por" prop="receptor"></ngx-datatable-column>
                 <ngx-datatable-column name="Estatus" prop="estatus"></ngx-datatable-column>
-                <!-- <ngx-datatable-column name="Acciones" sortable="false" prop="id">
+                <ngx-datatable-column name="Acciones" sortable="false" prop="id">
                     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                         
-                        <a (click)="editarIniciativa(row)">
+                        <a (click)="turnarIniciativaDictamen(row)">
                             <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">edit
                             </mat-icon>
                         </a>
 
-                        <a (click)="iniciativaTurnada(row)">
-                            <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para ver iniciativa turnada">assignment_turned_in
-                            </mat-icon>
-                        </a>
-
-
                     </ng-template>
-                </ngx-datatable-column> -->
+                </ngx-datatable-column>
             </ngx-datatable>
         </div>
     </div>

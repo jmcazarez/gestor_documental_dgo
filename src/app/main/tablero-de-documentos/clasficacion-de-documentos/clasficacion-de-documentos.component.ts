@@ -132,8 +132,8 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         this.selectedLegislaturas = '';
         this.descargarDocumento();
         this.arrInformacion = this.menuService.tipoInformacion;
-        // this.documento.fechaCarga = this.datePipe.transform(this.documento.fechaCarga, 'yyyy-MM-dd') ;
-        // this.documento.fechaCreacion = this.datePipe.transform(this.documento.fechaCreacion, 'yyyy-MM-dd');
+        this.documento.fechaCarga = this.datePipe.transform(this.documento.fechaCarga, 'dd/MM/yyyy') ;
+         this.documento.fechaCreacion = this.datePipe.transform(this.documento.fechaCreacion, 'dd/MM/yyyy');
         this.documento.version = parseFloat(this.documento.version).toFixed(1);
         if (!this.documento.iniciativas) {
             if (this.documento.metacatalogos) {

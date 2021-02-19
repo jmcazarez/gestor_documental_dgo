@@ -94,7 +94,7 @@
                     [matChipInputAddOnBlur]="addOnBlur2" (matChipInputTokenEnd)="agregarTema($event)" disabled>
             </mat-chip-list>
         </mat-form-field>
-        <mat-form-field class="example-chip-list" *ngIf="iniciativa.estatus==='Turnado de iniciativa a comisión'">
+        <mat-form-field class="example-chip-list" *ngIf="iniciativa.estatus==='Turnar iniciativa a comisión'">
             <mat-label>Clasificación de iniciativa</mat-label>
             <mat-chip-list #chipList3 aria-label="Selección de clasificaciones">
                 <mat-chip *ngFor="let clasificacion of clasificaciones" [selectable]="selectable3"
@@ -111,7 +111,7 @@
                 y el máximo son 100 </mat-error>
         </mat-form-field>
 
-        <div fxLayout="row" fxLayoutAlign="start center" *ngIf="iniciativa.estatus==='Turnado de iniciativa a comisión'"
+        <div fxLayout="row" fxLayoutAlign="start center" *ngIf="iniciativa.estatus==='Turnar iniciativa a comisión'"
             fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="100">
                 <mat-label>Comisión</mat-label>
@@ -172,10 +172,10 @@
             <mat-error>La hora del registro no es valida ej. 01:00</mat-error>
         </mat-form-field>
 
-        <div *ngIf="iniciativa.estatus!=='Turnado de iniciativa a comisión'" fxLayout="row" fxLayoutAlign="center" fxFlex="1 0 auto">
-            <mat-label>Oficio de envío de informe</mat-label>
+        <div *ngIf="iniciativa.estatus!=='Turnar iniciativa a comisión'" fxLayout="row" fxLayoutAlign="center" fxFlex="1 0 auto">
+            <mat-label>Oficio de envio de informe</mat-label>
         </div>
-        <div *ngIf="iniciativa.estatus!=='Turnado de iniciativa a comisión'" fxLayout="row" fxLayoutAlign="center" fxFlex="1 0 auto">
+        <div *ngIf="iniciativa.estatus!=='Turnar iniciativa a comisión'" fxLayout="row" fxLayoutAlign="center" fxFlex="1 0 auto">
 
             <section fxLayoutAlign="center">
                 <button color="warn" (click)="addOficio()" mat-raised-button color="warn">
@@ -187,13 +187,13 @@
                
         </div>
 
-        <div *ngIf="iniciativa.estatus!=='Turnado de iniciativa a comisión'" fxLayout="row" fxLayoutAlign="center" fxFlex="1 0 auto">
+        <div *ngIf="iniciativa.estatus!=='Turnar iniciativa a comisión'" fxLayout="row" fxLayoutAlign="center" fxFlex="1 0 auto">
             <mat-label class="example-margin"  (change)="changeOficio()" >{{fileOficioName}} </mat-label>
         </div>
-        <div *ngIf="iniciativa.estatus!=='Turnado de iniciativa a comisión'" fxLayout="row" fxLayoutAlign="center" fxFlex="1 0 auto">
-            <mat-label>Informe de resultados a revisión de la cuenta pública</mat-label>
+        <div *ngIf="iniciativa.estatus!=='Turnar iniciativa a comisión'" fxLayout="row" fxLayoutAlign="center" fxFlex="1 0 auto">
+            <mat-label>Informe de resultados a revisión de la cuenta publica</mat-label>
         </div>
-        <div *ngIf="iniciativa.estatus!=='Turnado de iniciativa a comisión'" fxLayout="row" fxLayoutAlign="center" fxFlex="1 0 auto">
+        <div *ngIf="iniciativa.estatus!=='Turnar iniciativa a comisión'" fxLayout="row" fxLayoutAlign="center" fxFlex="1 0 auto">
             <section fxLayoutAlign="center">
                 <button color="warn" (click)="addInforme()"  mat-raised-button color="warn">
                    Anexar documento <mat-icon>add</mat-icon>
@@ -203,7 +203,7 @@
                 accept="application/pdf" style="display:none;" />
                   
         </div>
-        <div *ngIf="iniciativa.estatus!=='Turnado de iniciativa a comisión'" fxLayout="row" fxLayoutAlign="center" fxFlex="1 0 auto">
+        <div *ngIf="iniciativa.estatus!=='Turnar iniciativa a comisión'" fxLayout="row" fxLayoutAlign="center" fxFlex="1 0 auto">
             <mat-label class="example-margin" (change)="changeInforme()">{{fileInformeName}} </mat-label>
         </div>
     </form>
@@ -216,10 +216,10 @@
 
     <!--  <button mat-raised-button color="warn" (click)="generaReport()">Documento</button>-->
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
-    <button *ngIf="iniciativa.estatus ==='Turnado de iniciativa a comisión'"
+    <button *ngIf="iniciativa.estatus ==='Turnar iniciativa a comisión'"
         [disabled]="form.invalid"
         mat-raised-button color="accent" (click)="guardar()">Guardar</button>
-         <button *ngIf="iniciativa.estatus!=='Turnado de iniciativa a comisión'"
+         <button *ngIf="iniciativa.estatus!=='Turnar iniciativa a comisión'"
         [disabled]="form.invalid  || fileInformeName.length === 0 || fileOficioName.length === 0"
         mat-raised-button color="accent" (click)="guardar()">Guardar</button>
   <!-- <button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->

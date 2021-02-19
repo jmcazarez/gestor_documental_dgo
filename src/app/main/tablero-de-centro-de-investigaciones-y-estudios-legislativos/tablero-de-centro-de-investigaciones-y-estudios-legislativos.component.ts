@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-//import { GuardarIniciativasComponent } from './guardar-iniciativas/guardar-iniciativas.component';
-//import { IniciativaTurnadaAComisionComponent } from './iniciativa-turnada-a-comision/iniciativa-turnada-a-comision.component';
+import { RecepcionDeIniciativasComponent } from './recepcion-de-iniciativas/recepcion-de-iniciativas.component';
 import { IniciativasModel } from 'models/iniciativas.models';
 import { IniciativasService } from 'services/iniciativas.service';
 import { MenuService } from 'services/menu.service';
@@ -21,6 +20,7 @@ import * as moment from 'moment';
 })
 
 export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent implements OnInit {
+    valueBuscador: string;
     filterName: string;
     fileUrl: any;
     loadingIndicator: boolean;
@@ -116,7 +116,7 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
                         }else{
                             clasificaciones = [];
                         }
-                        if(ini.estatus === 'Turnado de iniciativa a CIEL'){
+                        if(ini.estatus === 'Turnar iniciativa a CIEL'){
                           pendiente = 'Pendiente';
                         }else{
                           pendiente = 'Turnada a dictamen'
@@ -135,7 +135,7 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
                           fechaRecepcion = moment(ini.fechaRecepcion).format('YYYY-MM-DD');
                         }
 
-                        if(ini.estatus == 'Turnado de iniciativa a CIEL' || ini.estatus === 'Turnada a dictamen'){
+                        if(ini.estatus == 'Turnar iniciativa a CIEL' || ini.estatus === 'Turnada a dictamen'){
                           iniciativasTemp.push({
                               id: ini.id,
                               autores: ini.autores,
@@ -153,7 +153,8 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
                               fechaIniciativaText: this.datePipe.transform(ini.fechaIniciativa, 'dd-MM-yyyy'),
                               fechaCreacionText: this.datePipe.transform(ini.fechaCreacion, 'dd-MM-yyyy'),
                               actasSesion: ini.actasSesion,
-                              comisiones: ini.comisiones + ' ' + temas,
+                              comisiones: ini.comisiones,
+                              asunto: ini.comisiones.descripcion + ', ' + temas,
                               fechaRecepcion: fechaRecepcion,
                               receptor: receptor
                         });
@@ -171,12 +172,21 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
         });
     }
 
-    editar(iniciativa: IniciativasModel): void {
+    turnarIniciativaDictamen(iniciativa: IniciativasModel): void {
+        this.valueBuscador = '';
+        // Abrimos modal de guardar perfil
+        if (iniciativa.estatus == 'Turnada a dictamen' || iniciativa.estatus == 'Turnar iniciativa a CIEL' || iniciativa.estatus == 'Pendiente') {
+            const dialogRef = this.dialog.open(RecepcionDeIniciativasComponent, {
+                width: '60%',
+                height: '80%',
+                disableClose: true,
+                data: iniciativa,
+            });
 
-    }
-
-    iniciativaTurnada(iniciativa: IniciativasModel): void {
-
+            dialogRef.afterClosed().subscribe(result => {
+                this.obtenerIniciativas();
+            });
+        }
     }
 
     eliminarIniciativa(row): void {
@@ -205,11 +215,6 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
 
             }
         });
-    }
-
-
-    consultarDcumento(iniciativa: IniciativasModel): void {
-
     }
 
     filterDatatable(value): void {

@@ -309,7 +309,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 horaSesion: [{ value: '', disabled: false }, [Validators.required]],
             });
         }
-        if (this.iniciativa.estatus === 'Turnado de iniciativa a comisión') {
+        if (this.iniciativa.estatus === 'Turnar iniciativa a comisión') {
             validatos = [
                 Validators.required
             ];
@@ -852,6 +852,9 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     }
 
     async generaReport(): Promise<string> {
+        //Seteamos la libreria de moment en español.
+        moment.locale('es');
+
         return new Promise(async (resolve) => {
             console.log('reporte');
 
@@ -880,7 +883,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             let idFirmasPorEtapas = parametrosSSP004.filter((d) => d['cParametroAdministrado'] === 'SSP-004-Firmas');
             console.log(idFirmasPorEtapas);
-            if (this.iniciativa.estatus === 'Turnado de iniciativa a comisión') {
+            if (this.iniciativa.estatus === 'Turnar iniciativa a comisión') {
                 idPuesto = parametrosSSP004.filter((d) => d['cParametroAdministrado'] === 'SSP-004-Iniciativa-Puesto');
             } else {
                 idPuesto = parametrosSSP004.filter((d) => d['cParametroAdministrado'] === 'SSP-004-EASE-Puesto');
@@ -892,7 +895,9 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             let puestoSecretario = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === puestoSecretarioGeneral[0].cValor);
             let tipoIniciativa = this.arrTipo.filter((d) => d['id'] === this.selectTipo);
-            let comision = this.comisiones.filter((d) => d['id'] === this.selectTipo);
+            let comision: any = this.comisiones.filter(d => d.id === this.selectedComision);
+            console.log('comision');
+            console.log(comision);
             //console.log(this.arrMesas);
             let mesa_directiva: any = this.arrMesas.filter(meta => meta.legislatura.id === this.selectedLegislatura);
             console.log(mesa_directiva[0].id);
@@ -901,7 +906,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             console.log('detalleMesa');
             console.log(detalle_mesa);
             let tipoSesion = this.selectedSesion;
-            let fechaSesion = moment(this.form.get('fechaSesion').value).format('DD-MM-YYYY');
+            let fechaSesion = moment(this.form.get('fechaSesion').value).format('LL');
             let tipoDocumento = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Tipo-de-Documento');
             let tipoExpediente = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Tipo-de-Expediente');
             let tipoInformacion = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Tipo-de-Informacion');
@@ -935,7 +940,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 alignment: "left",
                 margin: [0, 10, 0, 0],
             });
-            if (this.iniciativa.estatus === 'Turnado de iniciativa a comisión') {
+            if (this.iniciativa.estatus === 'Turnar iniciativa a comisión') {
                 presente.push({
                     text: "Director del Centro de Investigación y Estudios Legislativos",
                     fontSize: 14,
@@ -944,33 +949,37 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 });
             } else {
                 presente.push({
-                    text: "Auditor Superior del Estado de Durango PRESENTE",
+                    text: "Auditor Superior del Estado de Durango",
                     fontSize: 14,
                     bold: true,
                     alignment: "left",
                 });
-
+                presente.push({
+                    text: "PRESENTE",
+                    fontSize: 14,
+                    bold: true,
+                    alignment: "left",
+                })
+                
             }
 
-            presente.push({
-                text: "H. Congreso del Estado",
-                fontSize: 14,
-                bold: true,
-                alignment: "left",
-            });
-            if (this.iniciativa.estatus === 'Turnado de iniciativa a comisión') {
+     
+            if (this.iniciativa.estatus === 'Turnar iniciativa a comisión') {
+            //verificamos si es uno o varios autores.
+            //console.log(this.autores.length);
+            if(this.autores.length <= 1){
                 presente.push({
                     text:
                         [
-                            'Por instrucciones del ',
-                            { text: detalle_mesa[0].presidentes[0].nombre, bold: true },
+                            'Por instrucciones del C. ', 
+                            { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
                             'presidente de la mesa directiva, en sesión',
                             { text: tipoSesion, bold: true },
                             ' verificada el ',
                             { text: fechaSesion, bold: true },
-                            ' se acordó turnar a la comisión de',
-                            { text: comision, bold: true },
-                            ', iniciativa, presentada por ',
+                            ' se acordó turnar a la comisión de ',
+                            { text: comision[0].descripcion, bold: true },
+                            ', iniciativa, presentada por el C. ',
                             { text: cAutores, bold: true },
                             ', que contiene ',
                             { text: cTemas, bold: true }
@@ -980,29 +989,21 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     alignment: "justify",
                     margin: [0, 50, 5, 5],
                 });
-
-                presente.push({
-                    text: "ATENTAMENTE",
-                    fontSize: 12,
-                    bold: true,
-                    alignment: "center",
-                    margin: [0, 120, 0, 0],
-                });
-            } else {
+            }else{
                 presente.push({
                     text:
                         [
-                            'Por instrucciones del ',
-                            { text: detalle_mesa[0].presidentes[0].nombre, bold: true },
+                            'Por instrucciones del C. ', 
+                            { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
                             'presidente de la mesa directiva, en sesión',
                             { text: tipoSesion, bold: true },
                             ' verificada el ',
                             { text: fechaSesion, bold: true },
-                            ' se acordó turnar a la Entidad de',
-                            { text: comision, bold: true },
-                            ', Auditoria Superior del Estado de Durango, Cuenta pública, presentada por el cc. ',
+                            ' se acordó turnar a la comisión de ',
+                            { text: comision[0].descripcion, bold: true },
+                            ', iniciativa, presentada por los CC. ',
                             { text: cAutores, bold: true },
-                            ', Dgo., que contiene ',
+                            ', que contiene ',
                             { text: cTemas, bold: true }
                         ],
                     fontSize: 12,
@@ -1010,20 +1011,13 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     alignment: "justify",
                     margin: [0, 50, 5, 5],
                 });
-
-                presente.push({
-                    text: "ATENTAMENTE",
-                    fontSize: 12,
-                    bold: true,
-                    alignment: "center",
-                    margin: [0, 120, 0, 0],
-                });
             }
             presente.push({
                 text: "SUFRAGIO EFECTTIVO, NO REELECCIÒN",
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
+                margin: [0, 50 , 0, 0],
             });
 
             presente.push({
@@ -1105,6 +1099,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             await this.upload(base64, 'SSP 04.pdf');
             await this.guardarDocumento(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
             resolve('ok');
+        }
         });
     }
 

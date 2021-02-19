@@ -79,6 +79,7 @@ import { TableroDeInventarioFisicoModule } from './main/tablero-de-inventario-fi
 import { GuardarInventarioFisicoModule } from './main/tablero-de-inventario-fisico/guardar-inventario-fisico/guardar-inventario-fisico.module';
 import { IniciativaTurnadaAComisionModule } from './main/tablero-de-iniciativas/iniciativa-turnada-a-comision/iniciativa-turnada-a-comision.module';
 import { TableroDeCentroDeInvestigacionesYEstudiosLegislativosModule } from './main/tablero-de-centro-de-investigaciones-y-estudios-legislativos/tablero-de-centro-de-investigaciones-y-estudios-legislativos.module';
+import { RecepcionDeIniciativasModule } from './main/tablero-de-centro-de-investigaciones-y-estudios-legislativos/recepcion-de-iniciativas/recepcion-de-iniciativas.module';
 
 const appRoutes: Routes = [
     {
@@ -179,7 +180,8 @@ const appRoutes: Routes = [
         TableroDeInventarioFisicoModule,
         GuardarInventarioFisicoModule,
         IniciativaTurnadaAComisionModule,
-        TableroDeCentroDeInvestigacionesYEstudiosLegislativosModule
+        TableroDeCentroDeInvestigacionesYEstudiosLegislativosModule,
+        RecepcionDeIniciativasModule
     ],             
     bootstrap   : [
         AppComponent
