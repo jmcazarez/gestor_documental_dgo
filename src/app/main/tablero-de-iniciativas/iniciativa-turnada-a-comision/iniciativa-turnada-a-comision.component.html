@@ -106,9 +106,8 @@
                     [matChipInputFor]="chipList3" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                     [matChipInputAddOnBlur]="addOnBlur3" (matChipInputTokenEnd)="agregarClasificacion($event)">
             </mat-chip-list>
-            <mat-error *ngIf="form.get('clasificaciones').hasError('required')">El nombre la comsión es requerido</mat-error>
-            <mat-error *ngIf="form.get('clasificaciones').hasError('minlength') || form.get('clasificaciones').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
-                y el máximo son 100 </mat-error>
+            <p *ngIf="this.errorLargo">Valor invalido, el mínimo de caracteres es 3
+                y el máximo son 100 </p>
         </mat-form-field>
 
         <div fxLayout="row" fxLayoutAlign="start center" *ngIf="iniciativa.estatus==='Turnar iniciativa a comisión'"
@@ -217,9 +216,9 @@
     <!--  <button mat-raised-button color="warn" (click)="generaReport()">Documento</button>-->
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
     <button *ngIf="iniciativa.estatus ==='Turnar iniciativa a comisión'"
-        [disabled]="form.invalid"
+        [disabled]="form.invalid || this.errorLargo"
         mat-raised-button color="accent" (click)="guardar()">Guardar</button>
-         <button *ngIf="iniciativa.estatus!=='Turnar iniciativa a comisión'"
+        <button *ngIf="iniciativa.estatus!=='Turnar iniciativa a comisión'"
         [disabled]="form.invalid  || fileInformeName.length === 0 || fileOficioName.length === 0"
         mat-raised-button color="accent" (click)="guardar()">Guardar</button>
   <!-- <button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->

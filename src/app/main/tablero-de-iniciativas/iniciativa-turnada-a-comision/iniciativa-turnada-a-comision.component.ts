@@ -108,6 +108,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     selectedSesion: any;
     imageBase64: any;
     documentos: DocumentosModel = new DocumentosModel();
+    validarLargoClasificacion: number = 0;
+    errorLargo: boolean = false;
 
     constructor(
         private spinner: NgxSpinnerService,
@@ -231,6 +233,12 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.iniciativa.fechaCreacion = ano + "-" + mes + "-" + dia;
         }
 
+        if (this.iniciativa.estatus === 'Turnar iniciativa a comisión') {
+            validatos = [
+                Validators.required
+            ];
+        }
+
         if (this.iniciativa.actasSesion[0] !== undefined) {
             console.log('haycomision');
             this.iniciativa.actasSesion[0].fechaSesion =
@@ -309,16 +317,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 horaSesion: [{ value: '', disabled: false }, [Validators.required]],
             });
         }
-        if (this.iniciativa.estatus === 'Turnar iniciativa a comisión') {
-            validatos = [
-                Validators.required
-            ];
-
-        }
-
-
-
-
     }
 
     async guardar(): Promise<void> {
@@ -596,10 +594,26 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     agregarClasificacion(event: MatChipInputEvent): void {
         const input = event.input;
         const value = event.value;
+        this.validarLargoClasificacion = 0;
+        let i = 0;
 
         if ((value || "").trim()) {
             this.clasificaciones.push({ name: value.trim() });
         }
+
+        while(i<=this.clasificaciones.length-1){
+            this.validarLargoClasificacion = this.validarLargoClasificacion + this.clasificaciones[i].name.length;
+            i++;
+        }
+
+        if(this.validarLargoClasificacion < 3 || this.validarLargoClasificacion > 100){
+            this.errorLargo = true;
+        }else{
+            this.errorLargo = false;
+        }
+
+        console.log(this.validarLargoClasificacion)
+        console.log(this.errorLargo);
 
         // Reset the input value
         if (input) {
@@ -874,7 +888,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             if (mes < 10) {
                 mes = '0' + mes; // agrega cero si el menor de 10
             }
-            const fechaActual = dia + '/' + mes + '/' + anio;
+            const fechaActual = moment().format('DD/MM/YYYY');
             let puestoSecretarioGeneral: any[];
             let legislaturas = await this.obtenerLegislatura();
             let parametrosSSP001 = await this.obtenerParametros('SSP-001');
@@ -907,6 +921,12 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             console.log(detalle_mesa);
             let tipoSesion = this.selectedSesion;
             let fechaSesion = moment(this.form.get('fechaSesion').value).format('LL');
+            let diaSesion = moment(this.form.get('fechaSesion').value).format('DD');
+            console.log(diaSesion);
+            let mesSesion = moment(this.form.get('fechaSesion').value).format('MMMM');
+            console.log(mesSesion);
+            let anioSesion = moment(this.form.get('fechaSesion').value).format('YYYY');
+            console.log(anioSesion);
             let tipoDocumento = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Tipo-de-Documento');
             let tipoExpediente = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Tipo-de-Expediente');
             let tipoInformacion = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Tipo-de-Informacion');
@@ -975,10 +995,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                         [
                             'Por instrucciones del C. ', 
                             { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
-                            'presidente de la mesa directiva, en sesión ',
+                            ', presidente de la mesa directiva, en sesión ',
                             { text: tipoSesion, bold: true },
                             ' verificada el ',
-                            { text: fechaSesion, bold: true },
+                            { text: diaSesion + ' de ' + mesSesion + ' del año ' + anioSesion, bold: true },
                             ' se acordó turnar a la comisión de ',
                             { text: comision[0].descripcion, bold: true },
                             ', iniciativa, presentada por el C. ',
@@ -999,10 +1019,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                         [
                             'Por instrucciones del C. ', 
                             { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
-                            'presidente de la mesa directiva, en sesión ',
+                            ', presidente de la mesa directiva, en sesión ',
                             { text: tipoSesion, bold: true },
                             ' verificada el ',
-                            { text: fechaSesion, bold: true },
+                            { text: diaSesion + ' de ' + mesSesion + ' del año ' + anioSesion, bold: true },
                             ' se acordó turnar a la comisión de ',
                             { text: comision[0].descripcion, bold: true },
                             ', iniciativa, presentada por los CC. ',
@@ -1025,10 +1045,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             [
                                 'Por instrucciones del C. ', 
                                 { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
-                                'presidente de la mesa directiva, en sesión ',
+                                ', presidente de la mesa directiva, en sesión ',
                                 { text: tipoSesion, bold: true },
                                 ' verificada el ',
-                                { text: fechaSesion, bold: true },
+                                { text: diaSesion + ' de ' + mesSesion + ' del año ' + anioSesion, bold: true },
                                 ' se acordó turnar a la Entidad de Auditoria Superior del Estado de Durango, Cuenta pública, presentada por el C. ',
                                 { text: cAutores, bold: true },
                                 ', que contiene ',
@@ -1047,10 +1067,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             [
                                 'Por instrucciones del C. ', 
                                 { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
-                                'presidente de la mesa directiva, en sesión ',
+                                ', presidente de la mesa directiva, en sesión ',
                                 { text: tipoSesion, bold: true },
                                 ' verificada el ',
-                                { text: fechaSesion, bold: true },
+                                { text: diaSesion + ' de ' + mesSesion + ' del año ' + anioSesion, bold: true },
                                 ' se acordó turnar a la Entidad de Auditoria Superior del Estado de Durango, Cuenta pública, presentada por los CC. ',
                                 { text: cAutores, bold: true },
                                 ', que contiene ',

@@ -91,11 +91,11 @@
                    Agregar documento <mat-icon>add</mat-icon>
                 </button>
             </section>
-            <input type="file" #fileInput id="fileUpload" name="fileUpload" multiple="multiple" accept="application/pdf" style="display:none;" />
-        </div>
+            </div>
     </form>
 </div>
-
+<input type="file" #fileInput id="fileUpload" name="fileUpload" multiple="multiple" accept="application/pdf" style="visibility:hidden" />
+       
 <mat-dialog-actions align="end" class="buttons">
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
     <button [disabled]="form.invalid || fileName.length === 0" mat-raised-button color="accent" (click)="guardar()">Siguiente</button>
