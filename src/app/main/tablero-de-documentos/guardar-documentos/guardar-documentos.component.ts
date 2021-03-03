@@ -96,7 +96,13 @@ export class GuardarDocumentosComponent implements OnInit {
         } else {
             // Seteamos la fecha de carga con la fecha actual
             this.documentos.fechaCarga = ano + '-' + mes + '-' + dia;
+            this.documentos.bActivo = true;
+            if(this.documentos.tipo_de_documento){
+                this.tipoDocumento = this.documentos.tipo_de_documento;
+                this.selectTipoDocument = this.documentos.tipo_de_documento;
+            }
         }
+        
         for (const documentosAgregar of this.menu.tipoDocumentos) {
 
             // Si tiene permisos de agregar estos documentos los guardamos en una array
@@ -109,6 +115,8 @@ export class GuardarDocumentosComponent implements OnInit {
 
 
         }
+        console.log(this.documentos);
+        console.log(this.arrTipoDocumentos);
         if (!this.documentos.bActivo) {
             this.documentos.bActivo = false;
         }
@@ -160,14 +168,20 @@ export class GuardarDocumentosComponent implements OnInit {
         this.documentos.bActivo = this.form.get('estatus').value;
         this.documentos.cNombreDocumento = this.form.get('nombreDocumento').value;
 
-
-        if (this.cambioFecha) {
-            this.documentos.fechaCreacion = this.form.get('fechaCreacion').value;
-        } else {
-            this.documentos.fechaCreacion = this.form.get('fechaCreacion').value + 'T16:00:00.000Z';
+        const fechaCreacion = new Date(this.form.get('fechaCreacion').value);
+        let mesCreacion: any = fechaCreacion.getMonth() + 1; // obteniendo mes
+        let diaCreacion: any = fechaCreacion.getDate(); // obteniendo dia      
+        const anoCreacion = fechaCreacion.getFullYear(); // obteniendo año
+        console.log(diaCreacion);
+        if (diaCreacion < 10) {
+            diaCreacion = '0' + diaCreacion; // agrega cero si el menor de 10
         }
+        if (mesCreacion < 10) {
+            mesCreacion = '0' + mesCreacion; // agrega cero si el menor de 10
+        }
+        this.documentos.fechaCreacion = anoCreacion + '-' + mesCreacion + '-' + diaCreacion + 'T16:00:00.000Z';
         this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
-
+        console.log(this.documentos);
 
         this.documentos.tipo_de_documento = this.selectTipoDocument;
         if (this.paginasInput.nativeElement.value > 0) {
@@ -204,10 +218,11 @@ export class GuardarDocumentosComponent implements OnInit {
 
                         this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
                             if (resp) {
-
+                                console.log('con version');
                                 this.documentos = resp.data;
                                 this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
                                 this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+                                console.log(this.documentos);
                                 this.spinner.hide();
                                 this.cerrar(this.documentos);
                             } else {
@@ -220,10 +235,13 @@ export class GuardarDocumentosComponent implements OnInit {
                             Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
                         });
                     } else {
+                        console.log('sin version');
+                        console.log(this.documentos);
                         this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
                             if (resp) {
 
                                 this.documentos = resp.data;
+                                console.log(this.documentos);
                                 this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
                                 this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
                                 this.spinner.hide();
@@ -235,7 +253,7 @@ export class GuardarDocumentosComponent implements OnInit {
                         }, err => {
                             this.spinner.hide();
                             console.log(err);
-                            Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                            Swal.fire('Error', 'Ocurrió un error al guardar.' + err, 'error');
                         });
                     }
                     // Seteamos version

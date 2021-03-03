@@ -38,7 +38,13 @@ const routes: Routes = [
         FuseSharedModule,
         MatDialogModule,
         MatCheckboxModule,
-        NgxDatatableModule,
+             NgxDatatableModule.forRoot({
+            messages: {
+                emptyMessage: 'No hay datos disponibles', // Message to show when array is presented, but contains no values
+                totalMessage: 'total', // Footer total message
+                selectedMessage: 'selected' // Footer selected message
+            }
+        }),
         MatTabsModule,
         MatSlideToggleModule
     ]

@@ -57,6 +57,7 @@ export class DocumentosService {
 
         documento.fechaCarga = documento.fechaCarga;
         documento.fechaCreacion = documento.fechaCreacion;
+        console.log(this.baseUrl + this.urlDocumentos + '/' + documento.id);
         return this.http.put(this.baseUrl + this.urlDocumentos + '/' + documento.id, documento, this.httpOptions);
     }
 

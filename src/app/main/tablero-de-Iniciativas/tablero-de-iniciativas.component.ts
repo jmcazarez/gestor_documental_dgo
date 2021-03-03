@@ -147,7 +147,9 @@ export class TableroDeIniciativasComponent implements OnInit {
                             actasSesion: ini.actasSesion,
                             comisiones: ini.comisiones,
                             anexosTipoCuentaPublica: ini.anexosTipoCuentaPublica,
-                            anexosTipoIniciativa: ini.anexosTipoIniciativa
+                            anexosTipoIniciativa: ini.anexosTipoIniciativa,
+                            oficioEnvioDeInforme: ini.oficioEnvioDeInforme,
+                            informeDeResultadosRevision: ini.informeDeResultadosRevision
                         });
                     }
                 }

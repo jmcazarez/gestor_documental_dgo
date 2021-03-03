@@ -44,7 +44,10 @@
             <button *ngIf="this.documento.iniciativas" mat-raised-button color="warn" [matMenuTriggerFor]="menu">Documento</button>
 
             <mat-menu #menu="matMenu">
-                <button mat-menu-item>
+                <button [disabled]="this.documento.formulario == 'Iniciativas' || 
+                this.documento.formulario == 'Turnar cuenta pública a EASE' || 
+                this.documento.formulario == 'Turnada a dictamen' ||
+                this.documento.formulario == 'Turnar dictamen a Secretaria General'" mat-menu-item>
                   <mat-icon>verified_user</mat-icon>
                   <span>Autorizar</span>
                 </button>
@@ -52,7 +55,10 @@
                   <mat-icon>cloud_download</mat-icon>
                   <span>Descargar</span>
                 </button>
-                <button mat-menu-item (click)="turnarIniciativa()">
+                <button [disabled]="this.documento.formulario == 'Iniciativas' || 
+                this.documento.formulario == 'Turnar cuenta pública a EASE' || 
+                this.documento.formulario == 'Turnada a dictamen' ||
+                this.documento.formulario == 'Turnar dictamen a Secretaria General'" mat-menu-item (click)="turnarIniciativa()">
                   <mat-icon>keyboard_tab</mat-icon>
                   <span>Turnar</span>
                 </button>
@@ -89,6 +95,14 @@
         <div class="contentInfo border-button">
             <form class="mat-card " fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form" [formGroup]="form">
                 <h3>Información general</h3>
+                <div fxLayout="row" fxFlex="100">
+                    <div fxLayout="row" fxFlex="20">
+                        <p class="info">Id. Documento:</p>
+                    </div>
+                    <div fxLayout="row" fxFlex="80">
+                        <p>{{this.documento.id}}</p>
+                    </div>
+                </div>
                 <div fxLayout="row" fxFlex="100">
                     <div fxLayout="row" fxFlex="20">
                         <p class="info">Documento:</p>

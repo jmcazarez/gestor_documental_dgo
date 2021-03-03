@@ -36,6 +36,7 @@ import { ComisionesService } from 'services/comisiones.service';
 import { ActasSesionsService } from 'services/actas-sesions.service';
 import { AmazingTimePickerService } from 'amazing-time-picker';
 import * as moment from 'moment';
+import { GuardarDocumentosComponent } from '../../tablero-de-documentos/guardar-documentos/guardar-documentos.component';
 
 export interface Autores {
     name: string;
@@ -88,8 +89,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     visible = true;
     selectable = true;
     selectable2 = true;
+    selectable3 = true;
     removable = true;
     removable2 = true;
+    removable3 = true;
     addOnBlur = true;
     addOnBlur2 = true;
     addOnBlur3 = true;
@@ -110,6 +113,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     documentos: DocumentosModel = new DocumentosModel();
     validarLargoClasificacion: number = 0;
     errorLargo: boolean = false;
+    idDocumento: string = '';
+    files = [];
+    filesTemp = [];
+    cargando: boolean;
 
     constructor(
         private spinner: NgxSpinnerService,
@@ -139,6 +146,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         this.obtenerLegislatura();
         this.obtenerMesaDirectiva();
         this.obtenerDetalleMesa();
+        this.obtenerDocumento();
         console.log(this.iniciativa.formatosTipoIniciativa);
         this.tipoSesion.push({
             id: '001',
@@ -177,7 +185,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         if (this.iniciativa.anexosTipoIniciativa === undefined) {
             this.iniciativa.anexosTipoIniciativa = [];
         }
-        if (this.iniciativa.comisiones === undefined) {
+        if (this.iniciativa.comisiones === undefined || this.iniciativa.comisiones === null) {
             this.iniciativa.comisiones = "";
         }
         if (this.iniciativa.clasificaciones === undefined) {
@@ -186,18 +194,17 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         let validatos = [
         ];
 
-        if (this.iniciativa.anexosTipoCuentaPublica !== undefined) {
-            if (this.iniciativa.anexosTipoCuentaPublica.length > 0) {
-                this.fileInformeName = this.iniciativa.anexosTipoCuentaPublica[0].name;
-                this.fileOficioName = this.iniciativa.anexosTipoCuentaPublica[1].name;
-            } else {
-                this.fileInformeName = "";
-                this.fileOficioName = "";
-            }
+        if (this.iniciativa.oficioEnvioDeInforme !== undefined) {
+            this.fileOficioName = this.iniciativa.oficioEnvioDeInforme.cNombreDocumento;
         } else {
-            this.iniciativa.anexosTipoCuentaPublica = [];
-            this.fileInformeName = "";
             this.fileOficioName = "";
+
+        }
+        if (this.iniciativa.informeDeResultadosRevision !== undefined) {
+            this.fileInformeName = this.iniciativa.informeDeResultadosRevision.cNombreDocumento;
+        } else {
+            this.fileInformeName = "";
+
         }
 
         const fecha = new Date(); // Fecha actual
@@ -347,7 +354,9 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         this.iniciativa.anexosTipoCuentaPublica = this.anexos;
 
         this.iniciativa.clasificaciones = this.clasificaciones;
+
         this.iniciativa.comisiones = this.selectedComision;
+
         legislatura = this.selectedLegislatura;
         tipoSesion = this.form.get('tipoSesion').value;;
         fechaSesion = moment(this.form.get('fechaSesion').value).format('YYYY-MM-DD');
@@ -601,14 +610,14 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.clasificaciones.push({ name: value.trim() });
         }
 
-        while(i<=this.clasificaciones.length-1){
+        while (i <= this.clasificaciones.length - 1) {
             this.validarLargoClasificacion = this.validarLargoClasificacion + this.clasificaciones[i].name.length;
             i++;
         }
 
-        if(this.validarLargoClasificacion < 3 || this.validarLargoClasificacion > 100){
+        if (this.validarLargoClasificacion < 3 || this.validarLargoClasificacion > 100) {
             this.errorLargo = true;
-        }else{
+        } else {
             this.errorLargo = false;
         }
 
@@ -621,8 +630,9 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         }
     }
 
-    eliminarClasificacion(clasificaciones: Clasificaciones): void {
-        const index = this.clasificaciones.indexOf(clasificaciones);
+    eliminarClasificacion(clasificacion: Clasificaciones): void {
+        const index = this.clasificaciones.indexOf(clasificacion);
+
 
         if (index >= 0) {
             this.clasificaciones.splice(index, 1);
@@ -891,6 +901,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             const fechaActual = moment().format('DD/MM/YYYY');
             let puestoSecretarioGeneral: any[];
             let legislaturas = await this.obtenerLegislatura();
+
             let parametrosSSP001 = await this.obtenerParametros('SSP-001');
             let parametrosSSP004 = await this.obtenerParametros('SSP-004');
             puestoSecretarioGeneral = await this.obtenerParametros('Id-Puesto-Secretario-General');
@@ -914,6 +925,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             console.log(comision);
             //console.log(this.arrMesas);
             let mesa_directiva: any = this.arrMesas.filter(meta => meta.legislatura.id === this.selectedLegislatura);
+            let legislaturaDoc: any = this.legislatura.filter(meta => meta.id === this.selectedLegislatura);
             console.log(mesa_directiva[0].id);
             console.log(this.arrDetalleMesas);
             let detalle_mesa: any = this.arrDetalleMesas.filter(meta => meta.mesas_directiva === mesa_directiva[0].id);
@@ -962,12 +974,24 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             });
             if (this.iniciativa.estatus === 'Turnar iniciativa a comisión' || this.iniciativa.estatus === '') {
                 presente.push({
-                    text: "Director del Centro de Investigación y Estudios Legislativos",
+                    text: "Director del Centro de Investigación y",
                     fontSize: 14,
                     bold: true,
                     alignment: "left",
                 });
-            } else {
+                presente.push({
+                    text: "Estudios Legislativos",
+                    fontSize: 14,
+                    bold: true,
+                    alignment: "left",
+                });
+                presente.push({
+                    text: "PRESENTE",
+                    fontSize: 14,
+                    bold: true,
+                    alignment: "left",
+                })
+            } if (this.iniciativa.estatus === 'Turnar cuenta pública a EASE') {
                 presente.push({
                     text: "Auditor Superior del Estado de Durango",
                     fontSize: 14,
@@ -980,39 +1004,54 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     bold: true,
                     alignment: "left",
                 })
-                
-
-                
+            } if (this.iniciativa.estatus === 'Turnar dictamen a Secretaria General'){
+                presente.push({
+                    text: "SECRETARIO GENERAL DEL H.",
+                    fontSize: 14,
+                    bold: true,
+                    alignment: "left",
+                });
+                presente.push({
+                    text: "CONGRESO DEL ESTADO",
+                    fontSize: 14,
+                    bold: true,
+                    alignment: "left",
+                });
+                presente.push({
+                    text: "PRESENTE",
+                    fontSize: 14,
+                    bold: true,
+                    alignment: "left",
+                })
             }
 
-     
             if (this.iniciativa.estatus === 'Turnar iniciativa a comisión') {
-            //verificamos si es uno o varios autores.
-            //console.log(this.autores.length);
-            if(this.autores.length <= 1){
-                presente.push({
-                    text:
-                        [
-                            'Por instrucciones del C. ', 
-                            { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
-                            ', presidente de la mesa directiva, en sesión ',
-                            { text: tipoSesion, bold: true },
-                            ' verificada el ',
-                            { text: diaSesion + ' de ' + mesSesion + ' del año ' + anioSesion, bold: true },
-                            ' se acordó turnar a la comisión de ',
-                            { text: comision[0].descripcion, bold: true },
-                            ', iniciativa, presentada por el C. ',
-                            { text: cAutores, bold: true },
-                            ', que contiene ',
-                            { text: cTemas, bold: true },
-                            '.'
-                        ],
-                    fontSize: 12,
-                    bold: false,
-                    alignment: "justify",
-                    margin: [0, 50, 5, 5],
-                });
-            }if(this.autores.length >= 2){
+                //verificamos si es uno o varios autores.
+                //console.log(this.autores.length);
+                if (this.autores.length <= 1) {
+                    presente.push({
+                        text:
+                            [
+                                'Por instrucciones del C. ',
+                                { text: detalle_mesa[0].presidentes[0].nombre, bold: true },
+                                ', presidente de la mesa directiva, en sesión ',
+                                { text: tipoSesion, bold: true },
+                                ' verificada el ',
+                                { text: diaSesion + ' de ' + mesSesion + ' del año ' + anioSesion, bold: true },
+                                ' se acordó turnar a la comisión de ',
+                                { text: comision[0].descripcion, bold: true },
+                                ', iniciativa, presentada por el C. ',
+                                { text: cAutores, bold: true },
+                                ', de la coalicción parlamentaria "Cuarta transformación", que contiene ',
+                                { text: cTemas, bold: true },
+                                '.'
+                            ],
+                        fontSize: 12,
+                        bold: false,
+                        alignment: "justify",
+                        margin: [0, 50, 5, 5],
+                    });
+                } if (this.autores.length >= 2) {
 
                 presente.push({
                     text:
@@ -1027,7 +1066,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             { text: comision[0].descripcion, bold: true },
                             ', iniciativa, presentada por los CC. ',
                             { text: cAutores, bold: true },
-                            ', que contiene ',
+                            ', de la coalicción parlamentaria "Cuarta transformación", que contiene ',
                             { text: cTemas, bold: true },
                             '.'
                         ],
@@ -1037,14 +1076,14 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     margin: [0, 50, 5, 5],
                 });
             }
-            }else{
+            }if(this.iniciativa.estatus === 'Turnar cuenta pública a EASE'){
                 console.log('turnada a ciel');
-                if(this.autores.length <= 1){
+                if (this.autores.length <= 1) {
                     presente.push({
                         text:
                             [
-                                'Por instrucciones del C. ', 
-                                { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
+                                'Por instrucciones del C. ',
+                                { text: detalle_mesa[0].presidentes[0].nombre, bold: true },
                                 ', presidente de la mesa directiva, en sesión ',
                                 { text: tipoSesion, bold: true },
                                 ' verificada el ',
@@ -1060,13 +1099,13 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                         alignment: "justify",
                         margin: [0, 50, 5, 5],
                     });
-                }if(this.autores.length >= 2){
-    
+                } if (this.autores.length >= 2) {
+
                     presente.push({
                         text:
                             [
-                                'Por instrucciones del C. ', 
-                                { text: detalle_mesa[0].presidentes[0].nombre, bold: true }, 
+                                'Por instrucciones del C. ',
+                                { text: detalle_mesa[0].presidentes[0].nombre, bold: true },
                                 ', presidente de la mesa directiva, en sesión ',
                                 { text: tipoSesion, bold: true },
                                 ' verificada el ',
@@ -1083,15 +1122,49 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                         margin: [0, 50, 5, 5],
                     });
                 }
+            }if(this.iniciativa.estatus === 'Turnar dictamen a Secretaria General'){
+                console.log('Turnar dictamen a Secretaria General');
+                if(this.autores.length <= 1){
+                    presente.push({
+                        text:
+                            [
+                                'Por instrucciones del presidente de la comisión ', 
+                                { text: comision[0].descripcion, bold: true },
+                                ', de este H. Congreso del Estado y con fundamento en lo dispuesto en la Ley Orgánica del Estado de Durango, me permito remitirle dictamen para su trámite legislativo el siguiente:',
+                            ],
+                        fontSize: 12,
+                        bold: false,
+                        alignment: "justify",
+                        margin: [0, 50, 5, 5],
+                    });
+                    presente.push({
+                        text:
+                            [
+                                { text: 'Dictamen: ', bold: true },
+                                'respecto de la iniciativa con proyecto de decreto, enviada por el o los ',
+                                { text: 'C. ', bold: true},
+                                { text: cAutores, bold: true },
+                                ' de la legislatura ',
+                                { text: legislaturaDoc[0].cLegislatura, bold: true },
+                                ' Legislatura del Congreso del Estado, que contiene ',
+                                { text: cTemas, bold: true },
+                                '.'
+                            ],
+                        fontSize: 12,
+                        bold: false,
+                        alignment: "justify",
+                        margin: [0, 10, 5, 5],
+                    });
+                }
             }
 
-            
+
             presente.push({
                 text: "SUFRAGIO EFECTTIVO, NO REELECCIÒN",
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
-                margin: [0,  100, 0, 0],
+                margin: [0, 100, 0, 0],
             });
 
             presente.push({
@@ -1117,7 +1190,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             });
 
 
-            const dd = {
+            const aa = {
                 header: {
                     columns: [
                         {
@@ -1167,11 +1240,89 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             // pdfMake.createPdf(dd).open();
 
-            const pdfDocGenerator = pdfMake.createPdf(dd);
+            let pdfDocGenerator = pdfMake.createPdf(aa);
             let base64 = await this.pdfBase64(pdfDocGenerator);
 
-            await this.upload(base64, 'SSP 04.pdf');
-            await this.guardarDocumento(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
+            if(this.iniciativa.estatus === 'Turnar iniciativa a comisión' || this.iniciativa.estatus === 'Turnar cuenta pública a EASE'){
+                await this.upload(base64, 'SSP 04.pdf');
+                await this.guardarDocumento(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
+            }if(this.iniciativa.estatus === 'Turnar dictamen a Secretaria General'){
+                console.log('documento ciel')
+                await this.upload(base64, 'Formato CIEL 08.pdf');
+                await this.guardarDocumentoCiel(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
+            }
+            
+            const dd = {
+                header: {
+                    columns: [
+                        {
+                            image: "data:image/jpeg;base64," + this.imageBase64,
+                            width: 120,
+                            margin: [20, 20, 5, 5],
+                        },
+                        {
+                            nodeName: "DIV",
+                            stack: [header],
+                        },
+                    ],
+                },
+                footer: {
+                    columns: [
+                        '',
+                        {
+                            alignment: 'right',
+                            text: 'Id. Documento: ' + this.idDocumento
+                        }
+                    ],
+                    margin: [10, 0]
+                },
+                pageOrientation: "portrait",
+                pageSize: "A4",
+                fontSize: 8,
+                pageMargins: [40, 100, 40, 50],
+                content: [presente],
+                styles: {
+                    header: {
+                        fontSize: 8,
+                        bold: true,
+                        margin: 0,
+                    },
+                    subheader: {
+                        fontSize: 8,
+                        margin: 0,
+                    },
+                    tableExample: {
+                        margin: 0,
+                    },
+                    tableOpacityExample: {
+                        margin: [0, 5, 0, 15],
+                        fillColor: "blue",
+                        fillOpacity: 0.3,
+                    },
+                    tableHeader: {
+                        bold: true,
+                        fontSize: 9,
+                        color: "black",
+                    },
+                },
+                defaultStyle: {
+                    // alignment: 'justify'
+                },
+            };
+
+            // pdfMake.createPdf(dd).open();
+
+            pdfDocGenerator = pdfMake.createPdf(dd);
+            base64 = await this.pdfBase64(pdfDocGenerator);
+
+            console.log('se ejecuto');
+            if(this.iniciativa.estatus === 'Turnar iniciativa a comisión' || this.iniciativa.estatus === 'Turnar cuenta pública a EASE'){
+                await this.upload(base64, 'SSP 04.pdf');
+                await this.guardarDocumento(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
+            }if(this.iniciativa.estatus === 'Turnar dictamen a Secretaria General'){
+                await this.upload(base64, 'Formato CIEL 08.pdf');
+                await this.guardarDocumentoCiel(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
+            }
             resolve('ok');
         });
     }
@@ -1267,14 +1418,26 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             if (this.iniciativa.formatosTipoIniciativa.length > 1) {
 
                 this.documentos.id = this.iniciativa.formatosTipoIniciativa[1].id
+                console.log('antes');
+                console.log(this.documentos.id);
+
+                if (this.idDocumento.length > 5) {
+                    console.log('despues');
+                    this.documentos.id = this.idDocumento;
+                    console.log(this.documentos.id);
+                }
                 this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
 
                     if (resp) {
                         this.documentos = resp.data;
+                        console.log('respuesta');
+                        console.log(this.documentos);
+                        this.idDocumento = resp.data._id;
+                        console.log(this.idDocumento);
                         this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
                         this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
-                        this.spinner.hide();
-                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.documentos.id];
+
+                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[1], this.documentos.id];
                         resolve(this.documentos.id);
                     } else {
                         this.spinner.hide();
@@ -1285,17 +1448,19 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     console.log(err);
                     Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
                 });
-            } else {
+            }else{
                 this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
 
                     if (resp) {
                         console.log('nuevo');
                         this.documentos = resp.data;
+                        console.log(this.documentos);
+                        this.idDocumento = resp.data._id;
                         this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
                         this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
-                        this.spinner.hide();
+
                         console.log(this.documentos.id);
-                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.documentos.id];
+                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[1], this.documentos.id];
                         // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
 
                         resolve(this.documentos.id);
@@ -1311,11 +1476,105 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 });
             }
         });
+    }
 
+    async guardarDocumentoCiel(tema: string, tipoDocumento: string, tipoExpediente: string, tipoInformacion: string, legislatura: any): Promise<string> {
+         return new Promise(async (resolve) => {
+            const fecha = new Date(); // Fecha actual
+            let mes: any = fecha.getMonth() + 1; // obteniendo mes
+            let dia: any = fecha.getDate(); // obteniendo dia
+
+            const ano = fecha.getFullYear(); // obteniendo año
+
+            if (dia < 10) {
+                dia = '0' + dia; // agrega cero si el menor de 10
+            }
+            if (mes < 10) {
+                mes = '0' + mes; // agrega cero si el menor de 10
+            }
+
+            const fechaActual = ano + '-' + mes + '-' + dia;
+            this.documentos.bActivo = true;
+            this.documentos.cNombreDocumento = 'Formato CIEL 08 de ' + tema;
+            this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+            this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
+            this.documentos.version = 1;
+            this.documentos.paginas = 1;
+            this.documentos.usuario = this.menu.usuario;
+            this.documentos.tipo_de_documento = tipoDocumento;
+            this.documentos.tipo_de_expediente = tipoExpediente;
+            this.documentos.visibilidade = tipoInformacion;
+
+            if (this.documentos.legislatura != legislatura.id) {
+                this.documentos.legislatura = legislatura.id;
+                this.documentos.folioExpediente = legislatura.cLegislatura + '-' + Number(legislatura.documentos + 1);
+            }
+            console.log(this.iniciativa.formatosTipoIniciativa);
+            if (this.iniciativa.formatosTipoIniciativa.length > 2) {
+
+                this.documentos.id = this.iniciativa.formatosTipoIniciativa[2].id
+                console.log('antes');
+                console.log(this.documentos.id);
+
+                if(this.idDocumento.length > 5){
+                    console.log('despues');
+                    this.documentos.id = this.idDocumento;
+                    console.log(this.documentos.id);
+                }
+                this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
+
+                    if (resp) {
+                        this.documentos = resp.data;
+                        console.log('respuesta');
+                        console.log(this.documentos);
+                        this.idDocumento = resp.data._id;
+                        console.log(this.idDocumento);
+                        this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                        this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+                        
+                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.documentos.id];
+                        resolve(this.documentos.id);
+                    } else {
+                        this.spinner.hide();
+                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                    }
+                }, (err: any) => {
+                    this.spinner.hide();
+                    console.log(err);
+                    Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
+                });
+            }else{
+                this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
+
+                    if (resp) {
+                        console.log('nuevo');
+                        this.documentos = resp.data;
+                        console.log(this.documentos);
+                        this.idDocumento = resp.data._id;
+                        this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                        this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+                        
+                        console.log(this.documentos.id);
+                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.documentos.id];
+                        // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
+
+                        resolve(this.documentos.id);
+                        // this.clasificarDocumento(this.documentos)
+                    } else {
+                        this.spinner.hide();
+                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                    }
+                }, (err: any) => {
+                    this.spinner.hide();
+                    console.log(err);
+                    Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
+                });
+            }
+        });
     }
 
     clasificarDocumento(): void {
-        if (this.iniciativa.formatosTipoIniciativa[1]) {
+        if (this.iniciativa.estatus == 'Turnar cuenta pública a EASE' || this.iniciativa.estatus == 'Turnar iniciativa a comisión') {
             this.spinner.show();
             const fecha = new Date(); // Fecha actual
             let mes: any = fecha.getMonth() + 1; // obteniendo mes
@@ -1404,10 +1663,97 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 console.log(err);
                 Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
             });
-        } else {
-            Swal.fire('Error', 'Ocurrió un error al generar el documento SSP 04.', 'error');
-        }
+        } if(this.iniciativa.estatus == 'Turnar dictamen a Secretaria General') {
+            this.spinner.show();
+            const fecha = new Date(); // Fecha actual
+            let mes: any = fecha.getMonth() + 1; // obteniendo mes
+            let dia: any = fecha.getDate(); // obteniendo dia
 
+            const ano = fecha.getFullYear(); // obteniendo año
+
+            if (dia < 10) {
+                dia = '0' + dia; // agrega cero si el menor de 10
+            }
+            if (mes < 10) {
+                mes = '0' + mes; // agrega cero si el menor de 10
+            }
+            const fechaActual = ano + '-' + mes + '-' + dia;
+            this.documentos.bActivo = true;
+
+            this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+            this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
+            let cAutores = '';
+            this.autores.forEach(element => {
+                if (cAutores === '') {
+                    cAutores = element.name;
+                } else {
+                    cAutores = cAutores + ', ' + element.name;
+                }
+
+            });
+
+            this.documentos = this.iniciativa.formatosTipoIniciativa[2];
+            console.log('turnada a secretaria general');
+            console.log(this.documentos);
+            this.documentos.metacatalogos = [
+
+                {
+                    "cDescripcionMetacatalogo": "Fecha",
+                    "bOligatorio": true,
+                    "cTipoMetacatalogo": "Fecha",
+                    "text": this.documentos.fechaCarga
+                },
+                {
+                    "cDescripcionMetacatalogo": "Documento",
+                    "bOligatorio": true,
+                    "cTipoMetacatalogo": "Texto",
+                    "text": cAutores
+                }
+            ]
+            this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
+                if (resp) {
+
+                    this.documentos = resp.data;
+                    this.documentos.iniciativas = true;
+                    this.documentos.iniciativa = this.iniciativa;
+                    if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
+                        this.documentos.estatus = 'Turnar iniciativa a CIEL';
+                    } else {
+                        this.documentos.estatus = 'Turnar dictamen a secretaría de servicios parlamentarios';
+                    }
+
+
+                    this.documentos.fechaCreacion = fechaActual;
+                    this.documentos.fechaCarga = fechaActual;
+
+                    this.spinner.hide();
+
+                    const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
+                        width: '100%',
+                        height: '90%',
+                        disableClose: true,
+                        data: this.documentos,
+
+                    });
+
+                    // tslint:disable-next-line: no-shadowed-variable
+                    dialogRef.afterClosed().subscribe(result => {
+                        console.log(result);
+                        if (result == '0') {
+                            this.cerrar('');
+                            // this.obtenerDocumentos();
+                        }
+                    });
+                } else {
+                    this.spinner.hide();
+                    Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                }
+            }, err => {
+                this.spinner.hide();
+                console.log(err);
+                Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+            });
+        } 
     }
 
     open() {
@@ -1429,4 +1775,401 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         console.log('change');
         this.cambioInforme = true;
     }
+
+    async cargaClasificacionDocumento(tipo: string): Promise<void> {
+
+        //Creamos nuevo modelo de documentos y asignamos parametros
+        this.documentos = new DocumentosModel();
+        let legislaturaFolio: any;
+        this.documentos.bActivo = true;
+        let parametrosSSP001 = await this.obtenerParametros("SSP-001");
+        let tipoDocumento = parametrosSSP001.filter(
+            (d) =>
+                d["cParametroAdministrado"] === "SSP-001-Tipo-de-Documento"
+        );
+        let tipoExpediente = parametrosSSP001.filter(
+            (d) =>
+                d["cParametroAdministrado"] === "SSP-001-Tipo-de-Expediente"
+        );
+        let tipoInformacion = parametrosSSP001.filter(
+            (d) =>
+                d["cParametroAdministrado"] ===
+                "SSP-001-Tipo-de-Informacion"
+        );
+       // this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
+       this.documentos.tipo_de_documento = '5f839b713ccdf563ac6ba096';
+        this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
+       
+        this.documentos.visibilidade = tipoInformacion[0]["cValor"];
+        this.documentos.iniciativa = this.iniciativa.id;
+        this.documentos.formulario = 'Turnar cuenta pública a EASE';
+        if (this.iniciativa.estatus == 'Turnar dictamen a Secretaria General') {
+            this.documentos.formulario = 'Turnar dictamen a Secretaria General';
+        }
+
+        legislaturaFolio = this.legislatura.filter(d => d.id === this.selectedLegislatura);
+        console.log(legislaturaFolio);
+        this.documentos.legislatura = legislaturaFolio[0].id;
+        this.documentos.folioExpediente = legislaturaFolio[0].cLegislatura + '-' + Number(legislaturaFolio[0].documentos + 1);
+        
+        const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
+            width: '60%',
+            height: '80%',
+            disableClose: true,
+            data: this.documentos,
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                if (result.documento) {
+                    this.clasificarDocAnex(result, tipo);
+                }
+            }
+        });
+    }
+
+
+    async clasificarDocAnex(result: any, tipo: string): Promise<void> {
+        this.spinner.show();
+        const fecha = new Date(); // Fecha actual
+        let mes: any = fecha.getMonth() + 1; // obteniendo mes
+        let dia: any = fecha.getDate(); // obteniendo dia
+
+        const anio = fecha.getFullYear(); // obteniendo año
+
+        if (dia < 10) {
+            dia = "0" + dia; // agrega cero si el menor de 10
+        }
+        if (mes < 10) {
+            mes = "0" + mes; // agrega cero si el menor de 10
+        }
+        const fechaActual = dia + "/" + mes + "/" + anio;
+        this.documentos.bActivo = true;
+        console.log(this.documentos);
+
+        this.documentos = result;
+        console.log(this.documentos);
+        let cAutores = "";
+        this.autores.forEach((element) => {
+            if (cAutores === "") {
+                cAutores = element.name;
+            } else {
+                cAutores = cAutores + ", " + element.name;
+            }
+        });
+        this.documentos.metacatalogos = [
+            {
+                cDescripcionMetacatalogo: "Fecha",
+                bOligatorio: true,
+                cTipoMetacatalogo: "Fecha",
+                text: this.documentos.fechaCarga,
+            },
+            {
+                cDescripcionMetacatalogo: "Documento",
+                bOligatorio: true,
+                cTipoMetacatalogo: "Texto",
+                text: cAutores,
+            },
+        ];
+
+        if (tipo === '2') {
+            this.documentos.iniciativaOficioEnvioDeInforme = this.iniciativa.id;
+        } else if (tipo === '3') {
+            this.documentos.iniciativaInformeDeResultadosRevision = this.iniciativa.id;
+        } else if (tipo === '1') {
+
+        }
+        console.log(this.documentos);
+        this.documentoService
+            .actualizarDocumentosSinVersion(this.documentos)
+            .subscribe(
+                (resp: any) => {
+                    if (resp.data) {
+                        console.log(resp.data);
+                        this.documentos = resp.data;
+                        // this.documentos.fechaCreacion = moment(this.documentos.fechaCreacion).format('DD-MM-YYYY');
+                        // this.documentos.fechaCarga = moment(this.documentos.fechaCarga).format('DD-MM-YYYY');
+                        console.log(this.documentos);
+                        this.documentos.iniciativas = true;
+                        this.documentos.iniciativa = this.iniciativa;
+                        if (tipo === '2') {
+                            this.iniciativa.oficioEnvioDeInforme = this.documentos;
+                        } else if (tipo === '3') {
+                            this.iniciativa.informeDeResultadosRevision = this.documentos;
+                        }
+                        if (
+                            this.iniciativa.tipo_de_iniciativa.descripcion ==
+                            "Iniciativa"
+                        ) {
+                            this.documentos.estatus =
+                                "Turnar iniciativa a comisión";
+                        } else {
+                            this.documentos.estatus =
+                                "Turnar cuenta pública a EASE";
+                        }
+
+                        //this.documentosTemp.fechaCreacion = fechaActual;
+                        //this.documentosTemp.fechaCarga = fechaActual;
+
+                        this.spinner.hide();
+
+                        const dialogRef = this.dialog.open(
+                            ClasficacionDeDocumentosComponent,
+                            {
+                                width: "100%",
+                                height: "90%",
+                                disableClose: true,
+                                data: this.documentos,
+                            }
+                        );
+
+                        // tslint:disable-next-line: no-shadowed-variable
+                        dialogRef.afterClosed().subscribe((result) => {
+                            this.obtenerDocumento();
+                            if (result == "0") {
+                                this.cerrar("");
+                            }
+                        });
+                    } else {
+                        this.spinner.hide();
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al guardar. " + resp.error.data,
+                            "error"
+                        );
+                    }
+                },
+                (err) => {
+                    this.spinner.hide();
+                    console.log(err);
+                    Swal.fire(
+                        "Error",
+                        "Ocurrió un error al guardar." + err.error.data,
+                        "error"
+                    );
+                }
+            );
+    }
+
+
+    obtenerDocumento() {
+        this.spinner.show();
+        const documentosTemp: any[] = [];
+        let idDocumento: any;
+        this.loadingIndicator = true;
+        let meta = '';
+        let visibilidad = '';
+        let info: any;
+        // Obtenemos los documentos
+        this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
+
+            // Buscamos permisos
+
+
+            for (const documento of resp.data) {
+                //                console.log(documento.tipo_de_documento.bActivo);
+                idDocumento = '';
+                // Validamos permisos
+
+                if (documento.tipo_de_documento) {
+                    const encontro = this.menu.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento.id);
+
+                    if (documento.visibilidade) {
+                        info = this.menu.tipoInformacion.find((tipo: { id: string; }) => tipo.id === documento.visibilidade.id);
+                    }
+                    if (encontro) {
+                        if (documento.tipo_de_documento.bActivo && encontro.Consultar && info) {
+
+                            if (documento.documento) {
+
+                                idDocumento = documento.documento.hash + documento.documento.ext;
+
+
+                                if (documento.metacatalogos) {
+                                    meta = '';
+                                    if (documento.metacatalogos) {
+                                        for (const x of documento.metacatalogos) {
+
+                                            if (meta === '') {
+
+                                                if (x.cTipoMetacatalogo === 'Fecha') {
+                                                    if (x.text) {
+                                                        meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                                    }
+                                                } else {
+                                                    if (x.text) {
+                                                        meta = meta + x.cDescripcionMetacatalogo + ': ' + x.text;
+                                                    }
+                                                }
+                                            } else {
+                                                if (x.cTipoMetacatalogo === 'Fecha') {
+                                                    if (x.text) {
+                                                        meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                                    }
+                                                } else {
+                                                    if (x.text) {
+                                                        meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + x.text;
+                                                    }
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }
+                                visibilidad = '';
+                                if (documento.visibilidade) {
+                                    visibilidad = documento.visibilidade.cDescripcionVisibilidad;
+                                }
+
+                                if (documento.iniciativa === undefined || documento.iniciativa === null) {
+                                    documento.iniciativa = '';
+                                } else {
+                                    if (documento.iniciativa.id == this.iniciativa.id) {
+                                        // tslint:disable-next-line: no-unused-expression
+                                        // Seteamos valores y permisos
+                                        if (documento.formulario == this.iniciativa.estatus || documento.formulario == this.iniciativa.estatus) {
+                                            documentosTemp.push({
+                                                id: documento.id,
+                                                cNombreDocumento: documento.cNombreDocumento,
+                                                tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
+                                                tipo_de_documento: documento.tipo_de_documento.id,
+                                                fechaCarga: this.datePipe.transform(documento.fechaCarga, 'yyyy-MM-dd'),
+                                                fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
+                                                paginas: documento.paginas,
+                                                bActivo: documento.bActivo,
+                                                fechaModificacion: this.datePipe.transform(documento.updatedAt, 'yyyy-MM-dd'),
+                                                Agregar: encontro.Agregar,
+                                                Eliminar: encontro.Eliminar,
+                                                Editar: encontro.Editar,
+                                                Consultar: encontro.Consultar,
+                                                idDocumento: idDocumento,
+                                                version: parseFloat(documento.version).toFixed(1),
+                                                documento: documento.documento,
+                                                iniciativa: documento.iniciativa,
+                                                //ente: documento.ente,
+                                                // secretaria: documento.secretaria,
+                                                // direccione: documento.direccione,
+                                                // departamento: documento.departamento,
+                                                folioExpediente: documento.folioExpediente,
+                                                clasificacion: meta,
+                                                metacatalogos: documento.metacatalogos,
+                                                informacion: visibilidad,
+                                                visibilidade: documento.visibilidade,
+                                                tipo_de_expediente: documento.tipo_de_expediente,
+                                                usuario: this.menu.usuario
+                                            });
+                                        }
+                                    }
+                                }
+                                meta = '';
+                            }
+                        }
+                    }
+                }
+            }
+            this.files = documentosTemp;
+            this.filesTemp = this.files;
+
+            this.loadingIndicator = false;
+            this.spinner.hide();
+        }, err => {
+            this.spinner.hide();
+            this.loadingIndicator = false;
+        });
+    }
+
+    async editarDocumento(documento: DocumentosModel, tipo: string): Promise<void> {
+        console.log(documento.fechaCreacion);
+        const fechaCreacion = new Date(documento.fechaCreacion);
+        let mesCreacion: any = fechaCreacion.getMonth() + 1; // obteniendo mes
+        let diaCreacion: any = fechaCreacion.getDate(); // obteniendo dia      
+        const anoCreacion = fechaCreacion.getFullYear(); // obteniendo año
+        diaCreacion = diaCreacion + 1;
+        if (diaCreacion < 10) {
+            diaCreacion = '0' + diaCreacion; // agrega cero si el menor de 10
+        }
+        if (mesCreacion < 10) {
+            mesCreacion = '0' + mesCreacion; // agrega cero si el menor de 10
+        }
+        let parametrosSSP001 = await this.obtenerParametros("SSP-001");
+        let tipoDocumento = parametrosSSP001.filter(
+            (d) =>
+                d["cParametroAdministrado"] === "SSP-001-Tipo-de-Documento"
+        );
+        let tipoExpediente = parametrosSSP001.filter(
+            (d) =>
+                d["cParametroAdministrado"] === "SSP-001-Tipo-de-Expediente"
+        );
+        let tipoInformacion = parametrosSSP001.filter(
+            (d) =>
+                d["cParametroAdministrado"] ===
+                "SSP-001-Tipo-de-Informacion"
+        );
+       // documento.tipo_de_documento = tipoDocumento[0]["cValor"];
+       documento.tipo_de_documento = '5f839b713ccdf563ac6ba096';
+        documento.tipo_de_expediente = tipoExpediente[0]["cValor"];
+        documento.visibilidade = tipoInformacion[0]["cValor"];
+        documento.disabled = false;
+        if (tipo === '2') {
+            this.documentos.iniciativa = this.iniciativa.id;
+            this.documentos.iniciativaOficioEnvioDeInforme = this.iniciativa.id;
+        } else if (tipo === '3') {
+            this.documentos.iniciativa = this.iniciativa.id;
+            this.documentos.iniciativaInformeDeResultadosRevision = this.iniciativa.id;
+        } else if (tipo === '1') {
+            this.documentos.iniciativa = this.iniciativa.id;
+        }
+        documento.fechaCreacion = anoCreacion + '-' + mesCreacion + '-' + diaCreacion + 'T16:00:00.000Z';
+        console.log(documento.fechaCreacion);
+        documento.fechaCarga = documento.fechaCreacion.replace('T00:00:00.000', 'T16:00:00.000Z');
+
+        // Abrimos modal de guardar perfil
+        const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
+            width: '60%',
+            height: '80%',
+            disableClose: true,
+            data: documento,
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                if (result.documento) {
+                    this.clasificarDocAnex(result, tipo);
+                }
+            }
+        });
+    }
+
+    eliminarDocumento(row): void {
+        // Eliminamos documento
+        Swal.fire({
+            title: '¿Está seguro que desea eliminar este documento?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Si',
+            cancelButtonText: 'No'
+        }).then((result) => {
+            if (result.value) {
+                row.documento = '';
+                row.usuario = this.menu.usuario;
+                // realizamos delete
+                this.documentoService.borrarDocumentos(row).subscribe((resp: any) => {
+                    Swal.fire('Eliminado', 'El documento ha sido eliminado.', 'success');
+                    console.log(resp);
+                    this.obtenerDocumento();
+                }, err => {
+                    this.cargando = false;
+                    Swal.fire(
+                        'Error',
+                        'Ocurrió un error al eliminar el documento.' + err,
+                        'error'
+                    );
+                });
+
+            }
+        });
+    }
+
+
+
 }

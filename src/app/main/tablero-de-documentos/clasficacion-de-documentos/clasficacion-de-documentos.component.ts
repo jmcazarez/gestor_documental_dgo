@@ -16,6 +16,7 @@ import { HistorialDeVersionamientoComponent } from './historial-de-versionamient
 import { LinkPublicoComponent } from './link-publico/link-publico.component';
 import { LegislaturaService } from 'services/legislaturas.service';
 import { IniciativasService } from 'services/iniciativas.service';
+import * as moment from 'moment';
 export interface Metacatalogos {
     name: string;
 }
@@ -132,8 +133,8 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         this.selectedLegislaturas = '';
         this.descargarDocumento();
         this.arrInformacion = this.menuService.tipoInformacion;
-        this.documento.fechaCarga = this.datePipe.transform(this.documento.fechaCarga, 'dd/MM/yyyy') ;
-         this.documento.fechaCreacion = this.datePipe.transform(this.documento.fechaCreacion, 'dd/MM/yyyy');
+        this.documento.fechaCarga = this.documento.fechaCarga;
+        this.documento.fechaCreacion = this.documento.fechaCreacion;
         this.documento.version = parseFloat(this.documento.version).toFixed(1);
         if (!this.documento.iniciativas) {
             if (this.documento.metacatalogos) {

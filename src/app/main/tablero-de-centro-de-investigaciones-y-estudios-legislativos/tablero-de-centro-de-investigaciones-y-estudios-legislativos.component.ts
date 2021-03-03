@@ -66,7 +66,9 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
         let clasificaciones: any;
         let pendiente: string;
         let receptor: string;
+        let comision: string;
         let fechaRecepcion: any;
+        let fechaRecepcionText: any;
         let receptorId: string;
         // Obtenemos los iniciativas
         this.iniciativasService.obtenerIniciativas().subscribe((resp: any) => {
@@ -120,7 +122,7 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
                         if(ini.estatus === 'Turnar iniciativa a CIEL'){
                           pendiente = 'Pendiente';
                         }else{
-                          pendiente = 'Turnada a dictamen'
+                          pendiente = ini.estatus;
                         }
 
                         if(ini.receptor.length == 0 || ini.receptor === undefined){
@@ -133,11 +135,19 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
 
                         if(ini.fechaRecepcion === undefined){
                           fechaRecepcion = 'N/A';
+                          fechaRecepcionText = 'N/A';
                         }else{
                           fechaRecepcion = moment(ini.fechaRecepcion).format('YYYY-MM-DD');
+                          fechaRecepcionText = moment(ini.fechaRecepcion).format('DD-MM-YYYY');
                         }
 
-                        if(ini.estatus == 'Turnar iniciativa a CIEL' || ini.estatus === 'Turnada a dictamen'){
+                        if(ini.comisiones === undefined || ini.comisiones === null){
+                            comision = '';
+                        }else{
+                            comision = ini.comisiones.descripcion;
+                        }
+
+                        if(ini.estatus == 'Turnar iniciativa a CIEL' || ini.estatus === 'Turnada a dictamen' || ini.estatus === 'Turnar dictamen a Secretaria General'){
                           iniciativasTemp.push({
                               id: ini.id,
                               autores: ini.autores,
@@ -156,10 +166,13 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
                               fechaCreacionText: this.datePipe.transform(ini.fechaCreacion, 'dd-MM-yyyy'),
                               actasSesion: ini.actasSesion,
                               comisiones: ini.comisiones,
-                              asunto: ini.comisiones.descripcion + ', ' + temas,
+                              asunto: comision + ', ' + temas,
                               fechaRecepcion: fechaRecepcion,
+                              fechaRecepcionText: fechaRecepcionText,
                               receptor: receptor,
-                              receptorId: receptorId
+                              receptorId: receptorId,
+                              anexosTipoCuentaPublica: ini.anexosTipoCuentaPublica,
+                              anexosTipoIniciativa: ini.anexosTipoIniciativa
                         });
                       }
                     }
@@ -227,7 +240,7 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
         } else {
             const val = value.target.value.toLowerCase();
             const temp = this.iniciativas.filter((d) => d.id.toLowerCase().indexOf(val) !== -1 || !val ||
-                d.fechaIniciativa.toLowerCase().indexOf(val) !== - 1 || d.comisiones.toLowerCase().indexOf(val) !== - 1 ||
+                d.fechaIniciativa.toLowerCase().indexOf(val) !== - 1 || d.asunto.toLowerCase().indexOf(val) !== - 1 ||
                 d.estatus.toLowerCase().indexOf(val) !== - 1 || d.autoresText.toLowerCase().indexOf(val) !== - 1 ||
                 d.receptor.toLowerCase().indexOf(val) !== - 1 ||
                 d.fechaRecepcion.toLowerCase().indexOf(val) !== - 1);

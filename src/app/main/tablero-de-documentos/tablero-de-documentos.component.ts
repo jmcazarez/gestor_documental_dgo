@@ -66,7 +66,6 @@ export class TableroDeDocumentosComponent implements OnInit {
                     this.clasificarDocumento(result);
                 }
             }
-
         });
     }
 
@@ -148,6 +147,14 @@ export class TableroDeDocumentosComponent implements OnInit {
                                     if (documento.visibilidade) {
                                         visibilidad = documento.visibilidade.cDescripcionVisibilidad;
                                     }
+
+                                    if(documento.informacion === undefined || documento.informacion === undefined){
+                                        documento.informacion = '';
+                                    }
+                                    if(documento.fechaCarga === null || documento.fechaCarga === undefined){
+                                        documento.fechaCarga = '';
+                                    }
+                                    
 
                                     // tslint:disable-next-line: no-unused-expression
                                     // Seteamos valores y permisos
@@ -326,6 +333,7 @@ export class TableroDeDocumentosComponent implements OnInit {
 
     filterDatatable(value): void {
         // Filtramos tabla
+        console.log(this.documentos);
         if (value.target.value === '') {
             this.documentos = this.documentosTemporal;
         } else {

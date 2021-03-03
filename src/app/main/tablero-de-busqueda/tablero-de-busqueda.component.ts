@@ -155,6 +155,7 @@ export class TableroDeBusquedaComponent implements OnInit {
             // Buscamos permisos
             // tslint:disable-next-line: max-line-length
             const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.url);
+            console.log(opciones);
             this.optAgregar = opciones.Agregar;
             this.optEditar = opciones.Editar;
             this.optConsultar = opciones.Consultar;
@@ -195,6 +196,7 @@ export class TableroDeBusquedaComponent implements OnInit {
             // Si tiene permisos para consultar
             if (this.optConsultar) {
                 for (const documento of resp.data) {
+                    console.log(resp.data);
                     idDocumento = '';
                     // Validamos permisos
                     if (documento.tipo_de_documento) {
@@ -302,6 +304,7 @@ export class TableroDeBusquedaComponent implements OnInit {
                 }
 
                 this.documentos = documentosTemp;
+                console.log(this.documentos);
                 this.documentosTemporal = this.documentos;
                 this.spinner.hide();
             }

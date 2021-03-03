@@ -101,7 +101,7 @@
                 <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)'>
             </mat-form-field>
             <section fxLayoutAlign="end">
-                <button mat-mini-fab color="warn" (click)="add()" (change)="change()" class="button">
+                <button mat-mini-fab color="warn" [disabled]="!this.iniciativa.id" (click)="cargaClasificacionDocumento()" class="button">
                     <mat-icon>add</mat-icon>
                 </button>
             </section>
@@ -118,9 +118,20 @@
     <ngx-datatable class="material shadow-none" [rows]="files" [loadingIndicator]="loadingIndicator"
         [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable"
         [limit]="10" [scrollbarH]="true">
-        <ngx-datatable-column name="Documentos" prop="filename"></ngx-datatable-column>
+        <ngx-datatable-column name="Documentos" prop="cNombreDocumento"></ngx-datatable-column>
         <ngx-datatable-column name="Acciones" sortable="false" prop="id">
             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+
+                <a (click)="editarDocumento(row)">
+                    <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">edit
+                    </mat-icon>
+                </a>
+
+                <a (click)="eliminarDocumento(row)">
+                    <mat-icon color="warn" class="material-icons pointer" matTooltip="Clic para eliminar">delete
+                    </mat-icon>
+                </a>
+
             </ng-template>
         </ngx-datatable-column>
     </ngx-datatable>

@@ -17,4 +17,6 @@ export class IniciativasModel {
     anexosTipoIniciativa: any;
     receptor: any;
     receptorId: any;
+    oficioEnvioDeInforme: any;
+    informeDeResultadosRevision: any;
 }
