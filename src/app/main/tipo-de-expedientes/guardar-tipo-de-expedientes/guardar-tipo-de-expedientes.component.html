@@ -10,7 +10,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Nombre</mat-label>
+                <mat-label>Nombre *</mat-label>
                 <input matInput formControlName="cDescripcionTipoExpediente" >
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
               
@@ -61,8 +61,8 @@ Seleccionar todos
         <ngx-datatable-column name="Descripción" prop="cDescripcionTipoDocumento"></ngx-datatable-column>    
         <ngx-datatable-column name="Obligatorio" sortable="false" prop="id">
             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                <h3 *ngIf="row.Obligatorio">Si</h3>
-                <h3 *ngIf="!row.Obligatorio">No</h3>
+                <h3 *ngIf="row.bObligatorio">Si</h3>
+                <h3 *ngIf="!row.bObligatorio">No</h3>
             </ng-template>
         </ngx-datatable-column>
         <ngx-datatable-column name="Añadir" sortable="false" prop="id">

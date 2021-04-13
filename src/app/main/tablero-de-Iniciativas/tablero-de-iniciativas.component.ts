@@ -30,6 +30,7 @@ export class TableroDeIniciativasComponent implements OnInit {
     optConsultar: boolean;
     optEditar: boolean;
     optEliminar: boolean;
+    valueBuscador: string;
     fileBase64: any;
     constructor(
         private spinner: NgxSpinnerService,

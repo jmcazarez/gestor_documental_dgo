@@ -4,7 +4,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TableroDeDocumentosComponent } from '../../tablero-de-documentos.component';
 import { DocumentosCompartidosService } from 'services/compartir.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 @Component({
   selector: 'app-link-publico',
   templateUrl: './link-publico.component.html',
@@ -19,13 +20,18 @@ export class LinkPublicoComponent implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<TableroDeDocumentosComponent>,
     private compartidos: DocumentosCompartidosService,
-    private formBuilder: FormBuilder,
+  
+    private router: Router,
+    private location: Location,
     @Inject(MAT_DIALOG_DATA) public documentos
-    ) { }
+    ) { 
+        this.url = '';
+
+    }
 
   ngOnInit(): void {
-    console.log(this.documentos.documento.related[0]);
-    this.documento = this.documentos.documento.related[0];
+      console.log(this.documentos);
+    this.documento = this.documentos.id;
   }
 
   cerrar() {
@@ -33,11 +39,11 @@ export class LinkPublicoComponent implements OnInit {
   }
 
   generarLink(){
-    console.log('boton');
-    console.log(this.documento);
     this.compartidos.linkGenerate(this.documento).subscribe( (resp: any) => {
+
+        console.log(resp);
       //console.log(resp + 'hay respuesta');
-      this.url = '10.20.30.7:4300/#/compartir-link/' + resp.id;
+      this.url = this.location['_platformLocation']['location']['origin']+'/#/compartir-link/' + resp.id;
       console.log(this.url);
     }, err => {
       console.log(err);

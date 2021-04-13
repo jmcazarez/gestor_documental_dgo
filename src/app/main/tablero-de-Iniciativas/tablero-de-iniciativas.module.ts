@@ -16,9 +16,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSortModule } from "@angular/material/sort";
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
-
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { IniciativaTurnadaAComisionComponent } from './iniciativa-turnada-a-comision/iniciativa-turnada-a-comision.component';
+
 const routes = [
     {
        
@@ -37,7 +36,13 @@ const routes = [
         RouterModule.forChild(routes),
         TranslateModule,
         FuseSharedModule,
-        NgxDatatableModule,
+             NgxDatatableModule.forRoot({
+            messages: {
+                emptyMessage: 'No hay datos disponibles', // Message to show when array is presented, but contains no values
+                totalMessage: 'total', // Footer total message
+                selectedMessage: 'selected' // Footer selected message
+            }
+        }),
         MatIconModule,
         MatCheckboxModule,
         MatDialogModule,

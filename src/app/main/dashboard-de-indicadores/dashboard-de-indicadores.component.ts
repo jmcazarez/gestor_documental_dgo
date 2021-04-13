@@ -321,6 +321,10 @@ export class DashboardDeIndicadoresComponent implements OnInit {
             // tslint:disable-next-line: max-line-length
             filtroReporte = filtroReporte + '&createdAt_gte=' + fechaAnio + '-' + ("0000" + fechaMes).slice(-2) + '-' + ('0000' + primerDia.getDate()).slice(-2) + 'T01:00:00.000Z&createdAt_lte=' + fechaAnio + '-' + ("0000" + fechaMes).slice(-2) + '-' + ("0000" + ultimoDia.getDate()).slice(-2) + 'T24:00:00.000Z&_limit=-1';
         }
+
+        console.log('filtro');
+        console.log(filtroReporte);
+
         // Obtenemos los entes
         this.trazabilidad.obtenerTrazabilidadFiltrado(filtroReporte).subscribe((resp: any) => {
             this.arrDocumentosIngresadosAyer = resp.ayer;
@@ -531,6 +535,9 @@ export class DashboardDeIndicadoresComponent implements OnInit {
             // tslint:disable-next-line: max-line-length
             filtroReporte = filtroReporte + '&createdAt_gte=' + fechaAnio + '-' + ('0000' + fechaMes).slice(-2) + '-' + ('0000' + primerDia.getDate()).slice(-2) + 'T01:00:00.000Z&createdAt_lte=' + fechaAnio + '-' + ('0000' + fechaMes).slice(-2) + '-' + ('0000' + ultimoDia.getDate()).slice(-2) + 'T24:00:00.000Z&_limit=-1';
         }
+
+        console.log('filtro');
+        console.log(filtroReporte);
         // Obtenemos los entes
 
         this.trazabilidad.obtenerTrazabilidadFiltrado(filtroReporte).subscribe((resp: any) => {
@@ -1064,6 +1071,7 @@ export class DashboardDeIndicadoresComponent implements OnInit {
             }
         };
     }
+
     configurarFechas(): void {
         let inicial: string;
         let final: string;
@@ -1144,6 +1152,8 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                 // tslint:disable-next-line: max-line-length
                 filtroReporte = filtroReporte + '&createdAt_gte=' + fIni.getFullYear() + '-' + ('0000' + fMesIni).slice(-2) + '-' + ('0000' + fIni.getDate()).slice(-2) + 'T01:00:00.000Z&createdAt_lte=' + fin.getFullYear() + '-' + ('0000' + fMesFin).slice(-2) + '-' + ('0000' + fin.getDate()).slice(-2) + 'T24:00:00.000Z&_limit=-1';
             }
+
+            console.log(filtroReporte);
             // Obtenemos los entes
 
             this.trazabilidad.obtenerTrazabilidadFiltrado(filtroReporte).subscribe((resp: any) => {
@@ -1175,7 +1185,7 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                     this.arrConsultaGraficaFechas.push(this.arrDocumentosIngresadosFechas.filter((d) => d['movimiento'] === 'Consulto' && element[0] === d['fecha']).length);
 
                     this.arrEliminadosGraficaFechas.push(this.arrDocumentosIngresadosFechas.filter((d) => element[0] === d['fecha'] && d['movimiento'] === 'Borro'
-                        || element[0] === d['fecha'] && d['movimiento'] === 'Cancelo').length);
+                    || element[0] === d['fecha'] && d['movimiento'] === 'Cancelo').length);
                 });
 
 

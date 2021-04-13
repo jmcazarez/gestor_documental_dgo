@@ -18,7 +18,7 @@
             </div>         
 
         </div>
-        <span class="username" fxHide fxShow.gt-sm>{{ usr ? usr[0].data.cNombre : '' }}</span>
+        <span class="username" fxHide fxShow.gt-sm>{{ usr ? usr[0].data.cNombre + ' ' + usr[0].data.cApellidoPaterno + ' ' + usr[0].data.cApellidoMaterno: '' }}</span>
         <div class="user-menu" fxFlex="0 1 auto" fxLayout="row" fxLayoutAlign="start center">
             <button mat-button [matMenuTriggerFor]="userMenu"
                     class="user-button">

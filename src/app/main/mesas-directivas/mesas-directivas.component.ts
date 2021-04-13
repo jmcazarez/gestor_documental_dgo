@@ -42,7 +42,7 @@ export class MesasDirectivasComponent implements OnInit {
         this.mesasDirectivasService.obtenerMesas().subscribe((resp: any) => {
 
             // Buscamos permisos
-            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === 'mesas-directivas');
+            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === 'mesas-directivas-por-legislatura');
             
             this.optAgregar = opciones.Agregar;
             this.optEditar = opciones.Editar;

@@ -57,6 +57,8 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
         this.rows = [];
 
         this.documentosPerfil = this.menuService.tipoDocumentos;
+
+        
         // tslint:disable-next-line: forin      
         for (const i in this.documentosPerfil) {
             this.documentosPerfil[i].selected = false;
@@ -110,7 +112,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
             // Guardamos la entidad
             this.expedientesService.guardarTipoExpedientes(this.expediente).subscribe((resp: any) => {
                 if (resp) {
-                    Swal.fire('Éxito', 'Tipo de expediente guardada correctamente.', 'success');
+                    Swal.fire('Éxito', 'Tipo de expediente guardado correctamente.', 'success');
                     this.cerrar(this.expediente);
                 } else {
                     Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
@@ -140,7 +142,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
             this.rows = this.rowsTemp;
         } else {
             const val = value.target.value.toLowerCase();
-            const temp = this.rows.filter((d) => d.cDescripcionTipoDocumento.toLowerCase().indexOf(this.searchText) !== -1 || !this.searchText);
+            const temp = this.rows.filter((d) => d.cDescripcionTipoDocumento.toLowerCase().indexOf(val) !== -1 || !val);
             this.rows = temp;
         }
     }
@@ -157,10 +159,24 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-
                 setTimeout(() => {
-                    this.documentosPerfil = this.menuService.tipoDocumentos;
-                    this.rows = [...this.documentosPerfil];
+
+                    this.rows.push({
+                        Agregar: true,
+                        Consultar: true,
+                        Editar: true,
+                        Eliminar: true,
+                        bObligatorio: result.bObligatorio,
+                        cDescripcionTipoDocumento: result.cDescripcionTipoDocumento,
+                        id: result.id,
+                        metacatalogos: result.metacatalogos,
+                        tipos_de_formato: result.tipos_de_formato.id,
+                        selected: false,
+                        visibilidade: result.visibilidade.id,
+
+                    });
+                    this.rows = [...this.rows];
+
                 }, 100);
 
                 //   this.obtenerTipoDocumentos();
@@ -169,7 +185,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
         });
     }
 
-    consultarTipoDocumento(row: TipoDocumentoModel): void{
+    consultarTipoDocumento(row: TipoDocumentoModel): void {
         row.disabled = true;
         const dialogRef = this.dialog.open(GuardarTipoDeDocumentosComponent, {
             width: '50%',
@@ -199,7 +215,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-
+               
                 setTimeout(() => {
                     this.documentosPerfil = this.menuService.tipoDocumentos;
                     this.rows = [...this.documentosPerfil];
@@ -232,7 +248,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
                 this.rows = [...this.documentosPerfil];
                 this.rowsTemp = this.rows;
             }, 100);
-           
+
             this.loadingIndicator = false;
 
         } else {
@@ -242,7 +258,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
                 this.rows = [...this.documentosPerfil];
                 this.rowsTemp = this.rows;
             }, 100);
-           
+
             this.loadingIndicator = false;
 
         }
@@ -274,7 +290,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
                         this.loginService.eliminarUsuario();
                         this.loginService.guardarUsuario(usr);
                     }
-                    Swal.fire('Eliminado', 'La el tipo de documento ha sido eliminada.', 'success');
+                    Swal.fire('Eliminado', 'El tipo de documento ha sido eliminada.', 'success');
 
 
                     setTimeout(() => {

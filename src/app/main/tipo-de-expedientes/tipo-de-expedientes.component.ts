@@ -44,14 +44,16 @@ export class TipoDeExpedientesComponent implements OnInit {
 
             // Buscamos permisos
             const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
-            this.optAgregar = opciones.Agregar;
-            this.optEditar = opciones.Editar;
-            this.optConsultar = opciones.Consultar;
-            this.optEliminar = opciones.Eliminar;
-            // Si tiene permisos para consultar
-            if (this.optConsultar) {
-                this.tipoExpedientes = resp;
-                this.tipoExpedientesTemp = this.tipoExpedientes;
+            if (opciones) {
+                this.optAgregar = opciones.Agregar;
+                this.optEditar = opciones.Editar;
+                this.optConsultar = opciones.Consultar;
+                this.optEliminar = opciones.Eliminar;
+                // Si tiene permisos para consultar
+                if (this.optConsultar) {
+                    this.tipoExpedientes = resp;
+                    this.tipoExpedientesTemp = this.tipoExpedientes;
+                }
             }
             this.loadingIndicator = false;
             this.spinner.hide();
@@ -66,13 +68,14 @@ export class TipoDeExpedientesComponent implements OnInit {
         // Abrimos modal de guardar expediente
         const dialogRef = this.dialog.open(GuardarTipoDeExpedientesComponent, {
             width: '50%',
-             height: '80%',
+            height: '80%',
             disableClose: true,
             data: new TipoExpedientesModel(),
 
         });
 
         dialogRef.afterClosed().subscribe(result => {
+            this.searchText = '';
             if (result) {
                 this.obtenerTiposExpedientes();
             }
@@ -80,10 +83,10 @@ export class TipoDeExpedientesComponent implements OnInit {
         });
     }
 
-   
+
     eliminarExpediente(row: { id: string; }): void {
-          // Eliminamos tipo de expediente
-          Swal.fire({
+        // Eliminamos tipo de expediente
+        Swal.fire({
             title: '¿Está seguro que desea eliminar este tipo de expediente?',
             icon: 'warning',
             showCancelButton: true,
@@ -94,7 +97,7 @@ export class TipoDeExpedientesComponent implements OnInit {
 
                 // realizamos delete
                 this.tipoExpedientesService.eliminarTipoExpedientes(row.id).subscribe((resp: any) => {
-                    Swal.fire('Eliminado', 'La el tipo de expediente ha sido eliminada.', 'success');
+                    Swal.fire('Eliminado', 'El tipo de expediente ha sido eliminada.', 'success');
                     this.obtenerTiposExpedientes();
                 }, err => {
                     this.cargando = false;
@@ -113,7 +116,7 @@ export class TipoDeExpedientesComponent implements OnInit {
         // Abrimos modal de editar expediente
         const dialogRef = this.dialog.open(GuardarTipoDeExpedientesComponent, {
             width: '50%',
-             height: '80%',
+            height: '80%',
             disableClose: true,
             data: expediente,
 
@@ -121,6 +124,7 @@ export class TipoDeExpedientesComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
+                this.searchText = '';
                 this.obtenerTiposExpedientes();
             }
         });
@@ -133,8 +137,10 @@ export class TipoDeExpedientesComponent implements OnInit {
             this.tipoExpedientes = this.tipoExpedientesTemp;
         } else {
             const val = value.target.value.toLowerCase();
-            const temp = this.tipoExpedientes.filter((d) => d.cDescripcionTipoExpediente.toLowerCase().indexOf(this.searchText) !== -1 || !this.searchText);
+            const temp = this.tipoExpedientes.filter((d) => d.cDescripcionTipoExpediente.toLowerCase().indexOf(val) !== -1 || !val);
             this.tipoExpedientes = temp;
         }
+
+
     }
 }

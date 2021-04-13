@@ -21,10 +21,10 @@ export class UploadFileService {
         }),
     };
     constructor(private http: HttpClient) {
-        this.urlCms = environment.apiStrapi;
+      //  this.urlCms = environment.apiStrapi;
         this.urlApi = environment.apiCms;
     }
-
+/*
     async uploadFile(file: any, base64: any): Promise<any> {
         return new Promise(resolve => {
             {
@@ -47,7 +47,7 @@ export class UploadFileService {
         });
 
     }
-
+*/
     subirArchivo(file: any, base64: any): Promise<any> {
         let options = {
             headers: new HttpHeaders({

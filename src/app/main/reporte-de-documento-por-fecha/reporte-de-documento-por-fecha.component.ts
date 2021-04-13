@@ -50,16 +50,16 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
     @ViewChild('pickerFechaInicial') pickerFechaInicial: MatDatepicker<Date>;
     @ViewChild('pickerFechaFinal') pickerFechaFinal: MatDatepicker<Date>;
 
-    constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe,            
-                private router: Router,
-                private spinner: NgxSpinnerService,
-                private documentoService: DocumentosService,
-                private menuService: MenuService) {
+    constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe,
+        private router: Router,
+        private spinner: NgxSpinnerService,
+        private documentoService: DocumentosService,
+        private menuService: MenuService) {
         this.imageBase64 = environment.imageBase64;
     }
 
     ngOnInit(): void {
-      
+
         // Formulario reactivo
         this.firstFormGroup = this._formBuilder.group({
             pickerFechaInicial: [new Date()],
@@ -114,7 +114,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
         let idDocumento: any;
         this.loadingIndicator = true;
 
-        
+
         this.spinner.show();
         const dFechaInicial = this.pickerFechaInicial._datepickerInput.value;
         const dFechaFinal = this.pickerFechaFinal._datepickerInput.value;
@@ -123,8 +123,10 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
 
         if (fIni > fFin) {
             Swal.fire('Error', 'La fecha inicial no puede ser mayor a la final.', 'error');
+            this.spinner.hide();
         } else if (this.pickerFechaInicial._datepickerInput.value === undefined || this.pickerFechaFinal._datepickerInput.value === undefined) {
             Swal.fire('Error', 'Las fechas son obligatorias.', 'error');
+            this.spinner.hide();
         } else {
             const cFechaInicial = dFechaInicial.toISOString().split('T')[0];
             const cFechaFinal = dFechaFinal.toISOString().split('T')[0];
@@ -145,33 +147,34 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
                     // Si tiene permisos para consultar
                     if (this.optConsultar) {
                         for (const documento of resp.listado) {
-                            idDocumento = '';
-                            documentosTemp.push({
-                                id: documento.id,
-                                tipoDocumento: documento.tipoDocumento,
-                                tipoExpediente: documento.tipoExpediente,
-                                tipoInformacion: documento.tipoInformacion,
-                                fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
-                                folioExpediente: documento.folioExpediente,
-                                fechaCarga: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
-                                fechaModificacion: this.datePipe.transform(documento.fechaModificacion, 'dd-MM-yyyy'),
-                                cNombreDocumento: documento.cNombreDocumento,
-                                cNombreUsuario: documento.nombreUsuario,
-                                bActivo: documento.estatus,
-                                ente: documento.ente,
-                                version: parseFloat(documento.version).toFixed(1),
-                                cAccion: documento.accion
-                            });
-
+                          
+                                idDocumento = '';
+                                documentosTemp.push({
+                                    id: documento.id,
+                                    tipoDocumento: documento.tipoDocumento,
+                                    tipoExpediente: documento.tipoExpediente,
+                                    tipoInformacion: documento.tipoInformacion,
+                                    fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
+                                    folioExpediente: documento.folioExpediente,
+                                    fechaCarga: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
+                                    fechaModificacion: this.datePipe.transform(documento.fechaModificacion, 'dd-MM-yyyy'),
+                                    cNombreDocumento: documento.cNombreDocumento,
+                                    cNombreUsuario: documento.nombreUsuario,
+                                    bActivo: documento.estatus,
+                                    ente: documento.ente,
+                                    version: parseFloat(documento.version).toFixed(1),
+                                    cAccion: documento.accion
+                                });
+                           
                         }
 
                         this.documentos = documentosTemp;
                         this.documentosTemporal = this.documentos;
-                       
+
                     }
                     this.spinner.hide();
 
-                }else{
+                } else {
                     Swal.fire('warning', 'No existen movimientos en el periodo seleccionado.', 'warning');
                     this.spinner.hide();
                 }
@@ -263,7 +266,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
             if (row.cNombreUsuario) {
                 nombreUsuario = row.cNombreUsuario;
             }
-          
+
             if (row.tipoDocumento) {
                 tipoDocumento = row.tipoDocumento;
             }

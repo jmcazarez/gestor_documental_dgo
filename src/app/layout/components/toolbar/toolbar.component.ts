@@ -87,8 +87,8 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
         this.languages = [
             {
-                id: 'en',
-                title: 'English',
+                id: 'es',
+                title: 'Español',
                 flag: 'us'
             },
             {
@@ -120,6 +120,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
 
         this.usr = JSON.parse(localStorage.getItem('usr'));
 
+        //console.log(this.usr);
         if (this.usr) {
             await this.descargarUsuarioLogo();
         }

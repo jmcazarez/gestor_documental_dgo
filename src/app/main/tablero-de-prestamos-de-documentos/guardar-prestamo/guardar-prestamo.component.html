@@ -109,6 +109,7 @@
         </mat-form-field>
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
+            
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
                 <mat-label>Estatus</mat-label>
                 <mat-select formControlName="cEstatus" [(ngModel)]="selectEstado" name="estatus">
@@ -120,7 +121,8 @@
             </mat-form-field>
         </div>
 
-        <div *ngIf="this.prestamo.id" fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
+
+        <div *ngIf="this.prestamo.id && selectEstado==='Incompleto'" fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
                 <mat-label>Tipo de daño</mat-label>
                 <mat-select formControlName="cTipoDanio" [(ngModel)]="selectDanio" name="danio">
@@ -144,6 +146,6 @@
 
 <mat-dialog-actions align="end" class="buttons">
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
-    <button [disabled]="form.invalid" mat-raised-button color="accent" (click)="guardar()">Guardar</button>
+    <button  mat-raised-button color="accent" (click)="guardar()">Guardar</button>
     <!--<button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
 </mat-dialog-actions>

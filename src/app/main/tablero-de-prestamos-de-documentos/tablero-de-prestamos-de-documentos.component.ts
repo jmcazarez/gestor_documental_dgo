@@ -163,6 +163,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
 
     filterDatatable(value): void {
         // Filtramos tabla
+        this.prestamoDocumentos = this.prestamoDocumentosTemp;
         if (value.target.value === '') {
             this.prestamoDocumentos = this.prestamoDocumentosTemp;
         } else {

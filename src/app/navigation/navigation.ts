@@ -6,13 +6,7 @@ export const navigation: FuseNavigation[] = [
         title    : 'Menú',
         type     : 'group',
         children : [
-            {
-                id       : 'usuarios',
-                title    : 'Usuarios',
-                type     : 'item',
-                icon     : 'face',
-                url      : '/usuarios'
-            },
+    
             // {
             //     id       : 'login',
             //     title    : 'Login',

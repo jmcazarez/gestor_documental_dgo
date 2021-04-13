@@ -10,6 +10,7 @@ export class LibroDeActasService {
 
     private baseUrl: string;
     private urlLibroDeActas = 'libro-de-actas';
+    private urlLibroDeActasFiltrado = 'libro-de-actas-filtrado';
  
     private TOKEN = localStorage.getItem('token');
 
@@ -38,5 +39,8 @@ export class LibroDeActasService {
         return this.http.delete(this.baseUrl + this.urlLibroDeActas + '/' + ruta, this.httpOptions);
     }
 
+    obtenerLibrosDeActasFiltrado(filtro: string): any {
 
+        return this.http.get(this.baseUrl + this.urlLibroDeActasFiltrado + '/' + filtro, this.httpOptions);
+    }
 }

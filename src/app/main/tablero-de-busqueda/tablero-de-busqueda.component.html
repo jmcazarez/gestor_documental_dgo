@@ -100,7 +100,7 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                         <!--
+                        <!--
                         <div class="select">
                             <p class="tag">Ente</p>
                             <mat-form-field appearance="fill" class="input">
@@ -237,16 +237,15 @@
 
                         </form>
 
-                        <div class="select buttons">
-                            <button [disabled]="documentos.length === 0 || firstFormGroup.invalid" mat-raised-button
-                                matStepperNext color="warn" (click)="filterDatatable()"
-                                class="btn-search">Consultar</button>
-                            <button mat-raised-button color="warn" class="btn-search"
-                                (click)="borrarFiltros()">Borrar</button>
-                        </div>
-                    </div>
-                </section>
 
+                    </div>
+
+                </section>
+                <div class="select buttons">
+                    <button [disabled]="documentos.length === 0 || firstFormGroup.invalid" mat-raised-button
+                        matStepperNext color="warn" (click)="filterDatatable()" class="btn-search">Consultar</button>
+                    <button mat-raised-button color="warn" class="btn-search" (click)="borrarFiltros()">Borrar</button>
+                </div>
             </form>
         </mat-step>
         <mat-step [stepControl]="secondFormGroup">
@@ -259,7 +258,7 @@
                             [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50"
                             [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable" [limit]="10"
                             [scrollbarH]="true">
-                           <!-- <ngx-datatable-column name="Id. documento" prop="id"></ngx-datatable-column>-->
+                            <!-- <ngx-datatable-column name="Id. documento" prop="id"></ngx-datatable-column>-->
                             <ngx-datatable-column name="Documento" prop="cNombreDocumento"></ngx-datatable-column>
                             <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
                             <ngx-datatable-column name="Tipo de información" prop="informacion"></ngx-datatable-column>
@@ -299,7 +298,7 @@
                                         (click)="descargarDocumento(row)">
                                         <mat-icon color="primary" class="material-icons pointer"
                                             matTooltip="Clic para descargar">
-                                            cloud_download</mat-icon>
+                                            printer</mat-icon>
 
                                     </a>
 
@@ -316,6 +315,7 @@
                                         <mat-icon color="primary" class="material-icons pointer"
                                             matTooltip="Clic para editar">remove_red_eye
                                         </mat-icon>
+
                                     </a>
 
 
@@ -328,8 +328,9 @@
                 <div class="select buttons">
                     <button mat-raised-button matStepperPrevious color="warn" class="btn-search">Volver</button>
                 </div>
+
             </form>
         </mat-step>
     </mat-vertical-stepper>
-
+  
 </div>

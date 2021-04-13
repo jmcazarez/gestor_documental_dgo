@@ -10,6 +10,7 @@ export class RecepcionDeActasService {
 
     private baseUrl: string;
     private urlRecepcionDeActas = 'recepcion-de-actas';
+    private urlRecepcionDeActasFiltrado = 'recepcion-de-actas-filtrado';
     private TOKEN = localStorage.getItem('token');
 
     private httpOptions = {
@@ -36,5 +37,10 @@ export class RecepcionDeActasService {
     eliminarRecepcionDeActa(id: string): any {
 
         return this.http.delete(this.baseUrl + this.urlRecepcionDeActas + '/' + id, this.httpOptions);
+    }
+
+    obtenerRecepcionDeActasFiltrado(filtro: string): any {
+
+        return this.http.get(this.baseUrl + this.urlRecepcionDeActasFiltrado + '/' + filtro, this.httpOptions);
     }
 }

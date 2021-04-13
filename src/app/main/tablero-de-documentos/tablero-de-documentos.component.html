@@ -21,7 +21,7 @@
             <div class="buscador">
                 <mat-form-field class="buscar">
                     <mat-label>Buscar un documento</mat-label>
-                    <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)'>
+                    <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)' [(ngModel)]="valueBuscador">
                 </mat-form-field>
                 <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevoDocumento()" class="button">
                     <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un documento">post_add

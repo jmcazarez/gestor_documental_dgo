@@ -27,8 +27,10 @@
 
                 <mat-form-field appearance="outline">
                     <mat-label>Contraseña</mat-label>
-                    <input matInput type="password" formControlName="password">
-                    <mat-icon matSuffix class="secondary-text">vpn_key</mat-icon>
+                    <input matInput  type="{{this.type}}" formControlName="password">
+                    <mat-icon *ngIf="this.type ==='password'"matSuffix class="secondary-text" (click)="viewPassword()">visibility</mat-icon>
+                    <mat-icon *ngIf="this.type !=='password'" matSuffix class="secondary-text" (click)="viewPassword()">
+                        visibility_off</mat-icon>
                     <mat-error>
                         La contraseña es requerida
                     </mat-error>
@@ -47,8 +49,7 @@
                         [disabled]="loginForm.invalid" (click)="login()">
                     INICIAR SESIÓN
                 </button>
-                <span *ngIf="error">Usuario y/o contraseña incorrecto(s)</span>
-
+             
             </form>
 
         </div>

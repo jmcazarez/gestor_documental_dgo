@@ -90,8 +90,6 @@ export class UsuariosService {
     return this.http.delete(this.baseUrl + this.urlDirecciones + '/' + ruta, this.httpOptions);
   }
 
-
-
   //departamentos
   obtenerDepartamentos(): any {
     return this.http.get(this.baseUrl + this.urlDepartamentos, this.httpOptions);
@@ -102,12 +100,10 @@ export class UsuariosService {
   }
 
   actualizarDepartamento(departamentos: any): any{    
-    //console.log('servicio ' + departamentos);
     return this.http.put(this.baseUrl + this.urlDepartamentos + '/' + departamentos.id, departamentos, this.httpOptions);
   }
 
   eliminarDepartamento(ruta: string): any {
-    //console.log('service ' + ruta);
     return this.http.delete(this.baseUrl + this.urlDepartamentos + '/' + ruta, this.httpOptions);
   }
 

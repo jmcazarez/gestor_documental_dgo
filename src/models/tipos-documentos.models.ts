@@ -7,7 +7,7 @@ export class TipoDocumentoModel {
     Editar: boolean;
     Eliminar: boolean;
     selected: boolean;
-    Obligatorio: boolean;
+    bObligatorio: boolean;
     tipos_de_formato: any;
     visibilidade: any;
     disabled: boolean;

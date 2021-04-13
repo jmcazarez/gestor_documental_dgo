@@ -38,7 +38,7 @@
                             <mat-form-field appearance="fill" class="input">
                                 <mat-label>Seleccionar</mat-label>
                                 <mat-select formControlName="informacion" [(ngModel)]="selectedInformacion" name="informacion">
-                                    <mat-option *ngFor="let informacion of arrInformacion" [value]="informacion.cDescripcionVisibilidad">
+                                    <mat-option *ngFor="let informacion of arrInformacion" [value]="informacion.id">
                                         {{informacion.cDescripcionVisibilidad}}
                                     </mat-option>
                                 </mat-select>

@@ -53,9 +53,9 @@ export class TableroDeRecepcionDeActasComponent implements OnInit {
 
         // Obtenemos los iniciativas
         this.recepcionDeActasService.obtenerRecepcionesDeActas().subscribe((resp: any) => {
-
+    
             // Buscamos permisos
-            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === 'tablero-de-recepción-de-actas');
+            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === 'tablero-de-recepción-de-actas-de-sesión');
 
             this.optAgregar = opciones.Agregar;
             this.optEditar = opciones.Editar;

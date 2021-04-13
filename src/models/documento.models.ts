@@ -24,4 +24,10 @@ export class DocumentosModel {
     legislatura: any;
     iniciativa: any;
     estatus:string;
+    formulario: string;
+    iniciativaOficioEnvioDeInforme: any;
+    iniciativaInformeDeResultadosRevision: any;
+    ordenDelDia: any;
+    listaDeAsistencia: any;
+    actasSesion: any;
 }

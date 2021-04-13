@@ -8,21 +8,20 @@ import { UsuarioLoginModel } from 'models/usuario-login.model';
 import { Router } from '@angular/router';
 import { UsuarioLoginService } from 'services/usuario-login.service';
 import { MenuService } from 'services/menu.service';
-
+import Swal from 'sweetalert2';
 @Component({
-    selector     : 'login',
-    templateUrl  : './login.component.html',
-    styleUrls    : ['./login.component.scss'],
+    selector: 'login',
+    templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    animations   : fuseAnimations
+    animations: fuseAnimations
 })
-export class LoginComponent implements OnInit
-{
+export class LoginComponent implements OnInit {
     loginForm: FormGroup;
     usuario: UsuarioLoginModel;
     error: any;
     cargando: boolean;
-
+    type = '';
     /**
      * Constructor
      *
@@ -40,18 +39,17 @@ export class LoginComponent implements OnInit
         private _router: Router,
         private _usuarioLoginService: UsuarioLoginService,
         private _menuService: MenuService
-    )
-    {
+    ) {
         // Configure the layout
         this._fuseConfigService.config = {
             layout: {
-                navbar   : {
+                navbar: {
                     hidden: true
                 },
-                toolbar  : {
+                toolbar: {
                     hidden: true
                 },
-                footer   : {
+                footer: {
                     hidden: true
                 },
                 sidepanel: {
@@ -68,10 +66,10 @@ export class LoginComponent implements OnInit
     /**
      * On init
      */
-    ngOnInit(): void
-    {
+    ngOnInit(): void {
+        this.type = 'password'
         this.loginForm = this._formBuilder.group({
-            usuario   : ['', [Validators.required]],
+            usuario: ['', [Validators.required]],
             password: ['', Validators.required]
         });
     }
@@ -82,30 +80,45 @@ export class LoginComponent implements OnInit
             cUsuario: this.loginForm.get('usuario').value,
             cPassword: this.loginForm.get('password').value
         };
-    
+
         this.cargando = true;
 
-      await  this._loginService.validarUsuario(usuario).subscribe( async (resp: any) => {
+        await this._loginService.validarUsuario(usuario).subscribe(async (resp: any) => {
             // Guardar en storage
-           await this._usuarioLoginService.guardarUsuario(resp);
-    
-            if (resp.perfiles_de_usuarios === 0) {
+            await this._usuarioLoginService.guardarUsuario(resp);
+            console.log(resp[0]);
+            if (resp[0].data.perfiles_de_usuario.length == 0) {
                 // this.mostrarMensaje('No cuenta con permisos asignados. Favor de verificar con el área de sistemas.');
                 console.log('No tiene permisos');
+                this.error = true;
+                this.cargando = false;
+                Swal.fire('Error', 'Usuario sin perfil configurado', 'error');
             }
-            else{
+            else {
                 // Crear menú
-               await this._menuService.crearMenu();
+                await this._menuService.crearMenu();
+                this.error = false;
+                this._router.navigate(['home']);
+                this.cargando = false;
             }
-            
-            this.error = false;
-            this._router.navigate(['home']);
-            this.cargando = false;
+
+           
         }, err => {
-            console.log('Error');
+
+
             this.error = true;
-            this.cargando = false;            
+            this.cargando = false;
+            Swal.fire('Error', err.error.message, 'error');
         });
-    
+
+    }
+
+    viewPassword(): void{
+        if(this.type === 'password'){
+            this.type = 'text';
+        }else{
+            this.type = 'password';
+        }
+       
     }
 }

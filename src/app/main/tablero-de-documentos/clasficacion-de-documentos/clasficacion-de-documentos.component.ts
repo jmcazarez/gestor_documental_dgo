@@ -16,6 +16,7 @@ import { HistorialDeVersionamientoComponent } from './historial-de-versionamient
 import { LinkPublicoComponent } from './link-publico/link-publico.component';
 import { LegislaturaService } from 'services/legislaturas.service';
 import { IniciativasService } from 'services/iniciativas.service';
+import * as moment from 'moment';
 export interface Metacatalogos {
     name: string;
 }
@@ -55,9 +56,12 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     trazabilidad = false;
     ocultarPreview = false;
     disabledGuardar = false;
+    disableFolioExpediente = false;
     entroVersionamiento = false;
     estatusIniciativa = '';
     version: any;
+    fechaCreacionView: string;
+    fechaCargaView: string;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     meta: Metacatalogos[] = [
     ];
@@ -100,6 +104,11 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         this.version = this.documento.version;
         let cFolioExpediente = '';
         let cLegislatura = '';
+        this.arrMetacatalogos = [];
+
+        await this.obtenerLegislaturas();
+        await this.obtenerTiposExpedientes();
+
         if (!this.documento.iniciativas) {
 
             if (this.documento.tipo_de_documento.id) {
@@ -110,7 +119,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
                     this.obtenerDocumento(this.documento.id, this.documento.usuario);
                 } else {
-                    this.documentoSinClasificar = true;
+
                 }
             } else {
                 this.trazabilidad = true;
@@ -132,9 +141,15 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         this.selectedLegislaturas = '';
         this.descargarDocumento();
         this.arrInformacion = this.menuService.tipoInformacion;
-        // this.documento.fechaCarga = this.datePipe.transform(this.documento.fechaCarga, 'yyyy-MM-dd') ;
-        // this.documento.fechaCreacion = this.datePipe.transform(this.documento.fechaCreacion, 'yyyy-MM-dd');
+
         this.documento.version = parseFloat(this.documento.version).toFixed(1);
+
+        if (!this.documento.legislatura && !this.documento.expediente && !this.documento.folioExpediente) {
+            for (const i in this.arrMetacatalogos) {
+                this.arrMetacatalogos[i].text = '';
+                // this.documentoSinClasificar = true;       
+            }
+        }
         if (!this.documento.iniciativas) {
             if (this.documento.metacatalogos) {
                 // this.arrMetacatalogos = this.documento.metacatalogos;
@@ -191,105 +206,109 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         } else {
             cFolioExpediente = this.documento.folioExpediente;
         }
+
+        if(this.documento.formulario){
+            this.disableFolioExpediente = true;
+        }
         this.form = this.formBuilder.group({
-            entes: [{ value: this.documento.ente, disabled: this.documento.disabled }],
-            secretarias: [{ value: this.documento.secretaria, disabled: this.documento.disabled }, [Validators.required]],
+            // entes: [{ value: this.documento.ente, disabled: this.documento.disabled }],
+            // secretarias: [{ value: this.documento.secretaria, disabled: this.documento.disabled }, [Validators.required]],
             legislatura: [{ value: this.documento.legislatura, disabled: this.documento.disabled }, [Validators.required]],
             expediente: [{ value: this.documento.tipo_de_expediente, disabled: this.documento.disabled }, [Validators.required]],
-            direcciones: [{ value: this.documento.direccione, disabled: this.documento.disabled }, [Validators.required]],
-            departamentos: [{ value: this.documento.departamento, disabled: this.documento.disabled }, [Validators.required]],
-            folioExpediente: [{ value: this.documento.folioExpediente, disabled: true }, [Validators.required]],
-            informacion: [{ value: this.documento.visibilidade, disabled: this.documento.disabled }, [Validators.required]]
+            // direcciones: [{ value: this.documento.direccione, disabled: this.documento.disabled }, [Validators.required]],
+            // departamentos: [{ value: this.documento.departamento, disabled: this.documento.disabled }, [Validators.required]],
+            folioExpediente: [{ value: this.documento.folioExpediente, disabled: this.disableFolioExpediente  }, [Validators.required]],
+            // informacion: [{ value: this.documento.visibilidade, disabled: this.documento.disabled }, [Validators.required]]
             //   imagen        : [this.usuario.cPassword,[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
         });
 
-
         // Obtenemos las entes
-        await this.obtenerEntes();
-        // Obtenemos las secretarias
-        // await this.obtenerSecretarias();
-        // Obtenemos las direcciones
-        // await this.obtenerDirecciones();
-        // Obtenemos los departamentos
-        // await this.obtenerDepartamentos();
-        // Obtenemos los tipos de expedientes
-        await this.obtenerTiposExpedientes();
-        await this.obtenerLegislaturas();
-        // Si el valor cambia filtramos el resultado
-        this.form.get('secretarias').valueChanges.subscribe(val => {
+        // await this.obtenerEntes();
 
-            if (val.length > 0) {
-                if (this.documento.disabled !== true) {
-                    this.form.controls['direcciones'].enable();
-                }
-                if (this.arrDireccionesFilter) {
-                    this.arrDirecciones = this.arrDireccionesFilter.filter(item => item['secretariaId'] === val);
-                }
-                this.selectedDepartamento = '';
-            }
-        });
+        this.documento.fechaCarga = this.documento.fechaCarga.replace('T16:00:00.000Z', '');
+        this.documento.fechaCreacion = this.documento.fechaCreacion.replace('T16:00:00.000Z', '');
 
-        // Si el valor cambia filtramos el resultado
-        this.form.get('direcciones').valueChanges.subscribe(val => {
+        this.fechaCreacionView = this.datePipe.transform(this.documento.fechaCreacion, 'dd/MM/yyyy');
+        this.fechaCargaView = this.datePipe.transform(this.documento.fechaCarga, 'dd/MM/yyyy');
 
-            if (val.length > 0) {
-                if (this.documento.disabled !== true) {
-                    this.form.controls['departamentos'].enable();
-                }
-
-                if (this.arrDepartamentosFilter) {
-                    this.arrDepartamentos = this.arrDepartamentosFilter.filter(item => item['direccionId'] === val);
-                }
-            }
-        });
-
+        /*  // Si el valor cambia filtramos el resultado
+          this.form.get('secretarias').valueChanges.subscribe(val => {
+  
+              if (val.length > 0) {
+                  if (this.documento.disabled !== true) {
+                      this.form.controls['direcciones'].enable();
+                  }
+                  if (this.arrDireccionesFilter) {
+                      this.arrDirecciones = this.arrDireccionesFilter.filter(item => item['secretariaId'] === val);
+                  }
+                  this.selectedDepartamento = '';
+              }
+          });
+  
+          // Si el valor cambia filtramos el resultado
+          this.form.get('direcciones').valueChanges.subscribe(val => {
+  
+              if (val.length > 0) {
+                  if (this.documento.disabled !== true) {
+                      this.form.controls['departamentos'].enable();
+                  }
+  
+                  if (this.arrDepartamentosFilter) {
+                      this.arrDepartamentos = this.arrDepartamentosFilter.filter(item => item['direccionId'] === val);
+                  }
+              }
+          });
+   */
         // Si el valor cambia filtramos el resultado
         this.form.get('legislatura').valueChanges.subscribe(val => {
+            if (val) {
+                if (val.length > 0) {
+                    if (this.arrLegislaturas) {
+                        if (cLegislatura == val) {
+                            this.form.controls['folioExpediente'].setValue(cFolioExpediente);
+                        } else {
+                            let arrFolioExpediente = this.arrLegislaturas.filter(item => item['id'] === val)
 
-            if (val.length > 0) {
-                if (this.arrLegislaturas) {
-                    if (cLegislatura == val) {
-                        this.form.controls['folioExpediente'].setValue(cFolioExpediente);
-                    } else {
-                        let arrFolioExpediente = this.arrLegislaturas.filter(item => item['id'] === val)
-
-                        this.form.controls['folioExpediente'].setValue(arrFolioExpediente[0].cLegislatura + '-' + Number(arrFolioExpediente[0].documentos + 1));
+                            this.form.controls['folioExpediente'].setValue(arrFolioExpediente[0].cLegislatura + '-' + Number(arrFolioExpediente[0].documentos + 1));
+                        }
                     }
                 }
             }
         });
 
         // Si el usuario trae id entonces vamos a editar por lo que ponemos enabled los select
-        if (this.documento.id && this.documento.id.length > 0) {
-
-            if (this.selectedSecretaria.length > 0 && this.documento.disabled !== true) {
-
-                this.form.controls['direcciones'].enable();
-            }
-
-            if (this.selectedDepartamento.length > 0 && this.documento.disabled !== true) {
-                this.form.controls['departamentos'].enable();
-            }
-        }
-
+        /*  if (this.documento.id && this.documento.id.length > 0) {
+  
+              if (this.selectedSecretaria.length > 0 && this.documento.disabled !== true) {
+  
+                  this.form.controls['direcciones'].enable();
+              }
+  
+              if (this.selectedDepartamento.length > 0 && this.documento.disabled !== true) {
+                  this.form.controls['departamentos'].enable();
+              }
+          }
+          */
     }
 
     obtenerTiposExpedientes(): void {
 
         // Obtenemos los documentos
         this.tipoExpedientesService.obtenerTipoExpedientes().subscribe((resp: any) => {
-            this.arrExpediente = resp;
+        
+            this.arrExpediente =  resp.filter(item => item['bActivo'] === true);
+
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener los tipos de expedientes.' + err, 'error');
         });
     }
 
     cerrar(retult: boolean): void {
-
+        this.form.reset();
         this.dialogRef.close(retult);
     }
     cerrarIniciativa(retult: string): void {
-
+        this.form.reset();
         this.dialogRef.close(retult);
     }
 
@@ -404,7 +423,8 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         // this.documento.secretaria = this.selectedSecretaria;
         // this.documento.direccione = this.selectedDireccion;
         // this.documento.departamento = this.selectedDepartamento;
-        this.documento.visibilidade = this.selectedInformacion;
+        // this.documento.visibilidade = this.selectedInformacion;
+        console.log(this.documento);
         this.documento.legislatura = this.selectedLegislaturas;
         this.documento.folioExpediente = this.form.get('folioExpediente').value;
         if (this.entroVersionamiento) {
@@ -415,20 +435,23 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             this.documento.fechaCarga = this.documento.fechaCarga + 'T16:00:00.000Z';
             this.documento.fechaCreacion = this.documento.fechaCreacion + 'T16:00:00.000Z';
         }
-        this.documento.tipo_de_expediente = this.selectedExpediente;
+        
+        if(this.documento.trazabilidads.lenght ===0){
+            delete this.documento['trazabilidads'];
+        }
+        if (this.selectedExpediente === '') {
+            delete this.documento['tipo_de_expediente'];
+        } else {
+            this.documento.tipo_de_expediente = this.selectedExpediente;
+        }
+
         if (this.documento.id) {
             if (this.documento.disabled) {
                 this.cerrar(true);
             } else {
 
                 this.documento.metacatalogos = this.arrMetacatalogos;
-                if (this.documentoSinClasificar) {
-                    this.documento.version = 1;
-                } else {
-
-                    this.documento.version = Number(this.documento.version) + .1;
-
-                }
+                this.documento.version = (Math.round((Number(this.documento.version) + .1) * 100) / 100).toFixed(2);
                 // Actualizamos documento
                 this.documentoService.actualizarDocumentos(this.documento).subscribe((resp: any) => {
                     if (resp) {
@@ -478,8 +501,8 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             cancelButtonText: 'No'
         }).then((result) => {
             if (result.value) {
-                this.documento = this.menuService.usuario;
-                this.documento.documento = '';
+                this.documento.usuario = this.menuService.usuario;
+
                 // realizamos delete
                 this.documentoService.borrarDocumentos(this.documento).subscribe((resp: any) => {
 
@@ -572,9 +595,12 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                         this.descargarDocumento();
                     }
 
+                    
                     if (result.listado.versionado_de_documentos['0'].tipo_de_documento) {
                         // tslint:disable-next-line: max-line-length
                         this.documento.tipo_de_documento = this.menuService.tipoDocumentos.find(tipoDocumento => tipoDocumento.id === result.listado.versionado_de_documentos['0'].tipo_de_documento);
+                        
+
                     }
 
                     if (result.listado.versionado_de_documentos['0'].ente) {
@@ -630,9 +656,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                         if (this.selectedExpediente === '') {
                             delete this.documento['tipo_de_expediente'];
                         }
-                        if (this.arrMetacatalogos === []) {
-                            delete this.documento['tipo_de_expediente'];
-                        }
+
                         this.documento.documento = this.documento.documento.id;
                         this.documento.tipo_de_documento = this.documento.tipo_de_documento.id;
                         // this.documento.version = Number(parseFloat(result.listado.documento.version).toFixed(1)) + .1;
@@ -659,7 +683,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
 
     async turnarIniciativa(): Promise<void> {
-        
+
         const fecha = new Date(); // Fecha actual
         let mes: any = fecha.getMonth() + 1; // obteniendo mes
         let dia: any = fecha.getDate(); // obteniendo dia
@@ -673,12 +697,12 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             mes = '0' + mes; // agrega cero si el menor de 10
         }
         const fechaActual = ano + '-' + mes + '-' + dia;
-     
+
         let iniciativa = this.documento.iniciativa;
-        console.log(this.documento);
+
         iniciativa.estatus = this.estatusIniciativa;
-        iniciativa.fechaIniciativa = fechaActual + 'T16:00:00.000Z';
-        this.iniciativaService.actualizarIniciativa(iniciativa).subscribe((resp: any) => {
+        iniciativa.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+        this.iniciativaService.actualizarIniciativa({ id: iniciativa.id, fechaCreacion: iniciativa.fechaCreacion, estatus: iniciativa.estatus }).subscribe((resp: any) => {
             if (resp) {
                 this.version = resp.version;
                 Swal.fire('Éxito', 'Iniciativa turnada correctamente.', 'success');

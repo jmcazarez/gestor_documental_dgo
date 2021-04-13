@@ -50,7 +50,7 @@ export class HistorialDeVersionamientoComponent implements OnInit {
     restaurarVersion(row: any): void {
 
         this.trazabilidadService.obtenerTrazabilidadId(row.id).subscribe((resp: any) => {
-
+            
             this.dialogRef.close({ opcion: 'restaurar', listado: resp.listado.data[0], version: row.movimiento });
         }, err => {
             this.loadingIndicator = false;

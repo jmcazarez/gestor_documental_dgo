@@ -40,7 +40,7 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
         this.obtenerPrestamosDeDocumentos();
     }
 
-    ngOnInit(): void {}
+    ngOnInit(): void { }
 
     obtenerPrestamosDeDocumentos(): void {
         this.spinner.show();
@@ -72,10 +72,10 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
                                     inventario.legislatura.cLegislatura;
                             }
 
-                              if (inventario.tipo_de_expediente) {
-                                  cDescripcionTipoExpediente =
-                                      inventario.legislatura.cLegislatura;
-                              }
+                            if (inventario.tipo_de_expediente) {
+                                cDescripcionTipoExpediente =
+                                    inventario.tipo_de_expediente.cDescripcionTipoExpediente;
+                            }
                             inventariosTemp.push({
                                 id: inventario.id,
                                 legislatura: inventario.legislatura,
@@ -96,6 +96,8 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
                     }
                     this.inventario = inventariosTemp;
                     this.inventarioTemp = this.inventario;
+
+                    this.spinner.hide();
                 }
                 this.loadingIndicator = false;
                 this.spinner.hide();
@@ -117,7 +119,9 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe((result) => {
-            this.obtenerPrestamosDeDocumentos();
+            if (result) {
+                this.obtenerPrestamosDeDocumentos();
+            }
         });
     }
 
@@ -131,7 +135,9 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe((result) => {
-            this.obtenerPrestamosDeDocumentos();
+            if (result) {
+                this.obtenerPrestamosDeDocumentos();
+            }
         });
     }
 
@@ -160,7 +166,7 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
                         Swal.fire(
                             "Error",
                             "Ocurrió un error al eliminar el libro de actas." +
-                                err,
+                            err,
                             "error"
                         );
                     }

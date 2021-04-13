@@ -50,6 +50,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         }
     ];
     selectedTipoDocumento: boolean;
+    selectedObligatorio: boolean;
     form: any;
     arrInformacion: any[];
     arrFormatos: any[];
@@ -82,13 +83,14 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         if (this.documento.tipos_de_formato) {
             this.selectedFormato = this.documento.tipos_de_formato.id;
         }
+
         this.arrInformacion = this.menuService.tipoInformacion;
         this.form = this.formBuilder.group({
             cDescripcionTipoDocumento: [{
                 value: this.documento.cDescripcionTipoDocumento,
                 disabled: this.documento.disabled
             }, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-            obligatorio: { value: this.documento.Obligatorio, disabled: this.documento.disabled },
+            obligatorio: { value: this.documento.bObligatorio, disabled: this.documento.disabled },
             tipoFormatos: [{ value: this.arrFormatos, disabled: this.documento.disabled }, [Validators.required]],
             tipoInformacion: [{ value: this.arrInformacion, disabled: this.documento.disabled }, [Validators.required]],
             metacatalogo: [{ value: '', disabled: this.documento.disabled }],
@@ -100,13 +102,15 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
 
         // Seteamos valores
         if (this.documento.visibilidade) {
-            this.selectedInformacion = this.documento.visibilidade;            
+            this.selectedInformacion = this.documento.visibilidade;
         }
 
         // Seteamos valores
         if (this.documento.tipos_de_formato) {
             this.selectedFormato = this.documento.tipos_de_formato;
         }
+
+        this.selectedObligatorio = this.documento.bObligatorio;
     }
 
     cerrar(ent): void {
@@ -126,12 +130,13 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         // Asignamos valores a objeto
         this.documento.bActivo = true;
         this.documento.cDescripcionTipoDocumento = this.form.get('cDescripcionTipoDocumento').value;
-        this.documento.Obligatorio = this.form.get('obligatorio').value;
+        this.documento.bObligatorio = this.selectedObligatorio;
         this.documento.tipos_de_formato = this.selectedFormato;
         this.documento.visibilidade = this.selectedInformacion;
         this.documento.metacatalogos = this.rows;
         const usuario = localStorage.getItem('usr');
         const usr = JSON.parse(usuario);
+
 
         if (this.documento.id) {
             // Actualizamos la expediente
@@ -146,7 +151,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                         if (this.menuService.tipoDocumentos[index].id === this.documento.id) {
 
                             this.menuService.tipoDocumentos[index].cDescripcionTipoDocumento = this.documento.cDescripcionTipoDocumento;
-                            this.menuService.tipoDocumentos[index].Obligatorio = this.documento.Obligatorio;
+                            this.menuService.tipoDocumentos[index].bObligatorio = this.documento.bObligatorio;
                             this.menuService.tipoDocumentos[index].tipos_de_formato = this.documento.tipos_de_formato;
                             this.menuService.tipoDocumentos[index].metacatalogos = this.documento.metacatalogos;
                             this.menuService.tipoDocumentos[index].visibilidade = this.documento.visibilidade;
@@ -161,7 +166,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                                 if (usr[0].data.perfiles_de_usuario[indexPerf].Documentos[indexDoc].tipo_de_documento.id === this.documento.id) {
                                     // tslint:disable-next-line: max-line-length
                                     usr[0].data.perfiles_de_usuario[indexPerf].Documentos[indexDoc].tipo_de_documento.cDescripcionTipoDocumento = this.documento.cDescripcionTipoDocumento;
-                                    usr[0].data.perfiles_de_usuario[indexPerf].Documentos[indexDoc].tipo_de_documento.Obligatorio = this.documento.Obligatorio;
+                                    usr[0].data.perfiles_de_usuario[indexPerf].Documentos[indexDoc].tipo_de_documento.bObligatorio = this.documento.bObligatorio;
                                     usr[0].data.perfiles_de_usuario[indexPerf].Documentos[indexDoc].tipo_de_documento.tipos_de_formato = this.documento.tipos_de_formato;
                                     usr[0].data.perfiles_de_usuario[indexPerf].Documentos[indexDoc].tipo_de_documento.metacatalogos = this.documento.metacatalogos;
                                     usr[0].data.perfiles_de_usuario[indexPerf].Documentos[indexDoc].tipo_de_documento.visibilidade = this.documento.visibilidade;
@@ -226,7 +231,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                                                 Consultar: true,
                                                 Editar: true,
                                                 Eliminar: true,
-                                                Obligatorio: this.documento.Obligatorio,
+                                                bObligatorio: this.documento.bObligatorio,
                                                 tipos_de_formato: tipoFormato,
                                                 metacatalogos,
                                                 visibilidade
@@ -244,7 +249,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                             });
 
                             // tslint:disable-next-line: forin
-                            // Agregamos actualizamos cadauno de los perfiles
+                            // Agregamos actualizamos cada uno de los perfiles
                             usr[0].data.perfiles_de_usuario[index].Documentos.push({
                                 Agregar: true,
                                 Consultar: true,
@@ -253,7 +258,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                                 tipo_de_documento: {
                                     bActivo: true,
                                     id: this.documento.id,
-                                    bObligatorio: this.documento.Obligatorio,
+                                    bObligatorio: this.documento.bObligatorio,
                                     cDescripcionTipoDocumento: this.documento.cDescripcionTipoDocumento,
                                     tipos_de_formato: this.documento.tipos_de_formato,
                                     metacatalogos,
@@ -305,23 +310,29 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         metacatalogoObligatorio = this.form.get('metacatalogoObligatorio').value;
         metacatalogoTipo = this.form.get('metacatalogoTipo').value;
 
+        this.form.controls['metacatalogo'].setValue('');
+        this.form.controls['metacatalogoObligatorio'].setValue(false);
+   
+        this.selectedTipo = '';
+
+
         if (metacatalogo === '' || metacatalogoTipo === '' || metacatalogo === undefined || metacatalogoTipo === undefined) {
             Swal.fire('Error', 'Es necesario capturar la descripción y el tipo para agregar metacatalogo. ', 'error');
             this.loadingIndicator = false;
         } else {
-            const temp = this.rows.filter((d) => d.cDescripcionMetacatalogo.toLowerCase().indexOf(metacatalogo) !== -1 || !metacatalogo);
+            const temp = this.rows.filter((d) => d.cDescripcionMetacatalogo.toLowerCase().indexOf(metacatalogo.toLowerCase()) !== -1 || !metacatalogo.toLowerCase());
             if (temp.length && !this.rowEditar) {
-                Swal.fire('Error', 'Ya existe un metacatalogo con esa descripcion agregado. ', 'error');
+                Swal.fire('Error', 'Ya existe un metacatalogo con esa descripción agregado. ', 'error');
             } else {
                 if (this.rowEditar) {
 
-                    const index = this.rows.findIndex(tipoDocumento => tipoDocumento.cDescripcionMetacatalogo === this.rowEditar.cDescripcionMetacatalogo);                 
+                    const index = this.rows.findIndex(tipoDocumento => tipoDocumento.cDescripcionMetacatalogo === this.rowEditar.cDescripcionMetacatalogo);
                     if (index >= 0) {
 
                         for (i in this.rows) {
 
-                            if (Number(i) !== index && this.rows[i].cDescripcionMetacatalogo === metacatalogo) {
-                                Swal.fire('Error', 'Ya existe un metacatalogo con esa descripcion agregado. ', 'error');
+                            if (Number(i) !== index && this.rows[i].cDescripcionMetacatalogo.toLowerCase() === metacatalogo.toLowerCase()) {
+                                Swal.fire('Error', 'Ya existe un metacatalogo con esa descripción agregado. ', 'error');
                                 repetido = true;
                             }
 
@@ -354,6 +365,8 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
 
             this.loadingIndicator = false;
             setTimeout(() => {
+
+             
                 this.rows = [...this.rows];
                 this.rowsTemp = this.rows;
             }, 100);
@@ -386,8 +399,8 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
             this.rows = this.rowsTemp;
         } else {
             const val = value.target.value.toLowerCase();
-            const temp = this.rows.filter((d) => d.cDescripcionMetacatalogo.toLowerCase().indexOf(this.searchText) !== -1 || !val
-                || d.cTipoMetacatalogo.toLowerCase(this.searchText).indexOf(val) !== - 1);
+            const temp = this.rows.filter((d) => d.cDescripcionMetacatalogo.toLowerCase().indexOf(val) !== -1 || !val
+                || d.cTipoMetacatalogo.toLowerCase(val).indexOf(val) !== - 1);
             this.rows = temp;
         }
     }

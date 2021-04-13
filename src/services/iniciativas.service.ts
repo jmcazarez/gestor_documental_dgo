@@ -11,6 +11,7 @@ export class IniciativasService {
     private baseUrl: string;
     private urlIniciativas = 'iniciativas';
     private urlTipoIniciativas = 'tipo-iniciativas';
+    private urlIniciativasFiltrado = 'iniciativas-filtrado';
     private TOKEN = localStorage.getItem('token');
 
     private httpOptions = {
@@ -26,7 +27,7 @@ export class IniciativasService {
         return this.http.get(this.baseUrl + this.urlIniciativas, this.httpOptions);
     }
 
-    actualizarIniciativa(iniciativa): any {
+    actualizarIniciativa(iniciativa: any): any {
         return this.http.put(this.baseUrl + this.urlIniciativas + '/' + iniciativa.id, iniciativa, this.httpOptions);
     }
 
@@ -38,8 +39,12 @@ export class IniciativasService {
         return this.http.delete(this.baseUrl + this.urlIniciativas + '/' + ruta, this.httpOptions);
     }
 
-
     obtenerTiposIniciativas(): any {
         return this.http.get(this.baseUrl + this.urlTipoIniciativas, this.httpOptions);
+    }
+
+    obtenerIniciativasFiltrado(filtro: string): any {
+
+        return this.http.get(this.baseUrl + this.urlIniciativasFiltrado + '/' + filtro, this.httpOptions);
     }
 }

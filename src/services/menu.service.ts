@@ -82,183 +82,194 @@ export class MenuService {
                         /*  for (const opciones of usuarioLogin.Opciones) { */
 
                         for (const perfiles of usuarioLogin[0].data.perfiles_de_usuario) {
-                            this.perfilUsuario.push({ id: perfiles.id });
-                            for (const visibilidad of perfiles.Visibilidad) {
+                            if (perfiles.bActivo) {
+                                this.perfilUsuario.push({ id: perfiles.id });
+                                for (const visibilidad of perfiles.Visibilidad) {
 
-                                if (visibilidad.visibilidade.bActivo && visibilidad.Si) {
-                                    this.tipoInformacion.push({
-                                        id: visibilidad.visibilidade.id,
-                                        cDescripcionVisibilidad: visibilidad.visibilidade.cDescripcionVisibilidad,
-                                    });
-                                }
-                            }
-
-
-                            // Agregamos permisos a tipos de documentos
-                            for (const documentos of perfiles.Documentos) {
-                                if (documentos.tipo_de_documento) {
-                                    if (documentos.tipo_de_documento.bActivo) {
-                                        const resultado = this.tipoDocumentos.find(tipoDocumento => tipoDocumento.id === documentos.tipo_de_documento.id);
-
-                                        if (resultado) {
-                                            // Si existen multiples permisos solo actualizamos los valores activos
-                                            let index = this.tipoDocumentos.findIndex(tipoDocumento => tipoDocumento.id === documentos.tipo_de_documento.id);
-                                            if (!index) {
-                                                index = 0;
-                                            }
-
-                                            if (documentos.Agregar) {
-                                                this.tipoDocumentos[index].Agregar = documentos.Agregar;
-                                            }
-                                            if (documentos.Consultar) {
-                                                this.tipoDocumentos[index].Consultar = documentos.Consultar;
-                                            }
-                                            if (documentos.Editar) {
-                                                this.tipoDocumentos[index].Editar = documentos.Editar;
-                                            }
-                                            if (documentos.Eliminar) {
-                                                this.tipoDocumentos[index].Eliminar = documentos.Eliminar;
-                                            }
-
-                                        } else {
-                                            // Si el permiso es unico lo agregamos
-
-                                            if (documentos.tipo_de_documento.tipos_de_formato) {
-                                                tipoFormato = documentos.tipo_de_documento.tipos_de_formato;
-                                            }
-                                            if (documentos.tipo_de_documento.metacatalogos) {
-                                                metacatalogos = documentos.tipo_de_documento.metacatalogos;
-                                            }
-
-                                            if (documentos.tipo_de_documento.visibilidade) {
-                                                visibilidade = documentos.tipo_de_documento.visibilidade;
-                                            }
-
-
-                                            this.tipoDocumentos.push({
-                                                id: documentos.tipo_de_documento.id,
-                                                cDescripcionTipoDocumento: documentos.tipo_de_documento.cDescripcionTipoDocumento,
-                                                Agregar: documentos.Agregar,
-                                                Consultar: documentos.Consultar,
-                                                Editar: documentos.Editar,
-                                                Eliminar: documentos.Eliminar,
-                                                Obligatorio: documentos.tipo_de_documento.bObligatorio,
-                                                tipos_de_formato: tipoFormato,
-                                                metacatalogos,
-                                                visibilidade
-                                            });
-                                        }
-
+                                    if (visibilidad.visibilidade.bActivo && visibilidad.Si) {
+                                       // console.log(visibilidad.visibilidade);
+                                        this.tipoInformacion.push({
+                                            id: visibilidad.visibilidade.id,
+                                            cDescripcionVisibilidad: visibilidad.visibilidade.cDescripcionVisibilidad,
+                                        });
                                     }
                                 }
-                            }
-                            // Agregamos permisos a opciones del sistema
-                            for (const opciones of perfiles.Opciones) {
 
-                                if (opciones) {
-                                   
-                                    if (opciones.opciones_del_sistema) {
-                                        const resultado = this.opcionesPerfil.find(opcion => opcion.id === opciones.opciones_del_sistema.id);
+                                // Agregamos permisos a tipos de documentos
+                                for (const documentos of perfiles.Documentos) {
+                                    if (documentos.tipo_de_documento) {
+                                       // console.log(documentos.tipo_de_documento);
+                                        if (documentos.tipo_de_documento.bActivo) {
+                                            const resultado = this.tipoDocumentos.find(tipoDocumento => tipoDocumento.id === documentos.tipo_de_documento.id);
 
-                                        const cUrl = opciones.opciones_del_sistema.cNombreOpcion.toLowerCase().replace(/ /g, '-');
-
-                                        if (!resultado) {
-
-                                            // Agregamos la opcion al Menu
-                                            const itemMenu: ItemMenuModel = {
-                                                id: 'modulo-' + cUrl,
-                                                title: opciones.opciones_del_sistema.cNombreOpcion,
-                                                type: 'item',
-                                                icon: 'blur_on',
-                                                function: () => {
-                                                    this.router.navigate([cUrl]);
-                                                }
-                                            };
-
-                                            if (opciones.opciones_del_sistema.tipo_de_opcion_de_sistema) {
-
-                                                tipo = this.tipoOpciones.find(tipoOpcion => tipoOpcion.id === opciones.opciones_del_sistema.tipo_de_opcion_de_sistema);
-                                                //console.log(tipo);
-                                                if (tipo) {
-                                                    if (tipo.cDescripcionTipoOpcion === 'Reportes') {
-                                                        grupoMenuReportes.children.push(itemMenu);
-                                                    }
-                                                    if (tipo.cDescripcionTipoOpcion === 'Registros') {
-                                                        grupoMenu.children.push(itemMenu);
-                                                    }
-                                                    if (tipo.cDescripcionTipoOpcion === 'Catalogos') {
-                                                        grupoMenuCatalagos.children.push(itemMenu);
-                                                    }
-
-                                                } else {
-
-
-                                                    grupoMenu.children.push(itemMenu);
-                                                }
-
-                                            } else if (opciones.opciones_del_sistema.tipo_de_opcion_de_sistemas[0]) {
-                                                tipo = this.tipoOpciones.find(tipoOpcion => tipoOpcion.id === opciones.opciones_del_sistema.tipo_de_opcion_de_sistemas[0]);
-                                                //console.log(tipo);
-                                                if (tipo) {
-                                                    if (tipo.cDescripcionTipoOpcion === 'Reportes') {
-                                                        grupoMenuReportes.children.push(itemMenu);
-                                                    }
-                                                    if (tipo.cDescripcionTipoOpcion === 'Registros') {
-                                                        grupoMenu.children.push(itemMenu);
-                                                    }
-                                                    if (tipo.cDescripcionTipoOpcion === 'Catalogos') {
-                                                        grupoMenuCatalagos.children.push(itemMenu);
-                                                    }
-
-                                                } else {
-
-
-                                                    grupoMenu.children.push(itemMenu);
-                                                }
-                                            } else {
-
-                                                grupoMenu.children.push(itemMenu);
-                                            }
-
-
-
-
-                                        }
-                                        if (opciones.opciones_del_sistema.bActivo) {
                                             if (resultado) {
                                                 // Si existen multiples permisos solo actualizamos los valores activos
-                                                let index = this.opcionesPerfil.findIndex(opcion => opcion.id === opciones.opciones_del_sistema.id);
+                                                let index = this.tipoDocumentos.findIndex(tipoDocumento => tipoDocumento.id === documentos.tipo_de_documento.id);
                                                 if (!index) {
                                                     index = 0;
                                                 }
-                                                if (opciones.Agregar) {
-                                                    this.opcionesPerfil[index].Agregar = opciones.Agregar;
+
+                                                if (documentos.Agregar) {
+                                                    this.tipoDocumentos[index].Agregar = documentos.Agregar;
                                                 }
-                                                if (opciones.Consultar) {
-                                                    this.opcionesPerfil[index].Consultar = opciones.Consultar;
+                                                if (documentos.Consultar) {
+                                                    this.tipoDocumentos[index].Consultar = documentos.Consultar;
                                                 }
-                                                if (opciones.Editar) {
-                                                    this.opcionesPerfil[index].Editar = opciones.Editar;
+                                                if (documentos.Editar) {
+                                                    this.tipoDocumentos[index].Editar = documentos.Editar;
                                                 }
-                                                if (opciones.Eliminar) {
-                                                    this.opcionesPerfil[index].Eliminar = opciones.Eliminar;
+                                                if (documentos.Eliminar) {
+                                                    this.tipoDocumentos[index].Eliminar = documentos.Eliminar;
                                                 }
+
                                             } else {
                                                 // Si el permiso es unico lo agregamos
-                                                this.opcionesPerfil.push({
-                                                    id: opciones.opciones_del_sistema.id,
-                                                    cNombreOpcion: opciones.opciones_del_sistema.cNombreOpcion,
-                                                    Agregar: opciones.Agregar,
-                                                    Eliminar: opciones.Eliminar,
-                                                    Consultar: opciones.Consultar,
-                                                    Editar: opciones.Editar,
-                                                    cUrl: cUrl
+
+                                                if (documentos.tipo_de_documento.tipos_de_formato) {
+                                                    tipoFormato = documentos.tipo_de_documento.tipos_de_formato;
+                                                }
+                                                if (documentos.tipo_de_documento.metacatalogos) {
+                                                    metacatalogos = documentos.tipo_de_documento.metacatalogos;
+                                                }
+
+                                                if (documentos.tipo_de_documento.visibilidade) {
+                                                    visibilidade = documentos.tipo_de_documento.visibilidade;
+                                                }
+
+                                               
+                                            // console.log(documentos.tipo_de_documento.bObligatorio);
+                                                this.tipoDocumentos.push({
+                                                    id: documentos.tipo_de_documento.id,
+                                                    cDescripcionTipoDocumento: documentos.tipo_de_documento.cDescripcionTipoDocumento,
+                                                    Agregar: documentos.Agregar,
+                                                    Consultar: documentos.Consultar,
+                                                    Editar: documentos.Editar,
+                                                    Eliminar: documentos.Eliminar,
+                                                    bObligatorio: documentos.tipo_de_documento.bObligatorio,
+                                                    tipos_de_formato: tipoFormato,
+                                                    metacatalogos,
+                                                    visibilidade
                                                 });
+
+
+                                                this.tipoDocumentos = [...this.tipoDocumentos];
+                                            }
+
+                                        }
+                                    }
+                                }
+                                // Agregamos permisos a opciones del sistema
+                                for (const opciones of perfiles.Opciones) {
+
+                                    if (opciones) {
+                                        if (opciones.opciones_del_sistema) {
+                                            if (opciones.opciones_del_sistema.bActivo) {
+                                                const resultado = this.opcionesPerfil.find(opcion => opcion.id === opciones.opciones_del_sistema.id);
+
+                                                const cUrl = opciones.opciones_del_sistema.cNombreOpcion.toLowerCase().replace(/ /g, '-');
+
+                                                if (!resultado) {
+
+                                                    // Agregamos la opcion al Menu
+                                                    const itemMenu: ItemMenuModel = {
+                                                        id: 'modulo-' + cUrl,
+                                                        title: opciones.opciones_del_sistema.cNombreOpcion,
+                                                        type: 'item',
+                                                        icon: 'blur_on',
+                                                        function: () => {
+                                                            this.router.navigate([cUrl]);
+                                                        }
+                                                    };
+
+                                                    if (opciones.opciones_del_sistema.tipo_de_opcion_de_sistema) {
+
+                                                        tipo = this.tipoOpciones.find(tipoOpcion => tipoOpcion.id === opciones.opciones_del_sistema.tipo_de_opcion_de_sistema);
+                                                        //console.log(tipo);
+                                                        if (tipo) {
+                                                            if (tipo.cDescripcionTipoOpcion === 'Reportes') {
+                                                                grupoMenuReportes.children.push(itemMenu);
+                                                            }
+                                                            if (tipo.cDescripcionTipoOpcion === 'Registros') {
+                                                                grupoMenu.children.push(itemMenu);
+                                                            }
+                                                            if (tipo.cDescripcionTipoOpcion === 'Catalogos') {
+                                                                grupoMenuCatalagos.children.push(itemMenu);
+                                                            }
+
+                                                        } else {
+
+
+                                                            grupoMenu.children.push(itemMenu);
+                                                        }
+
+                                                    } else if (opciones.opciones_del_sistema.tipo_de_opcion_de_sistemas[0]) {
+                                                        tipo = this.tipoOpciones.find(tipoOpcion => tipoOpcion.id === opciones.opciones_del_sistema.tipo_de_opcion_de_sistemas[0]);
+                                                        //console.log(tipo);
+                                                        if (tipo) {
+                                                            if (tipo.cDescripcionTipoOpcion === 'Reportes') {
+                                                                grupoMenuReportes.children.push(itemMenu);
+                                                            }
+                                                            if (tipo.cDescripcionTipoOpcion === 'Registros') {
+                                                                grupoMenu.children.push(itemMenu);
+                                                            }
+                                                            if (tipo.cDescripcionTipoOpcion === 'Catalogos') {
+                                                                grupoMenuCatalagos.children.push(itemMenu);
+                                                            }
+
+                                                        } else {
+
+
+                                                            grupoMenu.children.push(itemMenu);
+                                                        }
+                                                    } else {
+
+                                                        grupoMenu.children.push(itemMenu);
+                                                    }
+
+
+
+
+                                                }
+                                                if (opciones.opciones_del_sistema.bActivo) {
+                                                    if (resultado) {
+                                                        // Si existen multiples permisos solo actualizamos los valores activos
+                                                        let index = this.opcionesPerfil.findIndex(opcion => opcion.id === opciones.opciones_del_sistema.id);
+                                                        if (!index) {
+                                                            index = 0;
+                                                        }
+                                                        if (opciones.Agregar) {
+                                                            this.opcionesPerfil[index].Agregar = opciones.Agregar;
+                                                        }
+                                                        if (opciones.Consultar) {
+                                                            this.opcionesPerfil[index].Consultar = opciones.Consultar;
+                                                        }
+                                                        if (opciones.Editar) {
+                                                            this.opcionesPerfil[index].Editar = opciones.Editar;
+                                                        }
+                                                        if (opciones.Eliminar) {
+                                                            this.opcionesPerfil[index].Eliminar = opciones.Eliminar;
+                                                        }
+                                                    } else {
+                                                        // Si el permiso es unico lo agregamos
+                                                        this.opcionesPerfil.push({
+                                                            id: opciones.opciones_del_sistema.id,
+                                                            cNombreOpcion: opciones.opciones_del_sistema.cNombreOpcion,
+                                                            Agregar: opciones.Agregar,
+                                                            Eliminar: opciones.Eliminar,
+                                                            Consultar: opciones.Consultar,
+                                                            Editar: opciones.Editar,
+                                                            cUrl: cUrl
+                                                        });
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
+                        }
+                        if (grupoMenu.children.length === 0 && grupoMenuCatalagos.children.length === 0 && grupoMenuReportes.children.length === 0) {
+                            this.router.navigate(['login']);
                         }
                         this.fuseNavigationService.addNavigationItem(grupoMenuCatalagos, 'end');
                         this.fuseNavigationService.addNavigationItem(grupoMenu, 'end');

@@ -9,9 +9,22 @@ export class IniciativasModel {
     documentos : any; 
     fechaIniciativa : any; 
     fechaCreacion : any; 
+    fechaRecepcion: any;
     formatosTipoIniciativa: any;
     actasSesion: any;
     comisiones: any;
     anexosTipoCuentaPublica: any;
     anexosTipoIniciativa: any;
+    receptor: any;
+    receptorId: any;
+    oficioEnvioDeInforme: any;
+    informeDeResultadosRevision: any;
+    adicion: any;
+    etiquetas: any;
+    dictamenDeIniciativa: any;
+    sustentoDeModificacion: any;
+    motivoDeSuspension: any;
+    periodicoOficial: any;
+    fechaPublicacion: any;
+    disabled: any;
 }

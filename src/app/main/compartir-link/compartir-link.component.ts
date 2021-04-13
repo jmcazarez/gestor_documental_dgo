@@ -58,6 +58,7 @@ export class CompartirLinkComponent implements OnInit {
 			// '5fda61cdbbd71324a031035a'
 			 // '5fda61cdbbd71324a031035a' id de documento creado
             this.documentosCompartidos.documentoCompartido(this.rutaActiva.snapshot.params.id).subscribe((resp: any) => {
+                console.log(resp[0]);
                 this.documento = resp[0];
                 //console.log(this.documento);
                 if(this.documento === void 0){

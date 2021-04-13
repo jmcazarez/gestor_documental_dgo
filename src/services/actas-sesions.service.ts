@@ -9,6 +9,7 @@ export class ActasSesionsService {
 
     private baseUrl: string;
     private urlActasSesions = 'actas-sesions';
+    private urlActasSesionsFiltrado = 'actas-sesions-filtrado';
     private TOKEN = localStorage.getItem('token');
 
     private httpOptions = {
@@ -35,5 +36,10 @@ export class ActasSesionsService {
     eliminarActasSesions(id: string): any {
 
         return this.http.delete(this.baseUrl + this.urlActasSesions + '/' + id, this.httpOptions);
+    }
+
+    obtenerActasSesionsFiltrado(filtro: string): any {
+
+        return this.http.get(this.baseUrl + this.urlActasSesionsFiltrado + '/' + filtro, this.httpOptions);
     }
 }

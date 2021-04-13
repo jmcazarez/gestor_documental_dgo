@@ -15,6 +15,7 @@ import * as XLSX from 'xlsx';
 import { HistorialCargaService } from 'services/historial-carga.service';
 import { HistorialCargaEncabezadoModel } from 'models/historial-carga-encabezado.models';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { UsuarioLoginService } from 'services/usuario-login.service';
 
 @Component({
     selector: 'app-tablero-de-carga-masiva',
@@ -67,7 +68,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
     validarGuardado: boolean;
     historialEncabezado: HistorialCargaEncabezadoModel;
     base64: any;
-
+    usuario: any;
     constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe,
         private usuariosService: UsuariosService,
         private spinner: NgxSpinnerService,
@@ -79,6 +80,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
         private uploadService: UploadFileService,
         private exportExcel: ExportService,
         private historialCarga: HistorialCargaService,
+        private usuarioLoginService: UsuarioLoginService,
         private sanitizer: DomSanitizer) {
         this.url = 'tablero-de-carga-masiva';
         // this.url = this.router.routerState.snapshot.url.replace('/', '').replace('%C3%BA', 'ú');
@@ -86,7 +88,8 @@ export class TableroDeCargaMasivaComponent implements OnInit {
         // this.obtenerDocumentos();
     }
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
+        this.usuario = await this.usuarioLoginService.obtenerUsuario();
 
         this.selectedHistorial = '';
         this.obtenerEntes();
@@ -136,6 +139,9 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                 const tempMetacatalogos = this.arrTipoDocumentos.filter((d) => d.id.toLowerCase().indexOf(val.toLowerCase()) !== -1 || !val);
                 if (tempMetacatalogos[0].metacatalogos) {
                     this.arrMetacatalogos = tempMetacatalogos[0].metacatalogos;
+                    for (const i in this.arrMetacatalogos) {
+                        this.arrMetacatalogos[i].text = '';          
+                    }
                 }
                 // tslint:disable-next-line: forin
             }
@@ -175,11 +181,9 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                 this.documentosTemporal.push({
                                     'Documento': element.documento.id,
                                     'Nombre del documento': element.documento.name,
-                                    'Tipo de documento': '',
-                                    'Tipo de información': '',
+                                    'Tipo de documento': '',                                 
                                     'Páginas': '',
-                                    'Fecha de creación': '',
-                                    'Ente': '',
+                                    'Fecha de creación': '',                                   
                                     'Tipo de expediente': '',
                                     'Folio de expediente': '',
                                     'Estatus': '',
@@ -308,15 +312,15 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                 filtroReporte = filtroReporte + '&tipo_de_documento.id=' + this.selectTipoDocumento;
             }
         }
-/*
-        if (this.selectedEntes !== undefined && this.selectedEntes !== '') {
-            if (filtroReporte === '') {
-                filtroReporte = 'ente.id=' + this.selectedEntes;
-            } else {
-                filtroReporte = filtroReporte + '&ente.id=' + this.selectedEntes;
-            }
-        }
-*/
+        /*
+                if (this.selectedEntes !== undefined && this.selectedEntes !== '') {
+                    if (filtroReporte === '') {
+                        filtroReporte = 'ente.id=' + this.selectedEntes;
+                    } else {
+                        filtroReporte = filtroReporte + '&ente.id=' + this.selectedEntes;
+                    }
+                }
+        */
         if (this.selectedExpediente !== undefined && this.selectedExpediente !== '') {
             if (filtroReporte === '') {
                 filtroReporte = 'tipo_de_expediente.id=' + this.selectedExpediente;
@@ -411,36 +415,37 @@ export class TableroDeCargaMasivaComponent implements OnInit {
 
                                 // tslint:disable-next-line: no-unused-expression
                                 // Seteamos valores y permisos
-                                documentosTemp.push({
-                                    selected: false,
-                                    id: documento.id,
-                                    cNombreDocumento: documento.cNombreDocumento,
-                                    tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
-                                    tipo_de_documento: documento.tipo_de_documento.id,
-                                    fechaCarga: this.datePipe.transform(documento.fechaCarga, 'MM-dd-yyyy'),
-                                    fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'MM-dd-yyyy'),
-                                    paginas: documento.paginas,
-                                    bActivo: documento.bActivo,
-                                    fechaModificacion: this.datePipe.transform(documento.updatedAt, 'MM-dd-yyyy'),
-                                    Agregar: encontro.Agregar,
-                                    Eliminar: encontro.Eliminar,
-                                    Editar: encontro.Editar,
-                                    Consultar: encontro.Consultar,
-                                    idDocumento: idDocumento,
-                                    version: parseFloat(documento.version).toFixed(1),
-                                    documento: documento.documento,
-                                    ente: documento.ente,
-                                    folioExpediente: documento.folioExpediente,
-                                    clasificacion: meta,
-                                    metacatalogos: documento.metacatalogos,
-                                    informacion: visibilidad,
-                                    visibilidade: documento.visibilidade,
-                                    idEnte,
-                                    tipo_de_expediente: documento.tipo_de_expediente,
-                                    descripcionExpediente: cDescripcionTipoExpediente,
-                                    idExpediente
-                                });
-
+                                if (documento.documento) {
+                                    documentosTemp.push({
+                                        selected: false,
+                                        id: documento.id,
+                                        cNombreDocumento: documento.cNombreDocumento,
+                                        tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
+                                        tipo_de_documento: documento.tipo_de_documento.id,
+                                        fechaCarga: this.datePipe.transform(documento.fechaCarga, 'MM-dd-yyyy'),
+                                        fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'MM-dd-yyyy'),
+                                        paginas: documento.paginas,
+                                        bActivo: documento.bActivo,
+                                        fechaModificacion: this.datePipe.transform(documento.updatedAt, 'MM-dd-yyyy'),
+                                        Agregar: encontro.Agregar,
+                                        Eliminar: encontro.Eliminar,
+                                        Editar: encontro.Editar,
+                                        Consultar: encontro.Consultar,
+                                        idDocumento: idDocumento,
+                                        version: parseFloat(documento.version).toFixed(1),
+                                        documento: documento.documento,
+                                        ente: documento.ente,
+                                        folioExpediente: documento.folioExpediente,
+                                        clasificacion: meta,
+                                        metacatalogos: documento.metacatalogos,
+                                        informacion: visibilidad,
+                                        visibilidade: documento.visibilidade,
+                                        idEnte,
+                                        tipo_de_expediente: documento.tipo_de_expediente,
+                                        descripcionExpediente: cDescripcionTipoExpediente,
+                                        idExpediente
+                                    });
+                                }
                                 meta = '';
                             }
                         }
@@ -569,9 +574,9 @@ export class TableroDeCargaMasivaComponent implements OnInit {
     async obtenerHistorialCarga(): Promise<void> {
         this.spinner.show();
         // Obtenemos el historial de carga
-        
-        this.historialCarga.obtenerHistorialCarga(this.menuService.usuario).subscribe((resp: any) => {
-            
+
+        this.historialCarga.obtenerHistorialCarga(this.usuario[0].data.id).subscribe((resp: any) => {
+
             this.arrHistorialCarga = resp;
             this.spinner.hide();
         }, err => {
@@ -662,12 +667,12 @@ export class TableroDeCargaMasivaComponent implements OnInit {
             }
             this.documentos = temp;
         }
-/*
-        if (this.selectedEntes !== '' && this.selectedEntes !== undefined && this.selectedEntes !== null) {
-            temp = this.documentos.filter((d) => d.idEnte.toLowerCase().indexOf(this.selectedEntes.toLowerCase()) !== -1 || !this.selectedEntes);
-            this.documentos = temp;
-        }
-*/
+        /*
+                if (this.selectedEntes !== '' && this.selectedEntes !== undefined && this.selectedEntes !== null) {
+                    temp = this.documentos.filter((d) => d.idEnte.toLowerCase().indexOf(this.selectedEntes.toLowerCase()) !== -1 || !this.selectedEntes);
+                    this.documentos = temp;
+                }
+        */
         if (this.selectedExpediente !== '' && this.selectedExpediente !== undefined && this.selectedExpediente !== null) {
             temp = this.documentos.filter((d) => d.idExpediente === this.selectedExpediente);
             this.documentos = temp;
@@ -877,7 +882,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                     tipo.cDescripcionTipoDocumento.trim() === row['Tipo de documento']);
 
                                 if (encontro) {
-
+                                   
                                     if (encontro.Agregar === 'undefined') {
                                         this.documentos[x].valido = false;
                                         if (textError.length > 0) {
@@ -889,6 +894,31 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                         this.documentos[x].tipoDocumento = encontro.cDescripcionTipoDocumento;
                                         this.documentos[x].tipo_de_documento = encontro.id;
                                         this.arrMetacatalogos = this.menuService.tipoDocumentos.find(tipoDocumento => tipoDocumento.id === encontro.id).metacatalogos;
+
+
+                                        if (encontro.visibilidade && encontro.visibilidade.length > 0) {
+                                            const visibilidad = this.menuService.tipoInformacion.find((tipo: { id: string; }) =>
+                                                tipo.id === encontro.visibilidade);
+                                            if (visibilidad) {
+                                                this.documentos[x].informacion = visibilidad.cDescripcionVisibilidad;
+                                                this.documentos[x].visibilidade = visibilidad.id;
+                                            } else {
+                                                this.documentos[x].valido = false;
+                                                if (textError.length > 0) {
+                                                    textError = 'El tipo de información es obligatorio';
+                                                } else {
+                                                    textError = textError + ', el tipo de información es obligatorio';
+                                                }
+                                            }
+                                        } else {
+                                            this.documentos[x].valido = false;
+                                            if (textError.length > 0) {
+                                                textError = 'El tipo de información es obligatorio';
+                                            } else {
+                                                textError = textError + ', el tipo de información es obligatorio';
+                                            }
+
+                                        }
                                     }
                                 } else {
                                     this.documentos[x].valido = false;
@@ -906,30 +936,30 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                     textError = textError + ', el tipo de documento es obligatorio';
                                 }
                             }
-/*
-                            if (row['Ente'] && row['Ente'].length > 0) {
-                                const encontro = this.arrEntes.find((ente: { cDescripcionEnte: string; }) =>
-                                    ente.cDescripcionEnte === row['Ente']);
-                                if (encontro) {
-                                    this.documentos[x].idEnte = encontro['id'];
-                                    this.documentos[x].ente = encontro;
-                                } else {
-                                    this.documentos[x].valido = false;
-                                    if (textError.length > 0) {
-                                        textError = 'El ente es obligatorio';
-                                    } else {
-                                        textError = textError + ', el ente es obligatorio';
-                                    }
-                                }
-                            } else {
-                                this.documentos[x].valido = false;
-                                if (textError.length > 0) {
-                                    textError = 'El ente es obligatorio';
-                                } else {
-                                    textError = textError + ', el ente es obligatorio';
-                                }
-                            }
- */
+                            /*
+                                                        if (row['Ente'] && row['Ente'].length > 0) {
+                                                            const encontro = this.arrEntes.find((ente: { cDescripcionEnte: string; }) =>
+                                                                ente.cDescripcionEnte === row['Ente']);
+                                                            if (encontro) {
+                                                                this.documentos[x].idEnte = encontro['id'];
+                                                                this.documentos[x].ente = encontro;
+                                                            } else {
+                                                                this.documentos[x].valido = false;
+                                                                if (textError.length > 0) {
+                                                                    textError = 'El ente es obligatorio';
+                                                                } else {
+                                                                    textError = textError + ', el ente es obligatorio';
+                                                                }
+                                                            }
+                                                        } else {
+                                                            this.documentos[x].valido = false;
+                                                            if (textError.length > 0) {
+                                                                textError = 'El ente es obligatorio';
+                                                            } else {
+                                                                textError = textError + ', el ente es obligatorio';
+                                                            }
+                                                        }
+                             */
                             if (Number(row['Páginas'])) {
                                 this.documentos[x].paginas = Number(row['Páginas']);
                             } else {
@@ -947,29 +977,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                 }
                             }
 
-                            if (row['Tipo de información'] && row['Tipo de información'].length > 0) {
-                                const encontro = this.menuService.tipoInformacion.find((tipo: { cDescripcionVisibilidad: string; }) =>
-                                    tipo.cDescripcionVisibilidad === row['Tipo de información']);
-                                if (encontro) {
-                                    this.documentos[x].informacion = encontro.cDescripcionVisibilidad;
-                                    this.documentos[x].visibilidade = encontro.id;
-                                } else {
-                                    this.documentos[x].valido = false;
-                                    if (textError.length > 0) {
-                                        textError = 'El tipo de información es obligatorio';
-                                    } else {
-                                        textError = textError + ', el tipo de información es obligatorio';
-                                    }
-                                }
-                            } else {
-                                this.documentos[x].valido = false;
-                                if (textError.length > 0) {
-                                    textError = 'El tipo de información es obligatorio';
-                                } else {
-                                    textError = textError + ', el tipo de información es obligatorio';
-                                }
 
-                            }
 
                             if (row['Tipo de expediente'] && row['Tipo de expediente'].length > 0) {
                                 const encontro = this.arrExpediente.find((tipo: { cDescripcionTipoExpediente: string; }) =>
@@ -1214,11 +1222,11 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                             }, err => {
                                 this.spinner.hide();
                                 console.log(err);
-                              
+
                                 if (err.error) {
                                     Swal.fire(
                                         'Error',
-                                        'Ocurrió un error al guardar el historial de cargas.' +   JSON.stringify(err.error),
+                                        'Ocurrió un error al guardar el historial de cargas.' + JSON.stringify(err.error),
                                         'error'
                                     );
                                 }
@@ -1235,7 +1243,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                 }, (err: any) => {
                     console.log(err);
                     this.spinner.hide();
-                    Swal.fire('Error', 'Ocurrió un error al guardar. ' +   JSON.stringify(err.error), 'error');
+                    Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(err.error), 'error');
                 });
             }
         });
