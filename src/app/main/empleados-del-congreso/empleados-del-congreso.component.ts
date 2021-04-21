@@ -48,7 +48,7 @@ export class EmpleadosDelCongresoComponent implements OnInit {
             this.optEliminar = opciones.Eliminar;
             // Si tiene permisos para consultar
             if (this.optConsultar) {
-              console.log(resp);
+              
                 this.empleados = resp;
                 this.empleadosTemp = this.empleados;
             }

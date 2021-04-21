@@ -152,13 +152,16 @@ export class TableroDeLibroDeActasComponent implements OnInit {
 
 
     filterDatatable(value): void {
+        this.libroDeActas = this.libroDeActasTemporal;
         // Filtramos tabla
         if (value.target.value === '') {
             this.libroDeActas = this.libroDeActasTemporal;
         } else {
             const val = value.target.value.toLowerCase();
             const temp = this.libroDeActas.filter((d) => d.fechaDeInicio.toLowerCase().indexOf(val) !== -1 || !val ||
-                d.fechaDeFin.toLowerCase().indexOf(val) !== - 1 || d.descripcionLegislatura.toLowerCase().indexOf(val) !== - 1);
+                d.fechaDeFin.toLowerCase().indexOf(val) !== - 1 || 
+                d.id.toLowerCase().indexOf(val) !== - 1 ||
+                d.descripcionLegislatura.toLowerCase().indexOf(val) !== - 1);
 
             this.libroDeActas = temp;
         }

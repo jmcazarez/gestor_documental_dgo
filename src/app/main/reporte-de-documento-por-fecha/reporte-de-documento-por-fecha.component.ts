@@ -14,7 +14,8 @@ import { environment } from '../../../environments/environment';
 import { MatDatepicker } from '@angular/material/datepicker';
 import Swal from 'sweetalert2';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
-
+import * as moment from 'moment';
+import { date } from '@rxweb/reactive-form-validators';
 @Component({
     selector: 'app-reporte-de-documento-por-fecha',
     templateUrl: './reporte-de-documento-por-fecha.component.html',
@@ -41,13 +42,15 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
     arrBody: any[] = [];
     arr: any[] = [];
     imageBase64: any;
+    fechaIni: Date;
+    fechaFin: Date;
     externalDataRetrievedFromServer = [
         { name: 'Bartek', age: 34 },
         { name: 'John', age: 27 },
         { name: 'Elizabeth', age: 30 },
     ];
 
-    @ViewChild('pickerFechaInicial') pickerFechaInicial: MatDatepicker<Date>;
+    @ViewChild('pickerFechaInicial') pickerFechaInicial: any;
     @ViewChild('pickerFechaFinal') pickerFechaFinal: MatDatepicker<Date>;
 
     constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe,
@@ -59,7 +62,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
     }
 
     ngOnInit(): void {
-
+        moment.locale('es');
         // Formulario reactivo
         this.firstFormGroup = this._formBuilder.group({
             pickerFechaInicial: [new Date()],
@@ -107,6 +110,9 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
         // Limpiamos inputs
         this.vigenteBusqueda = '';
         this.selectedInformacion = '';
+        this.firstFormGroup.get('pickerFechaInicial').setValue(null);
+        this.firstFormGroup.get('pickerFechaFinal').setValue(null);
+
     }
 
     obtenerDocumentos(): void {
@@ -128,9 +134,13 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
             Swal.fire('Error', 'Las fechas son obligatorias.', 'error');
             this.spinner.hide();
         } else {
-            const cFechaInicial = dFechaInicial.toISOString().split('T')[0];
-            const cFechaFinal = dFechaFinal.toISOString().split('T')[0];
-            const filtroReporte = `fechaCreacion_gte=${cFechaInicial}T00:00:00.000Z&fechaCreacion_lte=${cFechaFinal}T24:00:00.000Z`;
+
+            dFechaFinal.setHours(23);
+            dFechaFinal.setMinutes(59);
+            dFechaFinal.setSeconds(59);
+            const cFechaInicial = dFechaInicial.toISOString();         
+            const cFechaFinal = dFechaFinal.toISOString();
+            const filtroReporte = `createdAt_gte=${cFechaInicial}&createdAt_lte=${cFechaFinal}`;
 
             // Obtenemos los documentos
             this.documentoService.obtenerDocumentoReportePorFecha(filtroReporte).subscribe((resp: any) => {
@@ -146,43 +156,53 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
 
                     // Si tiene permisos para consultar
                     if (this.optConsultar) {
+                        console.log(resp.listado);
                         for (const documento of resp.listado) {
-                          
-                                idDocumento = '';
-                                documentosTemp.push({
-                                    id: documento.id,
-                                    tipoDocumento: documento.tipoDocumento,
-                                    tipoExpediente: documento.tipoExpediente,
-                                    tipoInformacion: documento.tipoInformacion,
-                                    fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
-                                    folioExpediente: documento.folioExpediente,
-                                    fechaCarga: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
-                                    fechaModificacion: this.datePipe.transform(documento.fechaModificacion, 'dd-MM-yyyy'),
-                                    cNombreDocumento: documento.cNombreDocumento,
-                                    cNombreUsuario: documento.nombreUsuario,
-                                    bActivo: documento.estatus,
-                                    ente: documento.ente,
-                                    version: parseFloat(documento.version).toFixed(1),
-                                    cAccion: documento.accion
-                                });
-                           
+
+                            console.log(moment.utc(documento.createdAt, 'MM-DD-YYYY'));
+
+                            idDocumento = '';
+                            documentosTemp.push({
+                                id: documento.id,
+                                tipoDocumento: documento.tipoDocumento,
+                                tipoExpediente: documento.tipoExpediente,
+                                tipoInformacion: documento.tipoInformacion,
+                                fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
+                                folioExpediente: documento.folioExpediente,
+                                fechaCarga: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
+                                fechaModificacion: this.datePipe.transform(documento.fechaModificacion, 'dd-MM-yyyy'),
+                                fechaMovimiento: moment(documento.createdAt).format('DD-MM-YYYY'),
+                                cNombreDocumento: documento.cNombreDocumento,
+                                cNombreUsuario: documento.nombreUsuario,
+                                bActivo: documento.estatus,
+                                ente: documento.ente,
+                                version: parseFloat(documento.version).toFixed(1),
+                                cAccion: documento.accion
+                            });
+
                         }
 
                         this.documentos = documentosTemp;
                         this.documentosTemporal = this.documentos;
 
+                        console.log(this.documentos);
+
                     }
+                    this.loadingIndicator = false;
                     this.spinner.hide();
 
                 } else {
-                    Swal.fire('warning', 'No existen movimientos en el periodo seleccionado.', 'warning');
+                    Swal.fire('Alerta', 'No existen movimientos en el periodo seleccionado.', 'warning');
                     this.spinner.hide();
+                    this.loadingIndicator = false;
                 }
 
                 this.spinner.hide();
+                this.loadingIndicator = false;
             }, err => {
                 Swal.fire('Error', 'Ocurrió un problema al consultar la información.', 'error');
                 this.spinner.hide();
+                this.loadingIndicator = false;
             });
         }
     }

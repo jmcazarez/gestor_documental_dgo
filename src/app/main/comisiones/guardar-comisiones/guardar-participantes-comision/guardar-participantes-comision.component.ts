@@ -148,7 +148,7 @@ export class GuardarParticipantesComisionComponent implements OnInit {
       // Obtenemos empleados
       this.spinner.show();
       await this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
-          console.log(resp);
+         
           this.arrDiputados = resp;
           this.spinner.hide();
       }, err => {
@@ -161,7 +161,7 @@ export class GuardarParticipantesComisionComponent implements OnInit {
           // Obtenemos empleados
           this.spinner.show();
           await this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
-              console.log(resp);
+           
               this.arrDiputados = resp;
               this.arrDiputados = this.arrDiputados.filter(meta => meta.legislatura.id == id);
               this.spinner.hide();

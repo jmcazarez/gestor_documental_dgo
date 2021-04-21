@@ -136,7 +136,7 @@ export class GuardarInventarioFisicoComponent implements OnInit {
                         if (resp) {
                             Swal.fire(
                                 "Éxito",
-                                "Inventario fisico actualizada correctamente.",
+                                "Inventario fisico actualizado correctamente.",
                                 "success"
                             );
                             this.inventario = resp.data;

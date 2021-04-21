@@ -60,7 +60,7 @@ export class GuardarDepartamentosComponent implements OnInit {
             this.optEditar = opciones.Editar;
             this.optConsultar = opciones.Consultar;
             this.optEliminar = opciones.Eliminar;
-            console.log(resp);
+            
             // Si tiene permisos para consultar
             if (this.optConsultar) {
                 for (const departamento of resp) {

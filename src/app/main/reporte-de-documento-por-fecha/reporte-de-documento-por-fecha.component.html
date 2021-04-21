@@ -22,7 +22,7 @@
                             <p class="tag">Fecha de inicio</p>
                             <mat-form-field appearance="fill" class="input">
                               <mat-label>Seleccione una Fecha</mat-label>
-                              <input matInput [matDatepicker]="pickerFechaInicial">
+                              <input matInput [matDatepicker]="pickerFechaInicial" [(ngModel)]="fechaIni" formControlName="pickerFechaInicial">
                               <mat-datepicker-toggle matSuffix [for]="pickerFechaInicial"></mat-datepicker-toggle>
                               <mat-datepicker #pickerFechaInicial></mat-datepicker>
                             </mat-form-field>
@@ -37,7 +37,7 @@
                             <p class="tag">Fecha de fin</p>
                             <mat-form-field appearance="fill" class="input">
                               <mat-label>Seleccione una Fecha</mat-label>
-                              <input matInput [matDatepicker]="pickerFechaFinal">
+                              <input matInput [matDatepicker]="pickerFechaFinal" [(ngModel)]="fechaFin" formControlName="pickerFechaFinal">
                               <mat-datepicker-toggle matSuffix [for]="pickerFechaFinal"></mat-datepicker-toggle>
                               <mat-datepicker #pickerFechaFinal></mat-datepicker>
                             </mat-form-field>
@@ -76,6 +76,7 @@
                             <ngx-datatable-column name="Usuario" prop="cNombreUsuario"></ngx-datatable-column>
                             <ngx-datatable-column name="Documento" prop="cNombreDocumento"></ngx-datatable-column>
                             <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
+                            <ngx-datatable-column name="Fecha de movimiento" prop="fechaMovimiento"></ngx-datatable-column>
                             <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion"></ngx-datatable-column>
                             <ngx-datatable-column name="Fecha de carga" prop="fechaCarga"></ngx-datatable-column>
                             <ngx-datatable-column name="Fecha de modificación" prop="fechaModificacion"></ngx-datatable-column>

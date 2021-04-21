@@ -47,7 +47,7 @@
                             <p class="tag">Comisión</p>
                             <mat-form-field appearance="fill" class="input">
                                 <mat-label>Seleccione una comisión</mat-label>
-                                <mat-select formControlName="comision" [(ngModel)]="selectedComision">
+                                <mat-select formControlName="comision" [(ngModel)]="selectedComision" [disabled]="selectTipo==''">
                                     <mat-option *ngFor="let comision of arrComisiones" [value]="comision.id">
                                         {{comision.descripcion}}
                                     </mat-option>
@@ -87,7 +87,7 @@
                     <div class="column">
 
                         <div class="select">
-                            <p class="tag">Desde</p>
+                            <p class="tag">Fecha inicio</p>
                             <mat-form-field appearance="fill" class="input">
                                 <mat-label>Seleccione una fecha</mat-label>
                                 <input matInput [matDatepicker]="picker" formControlName="fechaIni"
@@ -98,7 +98,7 @@
                         </div>
 
                         <div class="select">
-                            <p class="tag">Hasta</p>
+                            <p class="tag">Fecha final</p>
                             <mat-form-field appearance="fill" class="input">
                                 <mat-label>Seleccione una fecha</mat-label>
                                 <input matInput [matDatepicker]="picker2" formControlName="fechaFin"
@@ -162,7 +162,7 @@
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">folder
                                         </mat-icon>
-                                        <p>{{sesionesAcumuladasAnio}}</p>
+                                        <p>{{decretosAcumuladosAnio}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -171,7 +171,7 @@
                                     <div class="position-relative p-24" fxLayout="row"
                                         fxLayoutAlign="space-between center">
                                         <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">TOTAL DE SESIONES ACUMULADAS</span>
+                                            <span class="h2">TOTAL DE DECRETOS CONCLUIDOS ACUMULADOS</span>
                                         </div>
                                     </div>
 
@@ -184,7 +184,7 @@
                                 </div>
                             </div>
                         </mat-tab>
-                        <mat-tab label="Total de sesiones de iniciativas acumuladas">
+                        <mat-tab label="Total de de iniciativas acumuladas">
                             <section class="container">
                                 <div class="column">
                                     
@@ -193,7 +193,7 @@
                                         <mat-form-field appearance="fill" class="input">
                                             <mat-label>Seleccione una fecha</mat-label>
                                             <input matInput type="month" formControlName="fechaIni"
-                                                [(ngModel)]="fechaIniciativaAcumulada" (ngModelChange)="valorMesAnioProcesada($event)">
+                                                [(ngModel)]="fechaIniciativaAcumulada" (ngModelChange)="valorMesAnioAcumuladas($event)">
                                         </mat-form-field>
                                     </div>
 
@@ -212,7 +212,7 @@
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">assignment
                                         </mat-icon>
-                                        <p>{{sesionesProcesoMes}}</p>
+                                        <p>{{iniciativasAcumuladasMes}}</p>
                                     </div>
                                 </div>
                                 <div class="card">
@@ -221,7 +221,71 @@
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">folder
                                         </mat-icon>
-                                        <p>{{sesionesProcesoAnio}}</p>
+                                        <p>{{iniciativasAcumuladasAnio}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <section class="container">
+                                <div class="column">
+                                    
+                                    <div class="select">
+                                        <p class="tag">Seleccione Mes y año (Aprobadas)</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Seleccione una fecha</mat-label>
+                                            <input matInput type="month" formControlName="fechaIni"
+                                                [(ngModel)]="fechaIniciativaAcumuladaAprobada" (ngModelChange)="valorMesAnioAcumuladasAprobadas($event)">
+                                        </mat-form-field>
+                                    </div>
+
+                                </div>
+                                <div class="column">
+                                    
+                                    <div class="select">
+                                        <p class="tag">Seleccione Mes y año (No aprobadas)</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Seleccione una fecha</mat-label>
+                                            <input matInput type="month" formControlName="fechaIni"
+                                                [(ngModel)]="fechaIniciativaAcumuladaNoAprobada" (ngModelChange)="valorMesAnioAcumuladasNoAprobadas($event)">
+                                        </mat-form-field>
+                                    </div>
+
+                                </div>
+                            </section>
+                            <div class="contenedor">
+                                <div class="card">
+                                    <h3 class="card-title">Cantidad total mes</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{iniciativasAcumuladasMesAprobada}}</p>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <h3 class="card-title">Cantidad total año</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">folder
+                                        </mat-icon>
+                                        <p>{{iniciativasAcumuladasAnioAprobada}}</p>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <h3 class="card-title">Cantidad total año</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">folder
+                                        </mat-icon>
+                                        <p>{{iniciativasAcumuladasMesNoAprobada}}</p>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <h3 class="card-title">Cantidad total año</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">folder
+                                        </mat-icon>
+                                        <p>{{iniciativasAcumuladasAnioNoAprobada}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -251,36 +315,35 @@
                                 <div class="column">
                                     <div class="select buttons">
                                         <button mat-raised-button matStepperNext color="warn" class="btn-search"
-                                        (click)="generaReportArchivada()" [disabled]="activarDescarga">Descargar</button>
+                                        (click)="generaReportAutors()" [disabled]="activarDescarga">Descargar</button>
                                     </div>
                                 </div>
                             </section>
 
-                            <ngx-datatable class="material shadow-none" [rows]="tablaAutoresMostrar" [loadingIndicator]="loadingIndicator"
+                            <h2 align="center">Iniciales</h2>
+                            <br>
+                            <ngx-datatable class="material shadow-none" [rows]="tablaAutorsMostrar" [loadingIndicator]="loadingIndicator"
                             [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
                             [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
-                                <ngx-datatable-column name="Autores" prop="departamento"></ngx-datatable-column>
-                                <ngx-datatable-column name="cantidad de iniciativas propuestas" prop="valor"></ngx-datatable-column>
+                                <ngx-datatable-column name="Autores" prop="autor"></ngx-datatable-column>
+                                <ngx-datatable-column name="Cantidad de iniciativas propuestas" prop="valor"></ngx-datatable-column>
                             </ngx-datatable>
-
-                            <ngx-datatable class="material shadow-none" [rows]="tablaAutoresMostrar" [loadingIndicator]="loadingIndicator"
+                            <br>
+                            <h2 align="center">Adheridos</h2>
+                            <ngx-datatable class="material shadow-none" [rows]="tablaAdicionsMostrar" [loadingIndicator]="loadingIndicator"
                             [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
                             [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
-                                <ngx-datatable-column name="Etiquetas" prop="departamento"></ngx-datatable-column>
-                                <ngx-datatable-column name="Total de etiquetas" prop="valor"></ngx-datatable-column>
+                                <ngx-datatable-column name="Autores" prop="adicion"></ngx-datatable-column>
+                                <ngx-datatable-column name="Cantidad de iniciativas propuestas" prop="valor"></ngx-datatable-column>
                             </ngx-datatable>
 
                             <div class="contenedor-grafica">
                                 <div class="fuse-card auto-width">
-                                    <div class="position-relative p-24" fxLayout="row"
-                                        fxLayoutAlign="space-between center">
-                                        <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">AUTORES DE INICIATVA</span>
-                                        </div>
-                                    </div>
+
+                                    <span class="h2">AUTORES DE INICIATIVA</span>
 
                                     <div class="position-relative h-200 pb-16">
-                                        <canvas baseChart id="chart3" [datasets]="graficaAutor.datasets.autor"
+                                        <canvas baseChart id="chart3" [datasets]="graficaAutor.datasets.autors"
                                             [labels]="graficaAutor.labels" [colors]="graficaAutor.colors"
                                             [options]="graficaAutor.options" [chartType]="graficaAutor.chartType">
                                         </canvas>
@@ -297,11 +360,21 @@
                                 <div class="column">
                                     <div class="select buttons">
                                         <button mat-raised-button matStepperNext color="warn" class="btn-search"
-                                        (click)="generaReportArchivada()" [disabled]="activarDescarga">Descargar</button>
+                                        (click)="generaReportEstatusIniciativa()" [disabled]="activarDescarga">Descargar</button>
                                     </div>
                                 </div>
                             </section>
 
+                                <h2 align="center">Inicial</h2>
+                                <br>
+                                <ngx-datatable class="material shadow-none" [rows]="tablaEstatusIniciativaInicialMostrar" [loadingIndicator]="loadingIndicator"
+                                [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                                [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
+                                    <ngx-datatable-column name="Departamento" prop="departamento"></ngx-datatable-column>
+                                    <ngx-datatable-column name="cantidad" prop="valor"></ngx-datatable-column>
+                                </ngx-datatable>
+
+                                <h2 align="center">En Proceso</h2>
                                 <br>
                                 <ngx-datatable class="material shadow-none" [rows]="tablaEstatusIniciativaMostrar" [loadingIndicator]="loadingIndicator"
                                 [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
@@ -310,7 +383,6 @@
                                     <ngx-datatable-column name="cantidad" prop="valor"></ngx-datatable-column>
                                 </ngx-datatable>
 
-                            
                             <div class="contenedor-grafica">
                                 <div class="fuse-card auto-width">
                                     <div class="position-relative p-24" fxLayout="row"
@@ -321,7 +393,7 @@
                                     </div>
 
                                     <div class="position-relative h-200 pb-16">
-                                        <canvas baseChart id="chart3" [datasets]="graficaArchivada.datasets.archivada"
+                                        <canvas baseChart id="chart4" [datasets]="graficaArchivada.datasets.archivada"
                                             [labels]="graficaArchivada.labels" [colors]="graficaArchivada.colors"
                                             [options]="graficaArchivada.options" [chartType]="graficaArchivada.chartType">
                                         </canvas>
@@ -329,11 +401,11 @@
                                 </div>
                             </div>
                         </mat-tab>
-                        <mat-tab label="Dictamenes">
+                        <mat-tab label="Dictámenes">
                             <section class="container">
                                 <div class="column">
                                     <div class="card">
-                                        <h3 class="card-title">Cantidad total año</h3>
+                                        <h3 class="card-title">Dictámenes totales</h3>
                                         <div class="contenido">
                                             <mat-icon color="white" class="material-icons mat-icon"
                                                 matTooltip="Clic para añadir una Ente">folder
@@ -359,17 +431,16 @@
                                 </ngx-datatable>
                             <div class="contenedor-grafica">
                                 <div class="fuse-card auto-width">
-                                    <div class="position-relative p-24" fxLayout="row"
-                                        fxLayoutAlign="space-between center">
-                                        <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">DICTAMENES</span>
-                                        </div>
-                                    </div>
+                                        <span class="h2">DICTÁMENES</span>
 
                                     <div class="position-relative h-200 pb-16">
-                                        <canvas baseChart id="chart5" [datasets]="graficaDictamen.datasets.dictamen"
-                                            [labels]="graficaDictamen.labels" [colors]="graficaDictamen.colors"
-                                            [options]="graficaDictamen.options" [chartType]="graficaDictamen.chartType">
+                                        <canvas baseChart id="chart5" [data]="pieChartData" 
+                                        [labels]="pieChartLabels" 
+                                        [chartType]="pieChartType"
+                                        [options]="pieChartOptions" 
+                                        [plugins]="pieChartPlugins" 
+                                        [colors]="pieChartColors" 
+                                        [legend]="pieChartLegend">>
                                         </canvas>
                                     </div>
                                 </div>
@@ -547,22 +618,19 @@
                                 </div>
                             </section>
 
+                                <h2 align="center">Comisiones</h2>
                                 <br>
-                                <ngx-datatable class="material shadow-none" [rows]="tablaComisionesMostrar" [loadingIndicator]="loadingIndicator"
+                                <ngx-datatable class="material shadow-none" [limit]="5" [rows]="tablaComisionesMostrar" [loadingIndicator]="loadingIndicator"
                                 [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
-                                [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
+                                [reorderable]="reorderable" [scrollbarH]="true">
                                     <ngx-datatable-column name="Comision" prop="comision"></ngx-datatable-column>
-                                    <ngx-datatable-column name="cantidad total" prop="valor"></ngx-datatable-column>
+                                    <ngx-datatable-column name="Cantidad total" prop="valor"></ngx-datatable-column>
                                 </ngx-datatable>
                                 
                             <div class="contenedor-grafica">
                                 <div class="fuse-card auto-width">
-                                    <div class="position-relative p-24" fxLayout="row"
-                                        fxLayoutAlign="space-between center">
-                                        <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">TOTAL DE SESIONES ARCHIVADAS</span>
-                                        </div>
-                                    </div>
+
+                                            <span class="h2">TOTAL COMISIONES ASIGNADAS</span>
 
                                     <div class="position-relative h-200 pb-16">
                                         <canvas baseChart id="chart8" [datasets]="graficaComisiones.datasets.comisiones"

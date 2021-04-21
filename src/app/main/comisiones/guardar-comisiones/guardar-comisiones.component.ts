@@ -99,7 +99,7 @@ export class GuardarComisionesComponent implements OnInit {
             this.optConsultar = opciones.Consultar;
             this.optEliminar = opciones.Eliminar;
             let i = 0;
-            console.log(resp);
+            
             console.log(this.arrPartidos);
             console.log(this.arrLegislatura);
             // Si tiene permisos para consultar
@@ -266,11 +266,9 @@ export class GuardarComisionesComponent implements OnInit {
                     activo: true
                 }).subscribe((resp: any) => {
                     if (resp) {
-                        console.log(resp);
                         this.comision.detalle_participantes_comisions = [resp.data.id];
                         this.comsionesService.guardarComision(this.comision).subscribe((resp: any) => {
                             if (resp) {
-                                console.log(resp);
                                 this.spinner.hide();
                                 Swal.fire('Éxito', 'Comisión por legislatura guardada correctamente.', 'success');
                                 this.cerrar(this.comision);
@@ -299,7 +297,7 @@ export class GuardarComisionesComponent implements OnInit {
         this.spinner.show();
         this.filterName = '';
         await this.comsionesService.obtenerTipoComisiones().subscribe((resp: any) => {
-            //console.log(resp);
+           
             this.arrTipoComision = resp;
             this.spinner.hide();
         }, err => {

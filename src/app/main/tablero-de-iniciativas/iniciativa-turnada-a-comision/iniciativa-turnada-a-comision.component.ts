@@ -1122,8 +1122,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             let parametrosCIEL008 = await this.obtenerParametros('CIEL-008');
             let parametrosSSP005 = await this.obtenerParametros('SSP-005');
             let parametrosSSP008 = await this.obtenerParametros('SSP-008');
-            console.log('parametros08')
-            console.log(parametrosSSP008);
+            //console.log('parametros08')
+            //console.log(parametrosSSP008);
             puestoSecretarioGeneral = await this.obtenerParametros('Id-Puesto-Secretario-General');
 
             if(this.iniciativa.estatus  == 'Turnar dictamen a Mesa Directiva'){
@@ -3242,7 +3242,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 // realizamos delete
                 this.documentoService.borrarDocumentos(row).subscribe((resp: any) => {
                     Swal.fire('Eliminado', 'El documento ha sido eliminado.', 'success');
-                    console.log(resp);
+                    
                     this.obtenerDocumento();
                 }, err => {
                     this.cargando = false;

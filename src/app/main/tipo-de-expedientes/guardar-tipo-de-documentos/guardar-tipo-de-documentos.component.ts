@@ -127,17 +127,18 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         let tipoFormato = '';
         let visibilidade = '';
         let metacatalogos = [];
+        this.rows = this.rowsTemp;
         // Asignamos valores a objeto
         this.documento.bActivo = true;
         this.documento.cDescripcionTipoDocumento = this.form.get('cDescripcionTipoDocumento').value;
-        this.documento.bObligatorio = this.selectedObligatorio;
+        this.documento.bObligatorio =this.selectedObligatorio;
         this.documento.tipos_de_formato = this.selectedFormato;
         this.documento.visibilidade = this.selectedInformacion;
         this.documento.metacatalogos = this.rows;
         const usuario = localStorage.getItem('usr');
         const usr = JSON.parse(usuario);
 
-
+       console.log(     this.documento.bObligatorio);
         if (this.documento.id) {
             // Actualizamos la expediente
             this.tipoDocumentosService.actualizarTipoDocumentos(this.documento).subscribe((resp: any) => {
@@ -177,13 +178,16 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                     // Actualizamos localesorage
                     this.loginService.eliminarUsuario();
                     this.loginService.guardarUsuario(usr);
+                    this.searchText = '';
                     this.cerrar(this.documento);
                 } else {
                     Swal.fire('Error', 'Ocurrió un error al guardar. ', 'error');
+                    this.searchText = '';
                 }
             }, err => {
                 console.log(err);
                 Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                this.searchText = '';
             });
 
         } else {
@@ -240,12 +244,15 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
 
                                     }, err => {
                                         Swal.fire('Error', 'Ocurrió un error al guardar.', 'error');
+                                        this.searchText = '';
                                     });
                                 } else {
                                     Swal.fire('Error', 'Ocurrió un error al guardar.', 'error');
+                                    this.searchText = '';
                                 }
                             }, err => {
                                 Swal.fire('Error', 'Ocurrió un error al guardar.', 'error');
+                                this.searchText = '';
                             });
 
                             // tslint:disable-next-line: forin
@@ -271,14 +278,17 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                         this.loginService.eliminarUsuario();
                         this.loginService.guardarUsuario(usr);
                         Swal.fire('Éxito', 'Tipo de documento guardado correctamente.', 'success');
+                        this.searchText = '';
                         this.cerrar(this.documento);
                     }
                     //  this.cerrar(this.documento);
                 } else {
                     Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                    this.searchText = '';
                 }
             }, err => {
                 Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                this.searchText = '';
             });
         }
 
@@ -299,6 +309,8 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
     agregarMetacatalogo(): void {
 
         this.loadingIndicator = true;
+        this.searchText = '';
+        this.rows = this.rowsTemp;
         let metacatalogo: string;
         let metacatalogoObligatorio: boolean;
         let metacatalogoTipo: string;
@@ -320,7 +332,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
             Swal.fire('Error', 'Es necesario capturar la descripción y el tipo para agregar metacatalogo. ', 'error');
             this.loadingIndicator = false;
         } else {
-            const temp = this.rows.filter((d) => d.cDescripcionMetacatalogo.toLowerCase().indexOf(metacatalogo.toLowerCase()) !== -1 || !metacatalogo.toLowerCase());
+            const temp = this.rows.filter((d) => d.cDescripcionMetacatalogo.toLowerCase() === metacatalogo.toLowerCase());
             if (temp.length && !this.rowEditar) {
                 Swal.fire('Error', 'Ya existe un metacatalogo con esa descripción agregado. ', 'error');
             } else {
@@ -366,7 +378,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
             this.loadingIndicator = false;
             setTimeout(() => {
 
-             
+               
                 this.rows = [...this.rows];
                 this.rowsTemp = this.rows;
             }, 100);

@@ -508,7 +508,8 @@ export class HistorialDeVersionamientoComponent implements OnInit {
         }
 
         if (this.selectedFolioExpediente !== '' && this.selectedFolioExpediente !== undefined && this.selectedFolioExpediente !== null) {
-            temp = this.documentos.filter((d) => d.folioExpediente.toString() === this.selectedFolioExpediente);
+            temp = this.documentos.filter((d) => d.folioExpediente !== undefined && d.folioExpediente !== null && d.folioExpediente !== '' );
+            temp = temp.filter((d) => d.folioExpediente.toString() === this.selectedFolioExpediente);
             this.documentos = temp;
         }
 

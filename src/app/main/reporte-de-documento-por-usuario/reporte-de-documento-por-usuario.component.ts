@@ -121,7 +121,7 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
                 }
 
             } else {
-                Swal.fire('warning', 'No existen movimientos en el periodo seleccionado.', 'warning');
+                Swal.fire('Alerta', 'No existen movimientos en el periodo seleccionado.', 'warning');
                 this.spinner.hide();
             }
 

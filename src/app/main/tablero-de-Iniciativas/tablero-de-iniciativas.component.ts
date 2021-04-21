@@ -10,6 +10,7 @@ import { DatePipe } from '@angular/common';
 import { DomSanitizer } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { element } from 'protractor';
 
 @Component({
     selector: 'app-tablero-de-iniciativas',
@@ -30,7 +31,6 @@ export class TableroDeIniciativasComponent implements OnInit {
     optConsultar: boolean;
     optEditar: boolean;
     optEliminar: boolean;
-    valueBuscador: string;
     fileBase64: any;
     valueBuscador = '';
     constructor(
@@ -79,6 +79,8 @@ export class TableroDeIniciativasComponent implements OnInit {
         let autores: string;
         let temas: string;
         let clasificaciones: any;
+        let adiciones: any;
+        let etiquetas: any;
         // Obtenemos los iniciativas
         this.iniciativasService.obtenerIniciativas().subscribe((resp: any) => {
 
@@ -92,7 +94,7 @@ export class TableroDeIniciativasComponent implements OnInit {
             // Si tiene permisos para consultar
             if (this.optConsultar) {
                 if (resp) {
-                    console.log(resp);
+                    
                     for (const ini of resp) {
                         autores = '';
                         temas = '';
@@ -129,6 +131,32 @@ export class TableroDeIniciativasComponent implements OnInit {
                             clasificaciones = [];
                         }
 
+                        if(ini.adicion){
+                            for (const adi of ini.adicion) {
+
+                                if (adiciones === '') {
+                                    adiciones = adi.name;
+                                } else {
+                                    adiciones = adiciones + ' , ' + adi.name;
+                                }
+                            }
+                        }else{
+                            adiciones = [];
+                        }
+
+                        if(ini.etiquetas){
+                            for (const eti of ini.etiquetas) {
+
+                                if (etiquetas === '') {
+                                    etiquetas = eti.name;
+                                } else {
+                                    etiquetas = etiquetas + ' , ' + eti.name;
+                                }
+                            }
+                        }else{
+                            etiquetas = [];
+                        }
+
                         iniciativasTemp.push({
                             id: ini.id,
                             autores: ini.autores,
@@ -137,6 +165,10 @@ export class TableroDeIniciativasComponent implements OnInit {
                             temaText: temas,
                             clasificaciones: ini.clasificaciones,
                             clasificacionesText: clasificaciones,
+                            adicion: ini.adicion,
+                            adicionText: adiciones,
+                            etiquetas: ini.etiquetas,
+                            etiquetasText: etiquetas,
                             estatus: ini.estatus,
                             tipo_de_iniciativa: ini.tipo_de_iniciativa,
                             documentos: ini.documentos,
@@ -150,7 +182,12 @@ export class TableroDeIniciativasComponent implements OnInit {
                             anexosTipoCuentaPublica: ini.anexosTipoCuentaPublica,
                             anexosTipoIniciativa: ini.anexosTipoIniciativa,
                             oficioEnvioDeInforme: ini.oficioEnvioDeInforme,
-                            informeDeResultadosRevision: ini.informeDeResultadosRevision
+                            informeDeResultadosRevision: ini.informeDeResultadosRevision,
+                            dictamenDeIniciativa: ini.dictamenDeIniciativa,
+                            sustentoDeModificacion: ini.sustentoDeModificacion,
+                            motivoDeSuspension: ini.motivoDeSuspension,
+                            fechaPublicacion: ini.fechaPublicacion,
+                            periodicoOficial: ini.periodicoOficial
                         });
                     }
                 }

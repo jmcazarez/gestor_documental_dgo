@@ -778,7 +778,7 @@ async clasificarDocAnex(result: any, tipo: string): Promise<void> {
                 // realizamos delete
                 this.documentoService.borrarDocumentos(row).subscribe((resp: any) => {
                     Swal.fire('Eliminado', 'El documento ha sido eliminado.', 'success');
-                    console.log(resp);
+                    
                     this.obtenerDocumento();
                 }, err => {
                     this.cargando = false;

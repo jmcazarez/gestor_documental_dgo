@@ -97,7 +97,7 @@ export class TipoDeExpedientesComponent implements OnInit {
 
                 // realizamos delete
                 this.tipoExpedientesService.eliminarTipoExpedientes(row.id).subscribe((resp: any) => {
-                    Swal.fire('Eliminado', 'El tipo de expediente ha sido eliminada.', 'success');
+                    Swal.fire('Eliminado', 'El tipo de expediente ha sido eliminado.', 'success');
                     this.obtenerTiposExpedientes();
                 }, err => {
                     this.cargando = false;

@@ -191,7 +191,7 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
         // Obtenemos legislaturas
         this.spinner.show();
         await this.legislaturasService.obtenerLegislatura().subscribe((resp: any) => {
-            console.log(resp);
+            
             this.arrLegislaturas = resp;
             this.spinner.hide();
         }, err => {

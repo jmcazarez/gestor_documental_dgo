@@ -41,7 +41,7 @@ export class LinkPublicoComponent implements OnInit {
   generarLink(){
     this.compartidos.linkGenerate(this.documento).subscribe( (resp: any) => {
 
-        console.log(resp);
+       
       //console.log(resp + 'hay respuesta');
       this.url = this.location['_platformLocation']['location']['origin']+'/#/compartir-link/' + resp.id;
       console.log(this.url);

@@ -48,7 +48,7 @@
      
 <mat-icon class="buscar">search</mat-icon>
 Seleccionar todos
-<mat-checkbox class="example-margin"  [(ngModel)]="selectedTipoDocumento" (click)="seleccionarTipoDocumento()">
+<mat-checkbox class="example-margin"  [(ngModel)]="selectedTipoDocumento" (click)="seleccionarTipoDocumentos()">
 </mat-checkbox>
 
 
@@ -67,7 +67,7 @@ Seleccionar todos
         </ngx-datatable-column>
         <ngx-datatable-column name="Añadir" sortable="false" prop="id">
             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                <mat-checkbox class="example-margin" [(ngModel)]="row.selected">
+                <mat-checkbox class="example-margin" [(ngModel)]="row.selected" (change)="seleccionarTipoDocumento(row.selected)" >
                 </mat-checkbox>
             </ng-template>
         </ngx-datatable-column>  
@@ -94,7 +94,7 @@ Seleccionar todos
 
 <mat-dialog-actions align="end" class="buttons">
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
-    <button [disabled]="form.invalid" mat-raised-button color="accent" (click)="guardar()">Guardar</button>
+    <button [disabled]="form.invalid || !this.selecteds" mat-raised-button color="accent" (click)="guardar()">Guardar</button>
     <!--<button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
 </mat-dialog-actions>
 

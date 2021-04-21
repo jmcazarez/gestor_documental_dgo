@@ -83,7 +83,7 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
             // Si tiene permisos para consultar
             if (this.optConsultar) {
                 if (resp) {
-                    console.log(resp);
+                    
                     for (const ini of resp) {
                         autores = '';
                         temas = '';

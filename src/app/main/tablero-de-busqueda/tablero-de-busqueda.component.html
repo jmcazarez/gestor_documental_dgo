@@ -181,10 +181,10 @@
                             <mat-form-field appearance="fill" class="input">
                                 <input matInput placeholder="Texto en documento" minlength="4"
                                     formControlName="textoDocumento" [(ngModel)]="selectedTextoDocumento">
-                                <mat-error>El texto capturado en el filtrado de documentos tiene que ser mayor a 3
-                                    caracteres.</mat-error>
+                                <mat-error>El texto en el filtrado de documentos tiene que ser mayor a 3 caracteres.</mat-error>
                             </mat-form-field>
                         </div>
+                        <br>
                         <form #formRef="ngForm">
                             <div *ngFor="let meta of arrMetacatalogos; let in=index" class="col-sm-3">
                                 <div class="form-group">
@@ -214,7 +214,7 @@
                                             <input *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Fecha'" matInput
                                                 [(ngModel)]="meta.text"
                                                 name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}"
-                                                [matDatepicker]="picker2" [required]="arrMetacatalogos[in].bOligatorio">
+                                                [matDatepicker]="picker2" >
                                             <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                                             <mat-datepicker #picker2></mat-datepicker>
                                         </mat-form-field>
@@ -263,9 +263,9 @@
                             <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
                             <ngx-datatable-column name="Tipo de información" prop="informacion"></ngx-datatable-column>
                             <ngx-datatable-column name="Páginas" prop="paginas" [width]="100"></ngx-datatable-column>
-                            <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion"></ngx-datatable-column>
-                            <ngx-datatable-column name="Fecha de carga" prop="fechaCarga"></ngx-datatable-column>
-                            <ngx-datatable-column name="Fecha de modificación" prop="fechaModificacion">
+                            <ngx-datatable-column name="Fecha de creación" prop="fechaCreacionView"></ngx-datatable-column>
+                            <ngx-datatable-column name="Fecha de carga" prop="fechaCargaView"></ngx-datatable-column>
+                            <ngx-datatable-column name="Fecha de modificación" prop="fechaModificacionView">
                             </ngx-datatable-column>
                             <ngx-datatable-column name="Versión" prop="version" [width]="100"></ngx-datatable-column>
                             <ngx-datatable-column name="Clasificación" prop="clasificacion"></ngx-datatable-column>

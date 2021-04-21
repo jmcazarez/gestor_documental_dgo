@@ -20,6 +20,13 @@ export class TipoFormatosService {
     }
 
     obtenerTipoFormatos(): any {
-        return this.http.get(this.baseUrl + this.urlTipoFormatos, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
+        return this.http.get(this.baseUrl + this.urlTipoFormatos, httpOptions);
     }
 }

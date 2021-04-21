@@ -6,6 +6,7 @@ import { FuseNavigationService } from '@fuse/components/navigation/navigation.se
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'environments/environment';
+import Swal from 'sweetalert2';
 
 @Injectable({
     providedIn: 'root'
@@ -42,12 +43,14 @@ export class MenuService {
             if (token !== undefined && token !== null) {
                 await this.obtenerTipoOpciones(token).subscribe(async (resp: any) => {
                     this.tipoOpciones = resp;
+                    
                     this.tipoDocumentos = [];
                     this.opcionesPerfil = [];
                     this.tipoInformacion = [];
                     let grupoMenu: GrupoMenuModel;
                     let grupoMenuReportes: GrupoMenuModel;
                     let grupoMenuCatalagos: GrupoMenuModel;
+                     let grupoMenuConfiguracion: GrupoMenuModel;
 
                     this.limpiarMenu();
                     let tipoFormato = '';
@@ -76,6 +79,13 @@ export class MenuService {
                             type: 'group',
                             children: []
                         };
+
+                        grupoMenuConfiguracion = {
+                               id: "grupo-" + "Configuracion",
+                               title: "Configuración",
+                               type: "group",
+                               children: [],
+                           };
 
 
 
@@ -163,6 +173,8 @@ export class MenuService {
 
                                     if (opciones) {
                                         if (opciones.opciones_del_sistema) {
+
+                                            console.log(opciones.opciones_del_sistema);
                                             if (opciones.opciones_del_sistema.bActivo) {
                                                 const resultado = this.opcionesPerfil.find(opcion => opcion.id === opciones.opciones_del_sistema.id);
 
@@ -192,9 +204,19 @@ export class MenuService {
                                                             if (tipo.cDescripcionTipoOpcion === 'Registros') {
                                                                 grupoMenu.children.push(itemMenu);
                                                             }
-                                                            if (tipo.cDescripcionTipoOpcion === 'Catalogos') {
-                                                                grupoMenuCatalagos.children.push(itemMenu);
+                                                            if (tipo.cDescripcionTipoOpcion === 'Configuración') {
+                                                                grupoMenuConfiguracion.children.push(
+                                                                    itemMenu
+                                                                );
                                                             }
+                                                               if (
+                                                                   tipo.cDescripcionTipoOpcion ===
+                                                                   "Catalogos"
+                                                               ) {
+                                                                   grupoMenuCatalagos.children.push(
+                                                                       itemMenu
+                                                                   );
+                                                               }
 
                                                         } else {
 
@@ -215,6 +237,14 @@ export class MenuService {
                                                             if (tipo.cDescripcionTipoOpcion === 'Catalogos') {
                                                                 grupoMenuCatalagos.children.push(itemMenu);
                                                             }
+                                                             if (
+                                                                 tipo.cDescripcionTipoOpcion ===
+                                                                 "Configuración"
+                                                             ) {
+                                                                 grupoMenuConfiguracion.children.push(
+                                                                     itemMenu
+                                                                 );
+                                                             }
 
                                                         } else {
 
@@ -269,17 +299,28 @@ export class MenuService {
                             }
                         }
                         if (grupoMenu.children.length === 0 && grupoMenuCatalagos.children.length === 0 && grupoMenuReportes.children.length === 0) {
+                           
                             this.router.navigate(['login']);
+                            Swal.fire(
+                                'Error',
+                                'El usuario no tiene perfil asignado para ingresar al sistema.',
+                                'error'
+                            );
                         }
                         this.fuseNavigationService.addNavigationItem(grupoMenuCatalagos, 'end');
                         this.fuseNavigationService.addNavigationItem(grupoMenu, 'end');
                         this.fuseNavigationService.addNavigationItem(grupoMenuReportes, 'end');
+                        this.fuseNavigationService.addNavigationItem(
+                            grupoMenuConfiguracion,
+                            "end"
+                        );
 
                         // }
                     }
                 }, err => {
                     console.log(err);
                     this.router.navigate(['login']);
+                    
                 });
             }
         }
@@ -295,10 +336,14 @@ export class MenuService {
     }
 
     obtenerTipoOpciones(token: string): any {
-
+        this.TOKEN = localStorage.getItem('token');
+   
+        if(this.TOKEN === null){
+            this.TOKEN = token;
+        }
         let options = {
             headers: new HttpHeaders({
-                Authorization: token,
+                Authorization: this.TOKEN,
             }),
         };
         return this.http.get(this.baseUrl + this.urlTipoOpciones, options);

@@ -77,6 +77,7 @@ export class GuardarDocumentosComponent implements OnInit {
 
         // Validamos si es un documento nuevo
         if (this.documentos.id) {
+
             this.selectTipoDocument = this.documentos.tipo_de_documento;
             if (this.documentos.documento) {
                 // Cargamos el nombre del documento
@@ -87,7 +88,6 @@ export class GuardarDocumentosComponent implements OnInit {
                 // Habilitamos el # de paginas
                 this.paginasEditar = false;
             }
-
             this.cNombreDocumento = this.documentos.cNombreDocumento;
             this.tipoDocumento = this.documentos.tipo_de_documento;
             this.fechaCreacion = this.documentos.fechaCreacion;
@@ -224,7 +224,7 @@ export class GuardarDocumentosComponent implements OnInit {
 
                         this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
                             if (resp) {
-                                
+
                                 this.documentos = resp.data;
                                 this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd') + 'T16:00:00.000Z';
                                 this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
@@ -238,7 +238,11 @@ export class GuardarDocumentosComponent implements OnInit {
                             }
                         }, err => {
                             this.spinner.hide();
-                            Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                            if (err.error.data) {
+                                Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                            } else {
+                                Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error, 'error');
+                            }
                         });
                     } else {
 

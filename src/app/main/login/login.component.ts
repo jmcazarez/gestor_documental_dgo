@@ -86,7 +86,7 @@ export class LoginComponent implements OnInit {
         await this._loginService.validarUsuario(usuario).subscribe(async (resp: any) => {
             // Guardar en storage
             await this._usuarioLoginService.guardarUsuario(resp);
-            console.log(resp[0]);
+           
             if (resp[0].data.perfiles_de_usuario.length == 0) {
                 // this.mostrarMensaje('No cuenta con permisos asignados. Favor de verificar con el área de sistemas.');
                 console.log('No tiene permisos');

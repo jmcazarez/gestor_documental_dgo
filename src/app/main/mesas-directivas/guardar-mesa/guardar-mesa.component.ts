@@ -174,11 +174,11 @@ export class GuardarMesaComponent implements OnInit {
                 activo: true
             }).subscribe((resp: any) => {
                 if (resp) {
-                    console.log(resp);
+                    
                     this.mesas.detalle_participantes_mesa_directivas = [resp.data.id];
                     this.mesasDirectivasService.guardarMesa(this.mesas).subscribe((resp: any) => {
                         if (resp) {
-                            console.log(resp);
+                           
                             this.spinner.hide();
                             Swal.fire('Éxito', 'Mesa directiva guardada correctamente.', 'success');
                             this.cerrar(this.mesas);
@@ -231,7 +231,7 @@ export class GuardarMesaComponent implements OnInit {
             this.optEditar = opciones.Editar;
             this.optConsultar = opciones.Consultar;
             this.optEliminar = opciones.Eliminar;
-            console.log(resp);
+            
             // Si tiene permisos para consultar
             if (this.optConsultar) {
                 for (const detalleMesa of resp) {

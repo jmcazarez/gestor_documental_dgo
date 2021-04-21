@@ -94,8 +94,9 @@
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento">
                                         </ngx-datatable-column>
-                                        <ngx-datatable-column name="Tipo de información" prop="informacion">
+                                        <!-- <ngx-datatable-column name="Tipo de información" prop="informacion">
                                         </ngx-datatable-column>
+                                        -->
                                         <ngx-datatable-column name="Páginas" prop="paginas" [width]="100">
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion">
@@ -274,7 +275,7 @@
                                                             *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Numérico'"
                                                             matInput [(ngModel)]="meta.text"
                                                             name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}"
-                                                            [required]="arrMetacatalogos[in].bOligatorio">
+                                                           >
                                                     </mat-form-field>
                                                 </div>
                                                 <div class="select"
@@ -285,7 +286,7 @@
                                                         <input *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Texto'"
                                                             matInput [(ngModel)]="meta.text"
                                                             name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}"
-                                                            [required]="arrMetacatalogos[in].bOligatorio">
+                                                            >
                                                     </mat-form-field>
                                                 </div>
                                                 <div class="select"
@@ -297,7 +298,7 @@
                                                             matInput [(ngModel)]="meta.text"
                                                             name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}"
                                                             [matDatepicker]="picker2"
-                                                            [required]="arrMetacatalogos[in].bOligatorio">
+                                                           >
                                                         <mat-datepicker-toggle matSuffix [for]="picker2">
                                                         </mat-datepicker-toggle>
                                                         <mat-datepicker #picker2></mat-datepicker>
@@ -311,7 +312,7 @@
                                                         <mat-label>Si/No</mat-label>
                                                         <mat-select [(ngModel)]="meta.text"
                                                             name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}"
-                                                            [required]="arrMetacatalogos[in].bOligatorio">
+                                                            >
                                                             <mat-option value="Sí">Sí</mat-option>
                                                             <mat-option value="No">No</mat-option>
                                                         </mat-select>

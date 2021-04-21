@@ -22,7 +22,14 @@ export class TipoExpedientesService {
     }
 
     obtenerTipoExpedientes(): any {
-        return this.http.get(this.baseUrl + this.urlTipoExpedientes, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
+        return this.http.get(this.baseUrl + this.urlTipoExpedientes, httpOptions);
     }
 
     actualizarTipoExpedientes(tipoExpedientes: TipoExpedientesModel): any {

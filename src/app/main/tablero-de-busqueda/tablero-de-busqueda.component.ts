@@ -70,11 +70,12 @@ export class TableroDeBusquedaComponent implements OnInit {
         this.obtenerDocumentos();
     }
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         this.pdfBase64 = '';
         this.spinner.show();
-        this.obtenerEntes();
-        this.obtenerTiposExpedientes();
+        // await this.obtenerEntes();
+        await this.obtenerTiposExpedientes();
+     
         for (const documentosAgregar of this.menuService.tipoDocumentos) {
 
             // Si tiene permisos de agregar estos documentos los guardamos en una array
@@ -116,6 +117,10 @@ export class TableroDeBusquedaComponent implements OnInit {
                 const tempMetacatalogos = this.arrTipoDocumentos.filter((d) => d.id.toLowerCase().indexOf(val.toLowerCase()) !== -1 || !val);
                 if (tempMetacatalogos[0].metacatalogos) {
                     this.arrMetacatalogos = tempMetacatalogos[0].metacatalogos;
+                    for (const i in this.arrMetacatalogos) {
+                        this.arrMetacatalogos[i].text = '';
+                        // this.documentoSinClasificar = true;       
+                    }
                 }
                 // tslint:disable-next-line: forin
             }
@@ -263,7 +268,7 @@ export class TableroDeBusquedaComponent implements OnInit {
                                         idExpediente = documento.tipo_de_expediente.id;
                                     }
 
-
+                                    console.log(documento);
                                     // tslint:disable-next-line: no-unused-expression
                                     // Seteamos valores y permisos
                                     documentosTemp.push({
@@ -271,11 +276,14 @@ export class TableroDeBusquedaComponent implements OnInit {
                                         cNombreDocumento: documento.cNombreDocumento,
                                         tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
                                         tipo_de_documento: documento.tipo_de_documento.id,
-                                        fechaCarga: this.datePipe.transform(documento.fechaCarga, 'MM-dd-yyyy'),
-                                        fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'MM-dd-yyyy'),
+                                        fechaCargaView: this.datePipe.transform(documento.fechaCarga, 'MM-dd-yyyy'),
+                                        fechaCreacionView: this.datePipe.transform(documento.fechaCreacion, 'MM-dd-yyyy'),
+                                        fechaCarga:documento.fechaCarga,
+                                        fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyy-MM-dd'),
                                         paginas: documento.paginas,
                                         bActivo: documento.bActivo,
-                                        fechaModificacion: this.datePipe.transform(documento.updatedAt, 'MM-dd-yyyy'),
+                                        fechaModificacion: documento.updatedAt,
+                                        fechaModificacionView: this.datePipe.transform(documento.updatedAt, 'MM-dd-yyyy'),
                                         Agregar: encontro.Agregar,
                                         Eliminar: encontro.Eliminar,
                                         Editar: encontro.Editar,
@@ -295,7 +303,8 @@ export class TableroDeBusquedaComponent implements OnInit {
                                         visibilidade: documento.visibilidade,
                                         idEnte,
                                         tipo_de_expediente: documento.tipo_de_expediente,
-                                        idExpediente
+                                        idExpediente,
+                                        legislatura: documento.legislatura
                                     });
 
                                     meta = '';
@@ -430,8 +439,14 @@ export class TableroDeBusquedaComponent implements OnInit {
 
             // tslint:disable-next-line: no-shadowed-variable
             dialogRef.afterClosed().subscribe(result => {
+                
                 if (result) {
-                    this.obtenerDocumentos();
+                    for (const i in this.arrMetacatalogos) {
+                        this.arrMetacatalogos[i].text = '';
+                        // this.documentoSinClasificar = true;       
+                    }
+                    this.spinner.hide();
+                   // this.obtenerDocumentos();
                 }
             });
         } else {
@@ -534,21 +549,22 @@ export class TableroDeBusquedaComponent implements OnInit {
                     if (this.fechaCreacion !== '' && this.fechaCreacion !== undefined && this.fechaCreacion !== null) {
                         let fecha: string;
                         fecha = this.datePipe.transform(this.fechaCreacion, 'MM-dd-yyyy');
-                        temp = this.documentos.filter((d) => d.fechaCreacion === fecha);
+                        console.log(fecha);
+                        temp = this.documentos.filter((d) => d.fechaCreacionView === fecha);
                         this.documentos = temp;
                     }
 
                     if (this.fechaCarga !== '' && this.fechaCarga !== undefined && this.fechaCarga !== null) {
                         let fecha: string;
                         fecha = this.datePipe.transform(this.fechaCarga, 'MM-dd-yyyy');
-                        temp = this.documentos.filter((d) => d.fechaCarga === fecha);
+                        temp = this.documentos.filter((d) => d.fechaCargaView === fecha);
                         this.documentos = temp;
                     }
 
                     if (this.fechaModificacion !== '' && this.fechaModificacion !== undefined && this.fechaModificacion !== null) {
                         let fecha: string;
                         fecha = this.datePipe.transform(this.fechaModificacion, 'MM-dd-yyyy');
-                        temp = this.documentos.filter((d) => d.fechaModificacion === fecha);
+                        temp = this.documentos.filter((d) => d.fechaModificacionView === fecha);
                         this.documentos = temp;
                     }
 
@@ -594,7 +610,8 @@ export class TableroDeBusquedaComponent implements OnInit {
                     }
 
                     if (this.selectedFolioExpediente !== '' && this.selectedFolioExpediente !== undefined && this.selectedFolioExpediente !== null) {
-                        temp = this.documentos.filter((d) => d.folioExpediente.toString() === this.selectedFolioExpediente);
+                        temp = this.documentos.filter((d) => d.folioExpediente !== undefined && d.folioExpediente !== null && d.folioExpediente !== '' );
+                        temp = temp.filter((d) => d.folioExpediente.toString() === this.selectedFolioExpediente);
                         this.documentos = temp;
                     }
 
@@ -612,7 +629,7 @@ export class TableroDeBusquedaComponent implements OnInit {
                 });
             }
         } else {
-
+            console.log('entro');
             if (this.documentoBusqueda !== '' && this.documentoBusqueda !== undefined) {
                 temp = this.documentos.filter((d) => d.cNombreDocumento.toLowerCase().indexOf(this.documentoBusqueda.toLowerCase()) !== -1 || !this.documentoBusqueda);
                 this.documentos = temp;
@@ -636,21 +653,21 @@ export class TableroDeBusquedaComponent implements OnInit {
             if (this.fechaCreacion !== '' && this.fechaCreacion !== undefined && this.fechaCreacion !== null) {
                 let fecha: string;
                 fecha = this.datePipe.transform(this.fechaCreacion, 'MM-dd-yyyy');
-                temp = this.documentos.filter((d) => d.fechaCreacion === fecha);
+                temp = this.documentos.filter((d) => d.fechaCreacionView === fecha);
                 this.documentos = temp;
             }
 
             if (this.fechaCarga !== '' && this.fechaCarga !== undefined && this.fechaCarga !== null) {
                 let fecha: string;
                 fecha = this.datePipe.transform(this.fechaCarga, 'MM-dd-yyyy');
-                temp = this.documentos.filter((d) => d.fechaCarga === fecha);
+                temp = this.documentos.filter((d) => d.fechaCargaView === fecha);
                 this.documentos = temp;
             }
 
             if (this.fechaModificacion !== '' && this.fechaModificacion !== undefined && this.fechaModificacion !== null) {
                 let fecha: string;
                 fecha = this.datePipe.transform(this.fechaModificacion, 'MM-dd-yyyy');
-                temp = this.documentos.filter((d) => d.fechaModificacion === fecha);
+                temp = this.documentos.filter((d) => d.fechaModificacionView === fecha);
                 this.documentos = temp;
             }
 
@@ -696,7 +713,9 @@ export class TableroDeBusquedaComponent implements OnInit {
             }
 
             if (this.selectedFolioExpediente !== '' && this.selectedFolioExpediente !== undefined && this.selectedFolioExpediente !== null) {
-                temp = this.documentos.filter((d) => d.folioExpediente.toString() === this.selectedFolioExpediente);
+               
+                temp = this.documentos.filter((d) => d.folioExpediente !== undefined && d.folioExpediente !== null && d.folioExpediente !== '' );
+                temp = temp.filter((d) => d.folioExpediente.toString() === this.selectedFolioExpediente);
                 this.documentos = temp;
             }
 

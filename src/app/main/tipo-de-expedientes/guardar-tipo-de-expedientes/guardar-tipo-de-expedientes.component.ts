@@ -32,6 +32,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
     optEliminar: boolean;
     tipoDocumentos: TipoDocumentoModel[];
     documentosPerfil: TipoDocumentoModel[];
+    selecteds: boolean;
     constructor(
         public dialog: MatDialog,
         private formBuilder: FormBuilder,
@@ -79,6 +80,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
         // Guardamos tipo de expediente
 
         // Asignamos valores a objeto
+        console.log(this.form.get('estatus').value);
         this.expediente.bActivo = this.form.get('estatus').value;
         this.expediente.cDescripcionTipoExpediente = this.form.get('cDescripcionTipoExpediente').value;
 
@@ -124,7 +126,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
     }
 
 
-    seleccionarTipoDocumento(): void {
+    seleccionarTipoDocumentos(): void {
         this.rows.forEach(element => {
             if (!this.selectedTipoDocumento) {
                 element.selected = true;
@@ -134,6 +136,13 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
         });
 
     }
+
+    
+    seleccionarTipoDocumento(row): void {
+        this.rows = [...this.rows];
+        this.selecteds =   this.rows.find((tipo: { selected: boolean; }) => tipo.selected === true);
+    }
+
 
     filterTiposDocumentos(value): void {
         // Filtramos tabla
@@ -159,6 +168,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
+                this.searchText = '';
                 setTimeout(() => {
 
                     this.rows.push({
@@ -217,6 +227,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
             if (result) {
                
                 setTimeout(() => {
+                    this.searchText = '';
                     this.documentosPerfil = this.menuService.tipoDocumentos;
                     this.rows = [...this.documentosPerfil];
                     this.rowsTemp = this.rows;
@@ -247,8 +258,9 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
             setTimeout(() => {
                 this.rows = [...this.documentosPerfil];
                 this.rowsTemp = this.rows;
+                this.selecteds =   this.rows.find((tipo: { selected: boolean; }) => tipo.selected === true);
             }, 100);
-
+            
             this.loadingIndicator = false;
 
         } else {
@@ -290,7 +302,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
                         this.loginService.eliminarUsuario();
                         this.loginService.guardarUsuario(usr);
                     }
-                    Swal.fire('Eliminado', 'El tipo de documento ha sido eliminada.', 'success');
+                    Swal.fire('Eliminado', 'El tipo de documento ha sido eliminado.', 'success');
 
 
                     setTimeout(() => {
@@ -316,6 +328,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
             }
         });
     }
+
 
 
 }

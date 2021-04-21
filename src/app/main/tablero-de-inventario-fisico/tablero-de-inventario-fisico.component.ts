@@ -176,6 +176,7 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        this.inventario = this.inventarioTemp;
         // Filtramos tabla
         if (value.target.value === "") {
             this.inventario = this.inventarioTemp;

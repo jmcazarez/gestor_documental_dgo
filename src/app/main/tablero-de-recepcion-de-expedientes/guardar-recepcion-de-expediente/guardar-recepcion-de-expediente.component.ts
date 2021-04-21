@@ -98,14 +98,13 @@ export class GuardarRecepcionDeExpedienteComponent implements OnInit {
             emisor: [{ value: this.recepcion.emisor, disabled: false }, Validators.required],
             receptor: [{ value: this.recepcion.receptor, disabled: false }, Validators.required],
             estatus: [{ value: this.estados, disabled: false }, Validators.required],
-            notas: [{ value: this.recepcion.notas, disabled: false }, Validators.required],
+            notas: [{ value: this.recepcion.notas, disabled: false },  [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
 
         });
     }
 
     async guardar(): Promise<void> {
         this.spinner.show();
-        console.log('guardar');
         // Asignamos valores a objeto
         this.recepcion.idExpediente = this.form.get('idExpediente').value;
         this.recepcion.legislatura = this.selectedLegislatura;
@@ -114,8 +113,7 @@ export class GuardarRecepcionDeExpedienteComponent implements OnInit {
         this.recepcion.fechaRecepcion = this.form.get('fechaRecepcion').value;
         this.recepcion.estatus = this.selectedEstado;
         this.recepcion.notas = this.form.get('notas').value
-        console.log(this.recepcion);
-
+   
         if (this.recepcion.id) {
 
             // Actualizamos la recepcion de actas
@@ -178,7 +176,7 @@ export class GuardarRecepcionDeExpedienteComponent implements OnInit {
         // Obtenemos legislaturas
         this.spinner.show();
         await this.legislaturasService.obtenerLegislatura().subscribe((resp: any) => {
-            //console.log(resp);
+          
             this.arrLegislaturas = resp;
             this.spinner.hide();
         }, err => {

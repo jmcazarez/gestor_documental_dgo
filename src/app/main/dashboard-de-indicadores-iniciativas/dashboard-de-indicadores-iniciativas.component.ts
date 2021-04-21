@@ -25,6 +25,11 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs; // fonts provided for pdfmake
 import { Ng2ImgMaxService } from 'ng2-img-max';
 import { MatChipInputEvent } from "@angular/material/chips";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
+import * as pluginDataLabels from 'chartjs-plugin-datalabels';
+import { ChartOptions, ChartType } from 'chart.js';
+import { Label } from 'ng2-charts';
+import 'chartjs-plugin-labels';
+import { normalize } from 'path';
 
 export interface Estado {
   id: string;
@@ -67,6 +72,8 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
     anio = '';
     fechaAcumulada = '';
     fechaIniciativaAcumulada = '';
+    fechaIniciativaAcumuladaAprobada = '';
+    fechaIniciativaAcumuladaNoAprobada = '';
     fechaArchivadas = '';
     fechaPublicados = '';
     fechaDecretoConcluida = '';
@@ -87,7 +94,10 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
     arrcreacionGraficaComisionesAsignadas = [];
     arrcreacionGraficaComisionesAsignadasSorted = [];
     arrcreacionGraficaComisionesAsignadasValor = [];
+    arrcreacionGraficaAutoresSorted = [];
+    arrcreacionGraficaAutoresValor = [];
     arrIniciativasAcumuladas = [];
+    arrIniciativasEstatus = [];
     arrSesionesArchivadas = [];
     
     arrCreacionGraficaAyer = [];
@@ -98,7 +108,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
     cantidadTotalMes: number;
     cantidadTotalAnio: number;
 
-
     arrCreacionGraficaAnio = [];
     arrCreacionGraficaEstatusIniciativas = [];
     arrCreacionGraficaDictamenes = [];
@@ -108,6 +117,12 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
     tablaAutoresMostrar = [];
     tablaEstatusIniciativa = [];
     tablaEstatusIniciativaMostrar = [];
+    tablaEstatusIniciativaInicial = [];
+    tablaEstatusIniciativaInicialMostrar = [];
+    tablaAutors = [];
+    tablaAutorsMostrar = [];
+    tablaAdicions = [];
+    tablaAdicionsMostrar = [];
     tablaComisiones = [];
     tablaComisionesMostrar = [];
     tablaDictamen = [];
@@ -116,7 +131,10 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
     arrReportePublicado = [];
     arrReporteEstatusDecreto = [];
     arrReporteComision = [];
+    arrReporteAutor = [];
+    arrReporteAdicion = []
     arrReporteEstatusIniciativa = [];
+    arrReporteEstatusIniciativaInicial = [];
     arrReporteDictamenes = [];
     arrReporteIniciativaAcumulada = [];
     arrReporteArchivado = [];
@@ -127,14 +145,18 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
     activarDescarga: boolean = true;
 
     decretosAcumuladosMes: number;
+    decretosAcumuladosAnio: number;
     dictamenesTotales: number;
     decretosPublicadosMes: number;
     decretosPublicadosAnio: number;
     decretosSolicitudPublicacionMes: number;
     decretosSolicitudPublicacionAnio: number;
-    sesionesAcumuladasAnio: number;
-    sesionesProcesoMes: number;
-    sesionesProcesoAnio: number;
+    iniciativasAcumuladasMes: number;
+    iniciativasAcumuladasAnio: number;
+    iniciativasAcumuladasMesAprobada: number;
+    iniciativasAcumuladasAnioAprobada: number;
+    iniciativasAcumuladasMesNoAprobada: number;
+    iniciativasAcumuladasAnioNoAprobada: number;
     sesionesArchivadasMes: number;
     sesionesArchivadasAnio: number;
     sesionesAcumuladasRangoFechas: number;
@@ -166,6 +188,20 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
     graficaFechas: any;
     imageBase64: any;
     imageCanvas1: any;
+
+    pieChartOptions: ChartOptions;
+    pieChartLabels: Label[];
+    pieChartData: number[];
+    pieChartType: ChartType;
+    pieChartLegend = true;
+    pieChartPlugins = [];
+    pieChartColors = [
+        {
+          backgroundColor: ['rgba(255,0,0,0.3)', 'rgba(0,255,0,0.3)', 'rgba(0,0,255,0.3)'],
+        },
+      ];
+    autorCompare: string = '';
+    adicionCompare: string = '';
     constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe,
         private router: Router,
         public dialog: MatDialog,
@@ -183,7 +219,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         // Obtenemos documentos
         // this.obtenerDocumentos();
         this.configuragraficas();
-        this.configurarGraficaFechas();
         this.obtenerTiposIniciativas();
         this.obtenerComisiones();
         // this.obtenerMovimientos();
@@ -411,6 +446,14 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         this.arrCreacionGraficaIniciativasAcumuladas = [];
         this.arrCreacionGraficaIniciativasAcumuladasN = [];
         this.arrCreacionGraficaAnioArchivada = [];
+        this.arrcreacionGraficaComisionesAsignadasSorted = [];
+        this.arrcreacionGraficaComisionesAsignadasValor = [];
+        this.arrcreacionGraficaAutoresValor = [];
+        this.arrcreacionGraficaAutoresSorted = [];
+        this.tablaComisiones = [];
+        this.tablaAutors = [];
+        this.tablaDictamen = [];
+        this.tablaEstatusIniciativa = [];
         this.arrMeses = [];
         let ini = new Date(this.fechaIni);
         const fin = new Date(this.fechaFin);
@@ -423,10 +466,10 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         let p: number = 0;
         let a: number = 0;
 
-
-
         this.fechaAcumulada = moment(this.fechaIni).format('YYYY-MM');
         this.fechaIniciativaAcumulada = moment(this.fechaIni).format('YYYY-MM');
+        this.fechaIniciativaAcumuladaAprobada = moment(this.fechaIni).format('YYYY-MM');
+        this.fechaIniciativaAcumuladaNoAprobada = moment(this.fechaIni).format('YYYY-MM');
         this.fechaPublicados = moment(this.fechaIni).format('YYYY-MM');
         this.fechaAcumulada = moment(this.fechaIni).format('YYYY-MM');
         this.fechaAcumulada = moment(this.fechaIni).format('YYYY-MM');
@@ -458,13 +501,13 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
             console.log(this.arrMeses);*/
             
 
-            if (this.selectedLegislatura !== undefined && this.selectedLegislatura !== '') {
+            /*if (this.selectedLegislatura !== undefined && this.selectedLegislatura !== '') {
                 if (filtroReporte === '') {
                     filtroReporte = 'actasSesion.legislatura=' + this.selectedLegislatura;
                 } else {
                     filtroReporte = filtroReporte + '&actasSesion.legislatura=' + this.selectedLegislatura;
                 }
-            }
+            }*/
 
             if (this.selectTipo !== undefined && this.selectTipo !== '') {
                 if (filtroReporte === '') {
@@ -474,13 +517,13 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 }
             }
 
-            if (this.selectedComision !== undefined && this.selectedComision !== '') {
+            /*if (this.selectedComision !== undefined && this.selectedComision !== '') {
                 if (filtroReporte === '') {
                     filtroReporte = 'comisiones.id=' + this.selectedComision;
                 } else {
                     filtroReporte = filtroReporte + '&comisiones.id=' + this.selectedComision;
                 }
-            }
+            }*/
 
             if (filtroReporte === '') {
                 // tslint:disable-next-line: max-line-length
@@ -508,38 +551,22 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     i++
                 }
                 
-                this.decretosAcumuladosMes = this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'enero').length;
+                this.decretosAcumuladosMes = this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'enero' && d['estatus'] === 'Publicada').length;
 
-                this.sesionesAcumuladasAnio = this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['fecha'] === '2021').length;
+                this.decretosAcumuladosAnio = this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['fecha'] === '2021' && d['estatus'] === 'Publicada').length;
 
-                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'enero' && d['fecha'] === moment(this.fechaIni).format('YYYY')).length);
-                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[0] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'febrero' && d['fecha'] === moment(this.fechaIni).format('YYYY')).length);
-                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[1] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'marzo' && d['fecha'] === moment(this.fechaIni).format('YYYY')).length);
-                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[2] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'abril' && d['fecha'] === moment(this.fechaIni).format('YYYY')).length);
-                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[3] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'mayo' && d['fecha'] === moment(this.fechaIni).format('YYYY')).length);
-                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[4] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'junio' && d['fecha'] === moment(this.fechaIni).format('YYYY')).length);
-                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[5] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'julio' && d['fecha'] === moment(this.fechaIni).format('YYYY')).length);
-                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[6] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'agosto' && d['fecha'] === moment(this.fechaIni).format('YYYY')).length);
-                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[7] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'septiembre' && d['fecha'] === moment(this.fechaIni).format('YYYY')).length);
-                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[8] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'octubre' && d['fecha'] === moment(this.fechaIni).format('YYYY')).length);
-                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[9] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'noviembre' && d['fecha'] === moment(this.fechaIni).format('YYYY')).length);
-                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[10] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'diciembre' && d['fecha'] === moment(this.fechaIni).format('YYYY')).length);
-
-                this.arrCreacionGraficaEstatusIniciativas.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['estatus'] === 'Turnar dictamen a secretaría de servicios parlamentarios' || d['dictamenDeIniciativa'] === 'Turnada a publicación').length);
-                this.arrCreacionGraficaEstatusIniciativas.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['estatus'] === 'Turnar iniciativa a CIEL' || d['dictamenDeIniciativa'] === 'Turnar dictamen a Secretaria General').length);
-                this.arrCreacionGraficaEstatusIniciativas.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['estatus'] === 'Turnar dictamen a Mesa Directiva').length);
-
-                this.arrReporteEstatusIniciativa = [[ 'Departamento', 'Cantidad total']];
-
-                this.tablaEstatusIniciativa.push({departamento: 'Secretaría General', valor: this.arrCreacionGraficaEstatusIniciativas[0]});
-                this.tablaEstatusIniciativa.push({departamento: 'Centro de Investigación y Estudios Legislativos', valor: this.arrCreacionGraficaEstatusIniciativas[1]});
-                this.tablaEstatusIniciativa.push({departamento: 'Mesa directiva', valor: this.arrCreacionGraficaEstatusIniciativas[2]});
-
-                this.arrReporteEstatusIniciativa.push(['Secretaría General', this.arrCreacionGraficaEstatusIniciativas[0]]);
-                this.arrReporteEstatusIniciativa.push(['Centro de Investigación y Estudios Legislativos', this.arrCreacionGraficaEstatusIniciativas[1]]);
-                this.arrReporteEstatusIniciativa.push(['Mesa directiva', this.arrCreacionGraficaEstatusIniciativas[2]]);
-
-                this.tablaEstatusIniciativaMostrar = this.tablaEstatusIniciativa;
+                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'enero' && d['fecha'] === moment(this.fechaIni).format('YYYY') && d['estatus'] === 'Publicada').length);
+                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[0] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'febrero' && d['fecha'] === moment(this.fechaIni).format('YYYY') && d['estatus'] === 'Publicada').length);
+                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[1] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'marzo' && d['fecha'] === moment(this.fechaIni).format('YYYY') && d['estatus'] === 'Publicada').length);
+                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[2] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'abril' && d['fecha'] === moment(this.fechaIni).format('YYYY') && d['estatus'] === 'Publicada').length);
+                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[3] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'mayo' && d['fecha'] === moment(this.fechaIni).format('YYYY') && d['estatus'] === 'Publicada').length);
+                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[4] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'junio' && d['fecha'] === moment(this.fechaIni).format('YYYY') && d['estatus'] === 'Publicada').length);
+                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[5] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'julio' && d['fecha'] === moment(this.fechaIni).format('YYYY') && d['estatus'] === 'Publicada').length);
+                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[6] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'agosto' && d['fecha'] === moment(this.fechaIni).format('YYYY') && d['estatus'] === 'Publicada').length);
+                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[7] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'septiembre' && d['fecha'] === moment(this.fechaIni).format('YYYY') && d['estatus'] === 'Publicada').length);
+                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[8] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'octubre' && d['fecha'] === moment(this.fechaIni).format('YYYY') && d['estatus'] === 'Publicada').length);
+                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[9] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'noviembre' && d['fecha'] === moment(this.fechaIni).format('YYYY') && d['estatus'] === 'Publicada').length);
+                this.arrCreacionGraficaAnio.push(this.arrCreacionGraficaAnio[10] + this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === 'diciembre' && d['fecha'] === moment(this.fechaIni).format('YYYY') && d['estatus'] === 'Publicada').length);
 
                 this.arrReporteAcumulado = [[ 'Folio', 'Fecha de iniciativa', 'Fecha de estatus', 'Estatus', 'Autores', 'Tema']];
 
@@ -548,21 +575,120 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     if(!this.arrCreacionGraficaIniciativaAcumulada[i].legislatura){
                         this.arrCreacionGraficaIniciativaAcumulada[i].legislatura = 'Sin asignar';
                     }
-                    this.arrReporteAcumulado.push([this.arrCreacionGraficaIniciativaAcumulada[i].id, this.arrCreacionGraficaIniciativaAcumulada[i].fechaIniciativa, 
-                    this.arrCreacionGraficaIniciativaAcumulada[i].fechaFiltro, this.arrCreacionGraficaIniciativaAcumulada[i].estatus, 
-                    'Autor(s)', 'Tema(s)']);
+                    if(this.arrCreacionGraficaIniciativaAcumulada[i].estatus === 'Publicada'){
+                        this.arrReporteAcumulado.push([this.arrCreacionGraficaIniciativaAcumulada[i].id, this.arrCreacionGraficaIniciativaAcumulada[i].fechaIniciativa, 
+                        this.arrCreacionGraficaIniciativaAcumulada[i].fechaFiltro, this.arrCreacionGraficaIniciativaAcumulada[i].estatus, 
+                        this.arrCreacionGraficaIniciativaAcumulada[i].autoresText, this.arrCreacionGraficaIniciativaAcumulada[i].temaText]);
+                    }else{
+
+                    }
                 }
 
-                /* DICTAMENES DE INICIATIVA */
-                this.arrCreacionGraficaDictamenes.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['dictamenDeIniciativa'] === 'Aprobada').length);
-                this.arrCreacionGraficaDictamenes.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['dictamenDeIniciativa'] === 'No aprobada').length);
-                this.arrCreacionGraficaDictamenes.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['dictamenDeIniciativa'] === 'Modificación').length);
+                /*************************/
+                /* Autores de iniciativa */
+                /*************************/
+
+                this.arrCreacionGraficaIniciativaAcumulada.forEach(element => {
+                    if(this.autorCompare === ''){
+                        this.autorCompare = element.autorCompare;
+                    }else{
+                        this.autorCompare = this.autorCompare + ',' + element.autorCompare;
+                    }
+                });
+
+                let separatedAutors = this.autorCompare.split(",");
+                const normalizedInputArray = separatedAutors.map(el => el.toLowerCase());
+                let autorsValue = [];
+                let autorsEqual = [];
+
+                //console.log(separatedAutors);
+
+                normalizedInputArray.forEach(value => {
+                    autorsValue.push({"autor": value, "valor": normalizedInputArray.filter(el => el === value).length});
+                });
+
+                autorsValue.sort((a, b) => b.valor - a.valor);
+                //console.log(autorsValue);
+
+                autorsValue.forEach(autors => {
+                    if (!autorsEqual.find(aut => aut.autor == autors.autor && aut.valor == autors.valor)) {
+                        const { autor, valor } = autors;
+                        autorsEqual.push({ autor, valor });
+                    }
+                });
+
+                //console.log(autorsEqual);
+
+                this.arrReporteAutor = [[ 'Autor', 'Cantidad total de iniciativas propuestas']];
+
+                for (let i = 0; i < 5; i++) {
+                    this.arrcreacionGraficaAutoresSorted.push(autorsEqual[i].autor);
+                    this.arrcreacionGraficaAutoresValor.push(autorsEqual[i].valor);
+                    this.tablaAutors.push({"valor": autorsEqual[i].valor, "autor": autorsEqual[i].autor});
+                    this.arrReporteAutor.push([autorsEqual[i].autor, autorsEqual[i].valor]);
+                 }
+                
+                this.tablaAutorsMostrar = this.tablaAutors;
+
+                //console.log(this.tablaAutors);
+                //console.log(this.arrcreacionGraficaAutoresValor);
+
+                this.arrCreacionGraficaIniciativaAcumulada.forEach(element => {
+                    if(this.adicionCompare === ''){
+                        this.adicionCompare = element.adicionText;
+                    }else{
+                        this.adicionCompare = this.adicionCompare + ',' + element.adicionText;
+                    }
+                });
+
+                let separatedAdicions = this.adicionCompare.split(",");
+                const normalizedInputArrayAdicion = separatedAdicions.map(el => el.toLowerCase());
+                let adicionsValue = [];
+                let adicionsEqual = [];
+
+                console.log(separatedAdicions);
+
+                normalizedInputArrayAdicion.forEach(value => {
+                    adicionsValue.push({"adicion": value, "valor": normalizedInputArrayAdicion.filter(el => el === value).length});
+                });
+
+                adicionsValue.sort((a, b) => b.valor - a.valor);
+                //console.log(adicionsValue);
+
+                adicionsValue.forEach(adicions => {
+                    if(adicions.adicion !== ""){
+                        if (!adicionsEqual.find(adi => adi.adicion == adicions.adicion && adi.valor == adicions.valor)) {
+                            const { adicion, valor } = adicions;
+                            adicionsEqual.push({ adicion, valor });
+                        }
+                    }
+                });
+
+                this.arrReporteAdicion = [[ 'Autor', 'Cantidad total de iniciativas propuestas']];
+
+                console.log(adicionsEqual);
+
+                for (let i = 0; i < 5; i++) {
+                    this.tablaAdicions.push({"valor": adicionsEqual[i].valor, "adicion": adicionsEqual[i].adicion});
+                    this.arrReporteAdicion.push([adicionsEqual[i].adicion, adicionsEqual[i].valor]);
+                }
+                
+                this.tablaAdicionsMostrar = this.tablaAdicions;
+                console.log(this.tablaAdicions);
+
+                /************************/
+                /* Dictamenes aprobados */
+                /************************/
+
+                this.arrCreacionGraficaDictamenes.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['dictamenDeIniciativa'] === 'Aprobada' && d['estatus'] === 'Publicada').length);
+                this.arrCreacionGraficaDictamenes.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['dictamenDeIniciativa'] === 'No aprobada' && d['estatus'] === 'Suspendida').length);
+                this.arrCreacionGraficaDictamenes.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['dictamenDeIniciativa'] === 'Modificación' && d['estatus'] === 'Turnada a comisión para modificación').length);
 
                 this.tablaDictamen.push({dictamen: 'Aprobado', valor: this.arrCreacionGraficaDictamenes[0]});
                 this.tablaDictamen.push({dictamen: 'No aprobado', valor: this.arrCreacionGraficaDictamenes[1]});
                 this.tablaDictamen.push({dictamen: 'Modificación', valor: this.arrCreacionGraficaDictamenes[2]});
 
-                this.arrReporteDictamenes = [['Dictamenes', 'Cantidad total']];
+                this.arrReporteDictamenes = [['Dictámenes', 'Cantidad total']];
 
                 this.arrReporteDictamenes.push(['Aprobados', this.arrCreacionGraficaDictamenes[0]]);
                 this.arrReporteDictamenes.push(['No aprobados', this.arrCreacionGraficaDictamenes[1]]);
@@ -601,7 +727,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         }
                         this.arrReportePublicado.push([this.arrCreacionGraficaIniciativaAcumulada[i].id, this.arrCreacionGraficaIniciativaAcumulada[i].fechaIniciativa, 
                         this.arrCreacionGraficaIniciativaAcumulada[i].fechaFiltro, this.arrCreacionGraficaIniciativaAcumulada[i].estatus, 
-                        'Autor(s)', 'Tema(s)']);
+                        this.arrCreacionGraficaIniciativaAcumulada[i].autoresText, this.arrCreacionGraficaIniciativaAcumulada[i].temaText]);
                     }else{
 
                     }
@@ -636,18 +762,46 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         }
                         this.arrReporteEstatusDecreto.push([this.arrCreacionGraficaIniciativaAcumulada[i].id, this.arrCreacionGraficaIniciativaAcumulada[i].fechaIniciativa, 
                         this.arrCreacionGraficaIniciativaAcumulada[i].fechaFiltro, this.arrCreacionGraficaIniciativaAcumulada[i].estatus, 
-                        'Autor(s)', 'Tema(s)']);
+                        this.arrCreacionGraficaIniciativaAcumulada[i].autoresText, this.arrCreacionGraficaIniciativaAcumulada[i].temaText]);
                     }else if(this.arrCreacionGraficaIniciativaAcumulada[i].estatus === 'Turnada a publicación'){
                         if(!this.arrCreacionGraficaIniciativaAcumulada[i].legislatura){
                             this.arrCreacionGraficaIniciativaAcumulada[i].legislatura = 'Sin asignar';
                         }
                         this.arrReporteEstatusDecreto.push([this.arrCreacionGraficaIniciativaAcumulada[i].id, this.arrCreacionGraficaIniciativaAcumulada[i].fechaIniciativa, 
                         this.arrCreacionGraficaIniciativaAcumulada[i].fechaFiltro, this.arrCreacionGraficaIniciativaAcumulada[i].estatus, 
-                        'Autor(s)', 'Tema(s)']);
+                        this.arrCreacionGraficaIniciativaAcumulada[i].autoresText, this.arrCreacionGraficaIniciativaAcumulada[i].temaText]);
                     }else{
 
                     }
                 }
+
+
+                /*************************/
+                /* Estatus de iniciativa */
+                /*************************/
+
+                this.arrCreacionGraficaEstatusIniciativas.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['estatus'] === 'Registrada').length);
+                this.arrCreacionGraficaEstatusIniciativas.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['estatus'] === 'Turnar dictamen a secretaría de servicios parlamentarios' || d['estatus'] === 'Turnada a publicación').length);
+                this.arrCreacionGraficaEstatusIniciativas.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['estatus'] === 'Turnar iniciativa a CIEL' || d['estatus'] === 'Turnar dictamen a Secretaría General').length);
+                this.arrCreacionGraficaEstatusIniciativas.push(this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['estatus'] === 'Turnar dictamen a Mesa Directiva').length);
+
+                console.log(this.arrCreacionGraficaEstatusIniciativas);
+
+                this.arrReporteEstatusIniciativa = [[ 'Departamento', 'Cantidad total']];
+                this.arrReporteEstatusIniciativaInicial = [[ 'Departamento', 'Cantidad total']];
+
+                this.tablaEstatusIniciativaInicial.push({departamento: 'Secretaría General', valor: this.arrCreacionGraficaEstatusIniciativas[0]});
+                this.tablaEstatusIniciativa.push({departamento: 'Secretaría General', valor: this.arrCreacionGraficaEstatusIniciativas[1]});
+                this.tablaEstatusIniciativa.push({departamento: 'Centro de Investigación y Estudios Legislativos', valor: this.arrCreacionGraficaEstatusIniciativas[2]});
+                this.tablaEstatusIniciativa.push({departamento: 'Mesa directiva', valor: this.arrCreacionGraficaEstatusIniciativas[3]});
+
+                this.arrReporteEstatusIniciativaInicial.push(['Secretaría General', this.arrCreacionGraficaEstatusIniciativas[0]]);
+                this.arrReporteEstatusIniciativa.push(['Secretaría General', this.arrCreacionGraficaEstatusIniciativas[1]]);
+                this.arrReporteEstatusIniciativa.push(['Centro de Investigación y Estudios Legislativos', this.arrCreacionGraficaEstatusIniciativas[2]]);
+                this.arrReporteEstatusIniciativa.push(['Mesa directiva', this.arrCreacionGraficaEstatusIniciativas[3]]);
+
+                this.tablaEstatusIniciativaMostrar = this.tablaEstatusIniciativa;
+                this.tablaEstatusIniciativaInicialMostrar = this.tablaEstatusIniciativaInicial;
 
                 /************************/
                 /* Comisiones asignadas */
@@ -664,12 +818,19 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
 
                 this.arrcreacionGraficaComisionesAsignadas.sort((a, b) => b.valor - a.valor);
 
-                this.arrcreacionGraficaComisionesAsignadas.forEach(element =>{
+                /*this.arrcreacionGraficaComisionesAsignadas.forEach(element =>{
                     this.arrcreacionGraficaComisionesAsignadasSorted.push(element.comision);
                     this.arrcreacionGraficaComisionesAsignadasValor.push(element.valor);
                     this.tablaComisiones.push({"valor": element.valor, "comision": element.comision});
                     this.arrReporteComision.push([element.comision,  element.valor]);
-                });
+                });*/
+
+                for (let i = 0; i < 5; i++) {
+                    this.arrcreacionGraficaComisionesAsignadasSorted.push(this.arrcreacionGraficaComisionesAsignadas[i].comision);
+                    this.arrcreacionGraficaComisionesAsignadasValor.push(this.arrcreacionGraficaComisionesAsignadas[i].valor);
+                    this.tablaComisiones.push({"valor": this.arrcreacionGraficaComisionesAsignadas[i].valor, "comision": this.arrcreacionGraficaComisionesAsignadas[i].comision});
+                    this.arrReporteComision.push([this.arrcreacionGraficaComisionesAsignadas[i].comision, this.arrcreacionGraficaComisionesAsignadas[i].valor]);
+                 }
 
                 console.log('Comisiones');
 
@@ -706,13 +867,13 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 }
             }
 
-            if (this.selectedComision !== undefined && this.selectedComision !== '') {
+            /*if (this.selectedComision !== undefined && this.selectedComision !== '') {
                 if (filtroIniciativasAcumuladas === '') {
                     filtroIniciativasAcumuladas = 'comisiones.id=' + this.selectedComision;
                 } else {
                     filtroIniciativasAcumuladas = filtroIniciativasAcumuladas + '&comisiones.id=' + this.selectedComision;
                 }
-            }
+            }*/
 
             if (filtroIniciativasAcumuladas === '') {
                 // tslint:disable-next-line: max-line-length
@@ -737,9 +898,15 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     p++
                 }
 
-                this.sesionesProcesoMes = this.arrIniciativasAcumuladas.filter((d) => d['cTiempo'] === 'enero').length;
-
-                this.sesionesProcesoAnio = this.arrIniciativasAcumuladas.filter((d) => d['fecha'] === '2021').length;
+                //Total general
+                this.iniciativasAcumuladasMes = this.arrIniciativasAcumuladas.filter((d) => d['cTiempo'] === 'enero').length;
+                this.iniciativasAcumuladasAnio = this.arrIniciativasAcumuladas.filter((d) => d['fecha'] === '2021').length;
+                //Aprobada
+                this.iniciativasAcumuladasMesAprobada = this.arrIniciativasAcumuladas.filter((d) => d['cTiempo'] === 'enero' && d['dictamenDeIniciativa'] === 'Aprobada').length;
+                this.iniciativasAcumuladasAnioAprobada = this.arrIniciativasAcumuladas.filter((d) => d['fecha'] === '2021' && d['dictamenDeIniciativa'] === 'Aprobada').length;
+                //No aprobada
+                this.iniciativasAcumuladasMesNoAprobada = this.arrIniciativasAcumuladas.filter((d) => d['cTiempo'] === 'enero' && d['dictamenDeIniciativa'] === 'No aprobada').length;
+                this.iniciativasAcumuladasAnioNoAprobada = this.arrIniciativasAcumuladas.filter((d) => d['fecha'] === '2021' && d['dictamenDeIniciativa'] === 'No aprobada').length;
 
                 console.log(this.arrIniciativasAcumuladas);
 
@@ -784,13 +951,61 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     }
                     this.arrReporteIniciativaAcumulada.push([this.arrIniciativasAcumuladas[i].id, this.arrIniciativasAcumuladas[i].fechaIniciativa, 
                     this.arrIniciativasAcumuladas[i].fechaFiltro, this.arrIniciativasAcumuladas[i].estatus, 
-                    'Autor(s)', 'Tema(s)']);
+                    this.arrIniciativasAcumuladas[i].autoresText, this.arrIniciativasAcumuladas[i].temaText]);
                 
                 }
 
                 console.log(this.arrReporteIniciativaAcumulada);
 
                 this.configuragraficas();
+            }, err => {
+                this.spinner.hide();
+            });
+
+            let filtroEstatusIniciativa = '';
+
+            if (this.selectedLegislatura !== undefined && this.selectedLegislatura !== '') {
+                if (filtroEstatusIniciativa === '') {
+                    filtroEstatusIniciativa = 'actasSesion.legislatura=' + this.selectedLegislatura;
+                } else {
+                    filtroEstatusIniciativa = filtroEstatusIniciativa + '&actasSesion.legislatura=' + this.selectedLegislatura;
+                }
+            }
+
+            if (this.selectTipo !== undefined && this.selectTipo !== '') {
+                if (filtroEstatusIniciativa === '') {
+                    filtroEstatusIniciativa = 'tipo_de_iniciativa.id=' + this.selectTipo;
+                } else {
+                    filtroEstatusIniciativa = filtroEstatusIniciativa + '&tipo_de_iniciativa.id=' + this.selectTipo;
+                }
+            }
+
+            /*if (this.selectedComision !== undefined && this.selectedComision !== '') {
+                if (filtroEstatusIniciativa === '') {
+                    filtroEstatusIniciativa = 'comisiones.id=' + this.selectedComision;
+                } else {
+                    filtroEstatusIniciativa = filtroEstatusIniciativa + '&comisiones.id=' + this.selectedComision;
+                }
+            }*/
+
+            if (filtroEstatusIniciativa === '') {
+                // tslint:disable-next-line: max-line-length
+                filtroEstatusIniciativa = 'createdAt_gte=' + fechaIni + 'T01:00:00.000Z&createdAt_lte=' + fechaFin + 'T24:00:00.000Z&_limit=-1';
+            } else {
+                // tslint:disable-next-line: max-line-length
+                filtroEstatusIniciativa = filtroEstatusIniciativa + '&createdAt_gte=' + fechaIni + 'T01:00:00.000Z&createdAt_lte=' + fechaFin + 'T24:00:00.000Z&_limit=-1';
+            }
+            // Obtenemos los entes
+
+            console.log('filtro');
+            console.log(filtroEstatusIniciativa);
+
+            await this.iniciativaService.obtenerIniciativasFiltrado(filtroEstatusIniciativa).subscribe((resp: any) => {
+                this.arrIniciativasEstatus = resp.anioTotal;
+
+                console.log(this.arrIniciativasEstatus);
+
+                //this.configuragraficas();
             }, err => {
                 this.spinner.hide();
             });
@@ -803,7 +1018,9 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         this.fechaIni = '';
         this.fechaFin = '';
         this.selectedLegislatura = '';
-        this.selectedTipoSesion = '';
+        this.selectedComision = '';
+        this.selectTipo = '';
+        this.autores = [];
 
     }
 
@@ -817,24 +1034,52 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
 
         let filtroMes = '';
         filtroMes = moment(this.fechaAcumulada).format('MMMM');
-        this.decretosAcumuladosMes = this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === filtroMes).length;
+        this.decretosAcumuladosMes = this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === filtroMes && d['estatus'] === 'Publicada').length;
 
         let filtroAnio = '';
         filtroAnio = moment(this.fechaAcumulada).format('YYYY');
-        this.sesionesAcumuladasAnio = this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['fecha'] === filtroAnio).length;
+        this.decretosAcumuladosAnio = this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['fecha'] === filtroAnio && d['estatus'] === 'Publicada').length;
     }
 
-    valorMesAnioProcesada(event: any): void {
+    valorMesAnioAcumuladas(event: any): void {
 
         moment.locale('es');
 
         let filtroMes = '';
         filtroMes = moment(this.fechaIniciativaAcumulada).format('MMMM');
-        this.sesionesProcesoMes = this.arrIniciativasAcumuladas.filter((d) => d['cTiempo'] === filtroMes).length;
+        this.iniciativasAcumuladasMes = this.arrIniciativasAcumuladas.filter((d) => d['cTiempo'] === filtroMes).length;
 
         let filtroAnio = '';
         filtroAnio = moment(this.fechaIniciativaAcumulada).format('YYYY');
-        this.sesionesProcesoAnio = this.arrIniciativasAcumuladas.filter((d) => d['fecha'] === filtroAnio).length;
+        this.iniciativasAcumuladasAnio = this.arrIniciativasAcumuladas.filter((d) => d['fecha'] === filtroAnio).length;
+    }
+
+    
+    valorMesAnioAcumuladasAprobadas(event: any): void {
+
+        moment.locale('es');
+
+        let filtroMes = '';
+        filtroMes = moment(this.fechaIniciativaAcumuladaAprobada).format('MMMM');
+        this.iniciativasAcumuladasMesAprobada = this.arrIniciativasAcumuladas.filter((d) => d['cTiempo'] === filtroMes && d['dictamenDeIniciativa'] === 'Aprobada').length;
+
+        let filtroAnio = '';
+        filtroAnio = moment(this.fechaIniciativaAcumuladaAprobada).format('YYYY');
+        this.iniciativasAcumuladasAnioAprobada = this.arrIniciativasAcumuladas.filter((d) => d['fecha'] === filtroAnio && d['dictamenDeIniciativa'] === 'Aprobada').length;
+    }
+
+    
+    valorMesAnioAcumuladasNoAprobadas(event: any): void {
+
+        moment.locale('es');
+
+        let filtroMes = '';
+        filtroMes = moment(this.fechaIniciativaAcumuladaNoAprobada).format('MMMM');
+        this.iniciativasAcumuladasMesNoAprobada = this.arrIniciativasAcumuladas.filter((d) => d['cTiempo'] === filtroMes && d['dictamenDeIniciativa'] === 'No aprobada').length;
+
+        let filtroAnio = '';
+        filtroAnio = moment(this.fechaIniciativaAcumuladaNoAprobada).format('YYYY');
+        this.iniciativasAcumuladasAnioNoAprobada = this.arrIniciativasAcumuladas.filter((d) => d['fecha'] === filtroAnio && d['dictamenDeIniciativa'] === 'No aprobada').length;
     }
 
     valorMesAnioArchivada(event: any): void {
@@ -858,11 +1103,11 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         moment.locale('es');
 
         let filtroMes = '';
-        filtroMes = moment(this.fechaPublicados).format('MMMM');
+        filtroMes = moment(this.fechaDecretoConcluida).format('MMMM');
         this.decretosPublicadosMes = this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === filtroMes && d['estatus'] === 'Publicada').length;
 
         let filtroAnio = '';
-        filtroAnio = moment(this.fechaPublicados).format('YYYY');
+        filtroAnio = moment(this.fechaDecretoConcluida).format('YYYY');
         this.decretosPublicadosAnio = this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['fecha'] === filtroAnio && d['estatus'] === 'Publicada').length;
     }
 
@@ -871,12 +1116,12 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         moment.locale('es');
 
         let filtroMes = '';
-        filtroMes = moment(this.fechaPublicados).format('MMMM');
-        this.decretosSolicitudPublicacionMes = this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === filtroMes && d['estatus'] === 'Publicada').length;
+        filtroMes = moment(this.fechaDecretoSolicitud).format('MMMM');
+        this.decretosSolicitudPublicacionMes = this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['cTiempo'] === filtroMes && d['estatus'] === 'Turnada a publicación').length;
 
         let filtroAnio = '';
-        filtroAnio = moment(this.fechaPublicados).format('YYYY');
-        this.decretosSolicitudPublicacionAnio = this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['fecha'] === filtroAnio && d['estatus'] === 'Publicada').length;
+        filtroAnio = moment(this.fechaDecretoSolicitud).format('YYYY');
+        this.decretosSolicitudPublicacionAnio = this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['fecha'] === filtroAnio && d['estatus'] === 'Turnada a publicación').length;
     }
 
     configuragraficas(): void {
@@ -989,10 +1234,10 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     pointHoverBorderColor: '#ffffff'
                 },
                 {
-                    borderColor: 'rgba(77,83,96,0.2)',
+                    borderColor: 'rgba(0,0,255,0.3)',
                     backgroundColor: 'transparent',
-                    pointBackgroundColor: 'rgba(77,83,96,0.2)',
-                    pointHoverBackgroundColor: 'rgba(77,83,96,0.2)',
+                    pointBackgroundColor: 'rgba(0,0,255,0.3)',
+                    pointHoverBackgroundColor: 'rgba(0,0,255,0.3)',
                     pointBorderColor: '#ffffff',
                     pointHoverBorderColor: '#ffffff'
                 }
@@ -1053,26 +1298,22 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         };
 
         this.graficaAutor = {
-            chartType: 'bar',
+            chartType: 'pie',
             datasets: {
-                autor: [
+                autors: [
 
                     {
-                        label: 'archivada',
-                        data: this.arrCreacionGraficaEstatusIniciativas,
+                        label: 'autors',
+                        data: this.arrcreacionGraficaAutoresValor,
                         fill: 'start'
                     }
                 ],
             },
             // tslint:disable-next-line: max-line-length
-            labels: ['Secretara general', 'CIEL', 'Mesa directiva'],
+            labels: this.arrcreacionGraficaAutoresSorted,
             colors: [
                 {
-                    backgroundColor: '#0E599A',
-                    pointBackgroundColor: 'rgba(220,220,220,1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(220,220,220,1)'
+                    backgroundColor: ['rgba(255,0,0,0.3)', 'rgba(0,255,0,0.3)', 'rgba(0,0,255,0.3)', 'rgba(71, 255, 255, 0.66)', 'rgba(255, 155, 56, 0.59)'],
                 }
             ],
             options: {
@@ -1100,28 +1341,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         hoverBorderWidth: 2
                     }
                 },
-                scales: {
-                    xAxes: [
-                        {
-                            gridLines: {
-                                display: false
-                            },
-                            ticks: {
-                                fontColor: 'rgba(0,0,0,0.54)'
-                            }
-                        }
-                    ],
-                    yAxes: [
-                        {
-                            gridLines: {
-                                tickMarkLength: 16
-                            },
-                            ticks: {
-                                stepSize: 1000
-                            }
-                        }
-                    ]
-                },
                 plugins: {
                     filler: {
                         propagate: false
@@ -1129,6 +1348,115 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 }
             }
         };
+
+        /*
+        this.graficaDictamen = {
+            chartType: 'pie',
+            datasets: {
+                dictamen: [
+
+                    {
+                        label: 'archivada',
+                        data: this.arrCreacionGraficaDictamenes,
+                        fill: 'start'
+                    }
+                ],
+            },
+            // tslint:disable-next-line: max-line-length
+            labels: ['Aprobada', 'No aprobada', 'Modificación'],
+            colors: [
+                {
+                    backgroundColor: ['rgba(255,0,0,0.3)', 'rgba(0,255,0,0.3)', 'rgba(0,0,255,0.3)'],
+                }
+            ],
+            options: {
+                spanGaps: false,
+                legend: {
+                    display: false
+                },
+                maintainAspectRatio: false,
+                tooltips: {
+                    position: 'nearest',
+                    mode: 'index',
+                    intersect: false
+                },
+                layout: {
+                    padding: {
+                        left: 24,
+                        right: 32
+                    }
+                },
+                elements: {
+                    point: {
+                        radius: 4,
+                        borderWidth: 2,
+                        hoverRadius: 4,
+                        hoverBorderWidth: 2
+                    }
+                },
+                plugins: {
+                    datalabels: {
+                        color: "white",
+                        formatter: (value, ctx) => {
+                         var perc = ((value * 100) / totalCount).toFixed(0) + "%";
+                         return perc;
+                        },
+                       },
+                    filler: {
+                        propagate: false
+                    }
+                }
+            }
+        };*/
+
+        this.pieChartOptions = {
+            maintainAspectRatio: false,
+            layout: {
+                padding: {
+                    left: 24,
+                    right: 32
+                }
+            },
+            legend: {
+              position: 'top',
+            },
+            tooltips: {
+                enabled: true,
+                mode: 'single',
+                /*callbacks: {
+                  label: function (tooltipItems, data) {
+                    return data.datasets[0].data[tooltipItems.index] + ' %';
+                  }
+                }*/
+              },
+              plugins:{
+                labels: {
+                render: 'percentage',
+                fontSize: 12,
+                //fontStyle: 'bold',
+                fontColor: '#000',
+                fontFamily: '"Lucida Console", Monaco, monospace',
+                precision: 2,
+                arc: false,
+                }
+            }
+        };
+        
+          this.pieChartLabels = ['Aprobada', 'No aprobada', 'Modificación'];
+        
+          this.pieChartData = this.arrCreacionGraficaDictamenes;
+        
+          this.pieChartType= 'pie';
+        
+          this.pieChartLegend = true;
+        
+          this.pieChartPlugins = [];
+        
+          this.pieChartColors = [
+            {
+              backgroundColor: ['rgba(255,0,0,0.3)', 'rgba(0,255,0,0.3)', 'rgba(0,0,255,0.3)'],
+            },
+          ];
 
         this.graficaArchivada = {
             chartType: 'bar',
@@ -1143,7 +1471,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 ],
             },
             // tslint:disable-next-line: max-line-length
-            labels: ['Secretara general', 'CIEL', 'Mesa directiva'],
+            labels: ['Secretaría general Inicial', 'Secretaría general', 'CIEL', 'Mesa directiva'],
             colors: [
                 {
                     backgroundColor: '#0E599A',
@@ -1214,9 +1542,15 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 dictamen: [
 
                     {
-                        label: 'archivada',
+                        labels: ['Aprobada', 'No aprobada', 'Modificación'],
                         data: this.arrCreacionGraficaDictamenes,
-                        fill: 'start'
+                        borderColor: "#fff",
+                        backgroundColor: [
+                            "#4b77a9",
+                            "#5f255f",
+                            "#d21243",
+                            "#B27200"
+                        ],
                     }
                 ],
             },
@@ -1255,12 +1589,15 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 plugins: {
                     datalabels: {
                         formatter: (value, ctx) => {
-                          const label = ctx.chart.data.labels[ctx.dataIndex];
-                          return label;
+                            let sum = 0;
+                            let dataArr = ctx.chart.data.datasets[0].dictamen;
+                            dataArr.map(data => {
+                                sum += data;
+                            });
+                            let percentage = (value*100 / sum).toFixed(2)+"%";
+                            return percentage;
                         },
-                      },
-                    filler: {
-                        propagate: false
+                        color: '#fff',
                     }
                 }
             }
@@ -1443,7 +1780,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 comisiones: [
 
                     {
-                        label: 'archivada',
+                        label: 'comisiones',
                         data: this.arrcreacionGraficaComisionesAsignadasValor,
                         fill: 'start'
                     }
@@ -1490,89 +1827,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         };
     }
 
-
-    configurarGraficaFechas(): void {
-        this.graficaFechas = {
-            chartType: 'line',
-            datasets: {
-                acumuladas: [
-
-                    {
-                        label: 'Acumuladas',
-                        data: this.arrCreacionGraficaFechas,
-                        fill: 'start'
-                    }
-                ],
-            },
-            // tslint:disable-next-line: max-line-length
-            labels: this.arrDiasRango,
-            colors: [
-
-                {
-                    borderColor: 'rgba(244, 67, 54, 0.87)',
-                    backgroundColor: 'transparent',
-                    pointBackgroundColor: 'rgba(244, 67, 54, 0.87)',
-                    pointHoverBackgroundColor: 'rgba(244, 67, 54, 0.87)',
-                    pointBorderColor: '#ffffff',
-                    pointHoverBorderColor: '#ffffff'
-                }
-            ],
-            options: {
-                spanGaps: false,
-                legend: {
-                    display: false
-                },
-                maintainAspectRatio: false,
-                tooltips: {
-                    position: 'nearest',
-                    mode: 'index',
-                    intersect: false
-                },
-                layout: {
-                    padding: {
-                        left: 24,
-                        right: 32
-                    }
-                },
-                elements: {
-                    point: {
-                        radius: 4,
-                        borderWidth: 2,
-                        hoverRadius: 4,
-                        hoverBorderWidth: 2
-                    }
-                },
-                scales: {
-                    xAxes: [
-                        {
-                            gridLines: {
-                                display: false
-                            },
-                            ticks: {
-                                fontColor: 'rgba(0,0,0,0.54)'
-                            }
-                        }
-                    ],
-                    yAxes: [
-                        {
-                            gridLines: {
-                                tickMarkLength: 16
-                            },
-                            ticks: {
-                                stepSize: 1000
-                            }
-                        }
-                    ]
-                },
-                plugins: {
-                    filler: {
-                        propagate: false
-                    }
-                }
-            }
-        };
-    }
-
     async generaReport(): Promise<string> {
         return new Promise(async (resolve) => {
             const fecha = new Date(); // Fecha actual
@@ -1608,16 +1862,16 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
 
             header = this.configuraHeaderReport();
 
-            presente.push({
+            /*presente.push({
                 text: ["Total sesiones mes: ", { text: this.decretosAcumuladosMes, bold: true }, 
                 "      Total sesiones año ", { text: this.sesionesAcumuladasAnio, bold: true },],
                 fontSize: 12,
                 alignment: "center",
                 margin: [0, 10, 0, 0],
-            });
+            });*/
 
             presente.push({
-                text: "Gráfica total de decretos acumulados",
+                text: "Gráfica total de decretos concluidos acumulados",
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
@@ -1635,7 +1889,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
             });
 
             presente.push({
-                text: "Listado de decretos acumulados",
+                text: "Listado de decretos concluidos acumulados",
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
@@ -1915,7 +2169,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         });
     }
 
-    async generaReportArchivada (): Promise<string> {
+    async generaReportAutors (): Promise<string> {
         return new Promise(async (resolve) => {
             const fecha = new Date(); // Fecha actual
             let mes: any = fecha.getMonth() + 1; // obteniendo mes
@@ -1932,6 +2186,202 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
             const fechaActual = dia + "/" + mes + "/" + anio;
 
             let canvas = <HTMLCanvasElement> document.getElementById('chart3');
+            
+            console.log(canvas.width);
+            console.log(canvas.height);
+
+            let fullQuality = canvas.toDataURL('image/png', 1);
+
+            /*await this.imageService.imageRedimensionada({"image": fullQuality}).subscribe((resp: any) => {
+                this.imageCanvas1 = resp;
+
+                console.log(resp);
+            }, err => {
+
+            });*/
+
+            // Creamos el reporte
+
+            header = this.configuraHeaderReportAutors();
+
+            /*presente.push({
+                text: ["Total sesiones mes: ", { text: this.sesionesArchivadasMes, bold: true }, 
+                "      Total sesiones año ", { text: this.sesionesArchivadasAnio, bold: true },],
+                fontSize: 12,
+                alignment: "center",
+                margin: [0, 10, 0, 0],
+            });*/
+
+            presente.push({
+                text: "Gráfica de autores de iniciativa",
+                fontSize: 12,
+                bold: true,
+                alignment: "center",
+                margin: [0, 10, 0, 0],
+            });
+
+            presente.push({
+                image: fullQuality,
+                fontSize: 12,
+                bold: false,
+                alignment: "justify",
+                margin: [0, 50, 20, 5],
+                width: 800,
+                height: 184
+            });
+
+            presente.push({
+                text: "Listado de autores iniciales",
+                fontSize: 12,
+                bold: true,
+                alignment: "center",
+                margin: [0, 20, 0, 0],
+            });
+
+            //this.arrReporteAcumulado = [['hola', 'chao', 'efe', 'x', 'y']];
+
+            await presente.push({
+                //layout: 'lightHorizontalLines', // optional
+                margin: [40, 20, 40, 50],
+                table: {
+                  // headers are automatically repeated if the table spans over multiple pages
+                  // you can declare how many rows should be treated as headers
+
+                  headerRows: 1,
+                  widths: [ 400, 300],
+          
+                  body: this.arrReporteAutor,
+                  fillColor: "#d9d9d9",
+                  fillOpacity: "#d9d9d9"
+                }
+              });
+
+            presente.push({
+                text: "Listado de autores adheridos",
+                fontSize: 12,
+                bold: true,
+                alignment: "center",
+                margin: [0, 20, 0, 0],
+            });
+
+            //this.arrReporteAcumulado = [['hola', 'chao', 'efe', 'x', 'y']];
+
+            await presente.push({
+                //layout: 'lightHorizontalLines', // optional
+                margin: [40, 20, 40, 50],
+                table: {
+                  // headers are automatically repeated if the table spans over multiple pages
+                  // you can declare how many rows should be treated as headers
+
+                  headerRows: 1,
+                  widths: [ 400, 300],
+          
+                  body: this.arrReporteAdicion,
+                  fillColor: "#d9d9d9",
+                  fillOpacity: "#d9d9d9"
+                }
+              });
+
+            const aa = {
+                header: {
+                    columns: [
+                        {
+                            image: "data:image/jpeg;base64," + this.imageBase64,
+                            width: 120,
+                            margin: [20, 20, 5, 5],
+                        },
+                        {
+                            nodeName: "DIV",
+                            stack: [header],
+                        },
+                    ],
+                },
+                pageOrientation: "landscape",
+                pageSize: "A4",
+                fontSize: 8,
+                pageMargins: [10, 100, 40, 50],
+                content: [presente],
+                styles: {
+                    header: {
+                        fontSize: 8,
+                        bold: true,
+                        margin: 0,
+                    },
+                    subheader: {
+                        fontSize: 8,
+                        margin: 0,
+                    },
+                    tableExample: {
+                        margin: 0,
+                    },
+                    tableOpacityExample: {
+                        margin: [0, 5, 0, 15],
+                        fillColor: "blue",
+                        fillOpacity: 0.3,
+                    },
+                    tableHeader: {
+                        bold: true,
+                        fontSize: 9,
+                        color: "black",
+                    },
+                },
+                defaultStyle: {
+                    // alignment: 'justify'
+                },
+            };
+
+            pdfMake.tableLayouts = {
+                exampleLayout: {
+                  hLineWidth: function (i, node) {
+                    if (i === 0 || i === node.table.body.length) {
+                      return 0;
+                    }
+                    return (i === node.table.headerRows) ? 2 : 1;
+                  },
+                  vLineWidth: function (i, node) {
+                    if (i === 0 || i === node.table.body.length) {
+                        return 0;
+                      }
+                      return (i === node.table.headerRows) ? 2 : 1;
+                  },
+                  hLineColor: function (i) {
+                    return i === 1 ? 'gray' : '#8c8c8c';
+                  },
+                  vLineColor: function (i) {
+                    return i === 1 ? 'gray' : '#aaa';
+                  },
+                  paddingLeft: function (i) {
+                    return i === 0 ? 0 : 8;
+                  },
+                  paddingRight: function (i, node) {
+                    return (i === node.table.widths.length - 1) ? 0 : 8;
+                  }
+                }
+              };
+
+            pdfMake.createPdf(aa).open();
+
+            resolve("ok");
+        });
+    }
+
+    async generaReportEstatusIniciativa (): Promise<string> {
+        return new Promise(async (resolve) => {
+            const fecha = new Date(); // Fecha actual
+            let mes: any = fecha.getMonth() + 1; // obteniendo mes
+            let dia: any = fecha.getDate(); // obteniendo dia
+            const anio = fecha.getFullYear(); // obteniendo año
+            let header: any[] = [];
+            let presente: any[] = [];
+            if (dia < 10) {
+                dia = "0" + dia; // agrega cero si el menor de 10
+            }
+            if (mes < 10) {
+                mes = "0" + mes; // agrega cero si el menor de 10
+            }
+            const fechaActual = dia + "/" + mes + "/" + anio;
+
+            let canvas = <HTMLCanvasElement> document.getElementById('chart4');
             
             console.log(canvas.width);
             console.log(canvas.height);
@@ -1977,7 +2427,33 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
             });
 
             presente.push({
-                text: "Listado de iniciativas",
+                text: "Listado de iniciativas iniciales",
+                fontSize: 12,
+                bold: true,
+                alignment: "center",
+                margin: [0, 20, 0, 0],
+            });
+
+            //this.arrReporteAcumulado = [['hola', 'chao', 'efe', 'x', 'y']];
+
+            await presente.push({
+                //layout: 'lightHorizontalLines', // optional
+                margin: [40, 20, 40, 50],
+                table: {
+                  // headers are automatically repeated if the table spans over multiple pages
+                  // you can declare how many rows should be treated as headers
+
+                  headerRows: 1,
+                  widths: [ 500, 200],
+          
+                  body: this.arrReporteEstatusIniciativaInicial,
+                  fillColor: "#d9d9d9",
+                  fillOpacity: "#d9d9d9"
+                }
+              });
+
+            presente.push({
+                text: "Listado de iniciativas en proceso",
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
@@ -2001,7 +2477,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillOpacity: "#d9d9d9"
                 }
               });
-
 
             const aa = {
                 header: {
@@ -2130,7 +2605,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
             });*/
 
             presente.push({
-                text: "Gráfica de estatus de dictamenes",
+                text: "Gráfica de estatus de dictámenes",
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
@@ -2148,7 +2623,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
             });
 
             presente.push({
-                text: "Listado de dictamenes",
+                text: "Listado de dictámenes",
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
@@ -2775,7 +3250,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         const stack: any[] = [];
 
         stack.push({
-            text: "Reporte de total de decretos acumulados",
+            text: "Reporte de total de decretos concluidos acumulados",
             nodeName: "H1",
             fontSize: 14,
             bold: true,
@@ -2830,6 +3305,36 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         return { stack };
     }
 
+    configuraHeaderReportAutors(): any {
+        // Configuramos en encabezado
+        const stack: any[] = [];
+
+        stack.push({
+            text: "Reporte de autores de iniciativa",
+            nodeName: "H1",
+            fontSize: 14,
+            bold: true,
+            alignment: "center",
+            margin: [0, 20, 0, 0],
+        });
+        stack.push({
+            text: ["Fecha inicio: ", { text: moment(this.fechaIni).format('DD-MM-YYYY'), bold: true }],
+            nodeName: "H4",
+            fontSize: 12,
+            bold: false,
+            alignment: "center",
+        });
+        stack.push({
+            text: ["Fecha inicio: ", { text: moment(this.fechaFin).format('DD-MM-YYYY'), bold: true }],
+            nodeName: "H4",
+            fontSize: 12,
+            bold: false,
+            alignment: "center",
+        });
+
+        return { stack };
+    }
+
     configuraHeaderReportEstatusDeIniciativa(): any {
         // Configuramos en encabezado
         const stack: any[] = [];
@@ -2865,7 +3370,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         const stack: any[] = [];
 
         stack.push({
-            text: "Reporte de dictamenes",
+            text: "Reporte de dictámenes",
             nodeName: "H1",
             fontSize: 14,
             bold: true,

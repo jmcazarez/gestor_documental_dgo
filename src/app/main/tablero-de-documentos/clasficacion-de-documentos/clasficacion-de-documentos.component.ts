@@ -143,7 +143,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         this.arrInformacion = this.menuService.tipoInformacion;
 
         this.documento.version = parseFloat(this.documento.version).toFixed(1);
-
+        console.log(this.documento.legislatura);
         if (!this.documento.legislatura && !this.documento.expediente && !this.documento.folioExpediente) {
             for (const i in this.arrMetacatalogos) {
                 this.arrMetacatalogos[i].text = '';
@@ -207,7 +207,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             cFolioExpediente = this.documento.folioExpediente;
         }
 
-        if(this.documento.formulario){
+        if(this.documento.formulario || this.documento.disabled){
             this.disableFolioExpediente = true;
         }
         this.form = this.formBuilder.group({
@@ -267,6 +267,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                         if (cLegislatura == val) {
                             this.form.controls['folioExpediente'].setValue(cFolioExpediente);
                         } else {
+                            console.log( this.arrLegislaturas);
                             let arrFolioExpediente = this.arrLegislaturas.filter(item => item['id'] === val)
 
                             this.form.controls['folioExpediente'].setValue(arrFolioExpediente[0].cLegislatura + '-' + Number(arrFolioExpediente[0].documentos + 1));
@@ -717,5 +718,9 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
         });
 
+    }
+
+    pruebaForm(): void{
+        console.log(this.form.touched);
     }
 }

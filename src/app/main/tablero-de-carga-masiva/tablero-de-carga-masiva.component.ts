@@ -140,7 +140,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                 if (tempMetacatalogos[0].metacatalogos) {
                     this.arrMetacatalogos = tempMetacatalogos[0].metacatalogos;
                     for (const i in this.arrMetacatalogos) {
-                        this.arrMetacatalogos[i].text = '';          
+                        this.arrMetacatalogos[i].text = '';
                     }
                 }
                 // tslint:disable-next-line: forin
@@ -181,9 +181,9 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                 this.documentosTemporal.push({
                                     'Documento': element.documento.id,
                                     'Nombre del documento': element.documento.name,
-                                    'Tipo de documento': '',                                 
+                                    'Tipo de documento': '',
                                     'Páginas': '',
-                                    'Fecha de creación': '',                                   
+                                    'Fecha de creación': '',
                                     'Tipo de expediente': '',
                                     'Folio de expediente': '',
                                     'Estatus': '',
@@ -565,7 +565,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
         }, err => {
             Swal.fire(
                 'Error',
-                'Ocurrió un error al eliminar obtener los entes.' + err,
+                'Ocurrió un error al obtener los entes.' + err,
                 'error'
             );
         });
@@ -679,7 +679,8 @@ export class TableroDeCargaMasivaComponent implements OnInit {
         }
 
         if (this.selectedFolioExpediente !== '' && this.selectedFolioExpediente !== undefined && this.selectedFolioExpediente !== null) {
-            temp = this.documentos.filter((d) => d.folioExpediente.toString() === this.selectedFolioExpediente);
+            temp = this.documentos.filter((d) => d.folioExpediente !== undefined && d.folioExpediente !== null && d.folioExpediente !== '');
+            temp = temp.filter((d) => d.folioExpediente.toString() === this.selectedFolioExpediente);
             this.documentos = temp;
         }
 
@@ -880,9 +881,9 @@ export class TableroDeCargaMasivaComponent implements OnInit {
 
                                 const encontro = this.menuService.tipoDocumentos.find((tipo: { cDescripcionTipoDocumento: string; }) =>
                                     tipo.cDescripcionTipoDocumento.trim() === row['Tipo de documento']);
-
+                                console.log(encontro);
                                 if (encontro) {
-                                   
+
                                     if (encontro.Agregar === 'undefined') {
                                         this.documentos[x].valido = false;
                                         if (textError.length > 0) {
@@ -894,7 +895,60 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                         this.documentos[x].tipoDocumento = encontro.cDescripcionTipoDocumento;
                                         this.documentos[x].tipo_de_documento = encontro.id;
                                         this.arrMetacatalogos = this.menuService.tipoDocumentos.find(tipoDocumento => tipoDocumento.id === encontro.id).metacatalogos;
-
+                                        console.log(this.arrMetacatalogos[0]);
+                                        if (this.arrMetacatalogos[0]) {
+                                            console.log(this.arrMetacatalogos[0].bOligatorio)
+                                            if (this.arrMetacatalogos[0].bOligatorio) {
+                                                console.log('obligatorio')
+                                                if (row['Meta_1'] && row['Meta_1'].length > 0) {
+                                                    if (textError.length > 0) {
+                                                        textError = 'El Meta_1(' + this.arrMetacatalogos[0].cDescripcionMetacatalogo + ') es obligatorio';
+                                                    } else {
+                                                        textError = textError + ', el Meta_1(' + this.arrMetacatalogos[0].cDescripcionMetacatalogo + ') es obligatorio';
+                                                    }
+                                                }
+                                            }
+                                        } else if (this.arrMetacatalogos[1]) {
+                                            if (this.arrMetacatalogos[1].bOligatorio) {
+                                                if (row['Meta_2'] && row['Meta_2'].length > 0) {
+                                                    if (textError.length > 0) {
+                                                        textError = 'El Meta_2(' + this.arrMetacatalogos[1].cDescripcionMetacatalogo + ') es obligatorio';
+                                                    } else {
+                                                        textError = textError + ', el Meta_2(' + this.arrMetacatalogos[1].cDescripcionMetacatalogo + ') es obligatorio';
+                                                    }
+                                                }
+                                            }
+                                        } else if (this.arrMetacatalogos[2]) {
+                                            if (this.arrMetacatalogos[2].bOligatorio) {
+                                                if (row['Meta_3'] && row['Meta_3'].length > 0) {
+                                                    if (textError.length > 0) {
+                                                        textError = 'El Meta_3(' + this.arrMetacatalogos[2].cDescripcionMetacatalogo + ') es obligatorio';
+                                                    } else {
+                                                        textError = textError + ', el Meta_3(' + this.arrMetacatalogos[2].cDescripcionMetacatalogo + ') es obligatorio';
+                                                    }
+                                                }
+                                            }
+                                        } else if (this.arrMetacatalogos[3]) {
+                                            if (this.arrMetacatalogos[3].bOligatorio) {
+                                                if (row['Meta_4'] && row['Meta_4'].length > 0) {
+                                                    if (textError.length > 0) {
+                                                        textError = 'El Meta_4(' + this.arrMetacatalogos[3].cDescripcionMetacatalogo + ') es obligatorio';
+                                                    } else {
+                                                        textError = textError + ', el Meta_4(' + this.arrMetacatalogos[3].cDescripcionMetacatalogo + ') es obligatorio';
+                                                    }
+                                                }
+                                            }
+                                        } else if (this.arrMetacatalogos[4]) {
+                                            if (this.arrMetacatalogos[4].bOligatorio) {
+                                                if (row['Meta_5'] && row['Meta_5'].length > 0) {
+                                                    if (textError.length > 0) {
+                                                        textError = 'El Meta_5(' + this.arrMetacatalogos[4].cDescripcionMetacatalogo + ') es obligatorio';
+                                                    } else {
+                                                        textError = textError + ', el Meta_5(' + this.arrMetacatalogos[4].cDescripcionMetacatalogo + ') es obligatorio';
+                                                    }
+                                                }
+                                            }
+                                        }
 
                                         if (encontro.visibilidade && encontro.visibilidade.length > 0) {
                                             const visibilidad = this.menuService.tipoInformacion.find((tipo: { id: string; }) =>
@@ -1313,6 +1367,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                 });
 
             }
+            this.spinner.hide();
         });
     }
 

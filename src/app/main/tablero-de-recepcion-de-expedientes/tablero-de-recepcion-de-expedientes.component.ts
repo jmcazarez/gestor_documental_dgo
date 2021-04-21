@@ -164,13 +164,14 @@ export class TableroDeRecepcionDeExpedientesComponent implements OnInit {
 
     filterDatatable(value): void {
         // Filtramos tabla
+        this.recepcionExpedientes = this.recepcionExpedientesTemp;
         if (value.target.value === '') {
           this.recepcionExpedientes = this.recepcionExpedientesTemp;
       } else {
           const val = value.target.value.toLowerCase();
           //agregamos campos a filtrar
           const temp = this.recepcionExpedientes.filter((d) => d.idExpediente.toLowerCase().indexOf(val) !== -1 || !val || 
-          d.fechaRecepcionFormato.toLowerCase().indexOf(val) !== -1 || !val || 
+          d.notas.toLowerCase().indexOf(val) !== -1 || d.fechaRecepcionFormato.toLowerCase().indexOf(val) !== -1 || !val || 
 
           d.estatus.toLowerCase().indexOf(val) !== -1 || !val ||
           d.legislatura.cLegislatura.toLowerCase().indexOf(val) !== -1);

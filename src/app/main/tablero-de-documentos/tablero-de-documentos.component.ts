@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { GuardarDocumentosComponent } from './guardar-documentos/guardar-documentos.component';
 import { DocumentosModel } from 'models/documento.models';
@@ -18,6 +18,10 @@ import { NgxSpinnerService } from 'ngx-spinner';
 })
 export class TableroDeDocumentosComponent implements OnInit {
 
+    @ViewChild('archivoPDF', { static: false }) archivoPDF;
+    public PDFtexto = '';
+    archivoBase64: any;
+    file: any;
     fileUrl: any;
     loadingIndicator: boolean;
     reorderable: boolean;
@@ -43,9 +47,9 @@ export class TableroDeDocumentosComponent implements OnInit {
 
     }
 
-      ngOnInit() {
+    ngOnInit() {
 
-         this.obtenerDocumentos();
+        this.obtenerDocumentos();
     }
 
     nuevoDocumento(): void {
@@ -71,7 +75,7 @@ export class TableroDeDocumentosComponent implements OnInit {
     }
 
 
-     obtenerDocumentos(): void {
+    obtenerDocumentos(): void {
         console.log('entro');
         this.spinner.show();
         const documentosTemp: any[] = [];
@@ -83,12 +87,12 @@ export class TableroDeDocumentosComponent implements OnInit {
         this.valueBuscador = '';
         // Obtenemos los documentos
         try {
-             this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
-           
+            this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
+
                 // Buscamos permisos
 
                 const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
-             
+
                 this.optAgregar = opciones.Agregar;
                 this.optEditar = opciones.Editar;
                 this.optConsultar = opciones.Consultar;
@@ -98,17 +102,18 @@ export class TableroDeDocumentosComponent implements OnInit {
                 if (this.optConsultar) {
 
                     for (const documento of resp.data) {
+                        console.log('entro');
                         //                console.log(documento.tipo_de_documento.bActivo);
                         idDocumento = '';
                         // Validamos permisos
-                     
+
                         if (documento.tipo_de_documento) {
                             const encontro = this.menuService.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento.id);
-                           
+
                             if (documento.visibilidade) {
                                 info = this.menuService.tipoInformacion.find((tipo: { id: string; }) => tipo.id === documento.visibilidade.id);
                             }
-                            
+
                             if (encontro) {
                                 if (documento.tipo_de_documento.bActivo && encontro.Consultar) {
 
@@ -207,6 +212,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                 this.loadingIndicator = false;
                 this.spinner.hide();
             }, err => {
+                console.log(err);
                 this.spinner.hide();
                 this.loadingIndicator = false;
             });
@@ -256,7 +262,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                 // realizamos delete
                 this.documentoService.borrarDocumentos(row).subscribe((resp: any) => {
                     Swal.fire('Eliminado', 'El documento ha sido eliminado.', 'success');
-                    console.log(resp);
+
                     this.obtenerDocumentos();
                 }, err => {
                     this.cargando = false;
@@ -362,4 +368,5 @@ export class TableroDeDocumentosComponent implements OnInit {
         }
     }
 
+   
 }

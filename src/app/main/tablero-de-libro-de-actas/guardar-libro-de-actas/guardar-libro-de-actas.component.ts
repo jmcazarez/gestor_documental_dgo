@@ -231,7 +231,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                 // Actualizamos el libro de actas
                 this.libroService.actualizarLibroDeActas(this.libro).subscribe((resp: any) => {
                     if (resp) {
-                        Swal.fire('Éxito', 'Libro de actas actualizada correctamente.', 'success');
+                        Swal.fire('Éxito', 'Libro de actas actualizado correctamente.', 'success');
                         this.libro = resp.data;
                         this.spinner.hide();
                         this.cerrar(this.libro);
@@ -249,7 +249,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                 this.libroService.guardarLibroDeActas(this.libro).subscribe((resp: any) => {
                     if (resp) {
                         this.spinner.hide();
-                        Swal.fire('Éxito', 'Libro de actas guardada correctamente.', 'success');
+                        Swal.fire('Éxito', 'Libro de actas guardado correctamente.', 'success');
                         this.cerrar(this.libro);
                     } else {
                         this.spinner.hide();

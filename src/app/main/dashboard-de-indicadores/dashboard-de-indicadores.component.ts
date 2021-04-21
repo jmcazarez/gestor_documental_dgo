@@ -256,6 +256,20 @@ export class DashboardDeIndicadoresComponent implements OnInit {
 
 
     async obtenerMovimientos(): Promise<void> {
+        this.fechaIni = '';
+        this.fechaFin = '';
+        this.arrDocumentosIngresadosFechas = [];
+        this.docCargadosFechas = 0
+        this.docExpedientesFechas = 0;
+        this.docDisponiblesFechas = 0
+        this.docConsultadosFechas = 0
+        this.docEliminadosFechas = 0
+        this.arrDiasRango = [];
+        this.arrCreacionGraficaFechas = [];
+        this.arrConsultaGraficaFechas = [];
+        this.arrEliminadosGraficaFechas = [];    
+        this.arrDocumentosIngresadosFechas = [];
+        this.configurarGraficaFechas();
         this.docDisponiblesAyer = 0;
         this.docCargadosAyer = 0;
         this.docConsultadosAyer = 0;
@@ -264,10 +278,12 @@ export class DashboardDeIndicadoresComponent implements OnInit {
         this.docExpedientes7dias = 0;
         this.docEliminados7dias = 0;
         this.docConsultados7dias = 0;
+        this.docCargados7dias = 0;
         this.arrCreacionGraficaAyer = [];
         this.arrCreacionGraficaMes = [];
         this.arrConsultaGraficaMes = [];
         this.arrEliminadosGraficaMes = [];
+        this.arrDocumentosIngresados7dias = [];
         let arrDocumentosIngresados7diasFiltro = [];
         let arrDocumentosIngresadosMesFiltro = [];
         const fecha = new Date();
@@ -281,10 +297,18 @@ export class DashboardDeIndicadoresComponent implements OnInit {
         const diaFin7Dias = this.datePipe.transform(date, 'MM-dd-yyyy');
         date.setDate(date.getDate() - 6);
         const diaIni7Dias = this.datePipe.transform(date, 'MM-dd-yyyy');
-       
+
         let fechaInicial = new Date(diaIni7Dias);
-       
+
         let fechaFinal = new Date(diaFin7Dias);
+
+
+        let fechaIni = new Date(fechaAnio + '-' + ("0000" + fechaMes).slice(-2) + '-' + ('0000' + primerDia.getDate()).slice(-2));
+        let fechaFin = new Date(fechaAnio + '-' + ("0000" + fechaMes).slice(-2) + '-' + ('0000' + ultimoDia.getDate()).slice(-2));
+        fechaFin.setHours(23);
+        fechaFin.setMinutes(59);
+        fechaFin.setSeconds(59);
+
         let filtroReporte = '';
         if (this.vigenteBusqueda !== undefined && this.vigenteBusqueda !== '') {
             filtroReporte = 'documento.bActivo=' + this.vigenteBusqueda + '&';
@@ -313,17 +337,15 @@ export class DashboardDeIndicadoresComponent implements OnInit {
             }
         }
 
-
         if (filtroReporte === '') {
+
             // tslint:disable-next-line: max-line-length
-            filtroReporte = 'createdAt_gte=' + fechaAnio + '-' + ("0000" + fechaMes).slice(-2) + '-' + ('0000' + primerDia.getDate()).slice(-2) + 'T01:00:00.000Z&createdAt_lte=' + fechaAnio + '-' + ("0000" + fechaMes).slice(-2) + '-' + ("0000" + ultimoDia.getDate()).slice(-2) + 'T24:00:00.000Z&_limit=-1';
+            filtroReporte = 'createdAt_gte=' + fechaIni.toISOString() + '&createdAt_lte=' + fechaFin.toISOString() + '&_limit=-1';
         } else {
             // tslint:disable-next-line: max-line-length
-            filtroReporte = filtroReporte + '&createdAt_gte=' + fechaAnio + '-' + ("0000" + fechaMes).slice(-2) + '-' + ('0000' + primerDia.getDate()).slice(-2) + 'T01:00:00.000Z&createdAt_lte=' + fechaAnio + '-' + ("0000" + fechaMes).slice(-2) + '-' + ("0000" + ultimoDia.getDate()).slice(-2) + 'T24:00:00.000Z&_limit=-1';
+            filtroReporte = filtroReporte + '&createdAt_gte=' + fechaIni.toISOString() + '&createdAt_lte=' + fechaFin.toISOString() + '&_limit=-1';
         }
 
-        console.log('filtro');
-        console.log(filtroReporte);
 
         // Obtenemos los entes
         this.trazabilidad.obtenerTrazabilidadFiltrado(filtroReporte).subscribe((resp: any) => {
@@ -331,21 +353,20 @@ export class DashboardDeIndicadoresComponent implements OnInit {
 
             arrDocumentosIngresados7diasFiltro = resp.ultimos7Dias;
 
-           // this.arrDocumentosIngresados7dias = arrDocumentosIngresados7diasFiltro.filter((d) => (d['fecha'] >= diaIni7Dias && d['fecha'] <= diaFin7Dias));
+            // this.arrDocumentosIngresados7dias = arrDocumentosIngresados7diasFiltro.filter((d) => (d['fecha'] >= diaIni7Dias && d['fecha'] <= diaFin7Dias));
             arrDocumentosIngresados7diasFiltro.forEach(element => {
                 let fecha = new Date(element.fechaFiltro);
-               
-               
+
+
                 if (fecha.getTime() >= fechaInicial.getTime()) {
                     if (fecha.getTime() <= fechaFinal.getTime()) {
-                    
+
                         this.arrDocumentosIngresados7dias.push(element);
                     }
                 }
 
             });
             this.docCargados7dias = this.arrDocumentosIngresados7dias.filter((d) => d['movimiento'] === 'Creación').length;
-            console.log( this.arrDocumentosIngresados7dias);
             this.docExpedientes7dias = this.arrDocumentosIngresados7dias.filter((d) => d['movimiento'] === 'Creación' && d['folioExpediente'] !== '').length;
             this.docConsultados7dias = this.arrDocumentosIngresados7dias.filter((d) => d['movimiento'] === 'Consulto').length;
             this.docEliminados7dias = this.arrDocumentosIngresados7dias.filter((d) => d['movimiento'] === 'Borro' || d['movimiento'] === 'Cancelo').length;
@@ -355,16 +376,16 @@ export class DashboardDeIndicadoresComponent implements OnInit {
             this.arrDocumentosIngresadosMes = [];
             arrDocumentosIngresadosMesFiltro.forEach(element => {
                 let fecha = new Date(element.fechaFiltro);
-             
+
                 if (fecha.getTime() >= primerDia.getTime()) {
                     if (fecha.getTime() <= ultimoDia.getTime()) {
-                        console.log(element);
+
                         this.arrDocumentosIngresadosMes.push(element);
                     }
                 }
 
             });
-           
+
             // this.arrDocumentosIngresadosMes = arrDocumentosIngresadosMesFiltro.filter((d) => (d['fechaFiltro'] >= this.datePipe.transform(primerDia, 'dd-MM-yyyy') && d['fecha'] <= this.datePipe.transform(ultimoDia, 'dd-MM-yyyy')));
             this.docCargadosMes = this.arrDocumentosIngresadosMes.filter((d) => d['movimiento'] === 'Creación').length;
             this.docExpedientesMes = this.arrDocumentosIngresadosMes.filter((d) => d['movimiento'] === 'Creación' && d['folioExpediente'] !== '').length;
@@ -499,6 +520,12 @@ export class DashboardDeIndicadoresComponent implements OnInit {
         const ultimoDia = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
         this.spinner.show();
+        let fechaIni = new Date(fechaAnio + '-' + ("0000" + fechaMes).slice(-2) + '-' + ('0000' + primerDia.getDate()).slice(-2));
+        let fechaFin = new Date(fechaAnio + '-' + ("0000" + fechaMes).slice(-2) + '-' + ('0000' + ultimoDia.getDate()).slice(-2));
+        fechaFin.setHours(23);
+        fechaFin.setMinutes(59);
+        fechaFin.setSeconds(59);
+
         let filtroReporte = '';
         if (this.vigenteBusqueda !== undefined && this.vigenteBusqueda !== '') {
             filtroReporte = 'documento.bActivo=' + this.vigenteBusqueda + '&';
@@ -527,20 +554,19 @@ export class DashboardDeIndicadoresComponent implements OnInit {
             }
         }
 
-        if (filtroReporte === '') {
 
+
+        if (filtroReporte === '') {
             // tslint:disable-next-line: max-line-length
-            filtroReporte = 'createdAt_gte=' + fechaAnio + '-' + ('0000' + fechaMes).slice(-2) + '-' + ('0000' + primerDia.getDate()).slice(-2) + 'T01:00:00.000Z&createdAt_lte=' + fechaAnio + '-' + ('0000' + fechaMes).slice(-2) + '-' + ('0000' + ultimoDia.getDate()).slice(-2) + 'T24:00:00.000Z&_limit=-1';
+            filtroReporte = 'createdAt_gte=' + fechaIni.toISOString() + '&createdAt_lte=' + fechaFin.toISOString() + '&_limit=-1';
         } else {
             // tslint:disable-next-line: max-line-length
-            filtroReporte = filtroReporte + '&createdAt_gte=' + fechaAnio + '-' + ('0000' + fechaMes).slice(-2) + '-' + ('0000' + primerDia.getDate()).slice(-2) + 'T01:00:00.000Z&createdAt_lte=' + fechaAnio + '-' + ('0000' + fechaMes).slice(-2) + '-' + ('0000' + ultimoDia.getDate()).slice(-2) + 'T24:00:00.000Z&_limit=-1';
+            filtroReporte = filtroReporte + '&createdAt_gte=' + fechaIni.toISOString() + '&createdAt_lte=' + fechaFin.toISOString() + '&_limit=-1';
         }
-
-        console.log('filtro');
-        console.log(filtroReporte);
         // Obtenemos los entes
 
         this.trazabilidad.obtenerTrazabilidadFiltrado(filtroReporte).subscribe((resp: any) => {
+
 
             this.arrDocumentosIngresadosMes = resp.ultimoMes;
             this.docCargadosMes = this.arrDocumentosIngresadosMes.filter((d) => d['movimiento'] === 'Creación').length;
@@ -1153,7 +1179,7 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                 filtroReporte = filtroReporte + '&createdAt_gte=' + fIni.getFullYear() + '-' + ('0000' + fMesIni).slice(-2) + '-' + ('0000' + fIni.getDate()).slice(-2) + 'T01:00:00.000Z&createdAt_lte=' + fin.getFullYear() + '-' + ('0000' + fMesFin).slice(-2) + '-' + ('0000' + fin.getDate()).slice(-2) + 'T24:00:00.000Z&_limit=-1';
             }
 
-            console.log(filtroReporte);
+
             // Obtenemos los entes
 
             this.trazabilidad.obtenerTrazabilidadFiltrado(filtroReporte).subscribe((resp: any) => {
@@ -1162,7 +1188,7 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                 arrDocumentosIngresadosFechasFiltrado = resp.ultimoMes;
                 arrDocumentosIngresadosFechasFiltrado.forEach(element => {
                     let fecha = new Date(element.fechaFiltro);
-        
+
                     if (fecha.getTime() >= fechaInicial.getTime()) {
                         if (fecha.getTime() <= fechaFinal.getTime()) {
                             this.arrDocumentosIngresadosFechas.push(element)
@@ -1171,10 +1197,10 @@ export class DashboardDeIndicadoresComponent implements OnInit {
 
                 });
 
-                console.log(this.arrDocumentosIngresadosFechas);
+
 
                 this.docCargadosFechas = this.arrDocumentosIngresadosFechas.filter((d) => d['movimiento'] === 'Creación').length;
-                console.log(this.docCargadosFechas);
+
                 this.docExpedientesFechas = this.arrDocumentosIngresadosFechas.filter((d) => d['movimiento'] === 'Creación' && d['folioExpediente'] !== '').length;
                 this.docConsultadosFechas = this.arrDocumentosIngresadosFechas.filter((d) => d['movimiento'] === 'Consulto').length;
                 // tslint:disable-next-line: max-line-length
@@ -1185,11 +1211,10 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                     this.arrConsultaGraficaFechas.push(this.arrDocumentosIngresadosFechas.filter((d) => d['movimiento'] === 'Consulto' && element[0] === d['fecha']).length);
 
                     this.arrEliminadosGraficaFechas.push(this.arrDocumentosIngresadosFechas.filter((d) => element[0] === d['fecha'] && d['movimiento'] === 'Borro'
-                    || element[0] === d['fecha'] && d['movimiento'] === 'Cancelo').length);
+                        || element[0] === d['fecha'] && d['movimiento'] === 'Cancelo').length);
                 });
 
 
-                console.log(this.arrEliminadosGraficaFechas);
                 this.configurarGraficaFechas();
                 this.spinner.hide();
 

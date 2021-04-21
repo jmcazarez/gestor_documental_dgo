@@ -8,6 +8,15 @@ export class StorageService {
     constructor() { }
     async guardarUsuario(usuario: any): Promise<void> {
         localStorage.setItem('usr', JSON.stringify(usuario));
+         
+        if (usuario) {
+            const usr = JSON.parse(localStorage.getItem('usr'));
+                
+            const token = usr[0]['data'].token;
+            localStorage.setItem('token', token);
+         
+       
+        }
     }
     async obtenerUsuario(): Promise<void> {
         return new Promise(resolve => {
