@@ -17,8 +17,8 @@ export class DocumentosService {
     private urlDescargarDocumentoClasificacion = 'documento-file-clasificacion';
     private urlDocumentosFiltrados = 'documentos-filtro';
     private urlDocumentosPorFecha = 'versionamiento';
-	private urlDocumentoPublico = 'compartir';
-	private urlDocumentosPorTexto = 'documentos-text';
+    private urlDocumentoPublico = 'compartir';
+    private urlDocumentosPorTexto = 'documentos-text';
     private TOKEN = localStorage.getItem('token');
     private urlUpload = 'upload';
 
@@ -29,6 +29,12 @@ export class DocumentosService {
     };
     constructor(private http: HttpClient) {
         this.baseUrl = environment.apiCms;
+        this.TOKEN = localStorage.getItem('token');
+        this.httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
     }
 
     obtenerDocumentos(): any {
@@ -65,6 +71,7 @@ export class DocumentosService {
                 Authorization: this.TOKEN,
             }),
         };
+
         return this.http.get(this.baseUrl + this.urlDocumentosPorFecha + '/' + filtro,
             httpOptions);
     }
@@ -76,7 +83,7 @@ export class DocumentosService {
         filtroObjt = {
             texto: filtro
         }
-        return this.http.post(this.baseUrl + this.urlDocumentosPorTexto , filtroObjt, this.httpOptions);
+        return this.http.post(this.baseUrl + this.urlDocumentosPorTexto, filtroObjt, this.httpOptions);
     }
 
     actualizarDocumentos(documento: DocumentosModel): any {
@@ -106,7 +113,7 @@ export class DocumentosService {
     }
 
     borrarDocumentos(documento: DocumentosModel): any {
-    
+
         documento.documento = '';
         documento.fechaCarga = documento.fechaCarga;
         documento.fechaCreacion = documento.fechaCreacion;
@@ -123,7 +130,7 @@ export class DocumentosService {
     }
 
     eliminarDocumentos(ruta: string, usuario: string): any {
-        
+
         return this.http.delete(this.baseUrl + this.urlDocumentos + '/' + ruta + '/' + usuario, this.httpOptions);
     }
     dowloadDocument(idFile: string, idDocumento: string, usuario: string, nombreDocumento: string): any {
@@ -134,12 +141,12 @@ export class DocumentosService {
             }),
         };
 
-        if(usuario.length > 0){
+        if (usuario.length > 0) {
             return this.http.get(this.baseUrl + this.urlDowloadDocument + '/' + idFile + '/' + idDocumento + '/' + usuario + '/' + nombreDocumento, options);
-        }else{
-            return this.http.get(this.baseUrl + this.urlDowloadDocument + '/' + idFile , options);
-        }   
-        
+        } else {
+            return this.http.get(this.baseUrl + this.urlDowloadDocument + '/' + idFile, options);
+        }
+
     }
     dowloadDocumentClasificacion(idFile: string, idDocumento: string, usuario: string, nombreDocumento: string): any {
         return this.http.get(this.baseUrl + this.urlDescargarDocumentoClasificacion + '/' + idFile + '/' + idDocumento + '/' + usuario + '/' + nombreDocumento, this.httpOptions);
@@ -166,8 +173,8 @@ export class DocumentosService {
         });
     }
 
-    printPdf(){
-        setTimeout(() =>{
+    printPdf() {
+        setTimeout(() => {
             window.print()
         });
     }

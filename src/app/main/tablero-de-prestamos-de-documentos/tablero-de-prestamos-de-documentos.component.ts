@@ -92,6 +92,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
                 //console.log(prestamosTemp);
                 this.prestamoDocumentos = prestamosTemp;
                 this.prestamoDocumentosTemp = this.prestamoDocumentos;
+                console.log( this.prestamoDocumentos);
             }
             this.loadingIndicator = false;
             this.spinner.hide();
@@ -176,7 +177,8 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
             d.tHoraSolicitud.toLowerCase().indexOf(val) !== -1 || !val || 
             d.tHoraDevolucion.toLowerCase().indexOf(val) !== -1 || !val || 
             d.cEstatus.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.cIdExpediente.toLowerCase().indexOf(val) !== -1);
+            d.cIdExpediente.toLowerCase().indexOf(val) !== -1  || 
+            d.id.toLowerCase().indexOf(val) !== -1);
 
             this.prestamoDocumentos = temp;
         }

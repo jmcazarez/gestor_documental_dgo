@@ -241,7 +241,7 @@
                         <mat-error>La legislatura es requerido</mat-error>
                     </mat-form-field>
                 </div>
-            <!--     <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                <!--     <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="100">
                         <mat-label>Tipo de información *</mat-label>
                         <mat-select formControlName="informacion" [(ngModel)]="selectedInformacion" name="informacion">
@@ -295,21 +295,23 @@
                             <div fxLayout="row" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Numérico'" fxLayoutAlign="start center" fxFlex="1 0 auto">
                                 <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
                                     <mat-label>{{arrMetacatalogos[in].cDescripcionMetacatalogo}}</mat-label>
-                                    <input [disabled]="this.documento.iniciativas" type="number" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Numérico'" matInput [(ngModel)]="meta.text" name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}" [required]="arrMetacatalogos[in].bOligatorio" [disabled]="this.documento.disabled">
-                                   
+                                    <input [disabled]="this.documento.iniciativas" type="number" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Numérico'" matInput [(ngModel)]="meta.text" name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}" [required]="arrMetacatalogos[in].bOligatorio"
+                                        [disabled]="this.documento.disabled">
+
                                 </mat-form-field>
                             </div>
                             <div fxLayout="row" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Texto'" fxLayoutAlign="start center" fxFlex="1 0 auto">
                                 <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
                                     <mat-label>{{arrMetacatalogos[in].cDescripcionMetacatalogo}}</mat-label>
                                     <input [disabled]="this.documento.iniciativas" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Texto'" matInput [(ngModel)]="meta.text" name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}" [required]="arrMetacatalogos[in].bOligatorio" [disabled]="this.documento.disabled">
-                                   
+
                                 </mat-form-field>
                             </div>
                             <div fxLayout="row" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Fecha'" fxLayoutAlign="start center" fxFlex="1 0 auto">
                                 <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
                                     <mat-label>{{arrMetacatalogos[in].cDescripcionMetacatalogo}}</mat-label>
-                                    <input [disabled]="this.documento.iniciativas" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Fecha'" matInput [(ngModel)]="meta.text" name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}" [matDatepicker]="picker2" [required]="arrMetacatalogos[in].bOligatorio" [disabled]="this.documento.disabled">
+                                    <input [disabled]="this.documento.iniciativas" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Fecha'" matInput [(ngModel)]="meta.text" name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}" [matDatepicker]="picker2" [required]="arrMetacatalogos[in].bOligatorio"
+                                        [disabled]="this.documento.disabled">
                                     <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                                     <mat-datepicker #picker2></mat-datepicker>
                                 </mat-form-field>
@@ -332,8 +334,8 @@
 
         <mat-dialog-actions align="end" class="mat-card">
             <button mat-raised-button color="warn" (click)="cerrar(true)">Cerrar</button>
-            <button *ngIf="!this.documento.iniciativas"  [disabled]="!formRef.form.valid ||  form.invalid || disabledGuardar || this.documento.disabled || !this.form.touched "  mat-raised-button color="accent" (click)="guardar()">Guardar</button>
-            <button  mat-raised-button color="accent" (click)="pruebaForm()">Upload</button> 
+            <button *ngIf="!this.documento.iniciativas" [disabled]="!formRef.form.valid ||  form.invalid || disabledGuardar || this.documento.disabled || !this.form.touched " mat-raised-button color="accent" (click)="guardar()">Guardar</button>
+            <!--  <button  mat-raised-button color="accent" (click)="pruebaForm()">Upload</button> -->
 
         </mat-dialog-actions>
     </mat-drawer-content>

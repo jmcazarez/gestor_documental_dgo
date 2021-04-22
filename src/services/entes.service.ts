@@ -19,6 +19,12 @@ export class EntesService {
     };
     constructor(private http: HttpClient) {
         this.baseUrl = environment.apiCms;
+        this.TOKEN = localStorage.getItem('token');
+        this.httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
     }
 
     obtenerEntes(): any {

@@ -1,8 +1,8 @@
 export const environment = {
     production: true,
     hmr: false,
-    //apiCms: 'http://45.230.172.75:3600/',
-    apiCms: 'http://45.230.172.75:3500/',
+    apiCms: 'http://45.230.172.75:3600/',
+    //apiCms: 'http://45.230.172.75:3500/',
     //apiCms: 'http://localhost:3500/',
     apiStrapi: 'http://10.20.30.7:1337/',
     apiStrapiMin: 'http://10.20.30.7:1337',

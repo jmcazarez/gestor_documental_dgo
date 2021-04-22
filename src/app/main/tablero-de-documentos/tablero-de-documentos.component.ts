@@ -102,7 +102,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                 if (this.optConsultar) {
 
                     for (const documento of resp.data) {
-                        console.log('entro');
+                       
                         //                console.log(documento.tipo_de_documento.bActivo);
                         idDocumento = '';
                         // Validamos permisos
@@ -205,7 +205,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                             }
                         }
                     }
-                    console.log(documentosTemp);
+                    
                     this.documentos = documentosTemp;
                     this.documentosTemporal = this.documentos;
                 }

@@ -33,6 +33,12 @@ export class MenuService {
         private http: HttpClient,
         private router: Router) {
         this.baseUrl = environment.apiCms;
+        this.TOKEN = localStorage.getItem('token');
+        this.httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
     }
 
     async crearMenu(): Promise<void> {
@@ -174,7 +180,7 @@ export class MenuService {
                                     if (opciones) {
                                         if (opciones.opciones_del_sistema) {
 
-                                            console.log(opciones.opciones_del_sistema);
+                                            
                                             if (opciones.opciones_del_sistema.bActivo) {
                                                 const resultado = this.opcionesPerfil.find(opcion => opcion.id === opciones.opciones_del_sistema.id);
 

@@ -81,6 +81,9 @@
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
                 <mat-label>Notas</mat-label>
                 <textarea matInput formControlName="notas" fxFlex="1 1 100%"></textarea>
+                <mat-error *ngIf="form.get('notas').hasError('required')">Las notas son requeridas.</mat-error>
+                <mat-error *ngIf="form.get('notas').hasError('minlength') || form.get('notas').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
+                    y el máximo son 500 </mat-error>
             </mat-form-field>
         </div>
     </form>

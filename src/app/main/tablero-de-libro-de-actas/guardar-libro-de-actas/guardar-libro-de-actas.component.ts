@@ -161,6 +161,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                 console.log('cambio fin');
                 if (val.getTime() > 0) {
                     this.recepcionDeActas = this.recepcionDeActasTemporal;
+                    console.log(this.recepcionDeActas);
                     let legislatura = this.form.get('legislatura').value;
                     let fecIni = this.datePipe.transform(this.form.get('fechaDeInicio').value, 'dd-MM-yyyy');
                     let fecFin = this.datePipe.transform(this.form.get('fechaDeFin').value, 'dd-MM-yyyy');
@@ -170,6 +171,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                     } else {
                         if (legislatura.length > 0) {
 
+                            
                             this.recepcionDeActas = this.recepcionDeActas.filter((d) => {
                                 return d.fechaCreacionText >= fecIni &&
                                     d.fechaCreacionText <= fecFin && d.idLegislatura == legislatura;
@@ -295,7 +297,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
         this.recepcionDeActasService.obtenerRecepcionesDeActas().subscribe((resp: any) => {
 
             // Buscamos permisos
-
+    console.log(resp);
             // Si tiene permisos para consultar
 
             if (resp) {
@@ -374,7 +376,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                         }
                     }
                 }
-
+                console.log(actasTemp);
                 this.recepcionDeActas = actasTemp;
                 this.recepcionDeActasTemporal = actasTemp;
                 if (this.libro.id) {

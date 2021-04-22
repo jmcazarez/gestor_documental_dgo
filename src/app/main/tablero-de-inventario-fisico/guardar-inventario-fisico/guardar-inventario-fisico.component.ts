@@ -107,7 +107,7 @@ export class GuardarInventarioFisicoComponent implements OnInit {
                     Validators.maxLength(100),
                 ],
             ],
-            notas: [{ value: this.inventario.notas, disabled: false }],
+            notas: [{ value: this.inventario.notas, disabled: false }, [ Validators.maxLength(500)]],
         });
 
         this.spinner.hide();

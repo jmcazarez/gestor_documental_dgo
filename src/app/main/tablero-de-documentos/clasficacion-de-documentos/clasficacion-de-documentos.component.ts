@@ -143,7 +143,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         this.arrInformacion = this.menuService.tipoInformacion;
 
         this.documento.version = parseFloat(this.documento.version).toFixed(1);
-        console.log(this.documento.legislatura);
+        
         if (!this.documento.legislatura && !this.documento.expediente && !this.documento.folioExpediente) {
             for (const i in this.arrMetacatalogos) {
                 this.arrMetacatalogos[i].text = '';

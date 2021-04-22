@@ -90,7 +90,6 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
 
         // Validamos si es un documento nuevo
         if (this.recepcion.id) {
-            console.log(this.recepcion);
             this.selectLegislatura = this.recepcion.legislatura.id;
             this.selectEmisor = this.recepcion.emisor[0].id;
             this.selectReceptor = this.recepcion.receptor[0].id;
@@ -114,7 +113,7 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
    
         // Form reativo
         this.form = this.formBuilder.group({
-
+            cId: [{ value: this.recepcion.id, disabled: true }],
             legislatura: [{ value: this.recepcion.legislatura, disabled: false }, Validators.required],
             fechaCreacion: [{ value: this.recepcion.fechaCreacion, disabled: true }, Validators.required],
             hora: [{ value: this.recepcion.hora, disabled: true }, Validators.required],
@@ -122,7 +121,7 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
             emisor: [{ value: this.recepcion.emisor, disabled: false }, Validators.required],
             receptor: [{ value: this.recepcion.receptor, disabled: false }, Validators.required],
             estatus: [{ value: this.estados, disabled: false }, Validators.required],
-            notas: [{ value: this.recepcion.notas, disabled: false }],
+            notas: [{ value: this.recepcion.notas, disabled: false }, [ Validators.maxLength(500)]],
 
         });
 
