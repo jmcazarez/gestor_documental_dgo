@@ -71,7 +71,7 @@ export class TableroDeRecepcionDeExpedientesComponent implements OnInit {
           if (this.optConsultar) {
               if (resp) {
                   for (const expediente of resp) {
-                      console.log(expediente);
+                      
                       expedientesTemp.push({
                           id: expediente.id,
                           idExpediente: expediente.idExpediente,

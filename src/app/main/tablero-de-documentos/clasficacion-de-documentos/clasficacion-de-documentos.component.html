@@ -333,7 +333,7 @@
         <mat-dialog-actions align="end" class="mat-card">
             <button mat-raised-button color="warn" (click)="cerrar(true)">Cerrar</button>
             <button *ngIf="!this.documento.iniciativas"  [disabled]="!formRef.form.valid ||  form.invalid || disabledGuardar || this.documento.disabled || !this.form.touched "  mat-raised-button color="accent" (click)="guardar()">Guardar</button>
-            <button  mat-raised-button color="accent" (click)="pruebaForm()">Upload</button> 
+           <!-- <button  mat-raised-button color="accent" (click)="pruebaForm()">Upload</button> -->
 
         </mat-dialog-actions>
     </mat-drawer-content>

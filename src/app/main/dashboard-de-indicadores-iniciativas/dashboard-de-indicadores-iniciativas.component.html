@@ -23,7 +23,7 @@
                             <p class="tag">Tipo de registro</p>
                             <mat-form-field appearance="fill" class="input">
                                 <mat-label>Seleccione un tipo de registro</mat-label>
-                                <mat-select formControlName="tipoRegistro" [(ngModel)]="selectTipo">
+                                <mat-select formControlName="tipoRegistro" [(ngModel)]="selectTipo" (ngModelChange)="selectChange($event)">
                                     <mat-option *ngFor="let tipo of arrTipo" [value]="tipo.id">
                                         {{tipo.descripcion}}
                                     </mat-option>
@@ -47,7 +47,7 @@
                             <p class="tag">Comisión</p>
                             <mat-form-field appearance="fill" class="input">
                                 <mat-label>Seleccione una comisión</mat-label>
-                                <mat-select formControlName="comision" [(ngModel)]="selectedComision" [disabled]="selectTipo==''">
+                                <mat-select formControlName="comision" [(ngModel)]="selectedComision" [disabled]="selectTipo=='5ff5ebc2dacfb729306116b8'">
                                     <mat-option *ngFor="let comision of arrComisiones" [value]="comision.id">
                                         {{comision.descripcion}}
                                     </mat-option>
@@ -80,8 +80,7 @@
                                       <mat-option value="option">Option</mat-option>
                                   </mat-select>
                               </mat-form-field>
-                          </div>
-    -->
+                          </div> -->
 
                     </div>
                     <div class="column">
@@ -525,7 +524,7 @@
                                         <mat-form-field appearance="fill" class="input">
                                             <mat-label>Seleccione una fecha</mat-label>
                                             <input matInput type="month" formControlName="fechaIni"
-                                                [(ngModel)]="fechaDecretoConcluida" (ngModelChange)="valorMesAnioPublicada($event)">
+                                                [(ngModel)]="fechaPublicados" (ngModelChange)="valorMesAnioPublicada($event)">
                                         </mat-form-field>
                                     </div>
 

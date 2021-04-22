@@ -92,6 +92,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
                 //console.log(prestamosTemp);
                 this.prestamoDocumentos = prestamosTemp;
                 this.prestamoDocumentosTemp = this.prestamoDocumentos;
+                console.log( this.prestamoDocumentos);
             }
             this.loadingIndicator = false;
             this.spinner.hide();

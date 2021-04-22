@@ -23,6 +23,12 @@ export class UploadFileService {
     constructor(private http: HttpClient) {
       //  this.urlCms = environment.apiStrapi;
         this.urlApi = environment.apiCms;
+        this.TOKEN = localStorage.getItem('token');
+        this.httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
     }
 /*
     async uploadFile(file: any, base64: any): Promise<any> {
