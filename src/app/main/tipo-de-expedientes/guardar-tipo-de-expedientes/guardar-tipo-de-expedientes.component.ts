@@ -80,7 +80,6 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
         // Guardamos tipo de expediente
 
         // Asignamos valores a objeto
-        console.log(this.form.get('estatus').value);
         this.expediente.bActivo = this.form.get('estatus').value;
         this.expediente.cDescripcionTipoExpediente = this.form.get('cDescripcionTipoExpediente').value;
 
@@ -225,7 +224,31 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-               
+                    this.expedientesService
+                        .actualizarTipoExpedientes(this.expediente)
+                        .subscribe(
+                            (resp: any) => {
+                                if (resp) {
+                           
+                                    this.expediente = resp.data;
+                               
+                                } else {
+                                    Swal.fire(
+                                        "Error",
+                                        "Ocurrió un error al guardar. ",
+                                        "error"
+                                    );
+                                }
+                            },
+                            (err) => {
+                                Swal.fire(
+                                    "Error",
+                                    "Ocurrió un error al guardar." +
+                                        err.error.data,
+                                    "error"
+                                );
+                            }
+                        );
                 setTimeout(() => {
                     this.searchText = '';
                     this.documentosPerfil = this.menuService.tipoDocumentos;

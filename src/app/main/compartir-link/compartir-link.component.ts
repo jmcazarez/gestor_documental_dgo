@@ -73,6 +73,7 @@ export class CompartirLinkComponent implements OnInit {
             }, err => {
                 this.spinner.hide();
                 console.log(err);
+                  alert(err.error.message);
                // this.router.navigate(['login']);
             });
             
@@ -80,6 +81,7 @@ export class CompartirLinkComponent implements OnInit {
             this.spinner.hide()
             // this.router.navigate(['login']);
         }
+          this.spinner.hide();
     }
 
     convertFile(buf: any): string {

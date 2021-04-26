@@ -108,7 +108,7 @@ export class DocumentosService {
         };
         documento.fechaCarga = documento.fechaCarga;
         documento.fechaCreacion = documento.fechaCreacion;
-        console.log(this.httpOptions);
+       
         return this.http.put(this.baseUrl + this.urlDocumentosSinVersion + '/' + documento.id, documento, httpOptions);
     }
 
@@ -121,12 +121,28 @@ export class DocumentosService {
     }
 
     guardarDocumentos(documento: DocumentosModel): any {
-
-        return this.http.post(this.baseUrl + this.urlDocumentos, documento, this.httpOptions);
+           let options = {
+               headers: new HttpHeaders({
+                   Authorization: localStorage.getItem("token"),
+               }),
+           };
+        return this.http.post(
+            this.baseUrl + this.urlDocumentos,
+            documento,
+            options
+        );
     }
     guardarDocumento(documento: any): any {
-
-        return this.http.post(this.baseUrl + this.urlDocumentos, documento, this.httpOptions);
+            let options = {
+                headers: new HttpHeaders({
+                    Authorization: localStorage.getItem("token"),
+                }),
+            };
+        return this.http.post(
+            this.baseUrl + this.urlDocumentos,
+            documento,
+            options
+        );
     }
 
     eliminarDocumentos(ruta: string, usuario: string): any {
@@ -149,25 +165,48 @@ export class DocumentosService {
 
     }
     dowloadDocumentClasificacion(idFile: string, idDocumento: string, usuario: string, nombreDocumento: string): any {
-        return this.http.get(this.baseUrl + this.urlDescargarDocumentoClasificacion + '/' + idFile + '/' + idDocumento + '/' + usuario + '/' + nombreDocumento, this.httpOptions);
+          let options = {
+              headers: new HttpHeaders({
+                  Authorization: localStorage.getItem("token"),
+              }),
+          };
+        return this.http.get(
+            this.baseUrl +
+                this.urlDescargarDocumentoClasificacion +
+                "/" +
+                idFile +
+                "/" +
+                idDocumento +
+                "/" +
+                usuario +
+                "/" +
+                nombreDocumento,
+            options
+        );
     }
 
     // tslint:disable-next-line: typedef
     uploadDocument(file: any) {
+          let options = {
+              headers: new HttpHeaders({
+                  Authorization: localStorage.getItem("token"),
+              }),
+          };
         return new Promise(resolve => {
             {
                 const formData: FormData = new FormData();
                 // Enviamos la imagen
                 formData.append('files', file, file.name);
-                this.http.post(this.baseUrl + this.urlUpload, formData, this.httpOptions).subscribe(
-                    (res) => {
-
-                        resolve(res);
-
-                    },
-                    (err) => {
-                        resolve(err);
-                    });
+                this.http
+                    .post(this.baseUrl + this.urlUpload, formData, options)
+                    .subscribe(
+                        (res) => {
+                            resolve(res);
+                        },
+                        (err) => {
+                            resolve(err);
+                        }
+                    );
 
             }
         });

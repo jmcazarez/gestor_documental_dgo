@@ -370,7 +370,14 @@ export class TableroDeCargaMasivaComponent implements OnInit {
 
                                                 if (x.cTipoMetacatalogo === 'Fecha') {
                                                     if (x.text) {
-                                                        meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                                        meta =
+                                                            meta +
+                                                            x.cDescripcionMetacatalogo +
+                                                            ": " +
+                                                            this.datePipe.transform(
+                                                                x.text,
+                                                                "yyyy-MM-dd"
+                                                            ) ;
                                                     }
                                                 } else {
                                                     if (x.text) {
@@ -380,7 +387,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                             } else {
                                                 if (x.cTipoMetacatalogo === 'Fecha') {
                                                     if (x.text) {
-                                                        meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                                        meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd') ;
                                                     }
                                                 } else if (x.cTipoMetacatalogo === 'Sí o no') {
                                                     if (x.text) { meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': Sí'; } else {
@@ -1051,7 +1058,11 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                             }
 
                             if (new Date(row['Fecha de creación'])) {
-                                this.documentos[x].fechaCreacion = this.datePipe.transform(row['Fecha de creación'], 'MM-dd-yyyy');
+                                this.documentos[x].fechaCreacion =
+                                    this.datePipe.transform(
+                                        row["Fecha de creación"],
+                                        "yyyy-MM-dd"
+                                    ) + "T06:00:00.000Z";
                             } else {
                                 this.documentos[x].valido = false;
                                 if (textError.length > 0) {
@@ -1126,7 +1137,17 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                                 if (this.arrMetacatalogos[num].cTipoMetacatalogo === 'Fecha') {
                                                     console.log('fecha');
                                                     if (new Date(row['Meta_' + metaRow])) {
-                                                        this.arrMetacatalogos[num].text = this.datePipe.transform(row['Meta_' + metaRow], 'MM-dd-yyyy');
+                                                        this.arrMetacatalogos[
+                                                            num
+                                                        ].text =
+                                                            this.datePipe.transform(
+                                                                row[
+                                                                    "Meta_" +
+                                                                        metaRow
+                                                                ],
+                                                                "yyyy-MM-dd"
+                                                            ) +
+                                                            "T06:00:00.000Z";;
                                                     } else {
                                                         this.documentos[x].valido = false;
                                                         if (textError.length > 0) {
@@ -1173,7 +1194,16 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                             if (this.arrMetacatalogos[num].cTipoMetacatalogo === 'Fecha') {
 
                                                 if (new Date(row['Meta_' + metaRow])) {
-                                                    this.arrMetacatalogos[num].text = this.datePipe.transform(row['Meta_' + metaRow], 'MM-dd-yyyy');
+                                                    this.arrMetacatalogos[
+                                                        num
+                                                    ].text =
+                                                        this.datePipe.transform(
+                                                            row[
+                                                                "Meta_" +
+                                                                    metaRow
+                                                            ],
+                                                            "yyyy-MM-dd"
+                                                        ) + "T06:00:00.000Z";
                                                 } else {
                                                     this.arrMetacatalogos[num].text = '';
                                                 }
@@ -1215,7 +1245,8 @@ export class TableroDeCargaMasivaComponent implements OnInit {
 
                                                 if (i.cTipoMetacatalogo === 'Fecha') {
                                                     if (i.text) {
-                                                        meta = meta + i.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(i.text, 'yyyy-MM-dd');
+                                                        meta = meta + i.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(i.text, 'yyyy-MM-dd')+
+                                                            "T06:00:00.000Z";
                                                     }
                                                 } else {
                                                     if (i.text) {
@@ -1225,7 +1256,8 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                             } else {
                                                 if (i.cTipoMetacatalogo === 'Fecha') {
                                                     if (i.text) {
-                                                        meta = meta + ' , ' + i.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(i.text, 'yyyy-MM-dd');
+                                                        meta = meta + ' , ' + i.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(i.text, 'yyyy-MM-dd')+
+                                                            "T06:00:00.000Z";
                                                     }
                                                 } else if (i.cTipoMetacatalogo === 'Sí o no') {
                                                     if (i.text) { meta = meta + ' , ' + i.cDescripcionMetacatalogo + ': Sí'; } else {

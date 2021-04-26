@@ -2,8 +2,7 @@
     <!-- REACTIVE FORM EXAMPLE -->
 
 
-    <form class="shadow-none" fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form"
-        [formGroup]="form">
+    <form class="shadow-none" fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form" [formGroup]="form">
 
         <div *ngIf="!this.documento.id" class="h2 mb-24">Crear tipo de documento</div>
         <div *ngIf="this.documento.id" class="h2 mb-24">Modificación o actualización de tipo de documento</div>
@@ -14,12 +13,9 @@
                 <input matInput formControlName="cDescripcionTipoDocumento">
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
 
-                <mat-error *ngIf="form.get('cDescripcionTipoDocumento').hasError('required')">El nombre del tipo de
-                    documento requerido</mat-error>
-                <mat-error
-                    *ngIf="form.get('cDescripcionTipoDocumento').hasError('minlength') || form.get('cDescripcionTipoDocumento').hasError('maxlength')">
-                    Valor invalido, el mínimo de caracteres es 3
-                    y el máximo son 100 </mat-error>
+                <mat-error *ngIf="form.get('cDescripcionTipoDocumento').hasError('required')">El nombre del tipo de documento requerido</mat-error>
+                <mat-error *ngIf="form.get('cDescripcionTipoDocumento').hasError('minlength') || form.get('cDescripcionTipoDocumento').hasError('maxlength')">
+                    Valor invalido, el mínimo de caracteres es 3 y el máximo son 100 </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" fxFlex="50" class="ml-16">
@@ -35,7 +31,7 @@
 
         <div fxLayout="row" fxLayoutAlign="center" fxFlex="30">
             <section class="example-section">
-                <mat-slide-toggle formControlName="obligatorio"   [(ngModel)]="selectedObligatorio" class="example-margin">
+                <mat-slide-toggle formControlName="obligatorio" [(ngModel)]="selectedObligatorio" class="example-margin">
                     Obligatorio
                 </mat-slide-toggle>
             </section>
@@ -60,8 +56,7 @@
     <!-- REACTIVE FORM EXAMPLE -->
 
 
-    <form class="shadow-none" fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form"
-        [formGroup]="form">
+    <form class="shadow-none" fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form" [formGroup]="form">
 
         <div class="h2 mb-24">Metacatálogos para clasificación de documentos</div>
 
@@ -88,7 +83,7 @@
             </section>
         </div>
         <section fxLayoutAlign="center">
-            <button mat-fab color="primary" (click)="agregarMetacatalogo()"  class="button">
+            <button mat-fab color="primary" (click)="agregarMetacatalogo()" class="button">
                 Agregar metacatalogo <mat-icon>add</mat-icon>
             </button>
         </section>
@@ -99,8 +94,7 @@
     <mat-label>Buscar</mat-label>
     <input type='text' matInput placeholder='' [(ngModel)]="searchText" (keyup)='filterDatatable($event)'>
 </mat-form-field>
-<ngx-datatable class="material border-table" [rows]="rows" [loadingIndicator]="loadingIndicator" [columnMode]="'force'"
-    [headerHeight]="48" [footerHeight]="56" [rowHeight]="'auto'" [reorderable]="reorderable" [limit]="10">
+<ngx-datatable class="material border-table" [rows]="rows" [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="48" [footerHeight]="56" [rowHeight]="'auto'" [reorderable]="reorderable" [limit]="10">
 
     <ngx-datatable-column name="Metacatalogo" prop="cDescripcionMetacatalogo"></ngx-datatable-column>
     <ngx-datatable-column name="Tipo" prop="cTipoMetacatalogo"></ngx-datatable-column>
