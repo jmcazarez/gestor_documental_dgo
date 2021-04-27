@@ -7,6 +7,13 @@
         [formGroup]="form">
 
         <div class="h2 mb-24">Registro de libro de actas</div>
+        <div  fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+            <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+                <mat-label>Id. libro de actas</mat-label>
+                <input matInput formControlName="cId" >
+                <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>              
+            </mat-form-field>
+        </div>
 
         <div fxLayout="row" fxLayoutAlign="staLibro de actas guardadart center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">

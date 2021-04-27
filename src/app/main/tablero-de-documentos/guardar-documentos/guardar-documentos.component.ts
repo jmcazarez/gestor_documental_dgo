@@ -150,152 +150,157 @@ export class GuardarDocumentosComponent implements OnInit {
     }
 
     async guardar(): Promise<void> {
-        this.spinner.show();
-        const fecha = new Date(); // Fecha actual
-        let mes: any = fecha.getMonth() + 1; // obteniendo mes
-        let dia: any = fecha.getDate(); // obteniendo dia      
-        const ano = fecha.getFullYear(); // obteniendo año
-        if (dia < 10) {
-            dia = '0' + dia; // agrega cero si el menor de 10
-        }
-        if (mes < 10) {
-            mes = '0' + mes; // agrega cero si el menor de 10
-        }
-        const fechaActual = ano + '-' + mes + '-' + dia;
+        try {
+            this.spinner.show();
+            const fecha = new Date(); // Fecha actual
+            let mes: any = fecha.getMonth() + 1; // obteniendo mes
+            let dia: any = fecha.getDate(); // obteniendo dia      
+            const ano = fecha.getFullYear(); // obteniendo año
+            if (dia < 10) {
+                dia = '0' + dia; // agrega cero si el menor de 10
+            }
+            if (mes < 10) {
+                mes = '0' + mes; // agrega cero si el menor de 10
+            }
+            const fechaActual = ano + '-' + mes + '-' + dia;
 
 
-        // Guardamos documento
+            // Guardamos documento
 
-        // Asignamos valores a objeto
-        this.documentos.bActivo = this.form.get('estatus').value;
-        this.documentos.cNombreDocumento = this.form.get('nombreDocumento').value;
+            // Asignamos valores a objeto
+            this.documentos.bActivo = this.form.get('estatus').value;
+            this.documentos.cNombreDocumento = this.form.get('nombreDocumento').value;
 
-        const fechaCreacion = new Date(this.form.get('fechaCreacion').value);
-        let mesCreacion: any = fechaCreacion.getMonth() + 1; // obteniendo mes
-        let diaCreacion: any = fechaCreacion.getDate(); // obteniendo dia      
-        const anoCreacion = fechaCreacion.getFullYear(); // obteniendo año
+            const fechaCreacion = new Date(this.form.get('fechaCreacion').value);
+            let mesCreacion: any = fechaCreacion.getMonth() + 1; // obteniendo mes
+            let diaCreacion: any = fechaCreacion.getDate(); // obteniendo dia      
+            const anoCreacion = fechaCreacion.getFullYear(); // obteniendo año
 
-        if (diaCreacion < 10) {
-            diaCreacion = '0' + diaCreacion; // agrega cero si el menor de 10
-        }
-        if (mesCreacion < 10) {
-            mesCreacion = '0' + mesCreacion; // agrega cero si el menor de 10
-        }
-        this.documentos.fechaCreacion = moment(this.form.get('fechaCreacion').value).format('YYYY-MM-DD') + 'T16:00:00.000Z';
-        this.documentos.fechaCarga = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
+            if (diaCreacion < 10) {
+                diaCreacion = '0' + diaCreacion; // agrega cero si el menor de 10
+            }
+            if (mesCreacion < 10) {
+                mesCreacion = '0' + mesCreacion; // agrega cero si el menor de 10
+            }
+            this.documentos.fechaCreacion = moment(this.form.get('fechaCreacion').value).format('YYYY-MM-DD') + 'T16:00:00.000Z';
+            this.documentos.fechaCarga = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
 
-        this.documentos.tipo_de_documento = this.selectTipoDocument;
-        let tipoDoc = this.arrTipoDocumentos.filter((tipo) => tipo.id === this.selectTipoDocument);
-        if (tipoDoc) {
-            this.documentos.visibilidade = tipoDoc[0]['visibilidade'];
-        }
+            this.documentos.tipo_de_documento = this.selectTipoDocument;
+            let tipoDoc = this.arrTipoDocumentos.filter((tipo) => tipo.id === this.selectTipoDocument);
+            if (tipoDoc) {
+                this.documentos.visibilidade = tipoDoc[0]['visibilidade'];
+            }
 
-        if (this.paginasInput.nativeElement.value > 0) {
-            this.documentos.paginas = this.paginasInput.nativeElement.value;
-        }
+            if (this.paginasInput.nativeElement.value > 0) {
+                this.documentos.paginas = this.paginasInput.nativeElement.value;
+            }
 
-        // Validamos el selecciono un archivo para subirlo
-        if (this.cambioFile) {
+            // Validamos el selecciono un archivo para subirlo
+            if (this.cambioFile) {
 
-            //  console.log('cambio');
-            // Subimos archivo
-            await this.upload();
+                //  console.log('cambio');
+                // Subimos archivo
+                await this.upload();
 
-        }
+            }
 
-        if (this.documentos.documento === '') {
-            this.spinner.hide();
-            Swal.fire('Error', 'Ocurrió un error al subir el archivo. ', 'error');
-        } else {
-            if (this.documentos.id) {
-
-                if (this.documentos.disabled) {
-                    this.cerrar(this.documentos);
-                } else {
-
-                    this.documentos.usuario = this.menu.usuario;
-                    // tslint:disable-next-line: no-bitwise
-                    if (this.documentos.cNombreDocumento !== this.cNombreDocumento || this.documentos.documento !== this.documento ||
-                        // tslint:disable-next-line: max-line-length
-                        this.documentos.tipo_de_documento !== this.tipoDocumento || this.datePipe.transform(this.documentos.fechaCreacion) !== this.datePipe.transform(this.fechaCreacion) ||
-                        String(this.documentos.paginas) !== String(this.paginas) || this.documentos.bActivo !== this.bActivo) {
-
-                        this.documentos.version = Number(this.documentos.version) + .1;
-
-                        this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
-                            if (resp) {
-
-                                this.documentos = resp.data;
-                                this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd') + 'T16:00:00.000Z';
-                                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
-
-                                this.spinner.hide();
-                                this.cerrar(this.documentos);
-                            } else {
-                                this.spinner.hide();
-                                Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
-
-                            }
-                        }, err => {
-                            this.spinner.hide();
-                            if (err.error.data) {
-                                Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
-                            } else {
-                                Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error, 'error');
-                            }
-                        });
-                    } else {
-
-                        this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
-
-                            if (resp) {
-                                console.log(resp.data);
-                                this.documentos = resp.data;
-                                this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd') + 'T16:00:00.000Z';
-                                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
-                                this.spinner.hide();
-                                this.cerrar(this.documentos);
-                            } else {
-                                this.spinner.hide();
-                                Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
-                            }
-                        }, err => {
-                            this.spinner.hide();
-                            console.log(err);
-                            Swal.fire('Error', 'Ocurrió un error al guardar.' + err, 'error');
-                        });
-                    }
-                    // Seteamos version
-
-
-                    // Actualizamos documento
-
-                }
+            if (this.documentos.documento === '') {
+                this.spinner.hide();
+                Swal.fire('Error', 'Ocurrió un error al subir el archivo. ', 'error');
             } else {
-                // Seteamos version
-                this.documentos.version = 1;
-                this.documentos.usuario = this.menu.usuario;
-                // Guardamos documento
-                this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
+                if (this.documentos.id) {
 
-                    if (resp) {
-                        this.documentos = resp.data;
-                        console.log(resp.data);
-                        this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd') + 'T16:00:00.000Z';
-                        this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
-                        this.spinner.hide();
-                        Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
+                    if (this.documentos.disabled) {
                         this.cerrar(this.documentos);
                     } else {
-                        this.spinner.hide();
-                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+
+                        this.documentos.usuario = this.menu.usuario;
+                        // tslint:disable-next-line: no-bitwise
+                        if (this.documentos.cNombreDocumento !== this.cNombreDocumento || this.documentos.documento !== this.documento ||
+                            // tslint:disable-next-line: max-line-length
+                            this.documentos.tipo_de_documento !== this.tipoDocumento || this.datePipe.transform(this.documentos.fechaCreacion) !== this.datePipe.transform(this.fechaCreacion) ||
+                            String(this.documentos.paginas) !== String(this.paginas) || this.documentos.bActivo !== this.bActivo) {
+
+                            this.documentos.version = Number(this.documentos.version) + .1;
+
+                            this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
+                                if (resp) {
+
+                                    this.documentos = resp.data;
+                                    this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+                                    this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+
+                                    this.spinner.hide();
+                                    this.cerrar(this.documentos);
+                                } else {
+                                    this.spinner.hide();
+                                    Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+
+                                }
+                            }, err => {
+                                this.spinner.hide();
+                                if (err.error.data) {
+                                    Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                                } else {
+                                    Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error, 'error');
+                                }
+                            });
+                        } else {
+
+                            this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
+
+                                if (resp) {
+
+                                    this.documentos = resp.data;
+                                    this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+                                    this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+                                    this.spinner.hide();
+                                    this.cerrar(this.documentos);
+                                } else {
+                                    this.spinner.hide();
+                                    Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                                }
+                            }, err => {
+                                this.spinner.hide();
+                                console.log(err);
+                                Swal.fire('Error', 'Ocurrió un error al guardar.' + err, 'error');
+                            });
+                        }
+                        // Seteamos version
+
+
+                        // Actualizamos documento
+
                     }
-                }, (err: any) => {
-                    this.spinner.hide();
-                    console.log(err);
-                    Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
-                });
+                } else {
+                    // Seteamos version
+                    this.documentos.version = 1;
+                    this.documentos.usuario = this.menu.usuario;
+                    // Guardamos documento
+                    this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
+
+                        if (resp) {
+                            this.documentos = resp.data;
+
+                            this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+                            this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+                            this.spinner.hide();
+                            Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
+
+                        } else {
+                            this.spinner.hide();
+                            Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                        }
+                    }, (err: any) => {
+                        this.spinner.hide();
+                        console.log(err);
+                        Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                    });
+                }
             }
+
+        } catch (err) {
+            Swal.fire('Error', 'Ocurrió un error al guardar .' + err, 'error');
         }
 
     }

@@ -158,14 +158,10 @@ export class TableroDeLibroDeActasComponent implements OnInit {
             this.libroDeActas = this.libroDeActasTemporal;
         } else {
             const val = value.target.value.toLowerCase();
-            const temp = this.libroDeActas.filter(
-                (d) =>
-                    d.fechaDeInicioText.toLowerCase().indexOf(val) !== -1 ||
-                    !val ||
-                    d.fechaDeFinText.toLowerCase().indexOf(val) !== -1 ||
-                    d.id.toLowerCase().indexOf(val) !== -1 ||
-                    d.descripcionLegislatura.toLowerCase().indexOf(val) !== -1
-            );
+            const temp = this.libroDeActas.filter((d) => d.fechaDeInicioText.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.fechaDeFinText.toLowerCase().indexOf(val) !== - 1 || 
+                d.id.toLowerCase().indexOf(val) !== - 1 ||
+                d.descripcionLegislatura.toLowerCase().indexOf(val) !== - 1);
 
             this.libroDeActas = temp;
         }

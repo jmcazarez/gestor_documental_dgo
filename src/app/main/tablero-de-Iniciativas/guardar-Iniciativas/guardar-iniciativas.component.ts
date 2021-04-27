@@ -1037,6 +1037,8 @@ export class GuardarIniciativasComponent implements OnInit {
                     this.documentos.id = this.iniciativa.formatosTipoIniciativa[0].id;
                 }
 
+                console.log(this.documentos);
+
                 this.documentoService.actualizarDocumentos(this.documentos).subscribe(
                         (resp: any) => {
                             if (resp.data) {

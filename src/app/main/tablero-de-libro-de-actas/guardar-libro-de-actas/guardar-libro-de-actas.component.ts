@@ -55,7 +55,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
     async ngOnInit(): Promise<void> {
 
 
-
+        
         await this.obtenerTiposLegislaturas();
         await this.obtenerRecepcionesDeActas();
 
@@ -79,7 +79,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
 
         // Form reativo
         this.form = this.formBuilder.group({
-
+            cId: [{ value: this.libro.id, disabled: true }],
             legislatura: [{ value: this.libro.legislatura, disabled: false }, Validators.required],
             fechaDeInicio: [{ value: this.libro.fechaDeInicio, disabled: false }, Validators.required],
             fechaDeFin: [{ value: this.libro.fechaDeFin, disabled: false }, Validators.required],
@@ -161,7 +161,6 @@ export class GuardarlibroDeActasComponent implements OnInit {
                 console.log('cambio fin');
                 if (val.getTime() > 0) {
                     this.recepcionDeActas = this.recepcionDeActasTemporal;
-                    console.log(this.recepcionDeActas);
                     let legislatura = this.form.get('legislatura').value;
                     let fecIni = this.datePipe.transform(this.form.get('fechaDeInicio').value, 'dd-MM-yyyy');
                     let fecFin = this.datePipe.transform(this.form.get('fechaDeFin').value, 'dd-MM-yyyy');
@@ -171,7 +170,6 @@ export class GuardarlibroDeActasComponent implements OnInit {
                     } else {
                         if (legislatura.length > 0) {
 
-                            
                             this.recepcionDeActas = this.recepcionDeActas.filter((d) => {
                                 return d.fechaCreacionText >= fecIni &&
                                     d.fechaCreacionText <= fecFin && d.idLegislatura == legislatura;
@@ -297,7 +295,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
         this.recepcionDeActasService.obtenerRecepcionesDeActas().subscribe((resp: any) => {
 
             // Buscamos permisos
-    console.log(resp);
+
             // Si tiene permisos para consultar
 
             if (resp) {
@@ -306,6 +304,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                     if (this.libro.id) {
                         if (ini.libro_de_actas_de_sesions.length == 0) {
                             let idLegislatura = '';
+                            console.log(ini);
                             if (ini.legislatura) {
                                 idLegislatura = ini.legislatura.id;
                             }
@@ -324,6 +323,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                                 selected: false,
                                 idLegislatura
                             });
+                            console.log(actasTemp);
                         } else {
                             let idLegislatura = '';
                             if (ini.legislatura) {
@@ -376,9 +376,10 @@ export class GuardarlibroDeActasComponent implements OnInit {
                         }
                     }
                 }
-                console.log(actasTemp);
-                this.recepcionDeActas = actasTemp;
-                this.recepcionDeActasTemporal = actasTemp;
+                this.recepcionDeActas = [...actasTemp];
+                this.recepcionDeActasTemporal = [...actasTemp];
+
+                console.log(this.recepcionDeActas);
                 if (this.libro.id) {
                     this.filtrarTabla();
                 }
