@@ -1001,9 +1001,35 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
 
                 this.arrReporteDictamenes = [['Dictámenes', 'Cantidad total']];
 
-                this.arrReporteDictamenes.push(['Aprobados', reportDictamen[0]]);
+                let dictamenFiltrado = [];
+
+                dictamenFiltrado.push({"dictamen": "Aprobado", "valor": reportDictamen[0]});
+                dictamenFiltrado.push({"dictamen": "No aprobado", "valor": reportDictamen[1]});
+                dictamenFiltrado.push({"dictamen": "Modificación", "valor": reportDictamen[2]});
+
+                /*for (let i = 0, max = dictamenFiltrado.length; i < max; i += 1) {
+                    let dictamen: string = '';
+                    if(i = 0){
+                        dictamen = 'Aprobados';
+                    } else if (i = 1){
+                        dictamen = 'No aprobados';
+                    } else {
+                        dictamen = 'Modificados';
+                    }
+                    if(dictamenFiltrado[i].valor > 0){
+                        this.arrReporteDictamenes.push([dictamen, dictamenFiltrado[i].valor]);
+                    }
+                }*/
+
+                for (let i = 0; i < 3; i++) {
+                    if(dictamenFiltrado[i].valor > 0){
+                        this.arrReporteDictamenes.push([dictamenFiltrado[i].dictamen, dictamenFiltrado[i].valor]);
+                    }
+                }
+                
+                /*this.arrReporteDictamenes.push(['Aprobados', reportDictamen[0]]);
                 this.arrReporteDictamenes.push(['No aprobados', reportDictamen[1]]);
-                this.arrReporteDictamenes.push(['Modificados', reportDictamen[2]]);
+                this.arrReporteDictamenes.push(['Modificados', reportDictamen[2]]);*/
 
                 this.tablaDictamenMostrar = this.tablaDictamen;
 
@@ -1123,10 +1149,32 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 estatusIniciativa.push(reportAcumulado.filter((d) => d['estatus'] === 'Turnar iniciativa a CIEL' || d['estatus'] === 'Turnar dictamen a Secretaría General').length);
                 estatusIniciativa.push(reportAcumulado.filter((d) => d['estatus'] === 'Turnar dictamen a Mesa Directiva').length);
 
-                this.arrReporteEstatusIniciativaInicial.push(['Secretaría General', estatusIniciativa[0], 'Inicial']);
-                this.arrReporteEstatusIniciativa.push(['Secretaría General', estatusIniciativa[1], 'En proceso']);
-                this.arrReporteEstatusIniciativa.push(['Centro de Investigación y Estudios Legislativos', estatusIniciativa[2], 'En proceso']);
-                this.arrReporteEstatusIniciativa.push(['Mesa directiva', estatusIniciativa[3], 'En proceso']);
+                for (let i = 0; i < 4; i++) {
+                    let estatus: string = '';
+                    let etapa: string = '';
+                    if(i == 0){
+                        estatus = 'Secretaría General';
+                        etapa = 'Inicial';
+                    } else if (i == 1){
+                        estatus = 'Secretaría General';
+                        etapa = 'En proceso';
+                    } else if (i == 2){
+                        estatus = 'Centro de Investigación y Estudios Legislativos';
+                        etapa = 'En proceso';
+                    } else {
+                        estatus = 'Mesa directiva';
+                        etapa = 'En proceso';
+                    }
+                    if(i == 0){
+                        if(estatusIniciativa[i] > 0){
+                            this.arrReporteEstatusIniciativaInicial.push([estatus, estatusIniciativa[i], etapa]);
+                        }
+                    } else {
+                        if(estatusIniciativa[i] > 0){
+                            this.arrReporteEstatusIniciativa.push([estatus, estatusIniciativa[i], etapa]);   
+                        }
+                    }
+                }
 
                 /************************/
                 /* Comisiones asignadas */
@@ -1170,7 +1218,9 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 comisionesReport.sort((a, b) => b.valor - a.valor);
 
                 for (let i = 0; i < 5; i++) {
-                    this.arrReporteComision.push([comisionesReport[i].comision, comisionesReport[i].valor]);
+                    if(comisionesReport[i].valor > 0){
+                        this.arrReporteComision.push([comisionesReport[i].comision, comisionesReport[i].valor]);
+                    }
                 }
 
                 this.activarDescarga = false;
@@ -2947,7 +2997,17 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillColor: "#d9d9d9",
                   fillOpacity: "#d9d9d9"
                 }
-              });
+            });
+
+            if(this.arrReporteEstatusIniciativaInicial.length < 2){
+                presente.push({
+                    text: "No existen iniciativas registradas de acuerdo al filtro de búsqueda.",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 5, 0, 0],
+                });
+            }
 
             presente.push({
                 text: "Listado de iniciativas en proceso",
@@ -2973,7 +3033,17 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillColor: "#d9d9d9",
                   fillOpacity: "#d9d9d9"
                 }
-              });
+            });
+
+            if(this.arrReporteEstatusIniciativa.length < 2){
+                presente.push({
+                    text: "No existen iniciativas registradas de acuerdo al filtro de búsqueda.",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 5, 0, 0],
+                });
+            }
 
             const aa = {
                 header: {
@@ -3515,8 +3585,17 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillColor: "#d9d9d9",
                   fillOpacity: "#d9d9d9"
                 }
-              });
+            });
 
+            if(this.arrReporteEstatusDecreto.length < 2){
+                presente.push({
+                    text: "No existen iniciativas registradas de acuerdo al filtro de búsqueda.",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 5, 0, 0],
+                });
+            }
 
             const aa = {
                 header: {
@@ -3690,8 +3769,17 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillColor: "#d9d9d9",
                   fillOpacity: "#d9d9d9"
                 }
-              });
+            });
 
+            if(this.arrReporteComision.length < 2){
+                presente.push({
+                    text: "No existen iniciativas registradas de acuerdo al filtro de búsqueda.",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 5, 0, 0],
+                });
+            }
 
             const aa = {
                 header: {

@@ -23,23 +23,23 @@
                     <mat-label>Buscar sesión</mat-label>
                     <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)'  [(ngModel)]="valorBusqueda">
                 </mat-form-field>
-                <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevaSesion()" class="button">
+          <!--      <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevaSesion()" class="button">
                     <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir una sesión">post_add
                     </mat-icon>
                     Agregar sesión
                 </button>
+                -->
             </div>
 
             <ngx-datatable class="material shadow-none" [rows]="sesiones" [loadingIndicator]="loadingIndicator"
                 [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
                 [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
-
-
-                <ngx-datatable-column name="Legislatura" prop="descripcionLegislatura"></ngx-datatable-column>
+                <ngx-datatable-column name="Id. sesion" prop="id"></ngx-datatable-column>
+               <ngx-datatable-column name="Legislatura" prop="descripcionLegislatura"></ngx-datatable-column>
                 <ngx-datatable-column name="Tipo de sesión" prop="tipoSesion"></ngx-datatable-column>
                 <ngx-datatable-column name="Fecha" prop="fechaSesionView"></ngx-datatable-column>
                 <ngx-datatable-column name="Hora" prop="horaSesionView"></ngx-datatable-column>
-       
+                
 
                 <ngx-datatable-column name="Acciones" sortable="false" prop="id" [width]="10">
                     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>

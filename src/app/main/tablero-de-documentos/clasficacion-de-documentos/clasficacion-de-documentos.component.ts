@@ -134,6 +134,14 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                     (tipoDocumento) =>
                         tipoDocumento.id === this.documento.tipo_de_documento
                 ).metacatalogos;
+
+                if (!this.documento.tipo_de_documento.id) {
+                    this.documento.tipo_de_documento = this.menuService.tipoDocumentos.find(
+                        (tipoDocumento) =>
+                            tipoDocumento.id ===
+                            this.documento.tipo_de_documento
+                    );
+                }
             }
         } else {
             this.estatusIniciativa = this.documento.estatus;
@@ -149,7 +157,11 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         this.selectedDepartamento = "";
         this.selectedInformacion = "";
         this.selectedLegislaturas = "";
-        this.descargarDocumento();
+        if (this.documento.disabled === true) {
+            this.descargarDocumentoClasificacion();
+        } else {
+              this.descargarDocumento();
+        }
         this.arrInformacion = this.menuService.tipoInformacion;
 
         this.documento.version = parseFloat(this.documento.version).toFixed(1);
@@ -350,8 +362,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
               }
           }
           */
-
-        console.log(this.documento.metacatalogos);
     }
 
     obtenerTiposExpedientes(): void {
@@ -401,7 +411,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     descargarDocumento(): void {
         // Descargamos el documento
         this.documentoService
-            .dowloadDocumentClasificacion(
+            .dowloadDocument(
                 this.documento.documento.hash + this.documento.documento.ext,
                 this.documento.id,
                 this.menuService.usuario,
@@ -426,6 +436,33 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             );
     }
 
+    descargarDocumentoClasificacion(): void {
+        // Descargamos el documento
+        this.documentoService
+            .dowloadDocumentClasificacion(
+                this.documento.documento.hash + this.documento.documento.ext,
+                this.documento.id,
+                this.menuService.usuario,
+                this.documento.cNombreDocumento
+            )
+            .subscribe(
+                (resp: any) => {
+                    const source =
+                        "data:application/octet-stream;base64," + resp.data;
+                    this.pdfSrc = source;
+                },
+                (err) => {
+                    if (err.error.data) {
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al descargar el documento." +
+                                err.error.data,
+                            "error"
+                        );
+                    }
+                }
+            );
+    }
     convertFile(buf: any): string {
         // Convertimos el resultado en binstring
         const binstr = Array.prototype.map

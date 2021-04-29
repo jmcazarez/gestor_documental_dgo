@@ -59,7 +59,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
 
         this.documentosPerfil = this.menuService.tipoDocumentos;
 
-        
+
         // tslint:disable-next-line: forin      
         for (const i in this.documentosPerfil) {
             this.documentosPerfil[i].selected = false;
@@ -136,10 +136,10 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
 
     }
 
-    
+
     seleccionarTipoDocumento(row): void {
         this.rows = [...this.rows];
-        this.selecteds =   this.rows.find((tipo: { selected: boolean; }) => tipo.selected === true);
+        this.selecteds = this.rows.find((tipo: { selected: boolean; }) => tipo.selected === true);
     }
 
 
@@ -224,14 +224,15 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
+                if (this.expediente.id) {
                     this.expedientesService
                         .actualizarTipoExpedientes(this.expediente)
                         .subscribe(
                             (resp: any) => {
                                 if (resp) {
-                           
+
                                     this.expediente = resp.data;
-                               
+
                                 } else {
                                     Swal.fire(
                                         "Error",
@@ -244,11 +245,12 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
                                 Swal.fire(
                                     "Error",
                                     "Ocurrió un error al guardar." +
-                                        err.error.data,
+                                    err.error.data,
                                     "error"
                                 );
                             }
                         );
+                }
                 setTimeout(() => {
                     this.searchText = '';
                     this.documentosPerfil = this.menuService.tipoDocumentos;
@@ -281,9 +283,9 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
             setTimeout(() => {
                 this.rows = [...this.documentosPerfil];
                 this.rowsTemp = this.rows;
-                this.selecteds =   this.rows.find((tipo: { selected: boolean; }) => tipo.selected === true);
+                this.selecteds = this.rows.find((tipo: { selected: boolean; }) => tipo.selected === true);
             }, 100);
-            
+
             this.loadingIndicator = false;
 
         } else {

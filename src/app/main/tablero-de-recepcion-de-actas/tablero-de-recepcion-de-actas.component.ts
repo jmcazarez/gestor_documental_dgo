@@ -157,6 +157,7 @@ export class TableroDeRecepcionDeActasComponent implements OnInit {
 
 
     filterDatatable(value): void {
+        this.recepcionDeActas = this.recepcionDeActasTemporal;
         // Filtramos tabla
         if (value.target.value === '') {
             this.recepcionDeActas = this.recepcionDeActasTemporal;
@@ -164,7 +165,8 @@ export class TableroDeRecepcionDeActasComponent implements OnInit {
             const val = value.target.value.toLowerCase();
             const temp = this.recepcionDeActas.filter((d) => d.fechaCreacionText.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.hora.toLowerCase().indexOf(val) !== - 1 || d.descripcionLegislatura.toLowerCase().indexOf(val) !== - 1 ||
-                d.estatus.toLowerCase().indexOf(val) !== - 1);
+                d.estatus.toLowerCase().indexOf(val) !== - 1 ||
+                d.id.toLowerCase().indexOf(val) !== - 1);
 
             this.recepcionDeActas = temp;
         }

@@ -79,7 +79,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         private usuarioService: LoginService,
         private _menuService: MenuService,
         @Inject(MAT_DIALOG_DATA) public documento: TipoDocumentoModel
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         console.log(this.documento);
@@ -456,7 +456,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                             Swal.fire(
                                 "Error",
                                 "Ocurrió un error al guardar. " +
-                                    resp.error.data,
+                                resp.error.data,
                                 "error"
                             );
                             this.searchText = "";
@@ -480,7 +480,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
             (resp: any) => {
                 this.arrFormatos = resp;
             },
-            (err) => {}
+            (err) => { }
         );
     }
     async login(): Promise<void> {
@@ -512,114 +512,127 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
     }
     agregarMetacatalogo(): void {
         try {
-            if (this.rowEditar === undefined) {
-                this.rowEditar = [];
-            }
-            this.loadingIndicator = true;
-            this.searchText = "";
-            this.rows = this.rowsTemp;
-            let metacatalogo: string;
-            let metacatalogoObligatorio: boolean;
-            let metacatalogoTipo: string;
-            let i: string;
-            let repetido = false;
-            metacatalogoTipo = "";
-            metacatalogo = "";
-            metacatalogo = this.form.get("metacatalogo").value;
-            metacatalogoObligatorio = this.form.get("metacatalogoObligatorio")
-                .value;
-            metacatalogoTipo = this.form.get("metacatalogoTipo").value;
 
-            this.form.controls["metacatalogo"].setValue("");
-            this.form.controls["metacatalogoObligatorio"].setValue(false);
-
-            this.selectedTipo = "";
-
-            if (
-                metacatalogo === "" ||
-                metacatalogoTipo === "" ||
-                metacatalogo === undefined ||
-                metacatalogoTipo === undefined
-            ) {
-                Swal.fire(
-                    "Error",
-                    "Es necesario capturar la descripción y el tipo para agregar metacatalogo. ",
-                    "error"
-                );
-                this.loadingIndicator = false;
+            if (this.rows.length >= 6) {
+                Swal.fire("Error", "El número máximo de metacatalogos son 6. ", "error");
             } else {
-                const temp = this.rows.filter(
-                    (d) =>
-                        d.cDescripcionMetacatalogo.toLowerCase() ===
-                        metacatalogo.toLowerCase()
-                );
-                if (temp.length && !this.rowEditar) {
+                if (this.rowEditar === undefined) {
+                    this.rowEditar = [];
+                }
+                this.loadingIndicator = true;
+                this.searchText = "";
+                this.rows = this.rowsTemp;
+                let metacatalogo: string;
+                let metacatalogoObligatorio: boolean;
+                let metacatalogoTipo: string;
+                let i: string;
+                let repetido = false;
+                metacatalogoTipo = "";
+                metacatalogo = "";
+                metacatalogo = this.form.get("metacatalogo").value;
+                metacatalogoObligatorio = this.form.get("metacatalogoObligatorio")
+                    .value;
+                metacatalogoTipo = this.form.get("metacatalogoTipo").value;
+
+                this.form.controls["metacatalogo"].setValue("");
+                this.form.controls["metacatalogoObligatorio"].setValue(false);
+
+                this.selectedTipo = "";
+
+                if (
+                    metacatalogo === "" ||
+                    metacatalogoTipo === "" ||
+                    metacatalogo === undefined ||
+                    metacatalogoTipo === undefined
+                ) {
                     Swal.fire(
                         "Error",
-                        "Ya existe un metacatalogo con esa descripción agregado. ",
+                        "Es necesario capturar la descripción y el tipo para agregar metacatalogo. ",
                         "error"
                     );
+                    this.loadingIndicator = false;
                 } else {
-                    console.log(this.rowEditar.length);
-                    if (this.rowEditar && this.rowEditar.length === undefined) {
-                        const index = this.rows.findIndex(
-                            (tipoDocumento) =>
-                                tipoDocumento.cDescripcionMetacatalogo ===
-                                this.rowEditar.cDescripcionMetacatalogo
+                    const temp = this.rows.filter(
+                        (d) =>
+                            d.cDescripcionMetacatalogo.toLowerCase() ===
+                            metacatalogo.toLowerCase()
+                    );
+                    console.log(temp.length);
+                    console.log(this.rowEditar);
+                    if (temp.length && !this.rowEditar) {
+                        Swal.fire(
+                            "Error",
+                            "Ya existe un metacatalogo con esa descripción agregado. ",
+                            "error"
                         );
-                        if (index >= 0) {
-                            for (i in this.rows) {
-                                if (
-                                    Number(i) !== index &&
-                                    this.rows[
-                                        i
-                                    ].cDescripcionMetacatalogo.toLowerCase() ===
+                    } else if (temp.length && this.rowEditar.length === 0) {
+                        Swal.fire(
+                            "Error",
+                            "Ya existe un metacatalogo con esa descripción agregado. ",
+                            "error"
+                        );
+                    } else {
+
+                        if (this.rowEditar && this.rowEditar.length === undefined) {
+                            const index = this.rows.findIndex(
+                                (tipoDocumento) =>
+                                    tipoDocumento.cDescripcionMetacatalogo ===
+                                    this.rowEditar.cDescripcionMetacatalogo
+                            );
+                            if (index >= 0) {
+                                for (i in this.rows) {
+                                    if (
+                                        Number(i) !== index &&
+                                        this.rows[
+                                            i
+                                        ].cDescripcionMetacatalogo.toLowerCase() ===
                                         metacatalogo.toLowerCase()
-                                ) {
-                                    Swal.fire(
-                                        "Error",
-                                        "Ya existe un metacatalogo con esa descripción agregado. ",
-                                        "error"
-                                    );
-                                    repetido = true;
+                                    ) {
+                                        Swal.fire(
+                                            "Error",
+                                            "Ya existe un metacatalogo con esa descripción agregado. ",
+                                            "error"
+                                        );
+                                        repetido = true;
+                                    }
+                                }
+
+                                if (!repetido) {
+                                    this.rows[
+                                        index
+                                    ].cDescripcionMetacatalogo = metacatalogo;
+                                    this.rows[
+                                        index
+                                    ].bOligatorio = metacatalogoObligatorio;
+                                    this.rows[
+                                        index
+                                    ].cTipoMetacatalogo = metacatalogoTipo;
+
+                                    this.form.controls["metacatalogo"].setValue("");
+                                    this.form.controls[
+                                        "metacatalogoObligatorio"
+                                    ].setValue(false);
+                                    this.selectedTipo = "";
+                                    this.rowEditar = [];
                                 }
                             }
-
-                            if (!repetido) {
-                                this.rows[
-                                    index
-                                ].cDescripcionMetacatalogo = metacatalogo;
-                                this.rows[
-                                    index
-                                ].bOligatorio = metacatalogoObligatorio;
-                                this.rows[
-                                    index
-                                ].cTipoMetacatalogo = metacatalogoTipo;
-
-                                this.form.controls["metacatalogo"].setValue("");
-                                this.form.controls[
-                                    "metacatalogoObligatorio"
-                                ].setValue(false);
-                                this.selectedTipo = "";
-                                this.rowEditar = [];
-                            }
+                        } else {
+                            console.log("push");
+                            this.rows.push({
+                                cDescripcionMetacatalogo: metacatalogo,
+                                bOligatorio: metacatalogoObligatorio,
+                                cTipoMetacatalogo: metacatalogoTipo,
+                                text: "",
+                            });
                         }
-                    } else {
-                        console.log("push");
-                        this.rows.push({
-                            cDescripcionMetacatalogo: metacatalogo,
-                            bOligatorio: metacatalogoObligatorio,
-                            cTipoMetacatalogo: metacatalogoTipo,
-                            text: "",
-                        });
                     }
-                }
 
-                this.loadingIndicator = false;
-                setTimeout(() => {
-                    this.rows = [...this.rows];
-                    this.rowsTemp = this.rows;
-                }, 100);
+                    this.loadingIndicator = false;
+                    setTimeout(() => {
+                        this.rows = [...this.rows];
+                        this.rowsTemp = this.rows;
+                    }, 100);
+                }
             }
         } catch (err) {
             console.log(err);
@@ -656,7 +669,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
             const temp = this.rows.filter(
                 (d) =>
                     d.cDescripcionMetacatalogo.toLowerCase().indexOf(val) !==
-                        -1 ||
+                    -1 ||
                     !val ||
                     d.cTipoMetacatalogo.toLowerCase(val).indexOf(val) !== -1
             );

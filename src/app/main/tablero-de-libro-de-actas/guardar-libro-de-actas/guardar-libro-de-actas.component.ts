@@ -12,6 +12,7 @@ import { EmpleadosDelCongresoService } from 'services/empleados-del-congreso.ser
 import { LibroDeActasModel } from 'models/libro-de-actas.models';
 import { LibroDeActasService } from 'services/libro-de-actas.service';
 import { RecepcionDeActasService } from 'services/recepcion-de-actas.service';
+import * as moment from 'moment';
 
 export interface Estado {
     id: string;
@@ -90,13 +91,13 @@ export class GuardarlibroDeActasComponent implements OnInit {
             if (val.length > 0) {
                 this.recepcionDeActas = this.recepcionDeActasTemporal;
                 let legislatura = this.form.get('legislatura').value;
-                let fecIni = this.datePipe.transform(this.form.get('fechaDeInicio').value, 'dd-MM-yyyy');
-                let fecFin = this.datePipe.transform(this.form.get('fechaDeFin').value, 'dd-MM-yyyy');
+                let fecIni = this.datePipe.transform(this.form.get('fechaDeInicio').value, 'yyyy-MM-dd');
+                let fecFin = this.datePipe.transform(this.form.get('fechaDeFin').value, 'yyyy-MM-dd');
 
                 if (fecIni !== null && fecFin !== null && legislatura.length > 0) {
                     this.recepcionDeActas = this.recepcionDeActas.filter((d) => {
-                        return d.fechaCreacionText >= fecIni &&
-                            d.fechaCreacionText <= fecFin && d.idLegislatura == legislatura;
+                        return d.fechaCreacionTextFiltro >= fecIni &&
+                            d.fechaCreacionTextFiltro <= fecFin && d.idLegislatura == legislatura;
                     });
                 } else {
                     this.recepcionDeActas = this.recepcionDeActas.filter((d) => {
@@ -112,8 +113,8 @@ export class GuardarlibroDeActasComponent implements OnInit {
                 if (val.getTime() > 0) {
                     this.recepcionDeActas = this.recepcionDeActasTemporal;
                     let legislatura = this.form.get('legislatura').value;
-                    let fecIni = this.datePipe.transform(this.form.get('fechaDeInicio').value, 'dd-MM-yyyy');
-                    let fecFin = this.datePipe.transform(this.form.get('fechaDeFin').value, 'dd-MM-yyyy');
+                    let fecIni = this.datePipe.transform(this.form.get('fechaDeInicio').value, 'yyyy-MM-dd');
+                    let fecFin = this.datePipe.transform(this.form.get('fechaDeFin').value, 'yyyy-MM-dd');
 
 
                     if (fecIni !== null && fecFin !== null) {
@@ -127,14 +128,14 @@ export class GuardarlibroDeActasComponent implements OnInit {
                             if (legislatura.length > 0) {
                                 console.log('filtro legis');
                                 this.recepcionDeActas = this.recepcionDeActas.filter((d) => {
-                                    return d.fechaCreacionText >= fecIni &&
-                                        d.fechaCreacionText <= fecFin && d.idLegislatura == legislatura;
+                                    return d.fechaCreacionTextFiltro >= fecIni &&
+                                        d.fechaCreacionTextFiltro <= fecFin && d.idLegislatura == legislatura;
                                 });
                             } else {
                                 console.log('filtro fechas');
                                 this.recepcionDeActas = this.recepcionDeActas.filter((d) => {
-                                    return d.fechaCreacionText >= fecIni &&
-                                        d.fechaCreacionText <= fecFin;
+                                    return d.fechaCreacionTextFiltro >= fecIni &&
+                                        d.fechaCreacionTextFiltro <= fecFin;
                                 });
                             }
                         }
@@ -142,12 +143,12 @@ export class GuardarlibroDeActasComponent implements OnInit {
                         if (legislatura.length > 0) {
                             console.log('filtro legis');
                             this.recepcionDeActas = this.recepcionDeActas.filter((d) => {
-                                return d.fechaCreacionText >= fecIni && d.idLegislatura == legislatura;
+                                return d.fechaCreacionTextFiltro >= fecIni && d.idLegislatura == legislatura;
                             });
                         } else {
                             console.log('filtro fechas');
                             this.recepcionDeActas = this.recepcionDeActas.filter((d) => {
-                                return d.fechaCreacionText >= fecIni
+                                return d.fechaCreacionTextFiltro >= fecIni
                             });
                         }
                     }
@@ -162,23 +163,25 @@ export class GuardarlibroDeActasComponent implements OnInit {
                 if (val.getTime() > 0) {
                     this.recepcionDeActas = this.recepcionDeActasTemporal;
                     let legislatura = this.form.get('legislatura').value;
-                    let fecIni = this.datePipe.transform(this.form.get('fechaDeInicio').value, 'dd-MM-yyyy');
-                    let fecFin = this.datePipe.transform(this.form.get('fechaDeFin').value, 'dd-MM-yyyy');
+                    let fecIni = this.datePipe.transform(this.form.get('fechaDeInicio').value, 'yyyy-MM-dd');
+                    console.log(fecIni);
+                    let fecFin = this.datePipe.transform(this.form.get('fechaDeFin').value, 'yyyy-MM-dd');
+                    console.log(fecFin);
                     if (fecIni > fecFin) {
                         Swal.fire('Error', 'La fecha de inicio no puede ser mayor a la fecha fin. ', 'error');
                         this.form.controls['fechaDeFin'].setValue('');
                     } else {
                         if (legislatura.length > 0) {
-
+                            console.log(this.recepcionDeActas)
                             this.recepcionDeActas = this.recepcionDeActas.filter((d) => {
-                                return d.fechaCreacionText >= fecIni &&
-                                    d.fechaCreacionText <= fecFin && d.idLegislatura == legislatura;
+                                return d.fechaCreacionTextFiltro >= fecIni &&
+                                    d.fechaCreacionTextFiltro <= fecFin && d.idLegislatura == legislatura;
                             });
                         } else {
-
+                            console.log(this.recepcionDeActas)
                             this.recepcionDeActas = this.recepcionDeActas.filter((d) => {
-                                return d.fechaCreacionText >= fecIni &&
-                                    d.fechaCreacionText <= fecFin;
+                                return d.fechaCreacionTextFiltro >= fecIni &&
+                                    d.fechaCreacionTextFiltro <= fecFin;
                             });
                         }
                     }
@@ -210,9 +213,10 @@ export class GuardarlibroDeActasComponent implements OnInit {
         let libros = [];
         // Asignamos valores a objeto
         this.libro.legislatura = this.selectLegislatura;
-        this.libro.fechaDeInicio = this.form.get('fechaDeInicio').value;
-        this.libro.fechaDeFin = this.form.get('fechaDeFin').value;
-
+       
+        this.libro.fechaDeInicio =  moment(this.form.get('fechaDeInicio').value).format('YYYY-MM-DD')  + 'T16:00:00.000Z';
+        this.libro.fechaDeFin = moment(this.form.get('fechaDeFin').value).format('YYYY-MM-DD')  + 'T16:00:00.000Z';
+      
         this.recepcionDeActas.forEach((row) => {
             if (row.selected) {
                 libros.push(row.id);
@@ -312,6 +316,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                                 id: ini.id,
                                 fechaCreacion: ini.fechaCreacion,
                                 fechaCreacionDate: new Date(ini.fechaCreacion),
+                                fechaCreacionTextFiltro: this.datePipe.transform(ini.fechaCreacion, 'yyyy-MM-dd'),
                                 fechaCreacionText: this.datePipe.transform(ini.fechaCreacion, 'dd-MM-yyyy'),
                                 fechaRecepcion: ini.fechaRecepcion,
                                 legislatura: ini.legislatura,
@@ -335,6 +340,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                                         id: ini.id,
                                         fechaCreacion: ini.fechaCreacion,
                                         fechaCreacionDate: new Date(ini.fechaCreacion),
+                                        fechaCreacionTextFiltro: this.datePipe.transform(ini.fechaCreacion, 'yyyy-MM-dd'),
                                         fechaCreacionText: this.datePipe.transform(ini.fechaCreacion, 'dd-MM-yyyy'),
                                         fechaRecepcion: ini.fechaRecepcion,
                                         legislatura: ini.legislatura,
@@ -362,6 +368,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                                 id: ini.id,
                                 fechaCreacion: ini.fechaCreacion,
                                 fechaCreacionDate: new Date(ini.fechaCreacion),
+                                fechaCreacionTextFiltro: this.datePipe.transform(ini.fechaCreacion, 'yyyy-MM-dd'),
                                 fechaCreacionText: this.datePipe.transform(ini.fechaCreacion, 'dd-MM-yyyy'),
                                 fechaRecepcion: ini.fechaRecepcion,
                                 legislatura: ini.legislatura,

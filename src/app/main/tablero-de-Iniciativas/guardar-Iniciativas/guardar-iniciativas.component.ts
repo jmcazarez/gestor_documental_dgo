@@ -838,6 +838,7 @@ export class GuardarIniciativasComponent implements OnInit {
 
             let pdfDocGenerator = pdfMake.createPdf(aa);
             let base64 = await this.pdfBase64(pdfDocGenerator);
+            console.log(base64);
 
             await this.upload(base64, "SP001.pdf");
             await this.guardarDocumento(

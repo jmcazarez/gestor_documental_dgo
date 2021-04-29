@@ -24,12 +24,12 @@
                     <mat-label>Buscar una recepción de expediente</mat-label>
                     <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)' [(ngModel)]="valueBuscador">
                 </mat-form-field>
-                <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="guardarRecepcionDeExpediente()" class="button">
+              <!--  <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="guardarRecepcionDeExpediente()" class="button">
                     <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un documento">post_add
                     </mat-icon>
                     Agregar nueva recepción de expedientes
                 </button>
-                
+                -->
             </div>
 
             <ngx-datatable class="material shadow-none" [rows]="recepcionExpedientes" [loadingIndicator]="loadingIndicator"

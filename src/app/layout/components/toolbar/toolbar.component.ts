@@ -182,10 +182,10 @@ export class ToolbarComponent implements OnInit, OnDestroy {
         this._translateService.use(lang.id);
     }
 
-    logout(): void {
+    async logout(): Promise<void> {
         this._usuarioLoginService.eliminarUsuario();
         // Borra el menú
-        this._menuService.limpiarMenu();
+        await this._menuService.limpiarMenu();
         // Redireccionar a login
         this._router.navigate(['login']);
     }

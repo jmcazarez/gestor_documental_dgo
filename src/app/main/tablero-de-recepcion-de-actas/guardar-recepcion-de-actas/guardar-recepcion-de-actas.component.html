@@ -7,7 +7,7 @@
         [formGroup]="form">
 
         <div class="h2 mb-24">Registro de recepción de acta</div>
-        <div  fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+        <div  fxLayout="row" *ngIf="recepcion.id" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
                 <mat-label>Id. Sesión</mat-label>
                 <input matInput formControlName="cId" >
@@ -17,7 +17,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Legislatura</mat-label>
+                <mat-label>Legislatura *</mat-label>
                 <mat-select formControlName="legislatura" [(ngModel)]="selectLegislatura" name="legislatura">
                     <mat-option *ngFor="let legislatura of arrLegislaturas" [value]="legislatura.id">
                         {{legislatura.cLegislatura}}
@@ -28,7 +28,7 @@
 
         </div>
         <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-            <mat-label>Fecha</mat-label>
+            <mat-label>Fecha *</mat-label>
             <input matInput [matDatepicker]="picker1" formControlName="fechaCreacion" [max]="maxDate">
             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
             <mat-datepicker #picker1></mat-datepicker>
@@ -37,7 +37,7 @@
         </mat-form-field>
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Hora</mat-label>
+                <mat-label>Hora *</mat-label>
                 <input matInput formControlName="hora">
                 <mat-icon matSuffix class="secondary-text">access_time</mat-icon>
             </mat-form-field>
@@ -45,7 +45,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Nombre de quien entrega</mat-label>
+                <mat-label>Nombre de quien entrega *</mat-label>
                 <mat-select formControlName="emisor" [(ngModel)]="selectEmisor" name="emisor">
                     <mat-option *ngFor="let emisor of arrEmisores" [value]="emisor.id">
                         {{emisor.nombre}}
@@ -57,7 +57,7 @@
         </div>
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Nombre de quien recibe</mat-label>
+                <mat-label>Nombre de quien recibe *</mat-label>
                 <mat-select formControlName="receptor" [(ngModel)]="selectReceptor" name="receptor">
                     <mat-option *ngFor="let receptor of arrReceptores" [value]="receptor.id">
                         {{receptor.nombre}}
@@ -69,7 +69,7 @@
         </div>
 
         <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-            <mat-label>Fecha de recepción</mat-label>
+            <mat-label>Fecha de recepción *</mat-label>
             <input matInput [matDatepicker]="picker2" formControlName="fechaRecepcion" [max]="maxDate">
             <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
             <mat-datepicker #picker2></mat-datepicker>
@@ -79,7 +79,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Estado del acta de sesión</mat-label>
+                <mat-label>Estado del acta de sesión *</mat-label>
                 <mat-select formControlName="estatus" [(ngModel)]="selectEstado" name="estado">
                     <mat-option *ngFor="let estado of estados" [value]="estado.descripcion">
                         {{estado.descripcion}}

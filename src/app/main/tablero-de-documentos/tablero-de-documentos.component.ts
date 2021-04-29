@@ -368,5 +368,8 @@ export class TableroDeDocumentosComponent implements OnInit {
         }
     }
 
+    onFooterPage(event): void{
+        console.log(event);
+    }
    
 }

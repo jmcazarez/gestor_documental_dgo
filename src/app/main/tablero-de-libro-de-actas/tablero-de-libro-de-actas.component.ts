@@ -62,11 +62,13 @@ export class TableroDeLibroDeActasComponent implements OnInit {
             // Si tiene permisos para consultar
             if (this.optConsultar) {
                 if (resp) {
+                    console.log(resp);
                     for (const ini of resp) {
                         let descripcionLegislatura = '';
                         if (ini.legislatura) {
                             descripcionLegislatura = ini.legislatura.cLegislatura;
                         }
+                       
                         actasTemp.push({
                             id: ini.id,
                             fechaDeInicio: ini.fechaDeInicio + 'T16:00:00.000Z',

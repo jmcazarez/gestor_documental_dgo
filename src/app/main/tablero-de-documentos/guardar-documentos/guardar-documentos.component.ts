@@ -286,7 +286,8 @@ export class GuardarDocumentosComponent implements OnInit {
                             this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
                             this.spinner.hide();
                             Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
-
+                 
+                            this.cerrar(this.documentos);
                         } else {
                             this.spinner.hide();
                             Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');

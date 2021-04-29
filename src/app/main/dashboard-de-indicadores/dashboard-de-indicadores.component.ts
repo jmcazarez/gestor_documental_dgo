@@ -605,6 +605,15 @@ export class DashboardDeIndicadoresComponent implements OnInit {
 
     }
 
+    borrarFiltrosFechas(): void {
+        // Limpiamos inputs
+
+        this.fechaIni = '';
+        this.fechaFin = '';
+ 
+
+    }
+
 
     changeTipoDocumento(event: any): void {
 

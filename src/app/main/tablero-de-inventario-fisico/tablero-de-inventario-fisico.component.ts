@@ -188,7 +188,7 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
                     !val ||
                     d.cLegislatura.toLowerCase().indexOf(val) !== -1 ||
                     !val ||
-                    d.cTipoExpediente.toLowerCase().indexOf(val) !== -1 ||
+                    d.cDescripcionTipoExpediente.toLowerCase().indexOf(val) !== -1 ||
                     !val ||
                     d.cIdExpedienteIni.toLowerCase().indexOf(val) !== -1 ||
                     !val ||

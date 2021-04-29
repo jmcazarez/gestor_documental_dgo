@@ -9,7 +9,7 @@
         <div class="h2 mb-24">Registro de recepción de expediente.</div>
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
-            <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+            <mat-form-field appearance="outline" *ngIf="recepcion.id" fxFlex="1 0 auto" class="pl-4">
                 <mat-label>Id. Expediente</mat-label>
                 <input matInput formControlName="idExpediente" >
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          

@@ -16,6 +16,7 @@ import { HistorialCargaService } from 'services/historial-carga.service';
 import { HistorialCargaEncabezadoModel } from 'models/historial-carga-encabezado.models';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UsuarioLoginService } from 'services/usuario-login.service';
+import { LegislaturaService } from 'services/legislaturas.service';
 
 @Component({
     selector: 'app-tablero-de-carga-masiva',
@@ -60,6 +61,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
     selectedHistorial: '';
     selectedDescarga: false;
     arrEntes: [];
+    arrLegislaturas: [];
     arrHistorialCarga: any[];
     arrMetacatalogos: any;
     url: string;
@@ -81,6 +83,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
         private exportExcel: ExportService,
         private historialCarga: HistorialCargaService,
         private usuarioLoginService: UsuarioLoginService,
+        private legislaturaService: LegislaturaService,
         private sanitizer: DomSanitizer) {
         this.url = 'tablero-de-carga-masiva';
         // this.url = this.router.routerState.snapshot.url.replace('/', '').replace('%C3%BA', 'ú');
@@ -92,6 +95,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
         this.usuario = await this.usuarioLoginService.obtenerUsuario();
 
         this.selectedHistorial = '';
+        this.obtenerLegislaturas();
         this.obtenerEntes();
         this.obtenerTiposExpedientes();
         this.obtenerHistorialCarga();
@@ -121,6 +125,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
             fechaModificacion: [''],
             tipoDocumentos: [''],
             entes: [''],
+            legislatura: [''],
             expediente: [''],
             folioExpediente: [''],
             historial: ['']
@@ -181,6 +186,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                 this.documentosTemporal.push({
                                     'Documento': element.documento.id,
                                     'Nombre del documento': element.documento.name,
+                                    'Legislatura': '',
                                     'Tipo de documento': '',
                                     'Páginas': '',
                                     'Fecha de creación': '',
@@ -377,7 +383,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                                             this.datePipe.transform(
                                                                 x.text,
                                                                 "yyyy-MM-dd"
-                                                            ) ;
+                                                            );
                                                     }
                                                 } else {
                                                     if (x.text) {
@@ -387,7 +393,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                             } else {
                                                 if (x.cTipoMetacatalogo === 'Fecha') {
                                                     if (x.text) {
-                                                        meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd') ;
+                                                        meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
                                                     }
                                                 } else if (x.cTipoMetacatalogo === 'Sí o no') {
                                                     if (x.text) { meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': Sí'; } else {
@@ -596,6 +602,23 @@ export class TableroDeCargaMasivaComponent implements OnInit {
         });
     }
 
+    async obtenerLegislaturas(): Promise<void> {
+        // Obtenemos secretarias
+
+        await this.legislaturaService.obtenerLegislatura().subscribe(
+            (resp: any) => {
+                this.arrLegislaturas = resp;
+            },
+            (err) => {
+                Swal.fire(
+                    "Error",
+                    "Ocurrió un error obtener las legislaturas." + err,
+                    "error"
+                );
+            }
+        );
+    }
+
     filter(): void {
         this.obtenerDocumentos();
     }
@@ -771,11 +794,10 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                         this.documentosTemporal.push({
                             'Documento': resultado.data[0].id,
                             'Nombre del documento': file.name,
+                            'Legislatura': '',
                             'Tipo de documento': '',
-                            'Tipo de información': '',
                             'Páginas': '',
                             'Fecha de creación': '',
-                            'Ente': '',
                             'Tipo de expediente': '',
                             'Folio de expediente': '',
                             'Estatus': '',
@@ -884,11 +906,34 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                 }
                             }
 
+                            if (row['Legislatura'] && row['Legislatura'].length > 0) {
+                                const encontro = this.arrLegislaturas.find((legislatura: { cLegislatura: string; }) =>
+                                    legislatura.cLegislatura === row['Legislatura']);
+                                if (encontro) {
+                                    this.documentos[x].idLegislatura = encontro['id'];
+                                    this.documentos[x].legislatura = encontro['id'];
+                                } else {
+                                    this.documentos[x].valido = false;
+                                    if (textError.length > 0) {
+                                        textError = 'La legislatura es obligatoria';
+                                    } else {
+                                        textError = textError + ', la legislatura es obligatoria';
+                                    }
+                                }
+                            } else {
+                                this.documentos[x].valido = false;
+                                if (textError.length > 0) {
+                                    textError = 'La legislatura es obligatoria';
+                                } else {
+                                    textError = textError + ', la legislatura es obligatoria';
+                                }
+                            }
+
                             if (row['Tipo de documento'] && row['Tipo de documento'].length > 0) {
 
                                 const encontro = this.menuService.tipoDocumentos.find((tipo: { cDescripcionTipoDocumento: string; }) =>
                                     tipo.cDescripcionTipoDocumento.trim() === row['Tipo de documento']);
-                                
+
                                 if (encontro) {
 
                                     if (encontro.Agregar === 'undefined') {
@@ -902,14 +947,14 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                         this.documentos[x].tipoDocumento = encontro.cDescripcionTipoDocumento;
                                         this.documentos[x].tipo_de_documento = encontro.id;
                                         this.arrMetacatalogos = this.menuService.tipoDocumentos.find(tipoDocumento => tipoDocumento.id === encontro.id).metacatalogos;
-                                        
+
                                         if (this.arrMetacatalogos[0]) {
-                                        
+
                                             if (this.arrMetacatalogos[0].bOligatorio) {
-                                            
+
                                                 if (
                                                     row["Meta_1"] ===
-                                                        undefined ||
+                                                    undefined ||
                                                     row["Meta_1"].length === 0
                                                 ) {
                                                     if (textError.length > 0) {
@@ -954,7 +999,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                             if (this.arrMetacatalogos[3].bOligatorio) {
                                                 if (
                                                     row["Meta_4"] ===
-                                                        undefined ||
+                                                    undefined ||
                                                     row["Meta_4"].length === 0
                                                 ) {
                                                     if (textError.length > 0) {
@@ -1142,8 +1187,8 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                                         ].text =
                                                             this.datePipe.transform(
                                                                 row[
-                                                                    "Meta_" +
-                                                                        metaRow
+                                                                "Meta_" +
+                                                                metaRow
                                                                 ],
                                                                 "yyyy-MM-dd"
                                                             ) +
@@ -1199,8 +1244,8 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                                     ].text =
                                                         this.datePipe.transform(
                                                             row[
-                                                                "Meta_" +
-                                                                    metaRow
+                                                            "Meta_" +
+                                                            metaRow
                                                             ],
                                                             "yyyy-MM-dd"
                                                         ) + "T06:00:00.000Z";
@@ -1245,7 +1290,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
 
                                                 if (i.cTipoMetacatalogo === 'Fecha') {
                                                     if (i.text) {
-                                                        meta = meta + i.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(i.text, 'yyyy-MM-dd')+
+                                                        meta = meta + i.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(i.text, 'yyyy-MM-dd') +
                                                             "T06:00:00.000Z";
                                                     }
                                                 } else {
@@ -1256,7 +1301,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                             } else {
                                                 if (i.cTipoMetacatalogo === 'Fecha') {
                                                     if (i.text) {
-                                                        meta = meta + ' , ' + i.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(i.text, 'yyyy-MM-dd')+
+                                                        meta = meta + ' , ' + i.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(i.text, 'yyyy-MM-dd') +
                                                             "T06:00:00.000Z";
                                                     }
                                                 } else if (i.cTipoMetacatalogo === 'Sí o no') {
@@ -1360,7 +1405,11 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                 }, (err: any) => {
                     console.log(err);
                     this.spinner.hide();
-                    Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(err.error), 'error');
+                    if (err.error.error) {
+                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(err.error.error), 'error');
+                    } else {
+                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(err.error), 'error');
+                    }
                 });
             }
         });

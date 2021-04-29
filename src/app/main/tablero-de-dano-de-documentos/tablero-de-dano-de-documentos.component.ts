@@ -70,8 +70,7 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
                                 dFechaDevolucionT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
                                 dFechaDocEntregadoT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
                                 cSolicitante: prestamos.cSolicitante,
-                                cTipoPrestamo: prestamos.cTipoPrestamo,
-                                cTipoExpediente: prestamos.cTipoExpediente,
+                                cTipoPrestamo: prestamos.cTipoPrestamo,                               
                                 cIdExpediente: prestamos.cIdExpediente,
                                  tHoraSolicitud: moment(prestamos.tHoraSolicitud, 'h:mm').format('HH:mm'),
                                  tHoraDevolucion: moment(prestamos.tHoraDevolucion, 'h:mm').format('HH:mm'),
@@ -109,7 +108,8 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
                 d.tHoraSolicitud.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.tHoraDevolucion.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.cIdExpediente.toLowerCase().indexOf(val) !== -1||
-                d.cTipoDanio.toLowerCase().indexOf(val) !== -1);
+                d.cTipoDanio.toLowerCase().indexOf(val) !== -1 ||
+                d.id.toLowerCase().indexOf(val) !== -1);
 
             this.prestamoDocumentos = temp;
         }
