@@ -40,18 +40,18 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Id. expediente(inicio) *</mat-label>
+                <mat-label>Folio de expediente(inicio) *</mat-label>
                 <input matInput formControlName="expedienteInicio">
-                <mat-error *ngIf="form.get('expedienteInicio').hasError('required')">El Id. expediente(inicio) es requerido</mat-error>
+                <mat-error *ngIf="form.get('expedienteInicio').hasError('required')">El Folio de expediente(inicio) es requerido</mat-error>
                 <mat-error *ngIf="form.get('expedienteInicio').hasError('minlength') || form.get('expedienteInicio').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3 y el máximo son 100 </mat-error>
 
             </mat-form-field>
         </div>
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Id. expediente(fin) *</mat-label>
+                <mat-label>Folio de expediente(fin) *</mat-label>
                 <input matInput formControlName="expedienteFin">
-                <mat-error *ngIf="form.get('expedienteFin').hasError('required')">El Id. expediente(fin) es requerido</mat-error>
+                <mat-error *ngIf="form.get('expedienteFin').hasError('required')">El Folio de expediente(fin) es requerido</mat-error>
                 <mat-error *ngIf="form.get('expedienteFin').hasError('minlength') || form.get('expedienteInicio').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3 y el máximo son 100 </mat-error>
             </mat-form-field>
         </div>

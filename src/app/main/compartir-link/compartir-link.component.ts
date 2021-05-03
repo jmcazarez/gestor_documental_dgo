@@ -77,8 +77,10 @@ export class CompartirLinkComponent implements OnInit {
                 console.log(err);
                 if (err.error.message) {
                     Swal.fire('Error', err.error.message, 'error');
+                    this.router.navigate(['login']);
                 } else {
                     Swal.fire('Error', err, 'error');
+                    this.router.navigate(['login']);
                 }
                 // this.router.navigate(['login']);
             });

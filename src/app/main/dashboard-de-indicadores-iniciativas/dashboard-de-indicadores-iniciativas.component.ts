@@ -775,8 +775,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     }
                 }
 
-                this.tablaAutorsMostrar = this.tablaAutors;
-
                 //Reporte
 
                 this.autorCompare = '';
@@ -898,7 +896,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         this.tablaAdicions.push({"valor": adicionsEqual[i].valor, "adicion": adicionsEqual[i].adicion});
                     }
                 }
-                
+
                 this.tablaAdicionsMostrar = this.tablaAdicions;
 
                 // reporte adicion 
@@ -978,6 +976,8 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         this.arrReporteAdicion.push([adicionObject[i].adicion, adicionObject[i].valor]);
                     }
                 }
+
+                this.tablaAutorsMostrar = this.tablaAutors;
                 
                 //console.log(this.tablaAdicions);
 
@@ -1139,9 +1139,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 this.tablaEstatusIniciativa.push({departamento: 'Centro de Investigación y Estudios Legislativos', valor: this.arrCreacionGraficaEstatusIniciativas[2]});
                 this.tablaEstatusIniciativa.push({departamento: 'Mesa directiva', valor: this.arrCreacionGraficaEstatusIniciativas[3]});
 
-                this.tablaEstatusIniciativaMostrar = this.tablaEstatusIniciativa;
-                this.tablaEstatusIniciativaInicialMostrar = this.tablaEstatusIniciativaInicial;
-
                 let estatusIniciativa = []
 
                 estatusIniciativa.push(reportAcumulado.filter((d) => d['estatus'] === 'Registrada').length);
@@ -1175,6 +1172,9 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         }
                     }
                 }
+
+                this.tablaEstatusIniciativaMostrar = this.tablaEstatusIniciativa;
+                this.tablaEstatusIniciativaInicialMostrar = this.tablaEstatusIniciativaInicial;
 
                 /************************/
                 /* Comisiones asignadas */

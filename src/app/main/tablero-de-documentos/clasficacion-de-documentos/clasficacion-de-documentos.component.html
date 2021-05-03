@@ -1,3 +1,4 @@
+<ngx-spinner></ngx-spinner>
 <mat-drawer-container class="example-container">
 
     <mat-drawer *ngIf="this.documento.documento.ext === '.pdf'" mode="side" opened position="start" [style.width]="'55%'">
@@ -268,7 +269,7 @@
 
                 <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
-                        <mat-label>Folio de expediente</mat-label>
+                        <mat-label>Folio de expediente *</mat-label>
                         <input matInput formControlName="folioExpediente" name="folioExpediente">
                         <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
                     </mat-form-field>

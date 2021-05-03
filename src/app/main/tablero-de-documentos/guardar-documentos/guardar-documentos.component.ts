@@ -186,11 +186,13 @@ export class GuardarDocumentosComponent implements OnInit {
             this.documentos.fechaCarga = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
 
             this.documentos.tipo_de_documento = this.selectTipoDocument;
+            console.log(this.documentos);
             let tipoDoc = this.arrTipoDocumentos.filter((tipo) => tipo.id === this.selectTipoDocument);
-            if (tipoDoc) {
+            if (tipoDoc.length > 0) {
+                console.log(tipoDoc);
                 this.documentos.visibilidade = tipoDoc[0]['visibilidade'];
             }
-
+        
             if (this.paginasInput.nativeElement.value > 0) {
                 this.documentos.paginas = this.paginasInput.nativeElement.value;
             }
@@ -301,6 +303,8 @@ export class GuardarDocumentosComponent implements OnInit {
             }
 
         } catch (err) {
+            this.spinner.hide();
+             console.log(this.documentos);
             Swal.fire('Error', 'Ocurrió un error al guardar .' + err, 'error');
         }
 

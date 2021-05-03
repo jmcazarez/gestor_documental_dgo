@@ -21,6 +21,7 @@ import { LinkPublicoComponent } from "./link-publico/link-publico.component";
 import { LegislaturaService } from "services/legislaturas.service";
 import { IniciativasService } from "services/iniciativas.service";
 import * as moment from "moment";
+import { NgxSpinnerService } from "ngx-spinner";
 export interface Metacatalogos {
     name: string;
 }
@@ -88,6 +89,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     constructor(
         private dialogRef: MatDialogRef<TableroDeDocumentosComponent>,
         private formBuilder: FormBuilder,
+        private spinner: NgxSpinnerService,
         private documentoService: DocumentosService,
         private datePipe: DatePipe,
         private menuService: MenuService,
@@ -104,6 +106,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
+        this.spinner.show();
         this.documento.usuario = this.menuService.usuario;
         this.version = this.documento.version;
         let cFolioExpediente = "";
@@ -157,11 +160,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         this.selectedDepartamento = "";
         this.selectedInformacion = "";
         this.selectedLegislaturas = "";
-        if (this.documento.disabled === true) {
-            this.descargarDocumentoClasificacion();
-        } else {
-              this.descargarDocumento();
-        }
+
         this.arrInformacion = this.menuService.tipoInformacion;
 
         this.documento.version = parseFloat(this.documento.version).toFixed(1);
@@ -362,6 +361,12 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
               }
           }
           */
+        if (this.documento.disabled === true) {
+            await this.descargarDocumentoClasificacion();
+        } else {
+            await this.descargarDocumento();
+        }
+        this.spinner.hide();
     }
 
     obtenerTiposExpedientes(): void {
@@ -408,60 +413,76 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         );
     }
 
-    descargarDocumento(): void {
-        // Descargamos el documento
-        this.documentoService
-            .dowloadDocument(
-                this.documento.documento.hash + this.documento.documento.ext,
-                this.documento.id,
-                this.menuService.usuario,
-                this.documento.cNombreDocumento
-            )
-            .subscribe(
-                (resp: any) => {
-                    const source =
-                        "data:application/octet-stream;base64," + resp.data;
-                    this.pdfSrc = source;
-                },
-                (err) => {
-                    if (err.error.data) {
-                        Swal.fire(
-                            "Error",
-                            "Ocurrió un error al descargar el documento." +
-                                err.error.data,
-                            "error"
-                        );
-                    }
-                }
-            );
+    async descargarDocumento(): Promise<string> {
+        return new Promise(async (resolve) => {
+            {
+                // Descargamos el documento
+                await this.documentoService
+                    .dowloadDocument(
+                        this.documento.documento.hash +
+                            this.documento.documento.ext,
+                        this.documento.id,
+                        this.menuService.usuario,
+                        this.documento.cNombreDocumento
+                    )
+                    .subscribe(
+                        (resp: any) => {
+                            const source =
+                                "data:application/octet-stream;base64," +
+                                resp.data;
+                            this.pdfSrc = source;
+                            resolve("1");
+                        },
+                        (err) => {
+                            if (err.error.data) {
+                                Swal.fire(
+                                    "Error",
+                                    "Ocurrió un error al descargar el documento." +
+                                        err.error.data,
+                                    "error"
+                                );
+                                resolve("0");
+                            }
+                        }
+                    );
+            }
+        });
     }
 
-    descargarDocumentoClasificacion(): void {
-        // Descargamos el documento
-        this.documentoService
-            .dowloadDocumentClasificacion(
-                this.documento.documento.hash + this.documento.documento.ext,
-                this.documento.id,
-                this.menuService.usuario,
-                this.documento.cNombreDocumento
-            )
-            .subscribe(
-                (resp: any) => {
-                    const source =
-                        "data:application/octet-stream;base64," + resp.data;
-                    this.pdfSrc = source;
-                },
-                (err) => {
-                    if (err.error.data) {
-                        Swal.fire(
-                            "Error",
-                            "Ocurrió un error al descargar el documento." +
-                                err.error.data,
-                            "error"
-                        );
-                    }
-                }
-            );
+    async descargarDocumentoClasificacion(): Promise<string> {
+        return new Promise(async (resolve) => {
+            {
+                // Descargamos el documento
+                await this.documentoService
+                    .dowloadDocumentClasificacion(
+                        this.documento.documento.hash +
+                            this.documento.documento.ext,
+                        this.documento.id,
+                        this.menuService.usuario,
+                        this.documento.cNombreDocumento
+                    )
+                    .subscribe(
+                        (resp: any) => {
+                            const source =
+                                "data:application/octet-stream;base64," +
+                                resp.data;
+                            this.pdfSrc = source;
+                            resolve("1");
+                        },
+                        (err) => {
+                            if (err.error.data) {
+                                Swal.fire(
+                                    "Error",
+                                    "Ocurrió un error al descargar el documento." +
+                                        err.error.data,
+                                    "error"
+                                );
+                                resolve("0");
+                            }
+                        }
+                    );
+            }
+        });
     }
     convertFile(buf: any): string {
         // Convertimos el resultado en binstring
@@ -590,7 +611,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         // this.documento.direccione = this.selectedDireccion;
         // this.documento.departamento = this.selectedDepartamento;
         // this.documento.visibilidade = this.selectedInformacion;
-        console.log(this.documento);
+        this.spinner.show();
         this.documento.legislatura = this.selectedLegislaturas;
         this.documento.folioExpediente = this.form.get("folioExpediente").value;
         if (this.entroVersionamiento) {
@@ -615,6 +636,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
         if (this.documento.id) {
             if (this.documento.disabled) {
+                this.spinner.hide();
                 this.cerrar(true);
             } else {
                 this.documento.metacatalogos = this.arrMetacatalogos;
@@ -634,8 +656,10 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                                     "Clasificación guardada correctamente.",
                                     "success"
                                 );
+                                this.spinner.hide();
                                 this.cerrar(true);
                             } else {
+                                this.spinner.hide();
                                 Swal.fire(
                                     "Error",
                                     "Ocurrió un error al guardar. " +
@@ -645,6 +669,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                             }
                         },
                         (err) => {
+                            this.spinner.hide();
                             console.log(err);
                             this.cerrar(false);
                             Swal.fire(

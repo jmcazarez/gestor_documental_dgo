@@ -180,7 +180,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
             d.dFechaDevolucionT.toLowerCase().indexOf(val) !== -1 || !val || 
             d.cSolicitante.toLowerCase().indexOf(val) !== -1 || !val || 
             d.cTipoPrestamo.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.cTipoExpediente.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.cDescripcionTipoExpediente.toLowerCase().indexOf(val) !== -1 || !val || 
             d.tHoraSolicitud.toLowerCase().indexOf(val) !== -1 || !val || 
             d.tHoraDevolucion.toLowerCase().indexOf(val) !== -1 || !val || 
             d.cEstatus.toLowerCase().indexOf(val) !== -1 || !val || 

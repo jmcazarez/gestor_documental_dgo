@@ -20,6 +20,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatChipsModule } from '@angular/material/chips';
 import {MatMenuModule} from '@angular/material/menu';
+import { NgxSpinnerModule } from "ngx-spinner";
 const routes: Routes = [
     {
         path: 'clasificacion-documentos',
@@ -41,6 +42,7 @@ const routes: Routes = [
         MatStepperModule,
         FuseSharedModule,
         MatDialogModule,
+        NgxSpinnerModule,
         MatCheckboxModule,
              NgxDatatableModule.forRoot({
             messages: {

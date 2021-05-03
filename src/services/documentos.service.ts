@@ -140,13 +140,19 @@ export class DocumentosService {
     }
 
     borrarDocumentos(documento: DocumentosModel): any {
+        this.TOKEN = localStorage.getItem("token");
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
         documento.documento = "";
         documento.fechaCarga = documento.fechaCarga;
         documento.fechaCreacion = documento.fechaCreacion;
         return this.http.put(
             this.baseUrl + this.urlDocumentosBorrar + "/" + documento.id,
             documento,
-            this.httpOptions
+            httpOptions
         );
     }
 

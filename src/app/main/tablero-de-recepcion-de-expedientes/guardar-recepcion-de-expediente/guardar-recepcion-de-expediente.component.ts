@@ -92,7 +92,7 @@ export class GuardarRecepcionDeExpedienteComponent implements OnInit {
         // Form reativo
         this.form = this.formBuilder.group({
 
-            idExpediente: [{ value: this.recepcion.idExpediente, disabled: false }, Validators.required],
+            idExpediente: [{ value: this.recepcion.idExpediente, disabled: true }, Validators.required],
             legislatura: [{ value: this.recepcion.legislatura, disabled: false }, Validators.required],
             fechaRecepcion: [{ value: this.recepcion.fechaRecepcion, disabled: false }, Validators.required],
             emisor: [{ value: this.recepcion.emisor, disabled: false }, Validators.required],
