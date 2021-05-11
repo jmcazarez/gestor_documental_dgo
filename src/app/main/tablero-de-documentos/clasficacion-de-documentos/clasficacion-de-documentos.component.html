@@ -266,8 +266,8 @@
                     </mat-form-field>
                 </div>
 
-
-                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+               
+                <div fxLayout="row" *ngIf="this.descriptionTipoDocumento !== 'Acta'" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
                         <mat-label>Folio de expediente *</mat-label>
                         <input matInput formControlName="folioExpediente" name="folioExpediente">
@@ -308,7 +308,7 @@
 
                                 </mat-form-field>
                             </div>
-                            <div fxLayout="row" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Fecha'" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                            <!-- <div fxLayout="row" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Fecha'" fxLayoutAlign="start center" fxFlex="1 0 auto">
                                 <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
                                     <mat-label>{{arrMetacatalogos[in].cDescripcionMetacatalogo}}</mat-label>
                                     <input [disabled]="this.documento.iniciativas" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Fecha'" matInput [(ngModel)]="meta.text" name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}" [matDatepicker]="picker2" [required]="arrMetacatalogos[in].bOligatorio"
@@ -316,7 +316,7 @@
                                     <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                                     <mat-datepicker #picker2></mat-datepicker>
                                 </mat-form-field>
-                            </div>
+                            </div> -->
                             <div fxLayout="row" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Sí o no'" fxLayoutAlign="center" fxFlex="30">
                                 <section class="example-section">
                                     <mat-slide-toggle *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Sí o no'" [(ngModel)]="meta.text" name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}" class="example-margin" [disabled]="this.documento.disabled">

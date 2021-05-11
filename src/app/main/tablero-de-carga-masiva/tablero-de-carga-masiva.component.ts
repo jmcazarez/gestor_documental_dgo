@@ -64,6 +64,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
     arrLegislaturas: [];
     arrHistorialCarga: any[];
     arrMetacatalogos: any;
+    arrMetacatalogosFiltro: any;
     url: string;
     files = [];
     fileName: string;
@@ -147,14 +148,16 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                     const tempMetacatalogos = this.arrTipoDocumentos.filter(
                         (d) =>
                             d.id.toLowerCase().indexOf(val.toLowerCase()) !==
-                                -1 || !val
+                            -1 || !val
                     );
                     if (tempMetacatalogos[0].metacatalogos) {
                         this.arrMetacatalogos =
                             tempMetacatalogos[0].metacatalogos;
+
                         for (const i in this.arrMetacatalogos) {
                             this.arrMetacatalogos[i].text = "";
                         }
+                        this.arrMetacatalogosFiltro = this.arrMetacatalogos;
                     }
                     // tslint:disable-next-line: forin
                 }
@@ -643,7 +646,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                     ) !== -1 || !this.selectTipoDocumento
                         );
                         this.documentos = temp;
-                        for (const i of this.arrMetacatalogos) {
+                        for (const i of this.arrMetacatalogosFiltro) {
                             if (i["cTipoMetacatalogo"] === "Fecha") {
                                 let fecha: string;
                                 fecha = this.datePipe.transform(
@@ -655,8 +658,8 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                         (d) =>
                                             d.clasificacion.indexOf(
                                                 i["cDescripcionMetacatalogo"] +
-                                                    ": " +
-                                                    fecha
+                                                ": " +
+                                                fecha
                                             ) !== -1 || !fecha
                                     );
                                     this.documentos = temp;
@@ -668,8 +671,8 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                         (d) =>
                                             d.clasificacion.indexOf(
                                                 i["cDescripcionMetacatalogo"] +
-                                                    ": " +
-                                                    i["text"]
+                                                ": " +
+                                                i["text"]
                                             ) !== -1 || !i["text"]
                                     );
                                     this.documentos = temp;
@@ -680,8 +683,8 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                         (d) =>
                                             d.clasificacion.indexOf(
                                                 i["cDescripcionMetacatalogo"] +
-                                                    ": " +
-                                                    i["text"]
+                                                ": " +
+                                                i["text"]
                                             ) !== -1 || !i["text"]
                                     );
                                     this.documentos = temp;
@@ -771,7 +774,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                             Swal.fire(
                                 "Error",
                                 "Ocurrió un error al descargar documento." +
-                                    err.error,
+                                err.error,
                                 "error"
                             );
                         }
@@ -822,7 +825,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                     Swal.fire(
                         "Error",
                         "Ocurrió un error al  obtener el historial de cargas." +
-                            err.error,
+                        err.error,
                         "error"
                     );
                 }
@@ -834,7 +837,9 @@ export class TableroDeCargaMasivaComponent implements OnInit {
 
         await this.legislaturaService.obtenerLegislatura().subscribe(
             (resp: any) => {
-                this.arrLegislaturas = resp;
+                this.arrLegislaturas =  resp.filter(
+                (item) => item["bActivo"] === true
+            );
             },
             (err) => {
                 Swal.fire(
@@ -887,7 +892,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                     d.informacion
                         .toLowerCase()
                         .indexOf(this.selectedInformacion.toLowerCase()) !==
-                        -1 || !this.selectedInformacion
+                    -1 || !this.selectedInformacion
             );
             this.documentos = temp;
         }
@@ -938,7 +943,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                     d.tipo_de_documento
                         .toLowerCase()
                         .indexOf(this.selectTipoDocumento.toLowerCase()) !==
-                        -1 || !this.selectTipoDocumento
+                    -1 || !this.selectTipoDocumento
             );
             this.documentos = temp;
             for (const i of this.arrMetacatalogos) {
@@ -961,8 +966,8 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                             (d) =>
                                 d.clasificacion.indexOf(
                                     i["cDescripcionMetacatalogo"] +
-                                        ": " +
-                                        i["text"]
+                                    ": " +
+                                    i["text"]
                                 ) !== -1 || !i["text"]
                         );
                         this.documentos = temp;
@@ -973,8 +978,8 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                             (d) =>
                                 d.clasificacion.indexOf(
                                     i["cDescripcionMetacatalogo"] +
-                                        ": " +
-                                        i["text"]
+                                    ": " +
+                                    i["text"]
                                 ) !== -1 || !i["text"]
                         );
                         this.documentos = temp;
@@ -1052,7 +1057,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                             Swal.fire(
                                 "Error",
                                 "Ocurrió un error al guardar el historial de cargas." +
-                                    err.error.error,
+                                err.error.error,
                                 "error"
                             );
                         }
@@ -1190,6 +1195,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
         const reader = new FileReader();
         const file = ev.target.files[0];
         const excelInput = this.excelInput.nativeElement;
+        let arrExpedienteTemp = [];
         reader.onload = (event) => {
             const data = reader.result;
             this.validarGuardado = true;
@@ -1305,7 +1311,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                             ) {
                                                 if (
                                                     row["Meta_1"] ===
-                                                        undefined ||
+                                                    undefined ||
                                                     row["Meta_1"].length === 0
                                                 ) {
                                                     if (textError.length > 0) {
@@ -1333,7 +1339,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                             ) {
                                                 if (
                                                     row["Meta_2"] ===
-                                                        undefined ||
+                                                    undefined ||
                                                     row["Meta_2"].length === 0
                                                 ) {
                                                     if (textError.length > 0) {
@@ -1361,7 +1367,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                             ) {
                                                 if (
                                                     row["Meta_3"] ===
-                                                        undefined ||
+                                                    undefined ||
                                                     row["Meta_3"].length === 0
                                                 ) {
                                                     if (textError.length > 0) {
@@ -1389,7 +1395,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                             ) {
                                                 if (
                                                     row["Meta_4"] ===
-                                                        undefined ||
+                                                    undefined ||
                                                     row["Meta_4"].length === 0
                                                 ) {
                                                     if (textError.length > 0) {
@@ -1417,7 +1423,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                             ) {
                                                 if (
                                                     row["Meta_5"] ===
-                                                        undefined ||
+                                                    undefined ||
                                                     row["Meta_5"].length === 0
                                                 ) {
                                                     if (textError.length > 0) {
@@ -1535,7 +1541,10 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                             }
 
                             if (new Date(row["Fecha de creación"])) {
-                                console.log("err4");
+                                console.log(this.datePipe.transform(
+                                    row["Fecha de creación"],
+                                    "yyyy-MM-dd"
+                                ));
                                 this.documentos[x].fechaCreacion =
                                     this.datePipe.transform(
                                         row["Fecha de creación"],
@@ -1557,6 +1566,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                 row["Tipo de expediente"] &&
                                 row["Tipo de expediente"].length > 0
                             ) {
+                                console.log(this.arrExpediente);
                                 const encontro = this.arrExpediente.find(
                                     (tipo: {
                                         cDescripcionTipoExpediente: string;
@@ -1566,12 +1576,27 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                 );
 
                                 if (encontro) {
-                                    this.documentos[x].tipo_de_expediente =
-                                        encontro.id;
-                                    this.documentos[x].expediente =
-                                        encontro.cDescripcionTipoExpediente;
-                                    this.documentos[x].idExpediente =
-                                        encontro.id;
+                                    arrExpedienteTemp = this.arrExpediente.filter((d) => d.cDescripcionTipoExpediente.toLowerCase().indexOf(row["Tipo de expediente"].toLowerCase()) !== -1);
+                                    console.log(arrExpedienteTemp);
+                                    console.log(arrExpedienteTemp.filter((d) => d.descripcionTiposDocumentos.toLowerCase().indexOf(row["Tipo de documento"].toLowerCase()) !== -1));
+                                    if (arrExpedienteTemp.filter((d) => d.descripcionTiposDocumentos.toLowerCase().indexOf(row["Tipo de documento"].toLowerCase()) !== -1).length > 0) {
+                                        this.documentos[x].tipo_de_expediente =
+                                            encontro.id;
+                                        this.documentos[x].expediente =
+                                            encontro.cDescripcionTipoExpediente;
+                                        this.documentos[x].idExpediente =
+                                            encontro.id;
+                                    } else {
+                                        this.documentos[x].valido = false;
+                                        if (textError.length > 0) {
+                                            textError =
+                                                "El tipo de documento no corresponde al tipo de expediente.";
+                                        } else {
+                                            textError =
+                                                textError +
+                                                ", el tipo de documento no corresponde al tipo de expediente";
+                                        }
+                                    }
                                 } else {
                                     this.documentos[x].valido = false;
                                     if (textError.length > 0) {
@@ -1594,12 +1619,31 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                         ", el tipo de expediente es obligatorio";
                                 }
                             }
-                            if (String(row["Folio de expediente"]).length > 0) {
-                                this.documentos[x].folioExpediente = String(
-                                    row["Folio de expediente"]
-                                );
+                            if (row["Folio de expediente"]) {
+                                console.log(row["Folio de expediente"]);
+                                // Se agrego por requerimiento de hilda cuando un documento es acta no lleva folio de expediente
+                                if (row["Tipo de documento"] === 'Acta') {
+                                    this.documentos[x].folioExpediente = "";
+                                } else {
+                                    this.documentos[x].folioExpediente = String(
+                                        row["Folio de expediente"]
+                                    );
+                                }
                             } else {
-                                this.documentos[x].folioExpediente = "0";
+                                if (row["Tipo de documento"] === 'Acta') {
+                                    this.documentos[x].folioExpediente = "";
+                                } else {
+                                    this.documentos[x].valido = false;
+                                    if (textError.length > 0) {
+                                        textError =
+                                            "El folio de expediente es obligatorio";
+                                    } else {
+                                        textError =
+                                            textError +
+                                            ", el folio de expediente es obligatorio";
+                                    }
+                                }
+
                             }
 
                             if (Number(row["Estatus"])) {
@@ -1615,7 +1659,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                             }
 
                             if (this.arrMetacatalogos.length > 0) {
-                                this.arrMetacatalogos.forEach((meta) => {});
+                                this.arrMetacatalogos.forEach((meta) => { });
 
                                 let num = 0;
                                 let metaRow = 1;
@@ -1632,28 +1676,29 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                                 String(row["Meta_" + metaRow])
                                                     .length > 0
                                             ) {
+
                                                 if (
                                                     this.arrMetacatalogos[num]
                                                         .cTipoMetacatalogo ===
                                                     "Fecha"
                                                 ) {
-                                                    console.log("fecha");
+
                                                     if (
                                                         new Date(
                                                             row[
-                                                                "Meta_" +
-                                                                    metaRow
+                                                            "Meta_" +
+                                                            metaRow
                                                             ]
                                                         )
                                                     ) {
-                                                        console.log("err5");
+
                                                         this.arrMetacatalogos[
                                                             num
                                                         ].text =
                                                             this.datePipe.transform(
                                                                 row[
-                                                                    "Meta_" +
-                                                                        metaRow
+                                                                "Meta_" +
+                                                                metaRow
                                                                 ],
                                                                 "yyyy-MM-dd"
                                                             ) +
@@ -1682,16 +1727,16 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                                 } else if (
                                                     this.arrMetacatalogos[num]
                                                         .cTipoMetacatalogo ===
-                                                        "Sí o no" ||
+                                                    "Sí o no" ||
                                                     this.arrMetacatalogos[num]
                                                         .cTipoMetacatalogo ===
-                                                        "Texto"
+                                                    "Texto"
                                                 ) {
                                                     if (
                                                         String(
                                                             row[
-                                                                "Meta_" +
-                                                                    metaRow
+                                                            "Meta_" +
+                                                            metaRow
                                                             ]
                                                         )
                                                     ) {
@@ -1699,8 +1744,8 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                                             num
                                                         ].text = String(
                                                             row[
-                                                                "Meta_" +
-                                                                    metaRow
+                                                            "Meta_" +
+                                                            metaRow
                                                             ]
                                                         );
                                                     } else {
@@ -1732,8 +1777,8 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                                     if (
                                                         Number(
                                                             row[
-                                                                "Meta_" +
-                                                                    metaRow
+                                                            "Meta_" +
+                                                            metaRow
                                                             ]
                                                         )
                                                     ) {
@@ -1741,8 +1786,8 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                                             num
                                                         ].text = Number(
                                                             row[
-                                                                "Meta_" +
-                                                                    metaRow
+                                                            "Meta_" +
+                                                            metaRow
                                                             ]
                                                         );
                                                     } else {
@@ -1794,6 +1839,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                                 }
                                             }
                                         } else {
+
                                             if (
                                                 this.arrMetacatalogos[num]
                                                     .cTipoMetacatalogo ===
@@ -1804,18 +1850,28 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                                         row["Meta_" + metaRow]
                                                     )
                                                 ) {
-                                                    console.log("err1");
-                                                    this.arrMetacatalogos[
-                                                        num
-                                                    ].text =
-                                                        this.datePipe.transform(
-                                                            row[
+
+
+                                                    if (row["Meta_" + metaRow]) {
+
+                                                        this.arrMetacatalogos[
+                                                            num
+                                                        ].text =
+                                                            this.datePipe.transform(
+                                                                row[
                                                                 "Meta_" +
-                                                                    metaRow
-                                                            ],
-                                                            "yyyy-MM-dd"
-                                                        ) + "T06:00:00.000Z";
+                                                                metaRow
+                                                                ],
+                                                                "yyyy-MM-dd"
+                                                            ) + "T06:00:00.000Z";
+                                                    } else {
+
+                                                        this.arrMetacatalogos[
+                                                            num
+                                                        ].text = "";
+                                                    }
                                                 } else {
+
                                                     this.arrMetacatalogos[
                                                         num
                                                     ].text = "";
@@ -1823,22 +1879,25 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                             } else if (
                                                 this.arrMetacatalogos[num]
                                                     .cTipoMetacatalogo ===
-                                                    "Sí o no" &&
+                                                "Sí o no" ||
                                                 this.arrMetacatalogos[num]
                                                     .cTipoMetacatalogo ===
-                                                    "Texto"
+                                                "Texto"
                                             ) {
+
                                                 if (
                                                     String(
                                                         row["Meta_" + metaRow]
                                                     )
                                                 ) {
+
                                                     this.arrMetacatalogos[
                                                         num
                                                     ].text = String(
                                                         row["Meta_" + metaRow]
                                                     );
                                                 } else {
+
                                                     this.arrMetacatalogos[
                                                         num
                                                     ].text = "";
@@ -1894,25 +1953,32 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                                     i.cTipoMetacatalogo ===
                                                     "Fecha"
                                                 ) {
-                                                    if (i.text) {
-                                                        console.log("err2");
-                                                        meta =
-                                                            meta +
-                                                            i.cDescripcionMetacatalogo +
-                                                            ": " +
-                                                            this.datePipe.transform(
-                                                                i.text,
-                                                                "yyyy-MM-dd"
-                                                            ) +
-                                                            "T06:00:00.000Z";
+                                                    if (
+                                                        i.text
+                                                    ) {
+
+                                                        if (new Date(i.text)) {
+
+                                                            meta =
+                                                                meta +
+                                                                i.cDescripcionMetacatalogo +
+                                                                ": " +
+                                                                this.datePipe.transform(
+                                                                    i.text,
+                                                                    "yyyy-MM-dd"
+                                                                ) +
+                                                                "T06:00:00.000Z";
+                                                        }
                                                     }
                                                 } else {
                                                     if (i.text) {
+
                                                         meta =
                                                             meta +
                                                             i.cDescripcionMetacatalogo +
                                                             ": " +
                                                             i.text;
+
                                                     }
                                                 }
                                             } else {
@@ -1920,9 +1986,9 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                                     i.cTipoMetacatalogo ===
                                                     "Fecha"
                                                 ) {
-                                                    if (i.bOligatorio) {
-                                                        if (i.text) {
-                                                            console.log("err3");
+                                                    if (i.text) {
+                                                        if (new Date(i.text)) {
+
                                                             meta =
                                                                 meta +
                                                                 " , " +
@@ -2011,13 +2077,13 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                     row.idDetalle
                                 )
                                 .subscribe(
-                                    (resp: any) => {},
+                                    (resp: any) => { },
                                     (err) => {
                                         this.spinner.hide();
                                         Swal.fire(
                                             "Error",
                                             "Ocurrió un error al guardar el historial de cargas detalle." +
-                                                err.error,
+                                            err.error,
                                             "error"
                                         );
                                     }
@@ -2050,9 +2116,9 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                                 Swal.fire(
                                                     "Error",
                                                     "Ocurrió un error al guardar el historial de cargas." +
-                                                        JSON.stringify(
-                                                            err.error
-                                                        ),
+                                                    JSON.stringify(
+                                                        err.error
+                                                    ),
                                                     "error"
                                                 );
                                             }
@@ -2077,14 +2143,14 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                             Swal.fire(
                                 "Error",
                                 "Ocurrió un error al guardar. " +
-                                    JSON.stringify(err.error.error),
+                                JSON.stringify(err.error.error),
                                 "error"
                             );
                         } else {
                             Swal.fire(
                                 "Error",
                                 "Ocurrió un error al guardar. " +
-                                    JSON.stringify(err.error),
+                                JSON.stringify(err.error),
                                 "error"
                             );
                         }
@@ -2114,7 +2180,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
         this.selectedEntes = "";
         this.selectedExpediente = "";
         this.selectedFolioExpediente = "";
-        this.arrMetacatalogos = [];
+        this.arrMetacatalogosFiltro = [];
     }
 
     selectAll(selected: boolean): void {
@@ -2154,7 +2220,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                             Swal.fire(
                                 "Error",
                                 "Ocurrió un error al eliminar el historial de carga." +
-                                    err.error,
+                                err.error,
                                 "error"
                             );
                         }

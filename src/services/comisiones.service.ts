@@ -30,23 +30,52 @@ export class ComisionesService {
     }
 
     obtenerComisiones(): any {
-        return this.http.get(this.baseUrl + this.urlComisiones, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlComisiones, httpOptions);
     }
 
     obtenerTipoComisiones(): any {
-        return this.http.get(this.baseUrl + this.urlTipoComisiones, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlTipoComisiones,httpOptions);
     }
 
     actualizarComision(comision: ComisionesModel): any {
-        return this.http.put(this.baseUrl + this.urlComisiones + '/' + comision.id, comision, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlComisiones + '/' + comision.id, comision, httpOptions);
     }
 
     guardarComision(comision: ComisionesModel): any {
-        return this.http.post(this.baseUrl + this.urlComisiones, comision, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlComisiones, comision, httpOptions);
     }
 
     eliminarComision(id: string): any {
-
-        return this.http.delete(this.baseUrl + this.urlComisiones + '/' + id, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlComisiones + '/' + id, httpOptions);
     }
 }

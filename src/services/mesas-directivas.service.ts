@@ -29,18 +29,42 @@ export class MesasDirectivasService {
     }
 
     obtenerMesas(): any {
-        return this.http.get(this.baseUrl + this.urlMesasDirectivas, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlMesasDirectivas, httpOptions);
     }
 
     actualizarMesa(mesas: MesasDirectivasModel): any {
-        return this.http.put(this.baseUrl + this.urlMesasDirectivas + '/' + mesas.id, mesas, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlMesasDirectivas + '/' + mesas.id, mesas, httpOptions);
     }
 
     guardarMesa(mesas: MesasDirectivasModel): any {
-        return this.http.post(this.baseUrl + this.urlMesasDirectivas, mesas, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlMesasDirectivas, mesas,httpOptions);
     }
 
     eliminarMesa(ruta: string): any {
-        return this.http.delete(this.baseUrl + this.urlMesasDirectivas + '/' + ruta, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlMesasDirectivas + '/' + ruta, httpOptions);
     }
 }

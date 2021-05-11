@@ -18,10 +18,10 @@ export interface Estado {
 }
 
 @Component({
-  selector: 'app-guardar-recepcion-de-expediente',
-  templateUrl: './guardar-recepcion-de-expediente.component.html',
-  styleUrls: ['./guardar-recepcion-de-expediente.component.scss'],
-  providers: [DatePipe]
+    selector: 'app-guardar-recepcion-de-expediente',
+    templateUrl: './guardar-recepcion-de-expediente.component.html',
+    styleUrls: ['./guardar-recepcion-de-expediente.component.scss'],
+    providers: [DatePipe]
 })
 export class GuardarRecepcionDeExpedienteComponent implements OnInit {
 
@@ -79,7 +79,7 @@ export class GuardarRecepcionDeExpedienteComponent implements OnInit {
             this.selectedReceptor = this.recepcion.receptor[0].id;
             this.recepcion.fechaRecepcion = this.recepcion.fechaRecepcion + 'T16:00:00.000Z';
             this.selectedEstado = this.recepcion.estatus;
-       
+
         } else {
             // Seteamos la fecha de carga con la fecha actual
             this.selectedEstado = 'pendiente'
@@ -98,7 +98,7 @@ export class GuardarRecepcionDeExpedienteComponent implements OnInit {
             emisor: [{ value: this.recepcion.emisor, disabled: false }, Validators.required],
             receptor: [{ value: this.recepcion.receptor, disabled: false }, Validators.required],
             estatus: [{ value: this.estados, disabled: false }, Validators.required],
-            notas: [{ value: this.recepcion.notas, disabled: false },  [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+            notas: [{ value: this.recepcion.notas, disabled: false }, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
 
         });
     }
@@ -113,7 +113,7 @@ export class GuardarRecepcionDeExpedienteComponent implements OnInit {
         this.recepcion.fechaRecepcion = this.form.get('fechaRecepcion').value;
         this.recepcion.estatus = this.selectedEstado;
         this.recepcion.notas = this.form.get('notas').value
-   
+
         if (this.recepcion.id) {
 
             // Actualizamos la recepcion de actas
@@ -159,25 +159,29 @@ export class GuardarRecepcionDeExpedienteComponent implements OnInit {
     }
 
     async obtenerEmpleados(): Promise<void> {
-      // Obtenemos empleados
-      this.spinner.show();
-      await this.empleados.obtenerEmpleados().subscribe((resp: any) => {
-
-          this.arrEmisores = resp;
-          this.arrReceptores = resp;
-          this.spinner.hide();
-      }, err => {
-          Swal.fire('Error', 'Ocurrió un error obtener los empleados.' + err, 'error');
-          this.spinner.hide();
-      });
-  }
+        // Obtenemos empleados
+        this.spinner.show();
+        await this.empleados.obtenerEmpleados().subscribe((resp: any) => {
+            console.log(resp);
+            this.arrEmisores = resp.filter(
+                (item) => item["activo"] === true
+            );
+            this.arrReceptores = this.arrEmisores;
+            this.spinner.hide();
+        }, err => {
+            Swal.fire('Error', 'Ocurrió un error obtener los empleados.' + err, 'error');
+            this.spinner.hide();
+        });
+    }
 
     async obtenerTiposLegislaturas(): Promise<void> {
         // Obtenemos legislaturas
         this.spinner.show();
         await this.legislaturasService.obtenerLegislatura().subscribe((resp: any) => {
-          
-            this.arrLegislaturas = resp;
+
+            this.arrLegislaturas = resp.filter(
+                (item) => item["bActivo"] === true
+            );
             this.spinner.hide();
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener las legislaturas.' + err, 'error');

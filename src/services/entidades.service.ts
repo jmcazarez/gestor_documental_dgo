@@ -28,19 +28,42 @@ export class EntidadesService {
     }
 
     obtenerEntidades(): any {
-        return this.http.get(this.baseUrl + this.urlEntidades, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlEntidades, httpOptions);
     }
 
     actualizarEntidades(entidad: EntidadesModel): any {
-        return this.http.put(this.baseUrl + this.urlEntidades + '/' + entidad.id, entidad, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlEntidades + '/' + entidad.id, entidad, httpOptions);
     }
 
     guardarEntidad(entidad: EntidadesModel): any {
-        return this.http.post(this.baseUrl + this.urlEntidades, entidad, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlEntidades, entidad, httpOptions);
     }
 
     eliminarEntidad(ruta: string): any {
-
-        return this.http.delete(this.baseUrl + this.urlEntidades + '/' + ruta, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlEntidades + '/' + ruta, httpOptions);
     }
 }

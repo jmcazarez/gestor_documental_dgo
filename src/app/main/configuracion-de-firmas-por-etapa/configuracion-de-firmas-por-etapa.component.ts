@@ -41,15 +41,15 @@ export class ConfiguracionFirmasPorEtapaComponent implements OnInit {
         private sanitizer: DomSanitizer,
         private puestosService: PuestosService
     ) {
-        // Obtenemos los puestos
-        this.obtenerPuestos();
-        // Obtenemos firmas por etapa
-        this.obtenerFirmasPorEtapa();
+       
 
     }
 
-    ngOnInit(): void {
-
+    async ngOnInit(): Promise<void> {
+     // Obtenemos los puestos
+       await this.obtenerPuestos();
+        // Obtenemos firmas por etapa
+       await this.obtenerFirmasPorEtapa();
     }
 
     nuevaConfiguracion(): void {
@@ -100,7 +100,7 @@ export class ConfiguracionFirmasPorEtapaComponent implements OnInit {
                             puesto = [];
                             descripcionPuestos = '';
                             for (const participante of objPartificapntes) {
-                                console.log(participante);
+                                
                                 if (participante.puesto) {
                                     puesto = this.arrPuestos.find(puesto => puesto.id === participante.puesto);
                                     if(puesto){
@@ -163,14 +163,15 @@ export class ConfiguracionFirmasPorEtapaComponent implements OnInit {
             data: configuracion,
         });
 
-        dialogRef.afterClosed().subscribe(result => {
-            this.obtenerFirmasPorEtapa();
+        dialogRef.afterClosed().subscribe(async result => {
+          await this.obtenerFirmasPorEtapa();
         });
     }
 
 
 
     filterDatatable(value): void {
+        this.confFirmas = this.confFirmasTemporal;
         // Filtramos tabla
         if (value.target.value === '') {
             this.confFirmas = this.confFirmasTemporal;

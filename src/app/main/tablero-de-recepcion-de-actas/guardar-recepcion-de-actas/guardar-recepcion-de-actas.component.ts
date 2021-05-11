@@ -191,7 +191,9 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
         this.spinner.show();
         await this.legislaturasService.obtenerLegislatura().subscribe((resp: any) => {
             
-            this.arrLegislaturas = resp;
+            this.arrLegislaturas = resp.filter(
+                (item) => item["bActivo"] === true
+            );
             this.spinner.hide();
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener las legislaturas.' + err, 'error');
@@ -204,8 +206,10 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
         this.spinner.show();
         await this.empleados.obtenerEmpleados().subscribe((resp: any) => {
 
-            this.arrEmisores = resp;
-            this.arrReceptores = resp;
+            this.arrEmisores = resp.filter(
+                (item) => item["activo"] === true
+            );
+            this.arrReceptores = this.arrEmisores;
             this.spinner.hide();
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener los empleados.' + err, 'error');

@@ -38,84 +38,209 @@ export class UsuariosService {
   }
 
   obtenerUsuarios(): any {
-    return this.http.get(this.baseUrl + this.urlUsuarios, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.get(this.baseUrl + this.urlUsuarios, httpOptions);
   }
 
   obtenerUsuario(id: number): any{
-    return this.http.get(this.baseUrl + this.urlUsuarios + '/' + id, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.get(this.baseUrl + this.urlUsuarios + '/' + id, httpOptions);
   }
 
   guardarUsuario(usuario: UsuarioModel): any {
-    return this.http.post(this.baseUrl + this.urlUsuarios, usuario, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.post(this.baseUrl + this.urlUsuarios, usuario, httpOptions);
 
   }
 
   actualizarUsuario(usuario: UsuarioModel): any{
-    return this.http.put(this.baseUrl + this.urlUsuarios + '/' + usuario.nIdUsuario, usuario, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.put(this.baseUrl + this.urlUsuarios + '/' + usuario.nIdUsuario, usuario, httpOptions);
   }
 
   eliminarUsuario(usuario: UsuarioModel): any {
-    return this.http.delete(this.baseUrl + this.urlUsuarios + '/' + usuario.nIdUsuario, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.delete(this.baseUrl + this.urlUsuarios + '/' + usuario.nIdUsuario, httpOptions);
   }
 
 
   //Servicios Secretaria
   obtenerSecretarias(): any {
-    return this.http.get(this.baseUrl + this.urlSecretarias, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.get(this.baseUrl + this.urlSecretarias, httpOptions);
   }
 
   guardarSecretaria(secretaria: any): any{
-    return this.http.post(this.baseUrl + this.urlSecretarias, secretaria, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.post(this.baseUrl + this.urlSecretarias, secretaria, httpOptions);
   }
   
   actualizarSecretaria(secretaria: SecretariasModel): any{    
-    return this.http.put(this.baseUrl + this.urlSecretarias + '/' + secretaria.id, secretaria, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.put(this.baseUrl + this.urlSecretarias + '/' + secretaria.id, secretaria, httpOptions);
   }
 
   eliminarSecretaria(ruta: string): any {
-    return this.http.delete(this.baseUrl + this.urlSecretarias + '/' + ruta, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.delete(this.baseUrl + this.urlSecretarias + '/' + ruta, httpOptions);
   }
 
 
   //Servicios direcciones
   obtenerDirecciones(): any {
-    return this.http.get(this.baseUrl + this.urlDirecciones, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.get(this.baseUrl + this.urlDirecciones, httpOptions);
   }
 
   guardarDireccion(direcciones: any): any{
-    return this.http.post(this.baseUrl + this.urlDirecciones, direcciones, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.post(this.baseUrl + this.urlDirecciones, direcciones, httpOptions);
   }
 
-  actualizarDireccion(direcciones: DireccionesModel): any{    
+  actualizarDireccion(direcciones: DireccionesModel): any{ 
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
     //console.log('servicio ' + direcciones);
-    return this.http.put(this.baseUrl + this.urlDirecciones + '/' + direcciones.id, direcciones, this.httpOptions);
+    return this.http.put(this.baseUrl + this.urlDirecciones + '/' + direcciones.id, direcciones, httpOptions);
   }
 
   eliminarDireccion(ruta: string): any {
-    console.log('service ' + ruta);
-    return this.http.delete(this.baseUrl + this.urlDirecciones + '/' + ruta, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.delete(this.baseUrl + this.urlDirecciones + '/' + ruta, httpOptions);
   }
 
   //departamentos
   obtenerDepartamentos(): any {
-    return this.http.get(this.baseUrl + this.urlDepartamentos, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.get(this.baseUrl + this.urlDepartamentos, httpOptions);
   }
 
   guardarDepartamento(departamentos: any): any{
-    return this.http.post(this.baseUrl + this.urlDepartamentos, departamentos, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.post(this.baseUrl + this.urlDepartamentos, departamentos, httpOptions);
   }
 
   actualizarDepartamento(departamentos: any): any{    
-    return this.http.put(this.baseUrl + this.urlDepartamentos + '/' + departamentos.id, departamentos, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.put(this.baseUrl + this.urlDepartamentos + '/' + departamentos.id, departamentos, httpOptions);
   }
 
   eliminarDepartamento(ruta: string): any {
-    return this.http.delete(this.baseUrl + this.urlDepartamentos + '/' + ruta, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.delete(this.baseUrl + this.urlDepartamentos + '/' + ruta, httpOptions);
   }
 
 
   //Entes
   obtenerEntes(): any {
-    return this.http.get(this.baseUrl + this.urlEntes, this.httpOptions);
+    this.TOKEN = localStorage.getItem('token');
+    let httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    }
+
+    return this.http.get(this.baseUrl + this.urlEntes, httpOptions);
   }
 }

@@ -28,18 +28,42 @@ export class InventarioFisicoService {
     }
 
     obtenerInventario(): any {
-        return this.http.get(this.baseUrl + this.urlInventarioFisico, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlInventarioFisico, httpOptions);
     }
 
     actualizarInventario(inventario: InventarioFisicoModels): any {
-        return this.http.put(this.baseUrl + this.urlInventarioFisico + '/' + inventario.id, inventario, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlInventarioFisico + '/' + inventario.id, inventario, httpOptions);
     }
 
     guardarInventario(inventario: InventarioFisicoModels): any {
-        return this.http.post(this.baseUrl + this.urlInventarioFisico, inventario, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlInventarioFisico, inventario, httpOptions);
     }
 
     eliminarInventario(id: string): any {
-        return this.http.delete(this.baseUrl + this.urlInventarioFisico + '/' + id, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlInventarioFisico + '/' + id, httpOptions);
     }
 }

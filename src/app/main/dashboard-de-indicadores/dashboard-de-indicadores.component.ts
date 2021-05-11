@@ -228,11 +228,16 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                     const tempMetacatalogos = this.arrTipoDocumentos.filter(
                         (d) =>
                             d.id.toLowerCase().indexOf(val.toLowerCase()) !==
-                                -1 || !val
+                            -1 || !val
                     );
                     if (tempMetacatalogos[0].metacatalogos) {
                         this.arrMetacatalogos =
                             tempMetacatalogos[0].metacatalogos;
+
+                        for (const i in this.arrMetacatalogos) {
+                            this.arrMetacatalogos[i].text = '';
+                            // this.documentoSinClasificar = true;       
+                        }
                     }
                     // tslint:disable-next-line: forin
                 }
@@ -331,17 +336,17 @@ export class DashboardDeIndicadoresComponent implements OnInit {
 
         let fechaIni = new Date(
             fechaAnio +
-                "-" +
-                ("0000" + fechaMes).slice(-2) +
-                "-" +
-                ("0000" + primerDia.getDate()).slice(-2)
+            "-" +
+            ("0000" + fechaMes).slice(-2) +
+            "-" +
+            ("0000" + primerDia.getDate()).slice(-2)
         );
         let fechaFin = new Date(
             fechaAnio +
-                "-" +
-                ("0000" + fechaMes).slice(-2) +
-                "-" +
-                ("0000" + ultimoDia.getDate()).slice(-2)
+            "-" +
+            ("0000" + fechaMes).slice(-2) +
+            "-" +
+            ("0000" + ultimoDia.getDate()).slice(-2)
         );
 
         ultimoDia.setHours(23);
@@ -461,6 +466,9 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                 });
                 this.docDisponibles7dias = arrDisponiblesSemana.length;
                 arrExpedientesSemana = arrDisponiblesSemana;
+                arrExpedientesSemana = arrExpedientesSemana.filter(
+                    (d) => d["folioExpediente"] !== "0" && d["folioExpediente"] !== ""
+                )
                 this.docExpedientes7dias = [
                     ...new Set(
                         arrExpedientesSemana.map((item) => item.folioExpediente)
@@ -510,6 +518,9 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                 });
                 this.docDisponiblesMes = arrDisponiblesMes.length;
                 arrExpedientesMes = arrDisponiblesMes;
+                arrExpedientesMes = arrExpedientesMes.filter(
+                    (d) => d["folioExpediente"] !== "0" && d["folioExpediente"] !== ""
+                )
                 this.docExpedientesMes = [
                     ...new Set(
                         arrExpedientesMes.map((item) => item.folioExpediente)
@@ -545,6 +556,9 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                 });
                 this.docDisponiblesAyer = arrDisponiblesAyer.length;
                 arrExpedientesAyer = arrDisponiblesAyer;
+                arrExpedientesAyer = arrExpedientesAyer.filter(
+                    (d) => d["folioExpediente"] !== "0" && d["folioExpediente"] !== ""
+                )
                 this.docExpedientesAyer = [
                     ...new Set(
                         arrExpedientesAyer.map((item) => item.folioExpediente)
@@ -894,7 +908,7 @@ export class DashboardDeIndicadoresComponent implements OnInit {
 
                 this.configuragraficas();
             },
-            (err) => {}
+            (err) => { }
         );
     }
 
@@ -912,17 +926,17 @@ export class DashboardDeIndicadoresComponent implements OnInit {
         this.spinner.show();
         let fechaIni = new Date(
             fechaAnio +
-                "-" +
-                ("0000" + fechaMes).slice(-2) +
-                "-" +
-                ("0000" + primerDia.getDate()).slice(-2)
+            "-" +
+            ("0000" + fechaMes).slice(-2) +
+            "-" +
+            ("0000" + primerDia.getDate()).slice(-2)
         );
         let fechaFin = new Date(
             fechaAnio +
-                "-" +
-                ("0000" + fechaMes).slice(-2) +
-                "-" +
-                ("0000" + ultimoDia.getDate()).slice(-2)
+            "-" +
+            ("0000" + fechaMes).slice(-2) +
+            "-" +
+            ("0000" + ultimoDia.getDate()).slice(-2)
         );
         fechaFin.setHours(23);
         fechaFin.setMinutes(59);
@@ -1026,13 +1040,17 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                 });
 
                 this.docDisponiblesFechas = arrDisponiblesFecha.length;
+                console.log(arrDisponiblesFecha);
                 arrExpedientesFecha = arrDisponiblesFecha;
+                arrExpedientesFecha = arrExpedientesFecha.filter(
+                    (d) => d["folioExpediente"] !== "0" && d["folioExpediente"] !== ""
+                )
                 this.docExpedientesFechas = [
                     ...new Set(
                         arrExpedientesFecha.map((item) => item.folioExpediente)
                     ),
                 ].length;
-                console.log(this.docExpedientesFechas);
+
                 this.docConsultadosFechas = this.arrDocumentosIngresadosFechas.filter(
                     (d) => d["movimiento"] === "Consulto"
                 ).length;
@@ -1067,7 +1085,7 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                 this.configuragraficas();
                 this.spinner.hide();
             },
-            (err) => {}
+            (err) => { }
         );
     }
 
@@ -1090,7 +1108,7 @@ export class DashboardDeIndicadoresComponent implements OnInit {
         this.fechaFin = "";
     }
 
-    changeTipoDocumento(event: any): void {}
+    changeTipoDocumento(event: any): void { }
 
     configuragraficas(): void {
         let date = new Date();
@@ -1683,13 +1701,19 @@ export class DashboardDeIndicadoresComponent implements OnInit {
         let ini = new Date(this.fechaIni);
         const fin = new Date(this.fechaFin);
         const fMesFin = fin.getMonth() + 1;
-          let arrEliminadosFecha = [];
-          let arrDisponiblesFecha = [];
-          let arrExpedientesFecha = [];
+        let arrEliminadosFecha = [];
+        let arrDisponiblesFecha = [];
+        let arrExpedientesFecha = [];
         let inicialFiltro = this.datePipe.transform(
             this.fechaIni,
             "MM-dd-yyyy"
         );
+        let isoDateStringIni = new Date(this.fechaIni).toISOString();
+
+        fin.setHours(23);
+        fin.setMinutes(59);
+        fin.setSeconds(59);
+        let isoDateStringFin = new Date(fin).toISOString();
         inicial = this.datePipe.transform(this.fechaIni, "dd-MM-yyyy");
         final = this.datePipe.transform(this.fechaFin, "MM-dd-yyyy");
         this.spinner.show();
@@ -1781,35 +1805,19 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                 // tslint:disable-next-line: max-line-length
                 filtroReporte =
                     "createdAt_gte=" +
-                    fIni.getFullYear() +
-                    "-" +
-                    ("0000" + fMesIni).slice(-2) +
-                    "-" +
-                    ("0000" + fIni.getDate()).slice(-2) +
-                    "T01:00:00.000Z&createdAt_lte=" +
-                    fin.getFullYear() +
-                    "-" +
-                    ("0000" + fMesFin).slice(-2) +
-                    "-" +
-                    ("0000" + fin.getDate()).slice(-2) +
-                    "T24:00:00.000Z&_limit=-1";
+                    isoDateStringIni +
+                    "&createdAt_lte=" +
+                    isoDateStringFin
+                    + "&_limit=-1";
             } else {
                 // tslint:disable-next-line: max-line-length
                 filtroReporte =
                     filtroReporte +
                     "&createdAt_gte=" +
-                    fIni.getFullYear() +
-                    "-" +
-                    ("0000" + fMesIni).slice(-2) +
-                    "-" +
-                    ("0000" + fIni.getDate()).slice(-2) +
-                    "T01:00:00.000Z&createdAt_lte=" +
-                    fin.getFullYear() +
-                    "-" +
-                    ("0000" + fMesFin).slice(-2) +
-                    "-" +
-                    ("0000" + fin.getDate()).slice(-2) +
-                    "T24:00:00.000Z&_limit=-1";
+                    isoDateStringIni +
+                    "&createdAt_lte=" +
+                    isoDateStringFin
+                    + "&_limit=-1";
             }
 
             // Obtenemos los entes
@@ -1818,6 +1826,7 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                 .obtenerTrazabilidadFiltrado(filtroReporte)
                 .subscribe(
                     (resp: any) => {
+
                         let fechaInicial = new Date(inicialFiltro);
                         let fechaFinal = new Date(final);
                         arrDocumentosIngresadosFechasFiltrado = resp.ultimoMes;
@@ -1862,6 +1871,9 @@ export class DashboardDeIndicadoresComponent implements OnInit {
 
                         this.docDisponiblesFechas = arrDisponiblesFecha.length;
                         arrExpedientesFecha = arrDisponiblesFecha;
+                        arrExpedientesFecha = arrExpedientesFecha.filter(
+                            (d) => d["folioExpediente"] !== "0" && d["folioExpediente"] !== ""
+                        )
                         this.docExpedientesFechas = [
                             ...new Set(
                                 arrExpedientesFecha.map(
@@ -1903,7 +1915,7 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                         this.configurarGraficaFechas();
                         this.spinner.hide();
                     },
-                    (err) => {}
+                    (err) => { }
                 );
         }
     }

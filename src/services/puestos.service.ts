@@ -27,7 +27,13 @@ export class PuestosService {
     }
 
     obtenerPuestos(): any {
-        return this.http.get(this.baseUrl + this.urlPuestos, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlPuestos, httpOptions);
     }
 
 }

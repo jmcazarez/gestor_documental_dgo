@@ -971,8 +971,7 @@ async clasificarDocAnex(result: any): Promise<void> {
                 d["cParametroAdministrado"] ===
                 "SSP-001-Tipo-de-Informacion"
         );
-        // this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
-        this.documentos.tipo_de_documento = '5f839b713ccdf563ac6ba096';
+        this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
         this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
         
         this.documentos.visibilidade = tipoInformacion[0]["cValor"];

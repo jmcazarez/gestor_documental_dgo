@@ -30,6 +30,7 @@ export class GuardarConfiguracionFirmasPorEtapaComponent implements OnInit {
     arrParticipantesTemporal = [];
     loadingIndicator: boolean;
     reorderable: boolean;
+    ocultarTipo: true;
     descripcionPuesto = '';
     constructor(
         private spinner: NgxSpinnerService,
@@ -43,9 +44,8 @@ export class GuardarConfiguracionFirmasPorEtapaComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         let puesto: any;
-
-        await this.obtenerEmpleados();
-        await this.obtenerTiposEtapas();
+        this.ocultarTipo = true;
+     
         this.fileName = '';
 
 
@@ -57,7 +57,7 @@ export class GuardarConfiguracionFirmasPorEtapaComponent implements OnInit {
                 for (const participante of this.firmasPorEtapa.participantes) {
 
                     puesto = this.firmasPorEtapa.arrPuestos.find(puesto => puesto.id === participante.puesto);
-                    console.log(puesto);
+                    
                     this.arrParticipantes.push({
                         id: participante.id,
                         nombre: participante.nombre,
@@ -70,11 +70,12 @@ export class GuardarConfiguracionFirmasPorEtapaComponent implements OnInit {
             // Seteamos la fecha de carga con la fecha actual
 
         }
-
+        console.log(this.firmasPorEtapa);
         // Form reativo
         this.form = this.formBuilder.group({
             id: [{ value: this.firmasPorEtapa.id, disabled: true }],
             tipo: [{ value: this.firmasPorEtapa.etapa, disabled: true }, Validators.required],
+            tipoText: [{ value: this.firmasPorEtapa.etapa.descripcion, disabled: true }, Validators.required],
             participantes: [{ value: this.firmasPorEtapa.participantes, disabled: false }],
         });
 
@@ -91,6 +92,9 @@ export class GuardarConfiguracionFirmasPorEtapaComponent implements OnInit {
                 }
             }
         });
+
+           await this.obtenerEmpleados();
+           await this.obtenerTiposEtapas();
 
     }
 
@@ -160,7 +164,7 @@ export class GuardarConfiguracionFirmasPorEtapaComponent implements OnInit {
         await this.firmasPorEtapaService.obtenerEtapas().subscribe((resp: any) => {
 
             this.arrTipo = resp;
-            console.log(this.arrTipo);
+            
             this.spinner.hide();
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener las etapas.' + err, 'error');
@@ -188,7 +192,7 @@ export class GuardarConfiguracionFirmasPorEtapaComponent implements OnInit {
         await this.empleadosService.obtenerEmpleados().subscribe((resp: any) => {
 
             this.arrEmpleados = resp;
-            console.log(this.arrEmpleados);
+            
             this.spinner.hide();
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener los puestos.' + err, 'error');

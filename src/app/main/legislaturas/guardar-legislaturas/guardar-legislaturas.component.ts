@@ -45,14 +45,14 @@ export class GuardarLegislaturasComponent implements OnInit {
         this.legislatura.bActivo = this.form.get('estatus').value;
         this.legislatura.cLegislatura = this.form.get('descripcionLegislatura').value;
         this.legislatura.bActual = this.form.get('actual').value;
-
+        delete this.legislatura["documentos"];
         if (this.legislatura.id) {
 
                 // Actualizamos el legislatura
                 this.legislaturaService.actualizarLegislatura(this.legislatura).subscribe((resp: any) => {
                     if (resp) {
                         this.spinner.hide();
-                        Swal.fire('Éxito', 'Legislatura actualizado correctamente.', 'success');
+                        Swal.fire('Éxito', 'Legislatura actualizada correctamente.', 'success');
                         this.legislatura = resp.data;
                      
                         this.cerrar(this.legislatura);

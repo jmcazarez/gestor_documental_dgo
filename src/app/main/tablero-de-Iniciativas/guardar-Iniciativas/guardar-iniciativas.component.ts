@@ -712,7 +712,7 @@ export class GuardarIniciativasComponent implements OnInit {
 
             presente.push({
                 text: [
-                    "Con fundamento en lo dispuesto por el artículo 102  de la Ley Orgánica del Congreso del Estado de Durango, me permito remitirle ",
+                    "Con fundamento en lo dispuesto en la Ley Orgánica del Congreso del Estado de Durango, me permito remitirle ",
                     { text: tipoIniciativa["0"]["descripcion"], bold: true },
                     " presentada por los CC. ",
                     { text: cAutores, bold: true },
@@ -838,7 +838,6 @@ export class GuardarIniciativasComponent implements OnInit {
 
             let pdfDocGenerator = pdfMake.createPdf(aa);
             let base64 = await this.pdfBase64(pdfDocGenerator);
-            console.log(base64);
 
             await this.upload(base64, "SP001.pdf");
             await this.guardarDocumento(
@@ -1130,7 +1129,7 @@ export class GuardarIniciativasComponent implements OnInit {
         this.documentos.bActivo = true;
         this.documentos.iniciativa = this.iniciativa.id;
         this.documentos.formulario = 'Iniciativas';
-        this.documentos.tipo_de_expediente = '603f2f4c244c463450942833';
+        this.documentos.tipo_de_expediente = '6091a8a900d37e30f07b2071';
         let parametrosSSP001 = await this.obtenerParametros("SSP-001");
         let legislaturas = await this.obtenerLegislatura();
         let tipoDocumento = parametrosSSP001.filter(
@@ -1149,7 +1148,7 @@ export class GuardarIniciativasComponent implements OnInit {
 
         this.documentos.legislatura = legislaturas[0].id;
         this.documentos.folioExpediente = legislaturas[0].cLegislatura + '-' + Number(legislaturas[0].documentos + 1);
-        this.documentos.tipo_de_documento = '5f839b713ccdf563ac6ba096';
+        this.documentos.tipo_de_documento = '609041c3b507671ee42ae0ab';
         this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
         this.documentos.visibilidade = tipoInformacion[0]["cValor"];
 

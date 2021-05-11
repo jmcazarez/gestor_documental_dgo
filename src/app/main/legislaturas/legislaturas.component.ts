@@ -94,6 +94,7 @@ export class LegislaturaComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        this.legislatura = this.legislaturaTemp;
         // Filtramos tabla
         if (value.target.value === '') {
             this.legislatura = this.legislaturaTemp;
@@ -116,7 +117,7 @@ export class LegislaturaComponent implements OnInit {
             if (result.value) {
                 // realizamos delete
                 this.legislaturaService.eliminarLegislatura(row.id).subscribe((resp: any) => {
-                    Swal.fire('Eliminado', 'La legislatura ha sido eliminado.', 'success');
+                    Swal.fire('Eliminado', 'La legislatura ha sido eliminada.', 'success');
                     this.obtenerLegislatura();
                 }, err => {
                     this.cargando = false;

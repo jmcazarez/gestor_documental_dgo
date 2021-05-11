@@ -4,5 +4,6 @@ export class LibroDeActasModel {
     fechaDeFin: any;
     legislatura: any;
     recepcion_de_actas_de_sesions: any;
+    estatus: boolean;
 };
 

@@ -39,6 +39,7 @@ export interface Estado {
 })
 export class GuardarInventarioFisicoComponent implements OnInit {
     form: FormGroup;
+    
     selectLegislatura: any;
     arrLegislaturas: any[] = [];
     selectTipoExpediente: any;
@@ -47,6 +48,7 @@ export class GuardarInventarioFisicoComponent implements OnInit {
 
     constructor(
         private spinner: NgxSpinnerService,
+        private datePipe: DatePipe,
         private formBuilder: FormBuilder,
         private dialogRef: MatDialogRef<TableroDeInventarioFisicoComponent>,
         public dialog: MatDialog,
@@ -54,7 +56,7 @@ export class GuardarInventarioFisicoComponent implements OnInit {
         private inventarioFisicoService: InventarioFisicoService,
         private legislaturasService: LegislaturaService,
         @Inject(MAT_DIALOG_DATA) public inventario: InventarioFisicoModels
-    ) {}
+    ) { }
 
     async ngOnInit(): Promise<void> {
         this.spinner.show();
@@ -66,9 +68,11 @@ export class GuardarInventarioFisicoComponent implements OnInit {
         // Validamos si es un documento nuevo
         if (this.inventario.id) {
             this.selectLegislatura = this.inventario.legislatura.id;
-            this.selectTipoExpediente = this.inventario.tipo_de_expediente.id;
+            if (this.inventario.tipo_de_expediente) {
+                this.selectTipoExpediente = this.inventario.tipo_de_expediente.id;
+            }
             this.inventario.dFechaAuditoria =
-                this.inventario.dFechaAuditoria + "T16:00:00.000Z";
+                this.inventario.dFechaAuditoria + "T06:00:00.000Z";
         } else {
             this.selectLegislatura = "";
             this.selectTipoExpediente = "";
@@ -107,7 +111,7 @@ export class GuardarInventarioFisicoComponent implements OnInit {
                     Validators.maxLength(100),
                 ],
             ],
-            notas: [{ value: this.inventario.notas, disabled: false }, [ Validators.maxLength(500)]],
+            notas: [{ value: this.inventario.notas, disabled: false }, [Validators.maxLength(500)]],
         });
 
         this.spinner.hide();
@@ -122,9 +126,11 @@ export class GuardarInventarioFisicoComponent implements OnInit {
         this.inventario.cIdExpedienteIni = this.form.get(
             "expedienteInicio"
         ).value;
+      
         this.inventario.cIdExpedienteFin = this.form.get("expedienteFin").value;
-        this.inventario.dFechaAuditoria = this.form.get("fechaAuditoria").value;
-
+     
+        this.inventario.dFechaAuditoria =       this.datePipe.transform( this.form.get("fechaAuditoria").value, 'yyyy-MM-dd');
+            console.log(this.inventario.dFechaAuditoria );
         this.inventario.notas = this.form.get("notas").value;
 
         if (this.inventario.id) {
@@ -147,7 +153,7 @@ export class GuardarInventarioFisicoComponent implements OnInit {
                             Swal.fire(
                                 "Error",
                                 "Ocurrió un error al guardar. " +
-                                    resp.error.data,
+                                resp.error.data,
                                 "error"
                             );
                         }
@@ -180,7 +186,7 @@ export class GuardarInventarioFisicoComponent implements OnInit {
                             Swal.fire(
                                 "Error",
                                 "Ocurrió un error al guardar. " +
-                                    resp.error.data,
+                                resp.error.data,
                                 "error"
                             );
                         }

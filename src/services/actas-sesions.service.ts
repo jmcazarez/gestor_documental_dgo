@@ -28,24 +28,52 @@ export class ActasSesionsService {
     }
 
     obtenerActasSesions(): any {
-        return this.http.get(this.baseUrl + this.urlActasSesions, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlActasSesions, httpOptions);
     }
 
     actualizarActasSesions(actasSesions: any): any {
-        return this.http.put(this.baseUrl + this.urlActasSesions + '/' + actasSesions.id, actasSesions, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlActasSesions + '/' + actasSesions.id, actasSesions, httpOptions);
     }
 
     guardarActasSesions(actasSesions: any): any {
-        return this.http.post(this.baseUrl + this.urlActasSesions, actasSesions, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlActasSesions, actasSesions, httpOptions);
     }
 
     eliminarActasSesions(id: string): any {
-
-        return this.http.delete(this.baseUrl + this.urlActasSesions + '/' + id, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlActasSesions + '/' + id, httpOptions);
     }
 
     obtenerActasSesionsFiltrado(filtro: string): any {
-
-        return this.http.get(this.baseUrl + this.urlActasSesionsFiltrado + '/' + filtro, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlActasSesionsFiltrado + '/' + filtro, httpOptions);
     }
 }

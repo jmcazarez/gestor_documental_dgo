@@ -110,7 +110,7 @@ export class GuardarDiputadosComponent implements OnInit {
             this.diputadosService.guardarDiputados(this.diputado).subscribe((resp: any) => {
                 if (resp) {
                     this.spinner.hide();
-                    Swal.fire('Éxito', 'Diputado guardada correctamente.', 'success');
+                    Swal.fire('Éxito', 'Diputado guardado correctamente.', 'success');
                     this.cerrar(this.diputado);
                 } else {
                     this.spinner.hide();
@@ -127,8 +127,10 @@ export class GuardarDiputadosComponent implements OnInit {
         // Obtenemos Distritos
         this.spinner.show();
         await this.distritosService.obtenerDistritos().subscribe((resp: any) => {
-
-            this.arrDistritos = resp;
+            console.log(resp);
+            this.arrDistritos = resp.filter(
+                (item) => item["activo"] === true
+            );
             this.spinner.hide();
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener los distritos.' + err, 'error');
@@ -140,7 +142,9 @@ export class GuardarDiputadosComponent implements OnInit {
         // Obtenemos Partidos Politicos
         this.spinner.show();
         await this.partidoPoliticoService.obtenerPartidoPolitico().subscribe((resp: any) => {
-            this.arrPartidos = resp;
+            this.arrPartidos = resp.filter(
+                (item) => item["bActivo"] === true
+            );
             this.spinner.hide();
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener los partidos politicos.' + err, 'error');
@@ -152,7 +156,9 @@ export class GuardarDiputadosComponent implements OnInit {
         // Obtenemos Legislaturas
         this.spinner.show();
         await this.legislaturasService.obtenerLegislatura().subscribe((resp: any) => {
-            this.arrLegislaturas = resp;
+            this.arrLegislaturas = resp.filter(
+                (item) => item["bActivo"] === true
+            );
             this.spinner.hide();
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener las legislaturas.' + err, 'error');

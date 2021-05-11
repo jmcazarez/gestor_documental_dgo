@@ -95,6 +95,7 @@ export class MesasDirectivasComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        this.mesas = this.mesasTemp;
         // Filtramos tabla
         if (value.target.value === '') {
             this.mesas = this.mesasTemp;

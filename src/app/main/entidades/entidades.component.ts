@@ -99,6 +99,7 @@ export class EntidadesComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        this.entidades = this.entidadesTemp;
         // Filtramos tabla
         if (value.target.value === '') {
             this.entidades = this.entidadesTemp;

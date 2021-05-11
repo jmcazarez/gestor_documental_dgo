@@ -65,6 +65,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     version: any;
     fechaCreacionView: string;
     fechaCargaView: string;
+    descriptionTipoDocumento: 'Acta';
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     meta: Metacatalogos[] = [];
 
@@ -112,11 +113,14 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         let cFolioExpediente = "";
         let cLegislatura = "";
         this.arrMetacatalogos = [];
-
+        let folioExpedienteRequerido = [];
         await this.obtenerLegislaturas();
         await this.obtenerTiposExpedientes();
 
+        console.log(this.documento);
+
         if (!this.documento.iniciativas) {
+            console.log('sin iniciativa');
             if (this.documento.tipo_de_documento.id) {
                 this.trazabilidad = false;
                 this.arrMetacatalogos = this.menuService.tipoDocumentos.find(
@@ -236,6 +240,17 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         if (this.documento.formulario || this.documento.disabled) {
             this.disableFolioExpediente = true;
         }
+
+        if (this.documento.tipo_de_documento) {
+            this.descriptionTipoDocumento = this.documento.tipo_de_documento.cDescripcionTipoDocumento;
+            if (this.documento.tipo_de_documento.cDescripcionTipoDocumento !== 'Acta') {
+                folioExpedienteRequerido = [Validators.required];
+            }
+
+        }
+
+
+
         this.form = this.formBuilder.group({
             // entes: [{ value: this.documento.ente, disabled: this.documento.disabled }],
             // secretarias: [{ value: this.documento.secretaria, disabled: this.documento.disabled }, [Validators.required]],
@@ -260,7 +275,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                     value: this.documento.folioExpediente,
                     disabled: this.disableFolioExpediente,
                 },
-                [Validators.required],
+                folioExpedienteRequerido,
             ],
             // informacion: [{ value: this.documento.visibilidade, disabled: this.documento.disabled }, [Validators.required]]
             //   imagen        : [this.usuario.cPassword,[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
@@ -325,7 +340,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                                 cFolioExpediente
                             );
                         } else {
-                            console.log(this.arrLegislaturas);
+
                             if (
                                 this.documento.formulario ||
                                 this.documento.disabled
@@ -336,10 +351,10 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
                                 this.form.controls["folioExpediente"].setValue(
                                     arrFolioExpediente[0].cLegislatura +
-                                        "-" +
-                                        Number(
-                                            arrFolioExpediente[0].documentos + 1
-                                        )
+                                    "-" +
+                                    Number(
+                                        arrFolioExpediente[0].documentos + 1
+                                    )
                                 );
                             }
                         }
@@ -376,6 +391,14 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 this.arrExpediente = resp.filter(
                     (item) => item["bActivo"] === true
                 );
+
+                if (this.arrExpediente) {
+                   
+                    if (this.documento.tipo_de_documento.cDescripcionTipoDocumento.toLowerCase()) {
+                        this.arrExpediente = this.arrExpediente.filter((d) => d.descripcionTiposDocumentos.toLowerCase().indexOf(this.documento.tipo_de_documento.cDescripcionTipoDocumento.toLowerCase()) !== -1);
+                    }
+                }
+
             },
             (err) => {
                 Swal.fire(
@@ -402,7 +425,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     ): Promise<void> {
         // Obtenemos los documentos
         this.documentoService.obtenerDocumento(idDocumento, usuario).subscribe(
-            (resp: any) => {},
+            (resp: any) => { },
             (err) => {
                 Swal.fire(
                     "Error",
@@ -420,7 +443,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 await this.documentoService
                     .dowloadDocument(
                         this.documento.documento.hash +
-                            this.documento.documento.ext,
+                        this.documento.documento.ext,
                         this.documento.id,
                         this.menuService.usuario,
                         this.documento.cNombreDocumento
@@ -438,7 +461,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                                 Swal.fire(
                                     "Error",
                                     "Ocurrió un error al descargar el documento." +
-                                        err.error.data,
+                                    err.error.data,
                                     "error"
                                 );
                                 resolve("0");
@@ -456,7 +479,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 await this.documentoService
                     .dowloadDocumentClasificacion(
                         this.documento.documento.hash +
-                            this.documento.documento.ext,
+                        this.documento.documento.ext,
                         this.documento.id,
                         this.menuService.usuario,
                         this.documento.cNombreDocumento
@@ -474,7 +497,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                                 Swal.fire(
                                     "Error",
                                     "Ocurrió un error al descargar el documento." +
-                                        err.error.data,
+                                    err.error.data,
                                     "error"
                                 );
                                 resolve("0");
@@ -513,7 +536,10 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
         await this.legislaturaService.obtenerLegislatura().subscribe(
             (resp: any) => {
-                this.arrLegislaturas = resp;
+                
+                this.arrLegislaturas = resp.filter(
+                    (item) => item["bActivo"] === true
+                );
             },
             (err) => {
                 Swal.fire(
@@ -663,7 +689,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                                 Swal.fire(
                                     "Error",
                                     "Ocurrió un error al guardar. " +
-                                        resp.error.data,
+                                    resp.error.data,
                                     "error"
                                 );
                             }
@@ -709,7 +735,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                     Swal.fire(
                         "Error",
                         "Ocurrió un error obtener al descargar el documento." +
-                            err,
+                        err,
                         "error"
                     );
                 }
@@ -745,7 +771,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                             Swal.fire(
                                 "Error",
                                 "Ocurrió un error al eliminar el documento." +
-                                    err,
+                                err,
                                 "error"
                             );
                         }
@@ -792,7 +818,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                     this.masAntiguo = resp.masAntiguo;
                     this.loadingIndicator = false;
                 },
-                (err) => {}
+                (err) => { }
             );
         this.ocultarPreview = true;
     }
@@ -840,7 +866,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
                     if (
                         result.listado.versionado_de_documentos["0"].documento[
-                            "0"
+                        "0"
                         ]
                     ) {
                         this.documento.documento =

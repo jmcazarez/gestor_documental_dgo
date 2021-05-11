@@ -62,7 +62,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
         private libroService: LibroDeActasService,
         private legislaturasService: LegislaturaService,
         @Inject(MAT_DIALOG_DATA) public libro: LibroDeActasModel
-    ) {}
+    ) { }
 
     async ngOnInit(): Promise<void> {
         await this.obtenerTiposLegislaturas();
@@ -98,6 +98,10 @@ export class GuardarlibroDeActasComponent implements OnInit {
             ],
             fechaDeFin: [
                 { value: this.libro.fechaDeFin, disabled: false },
+                Validators.required,
+            ],
+            estatus: [
+                { value: this.libro.estatus, disabled: false },
                 Validators.required,
             ],
         });
@@ -141,7 +145,6 @@ export class GuardarlibroDeActasComponent implements OnInit {
 
         this.form.get("fechaDeInicio").valueChanges.subscribe((val) => {
             if (val) {
-                console.log("cambio inicio");
                 if (val.getTime() > 0) {
                     this.recepcionDeActas = this.recepcionDeActasTemporal;
                     let legislatura = this.form.get("legislatura").value;
@@ -163,27 +166,27 @@ export class GuardarlibroDeActasComponent implements OnInit {
                             );
                             this.form.controls["fechaDeInicio"].setValue("");
                         } else {
-                            console.log(legislatura.length);
+
                             if (legislatura.length > 0) {
                                 console.log("filtro legis");
                                 this.recepcionDeActas = this.recepcionDeActas.filter(
                                     (d) => {
                                         return (
                                             d.fechaCreacionTextFiltro >=
-                                                fecIni &&
+                                            fecIni &&
                                             d.fechaCreacionTextFiltro <=
-                                                fecFin &&
+                                            fecFin &&
                                             d.idLegislatura == legislatura
                                         );
                                     }
                                 );
                             } else {
-                                console.log("filtro fechas");
+
                                 this.recepcionDeActas = this.recepcionDeActas.filter(
                                     (d) => {
                                         return (
                                             d.fechaCreacionTextFiltro >=
-                                                fecIni &&
+                                            fecIni &&
                                             d.fechaCreacionTextFiltro <= fecFin
                                         );
                                     }
@@ -192,7 +195,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                         }
                     } else if (fecIni !== null && fecFin === null) {
                         if (legislatura.length > 0) {
-                            console.log("filtro legis");
+
                             this.recepcionDeActas = this.recepcionDeActas.filter(
                                 (d) => {
                                     return (
@@ -202,7 +205,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                                 }
                             );
                         } else {
-                            console.log("filtro fechas");
+
                             this.recepcionDeActas = this.recepcionDeActas.filter(
                                 (d) => {
                                     return d.fechaCreacionTextFiltro >= fecIni;
@@ -216,7 +219,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
 
         this.form.get("fechaDeFin").valueChanges.subscribe((val) => {
             if (val) {
-                console.log("cambio fin");
+
                 if (val.getTime() > 0) {
                     this.recepcionDeActas = this.recepcionDeActasTemporal;
                     let legislatura = this.form.get("legislatura").value;
@@ -224,12 +227,12 @@ export class GuardarlibroDeActasComponent implements OnInit {
                         this.form.get("fechaDeInicio").value,
                         "yyyy-MM-dd"
                     );
-                    console.log(fecIni);
+
                     let fecFin = this.datePipe.transform(
                         this.form.get("fechaDeFin").value,
                         "yyyy-MM-dd"
                     );
-                    console.log(fecFin);
+
                     if (fecIni > fecFin) {
                         Swal.fire(
                             "Error",
@@ -239,7 +242,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                         this.form.controls["fechaDeFin"].setValue("");
                     } else {
                         if (legislatura.length > 0) {
-                            console.log(this.recepcionDeActas);
+
                             this.recepcionDeActas = this.recepcionDeActas.filter(
                                 (d) => {
                                     return (
@@ -250,7 +253,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                                 }
                             );
                         } else {
-                            console.log(this.recepcionDeActas);
+
                             this.recepcionDeActas = this.recepcionDeActas.filter(
                                 (d) => {
                                     return (
@@ -288,7 +291,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
         let libros = [];
         // Asignamos valores a objeto
         this.libro.legislatura = this.selectLegislatura;
-
+        this.libro.estatus = this.form.get('estatus').value;
         this.libro.fechaDeInicio =
             moment(this.form.get("fechaDeInicio").value).format("YYYY-MM-DD") +
             "T16:00:00.000Z";
@@ -306,7 +309,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
             this.spinner.hide();
             Swal.fire(
                 "Error",
-                "Es necesario capturar al menos una acta para guardar el libro de actas.",
+                "Es necesario capturar al menos un acta para guardar el libro de actas.",
                 "error"
             );
         } else {
@@ -330,7 +333,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                             Swal.fire(
                                 "Error",
                                 "Ocurrió un error al guardar. " +
-                                    resp.error.data,
+                                resp.error.data,
                                 "error"
                             );
                         }
@@ -361,7 +364,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                             Swal.fire(
                                 "Error",
                                 "Ocurrió un error al guardar. " +
-                                    resp.error.data,
+                                resp.error.data,
                                 "error"
                             );
                         }
@@ -392,7 +395,9 @@ export class GuardarlibroDeActasComponent implements OnInit {
         this.spinner.show();
         await this.legislaturasService.obtenerLegislatura().subscribe(
             (resp: any) => {
-                this.arrLegislaturas = resp;
+                this.arrLegislaturas = resp.filter(
+                    (item) => item["bActivo"] === true
+                );
                 this.spinner.hide();
             },
             (err) => {
@@ -420,11 +425,15 @@ export class GuardarlibroDeActasComponent implements OnInit {
 
                 if (resp) {
                     for (const ini of resp) {
-                        let dFecha = new Date(this.datePipe.transform(
+                        console.log(this.datePipe.transform(
                             ini.fechaCreacion,
                             "yyyy-MM-dd"
-                        )).getTime();
-                            console.log(dFecha);
+                        ));
+                        let dFecha = new Date( ini.fechaCreacion);
+
+                        dFecha.setHours(0);
+                        dFecha.setMinutes(0);
+                        dFecha.setSeconds(0);
                         if (this.libro.id) {
                             if (ini.libro_de_actas_de_sesions.length == 0) {
                                 let idLegislatura = "";
@@ -435,7 +444,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                                 actasTemp.push({
                                     id: ini.id,
                                     fechaCreacion: ini.fechaCreacion,
-                                    fechaCreacionDate: dFecha,
+                                    fechaCreacionDate: dFecha.getTime(),
                                     fechaCreacionTextFiltro: this.datePipe.transform(
                                         ini.fechaCreacion,
                                         "yyyy-MM-dd"
@@ -464,7 +473,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                                         actasTemp.push({
                                             id: ini.id,
                                             fechaCreacion: ini.fechaCreacion,
-                                            fechaCreacionDate: dFecha,
+                                            fechaCreacionDate: dFecha.getTime(),
                                             fechaCreacionTextFiltro: this.datePipe.transform(
                                                 ini.fechaCreacion,
                                                 "yyyy-MM-dd"
@@ -495,7 +504,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
                                 actasTemp.push({
                                     id: ini.id,
                                     fechaCreacion: ini.fechaCreacion,
-                                    fechaCreacionDate: dFecha,
+                                    fechaCreacionDate: dFecha.getTime(),
                                     fechaCreacionTextFiltro: this.datePipe.transform(
                                         ini.fechaCreacion,
                                         "yyyy-MM-dd"
@@ -535,41 +544,48 @@ export class GuardarlibroDeActasComponent implements OnInit {
     }
 
     filtrarTabla(): void {
-        this.recepcionDeActas = this.recepcionDeActasTemporal;
-        let legislatura = this.form.get("legislatura").value;
-        let fecIni = this.datePipe.transform(
-            this.form.get("fechaDeInicio").value,
-            "dd-MM-yyyy"
-        );
-        let fecFin = this.datePipe.transform(
-            this.form.get("fechaDeFin").value,
-            "dd-MM-yyyy"
-        );
+        try {
+            this.recepcionDeActas = this.recepcionDeActasTemporal;
+            let legislatura = this.form.get("legislatura").value;
        
+            let fecIni = new Date(this.form.get("fechaDeInicio").value);
+            fecIni.setHours(0);
+            fecIni.setMinutes(0);
+            fecIni.setSeconds(0);
+            console.log(fecIni);
+            let fecFin = new Date(this.form.get("fechaDeFin").value);
+            fecFin.setHours(23);
+            fecFin.setMinutes(59);
+            fecFin.setSeconds(59);
 
-        let dFechaIni = new Date(
-            this.form.get("fechaDeInicio").value
-        ).getTime();
-        let dFechaFin = new Date (this.form.get("fechaDeFin").value).getTime();
-     
+            let dFechaIni = new Date(
+                fecIni
+            ).getTime();
+            let dFechaFin = new Date(fecFin).getTime();
 
-        if (fecIni !== null && fecFin !== null) {
-            if (legislatura.length > 0) {
-                this.recepcionDeActas = this.recepcionDeActas.filter((d) => {
-                    return (
-                        d.fechaCreacionDate >= dFechaIni &&
-                        d.fechaCreacionDate <= dFechaFin &&
-                        d.idLegislatura == legislatura
-                    );
-                });
-            } else {
-                this.recepcionDeActas = this.recepcionDeActas.filter((d) => {
-                    return (
-                        d.fechaCreacionDate >= dFechaIni &&
-                        d.fechaCreacionDate <= dFechaFin
-                    );
-                });
+            console.log(dFechaIni);
+            console.log(dFechaFin);
+            if (fecIni !== null && fecFin !== null) {
+                if (legislatura.length > 0) {
+                    this.recepcionDeActas = this.recepcionDeActas.filter((d) => {
+                        return (
+                            d.fechaCreacionDate >= dFechaIni &&
+                            d.fechaCreacionDate <= dFechaFin &&
+                            d.idLegislatura == legislatura
+                        );
+                    });
+                } else {
+                    this.recepcionDeActas = this.recepcionDeActas.filter((d) => {
+                        return (
+                            d.fechaCreacionDate >= dFechaIni &&
+                            d.fechaCreacionDate <= dFechaFin
+                        );
+                    });
+                }
             }
+        }
+        catch (err) {
+            console.log(err);
         }
     }
 }

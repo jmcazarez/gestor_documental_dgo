@@ -92,6 +92,7 @@ export class DiputadosComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        this.Diputados = this.DiputadosTemp;
         // Filtramos tabla
         if (value.target.value === '') {
             this.Diputados = this.DiputadosTemp;

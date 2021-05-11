@@ -32,30 +32,61 @@ export class TrazabilidadService {
     }
 
     obtenerTrazabilidad(idDocumento: string): any {
-
-        return this.http.get(this.baseUrl + this.urlTrazabilidad + '/' + idDocumento, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlTrazabilidad + '/' + idDocumento, httpOptions);
     }
     obtenerTrazabilidadId(idDocumento: string): any {
-
-        return this.http.get(this.baseUrl + this.urlTrazabilidadId + '/' + idDocumento, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlTrazabilidadId + '/' + idDocumento, httpOptions);
     }
 
     obtenerTrazabilidadHistorial(idDocumento: string): any {
-
-        return this.http.get(this.baseUrl + this.urlTrazabilidadHistorial + '/' + idDocumento, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlTrazabilidadHistorial + '/' + idDocumento, httpOptions);
     }
 
     actualizarTrazabilidad(trazabilidad: any): any {
-        return this.http.put(this.baseUrl + this.urlTrazabilidad + '/' + trazabilidad.id, trazabilidad, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlTrazabilidad + '/' + trazabilidad.id, trazabilidad, httpOptions);
     }
 
     obtenerTrazabilidades(): any {
-
-        return this.http.get(this.baseUrl + this.urlTrazabilidad, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlTrazabilidad, httpOptions);
     }
 
     obtenerTrazabilidadFiltrado(filtro: string): any {
-
-        return this.http.get(this.baseUrl + this.urlTrazabilidadFiltrado + '/' + filtro, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlTrazabilidadFiltrado + '/' + filtro, httpOptions);
     }
 }

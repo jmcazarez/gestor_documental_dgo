@@ -22,19 +22,42 @@ export class RecepcionDeExpedientesService {
     }
 
     obtenerRecepcionExpediente(): any {
-        return this.http.get(this.baseUrl + this.urlRecepcionExpedientes, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlRecepcionExpedientes, httpOptions);
     }
 
     actualizarRecepcionExpediente(recepcionExpedientes: RecepcionDeExpedientesModels): any {
-        return this.http.put(this.baseUrl + this.urlRecepcionExpedientes + '/' + recepcionExpedientes.id, recepcionExpedientes, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlRecepcionExpedientes + '/' + recepcionExpedientes.id, recepcionExpedientes, httpOptions);
     }
 
     guardarRecepcionExpediente(recepcionExpedientes: RecepcionDeExpedientesModels): any {
-        return this.http.post(this.baseUrl + this.urlRecepcionExpedientes, recepcionExpedientes, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlRecepcionExpedientes, recepcionExpedientes, httpOptions);
     }
 
     eliminarRecepcionExpediente(id: string): any {
-
-        return this.http.delete(this.baseUrl + this.urlRecepcionExpedientes + '/' + id, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlRecepcionExpedientes + '/' + id, httpOptions);
     }
 }

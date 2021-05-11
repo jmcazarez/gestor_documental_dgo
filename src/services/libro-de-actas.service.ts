@@ -30,23 +30,52 @@ export class LibroDeActasService {
     }
 
     obtenerLibrosDeActas(): any {
-        return this.http.get(this.baseUrl + this.urlLibroDeActas, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlLibroDeActas, httpOptions);
     }
 
     actualizarLibroDeActas(libro: LibroDeActasModel): any {
-        return this.http.put(this.baseUrl + this.urlLibroDeActas + '/' + libro.id, libro, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlLibroDeActas + '/' + libro.id, libro, httpOptions);
     }
 
     guardarLibroDeActas(libro: LibroDeActasModel): any {
-        return this.http.post(this.baseUrl + this.urlLibroDeActas, libro, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlLibroDeActas, libro, httpOptions);
     }
 
     eliminarLibroDeActas(ruta: string): any {
-        return this.http.delete(this.baseUrl + this.urlLibroDeActas + '/' + ruta, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlLibroDeActas + '/' + ruta, httpOptions);
     }
 
     obtenerLibrosDeActasFiltrado(filtro: string): any {
-
-        return this.http.get(this.baseUrl + this.urlLibroDeActasFiltrado + '/' + filtro, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlLibroDeActasFiltrado + '/' + filtro, httpOptions);
     }
 }

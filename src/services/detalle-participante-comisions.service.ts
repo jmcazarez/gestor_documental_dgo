@@ -28,18 +28,42 @@ export class DetalleComisionsService {
     }
 
     obtenerDetalleComision(): any {
-        return this.http.get(this.baseUrl + this.urlDetalleComision, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlDetalleComision, httpOptions);
     }
 
     actualizarDetalleComisions(detalleComision: any): any {
-        return this.http.put(this.baseUrl + this.urlDetalleComision + '/' + detalleComision.id, detalleComision, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlDetalleComision + '/' + detalleComision.id, detalleComision, httpOptions);
     }
 
     guardarDetalleComision(detalleComision: any): any {
-        return this.http.post(this.baseUrl + this.urlDetalleComision, detalleComision, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlDetalleComision, detalleComision, httpOptions);
     }
 
     eliminarDetalleComision(ruta: string): any {
-        return this.http.delete(this.baseUrl + this.urlDetalleComision + '/' + ruta, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlDetalleComision + '/' + ruta, httpOptions);
     }
 }

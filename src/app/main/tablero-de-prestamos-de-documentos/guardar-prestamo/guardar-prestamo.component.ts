@@ -104,8 +104,10 @@ export class GuardarPrestamoComponent implements OnInit {
             //console.log(fechaDocEntregado);
 
             this.selectPrestamo = this.prestamo.cTipoPrestamo;
-            if (this.prestamo.tipo_de_expediente.id) {
-                this.selectExpediente = this.prestamo.tipo_de_expediente.id;
+            if (this.prestamo.tipo_de_expediente) {
+                if (this.prestamo.tipo_de_expediente.id) {
+                    this.selectExpediente = this.prestamo.tipo_de_expediente.id;
+                }
             }
             if (this.prestamo.cEstatus === 'Pendiente') {
                 this.prestamo.cEstatus = '';

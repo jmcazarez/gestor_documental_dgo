@@ -35,7 +35,7 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
         this.obtenerPrestamosDeDocumentos();
     }
 
-    ngOnInit(): void {}
+    ngOnInit(): void { }
 
     obtenerPrestamosDeDocumentos(): void {
         this.spinner.show();
@@ -65,13 +65,13 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
                             for (const prestamos of resp) {
                                 if (
                                     prestamos.cTipoDanio ===
-                                        "Perdida de documentos" ||
+                                    "Perdida de documentos" ||
                                     prestamos.cTipoDanio ===
-                                        "Deterioro de documentos"
+                                    "Deterioro de documentos"
                                 ) {
                                     let cTipoExpediente = "";
                                     if (prestamos.tipo_de_expediente) {
-                                        cTipoExpediente: prestamos
+                                        cTipoExpediente = prestamos
                                             .tipo_de_expediente
                                             .cDescripcionTipoExpediente;
                                     }

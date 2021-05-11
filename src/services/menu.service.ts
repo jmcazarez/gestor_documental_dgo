@@ -45,12 +45,12 @@ export class MenuService {
         this.fuseNavigationService.removeNavigationItem('grupo-Catalogos');
         this.fuseNavigationService.removeNavigationItem('grupo-Menu');
         this.fuseNavigationService.removeNavigationItem('grupo-Configuracion');
-        this.fuseNavigationService.removeNavigationItem('grupo-Registros');       
+        this.fuseNavigationService.removeNavigationItem('grupo-Registros');
         this.fuseNavigationService.removeNavigationItem('grupo-Reportes');
         let usr = JSON.parse(localStorage.getItem('usr'));
         if (usr) {
             let token = usr[0].data.token
-            
+
             if (token !== undefined && token !== null) {
                 await this.obtenerTipoOpciones(token).subscribe(async (resp: any) => {
                     this.tipoOpciones = resp;
@@ -63,7 +63,7 @@ export class MenuService {
                     let grupoMenuCatalagos: GrupoMenuModel;
                     let grupoMenuConfiguracion: GrupoMenuModel;
 
-                
+
                     let tipoFormato = '';
                     let visibilidade = '';
                     let metacatalogos = [];
@@ -103,16 +103,18 @@ export class MenuService {
                         /*  for (const opciones of usuarioLogin.Opciones) { */
 
                         for (const perfiles of usuarioLogin[0].data.perfiles_de_usuario) {
+                           
                             if (perfiles.bActivo) {
                                 this.perfilUsuario.push({ id: perfiles.id });
                                 for (const visibilidad of perfiles.Visibilidad) {
-
-                                    if (visibilidad.visibilidade.bActivo && visibilidad.Si) {
-                                        // console.log(visibilidad.visibilidade);
-                                        this.tipoInformacion.push({
-                                            id: visibilidad.visibilidade.id,
-                                            cDescripcionVisibilidad: visibilidad.visibilidade.cDescripcionVisibilidad,
-                                        });
+                                    if (visibilidad.visibilidade) {
+                                        if (visibilidad.visibilidade.bActivo && visibilidad.Si) {
+                                            // console.log(visibilidad.visibilidade);
+                                            this.tipoInformacion.push({
+                                                id: visibilidad.visibilidade.id,
+                                                cDescripcionVisibilidad: visibilidad.visibilidade.cDescripcionVisibilidad,
+                                            });
+                                        }
                                     }
                                 }
 
@@ -335,7 +337,7 @@ export class MenuService {
                            'error'
                        );
                      */
-                       
+
                     alert(JSON.stringify(err));
                     this.router.navigate(['login']);
 
@@ -349,9 +351,9 @@ export class MenuService {
         this.fuseNavigationService.removeNavigationItem('grupo-Catalogos');
         this.fuseNavigationService.removeNavigationItem('grupo-Menu');
         this.fuseNavigationService.removeNavigationItem('grupo-Configuracion');
-        this.fuseNavigationService.removeNavigationItem('grupo-Registros');       
+        this.fuseNavigationService.removeNavigationItem('grupo-Registros');
         this.fuseNavigationService.removeNavigationItem('grupo-Reportes');
-        
+
     }
 
     obtenerTipoOpciones(token: string): any {

@@ -30,27 +30,62 @@ export class IniciativasService {
     }
 
     obtenerIniciativas(): any {
-        return this.http.get(this.baseUrl + this.urlIniciativas, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlIniciativas, httpOptions);
     }
 
     actualizarIniciativa(iniciativa: any): any {
-        return this.http.put(this.baseUrl + this.urlIniciativas + '/' + iniciativa.id, iniciativa, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlIniciativas + '/' + iniciativa.id, iniciativa, httpOptions);
     }
 
     guardarIniciativa(iniciativa: IniciativasModel): any {
-        return this.http.post(this.baseUrl + this.urlIniciativas, iniciativa, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlIniciativas, iniciativa, httpOptions);
     }
 
     eliminarIniciativa(ruta: string): any {
-        return this.http.delete(this.baseUrl + this.urlIniciativas + '/' + ruta, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlIniciativas + '/' + ruta, httpOptions);
     }
 
     obtenerTiposIniciativas(): any {
-        return this.http.get(this.baseUrl + this.urlTipoIniciativas, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlTipoIniciativas, httpOptions);
     }
 
     obtenerIniciativasFiltrado(filtro: string): any {
-
-        return this.http.get(this.baseUrl + this.urlIniciativasFiltrado + '/' + filtro, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlIniciativasFiltrado + '/' + filtro, httpOptions);
     }
 }
