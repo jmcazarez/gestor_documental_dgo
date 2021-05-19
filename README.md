@@ -5,7 +5,7 @@ Este proyecto se utiliza para crear la interfaz grafica y desde aquí se hacen l
 
 ## Versión
 
-1.0.1
+1.0.2
 
 ## Instalación
 
@@ -63,7 +63,7 @@ ng serve o npm start
 En Producción
 
 ```
-ng build
+ng build o ng build --prod --build-optimizer=true
 ```
 ## Estructura del proyecto front
 
