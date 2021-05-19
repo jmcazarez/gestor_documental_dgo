@@ -12,7 +12,7 @@ Este proyecto se utiliza para crear la interfaz grafica y desde aquí se hacen l
 1. Instalar paquetes
 
 ```
-cd front-gestor-usuarios
+cd gestor-documental_dgo
 
 npm install
 ```
