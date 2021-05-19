@@ -5,7 +5,7 @@ Este proyecto se utiliza para crear la interfaz grafica y desde aquí se hacen l
 
 ## Versión
 
-1.0.0
+1.0.1
 
 ## Instalación
 
@@ -57,7 +57,7 @@ npm install
 En desarrollo
 
 ```
-ng serve
+ng serve o npm start
 ```
 
 En Producción
