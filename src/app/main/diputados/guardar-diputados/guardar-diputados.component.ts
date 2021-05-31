@@ -142,7 +142,9 @@ export class GuardarDiputadosComponent implements OnInit {
         // Obtenemos Partidos Politicos
         this.spinner.show();
         await this.partidoPoliticoService.obtenerPartidoPolitico().subscribe((resp: any) => {
-            this.arrPartidos = resp;
+            this.arrPartidos = resp.filter(
+                (item) => item["bActivo"] === true
+            );
             this.spinner.hide();
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener los partidos politicos.' + err, 'error');
@@ -154,7 +156,9 @@ export class GuardarDiputadosComponent implements OnInit {
         // Obtenemos Legislaturas
         this.spinner.show();
         await this.legislaturasService.obtenerLegislatura().subscribe((resp: any) => {
-            this.arrLegislaturas = resp;
+            this.arrLegislaturas = resp.filter(
+                (item) => item["bActivo"] === true
+            );
             this.spinner.hide();
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener las legislaturas.' + err, 'error');

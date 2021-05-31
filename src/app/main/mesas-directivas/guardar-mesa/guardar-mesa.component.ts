@@ -51,7 +51,7 @@ export class GuardarMesaComponent implements OnInit {
         private router: Router,
         private partidoPoliticoService: PartidosPoliticosService,
         @Inject(MAT_DIALOG_DATA) public mesas: MesasDirectivasModel
-    ) { }
+    ) {}
 
     async ngOnInit(): Promise<void> {
         console.log(this.mesas);

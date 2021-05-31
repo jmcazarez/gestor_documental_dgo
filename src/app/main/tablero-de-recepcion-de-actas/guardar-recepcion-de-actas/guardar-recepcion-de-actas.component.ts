@@ -98,7 +98,6 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
             this.selectEstado = this.recepcion.estatus;
 
         } else {
-
             // Seteamos la fecha de carga con la fecha actual
             this.selectEstado = 'pendiente'
             this.recepcion.estatus = 'pendiente';
