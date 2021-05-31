@@ -464,9 +464,17 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         this.arrReporteIniciativaAcumulada = [];
         this.tablaComisiones = [];
         this.tablaAutors = [];
+        this.tablaAutorsMostrar = [];
         this.autorCompare = '';
         this.tablaDictamen = [];
         this.tablaEstatusIniciativa = [];
+        this.tablaEstatusIniciativaMostrar = [];
+        this.tablaEstatusIniciativaInicialMostrar = [];
+        this.tablaEstatusIniciativaInicial = [];
+        this.tablaDictamenMostrar = [];
+        this.tablaDictamen = [];
+        this.tablaAdicionsMostrar = [];
+        this.tablaAdicions = [];
         this.arrMeses = [];
         let ini = new Date(this.fechaIni);
         const fin = new Date(this.fechaFin);
@@ -542,13 +550,16 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 }
             }*/
 
-            if (filtroReporte === '') {
+            /*if (filtroReporte === '') {
                 // tslint:disable-next-line: max-line-length
                 filtroReporte = 'createdAt_gte=' + fechaIni + 'T01:00:00.000Z&createdAt_lte=' + fechaFin + 'T24:00:00.000Z&_limit=-1';
             } else {
                 // tslint:disable-next-line: max-line-length
                 filtroReporte = filtroReporte + '&createdAt_gte=' + fechaIni + 'T01:00:00.000Z&createdAt_lte=' + fechaFin + 'T24:00:00.000Z&_limit=-1';
-            }
+            }*/
+
+            filtroReporte = '_limit=-1';
+
             // Obtenemos los entes
 
             //console.log(filtroReporte);
@@ -577,7 +588,11 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 if(!Array.isArray(this.autores) || this.autores.length === 0){
 
                     /* No hay autores */
-                    this.arrCreacionGraficaIniciativaAut = this.arrCreacionGraficaIniciativaAcumulada;
+                    this.arrCreacionGraficaIniciativaAcumulada.forEach(element => {
+                        if(moment(element.fechaFiltro).format('YYYY-MM-DD') >= fechaIni && moment(element.fechaFiltro).format('YYYY-MM-DD') <= fechaFin){
+                            this.arrCreacionGraficaIniciativaAut.push(element);
+                        }
+                    })
 
                 }else{
                     this.arrCreacionGraficaIniciativaAcumulada.forEach(element =>{
@@ -585,7 +600,14 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                             normalizedAutores.forEach(aut=>{
                                 //console.log(aut.name);
                                 if(ele.name.toLowerCase() == aut){
-                                    this.arrCreacionGraficaIniciativaAut.push(element);
+                                    //Comprobamos si el array ya existe.
+                                    if(!this.arrCreacionGraficaIniciativaAut.includes(element)){
+                                        if(moment(element.fechaFiltro).format('YYYY-MM-DD') >= fechaIni && moment(element.fechaFiltro).format('YYYY-MM-DD') <= fechaFin){
+                                            this.arrCreacionGraficaIniciativaAut.push(element);
+                                        }
+                                    }else{
+                                        console.log('el elemento ya existe');
+                                    }
                                 }
                             })
                         });
@@ -593,7 +615,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     //let arrAutoresIniciativas = this.arrCreacionGraficaIniciativaAut;
                 }
 
-                //console.log(this.arrCreacionGraficaIniciativaAut);
+                console.log(this.arrCreacionGraficaIniciativaAut);
 
                 //console.log(moment(this.arrCreacionGraficaIniciativaAcumulada[0].fechaFiltro).format('YYYY'));
                 
@@ -623,50 +645,81 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 this.arrReporteAcumulado = [[ 'Folio', 'Fecha de iniciativa', 'Fecha de estatus', 'Estatus', 'Autores', 'Tema']];
                 
                 let reportAcumulado = [];
+                let noData = false;
 
                 if(this.selectTipo !== undefined && this.selectTipo !== ''){
                     console.log(this.selectTipo);
-                    reportAcumulado = this.arrCreacionGraficaIniciativaAut.filter(element => element.tipoIniciativa.id == this.selectTipo);
+                    reportAcumulado = this.arrCreacionGraficaIniciativaAut.filter(element => element.tipoIniciativa.id === this.selectTipo);
+                    if(reportAcumulado.length === 0){
+                        noData = true;
+                    }
                 }
 
-                if (!Array.isArray(reportAcumulado) || reportAcumulado.length === 0){
+                console.log(reportAcumulado);
+                if(noData == true){
+                    reportAcumulado = [];
+                } else if (reportAcumulado.length === 0){
                     if(this.selectedLegislatura !== undefined && this.selectedLegislatura !== ''){
                         console.log(this.selectedLegislatura);
                         reportAcumulado = this.arrCreacionGraficaIniciativaAut.filter(element => element.legislatura == this.selectedLegislatura);
+                        if(reportAcumulado.length === 0){
+                            noData = true;
+                        }
                     }
                 } else {
                     if(this.selectedLegislatura !== undefined && this.selectedLegislatura !== ''){
                         reportAcumulado = reportAcumulado.filter(element => element.legislatura == this.selectedLegislatura);
+                        if(reportAcumulado.length === 0){
+                            noData = true;
+                        }
                     }
                 }
 
-                if (!Array.isArray(reportAcumulado) || reportAcumulado.length === 0){
+                console.log(reportAcumulado);
+                if(noData == true){
+                    reportAcumulado = [];
+                } else if (reportAcumulado.length === 0){
                     if(this.selectedComision !== undefined && this.selectedComision !== ''){
                         console.log(this.selectedComision);
                         reportAcumulado = this.arrCreacionGraficaIniciativaAut.filter(element => element.comisionesId == this.selectedComision);
+                        if(reportAcumulado.length === 0){
+                            noData = true;
+                        }
                     }
                 } else {
                     if(this.selectedComision !== undefined && this.selectedComision !== ''){
                         reportAcumulado = reportAcumulado.filter(element => element.comisionesId == this.selectedComision);
+                        if(reportAcumulado.length === 0){
+                            noData = true;
+                        }
                     }
                 }
 
-                if (!Array.isArray(reportAcumulado) || reportAcumulado.length === 0){
+                console.log(reportAcumulado);
+                if (reportAcumulado.length === 0){
                     reportAcumulado = this.arrCreacionGraficaIniciativaAut;
+                    if(reportAcumulado.length === 0){
+                        noData = true;
+                    }
+                }
+
+                if(noData == true){
+                    reportAcumulado = [];
                 }
 
                 console.log(reportAcumulado);
 
                 for (let i = 0, max = reportAcumulado.length; i < max; i += 1) {
+                    if(moment(reportAcumulado[i].fechaFiltro).format('YYYY-MM-DD') >= fechaIni && moment(reportAcumulado[i].fechaFiltro).format('YYYY-MM-DD') <= fechaFin){
+                        if(!reportAcumulado[i].legislatura){
+                            reportAcumulado[i].legislatura = 'Sin asignar';
+                        }
 
-                    if(!reportAcumulado[i].legislatura){
-                        reportAcumulado[i].legislatura = 'Sin asignar';
-                    }
-
-                    if(reportAcumulado[i].estatus === 'Publicada'){
-                        this.arrReporteAcumulado.push([reportAcumulado[i].id, reportAcumulado[i].fechaIniciativa, 
-                        reportAcumulado[i].fechaFiltro, reportAcumulado[i].estatus, 
-                        reportAcumulado[i].autoresText, reportAcumulado[i].temaText]);
+                        if(reportAcumulado[i].estatus === 'Publicada'){
+                        this.arrReporteAcumulado.push([reportAcumulado[i].id, moment(reportAcumulado[i].fechaIniciativa).format('DD-MM-YYYY'), 
+                            moment(reportAcumulado[i].fechaFiltro).format('DD-MM-YYYY'), reportAcumulado[i].estatus, 
+                            reportAcumulado[i].autoresText, reportAcumulado[i].temaText]);
+                        }
                     }
                 }
 
@@ -722,8 +775,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     }
                 }
 
-                this.tablaAutorsMostrar = this.tablaAutors;
-
                 //Reporte
 
                 this.autorCompare = '';
@@ -736,19 +787,29 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     }
                 });
 
+                if(this.autorCompare === ''){
+                    this.autorCompare = "No existen autores registrados de acuerdo al filtro de búsqueda.";
+                }
+
                 let separatedAutorsReport = this.autorCompare.split(",");
                 let normalizedInputArrayReport = separatedAutorsReport.map(el => el.toLowerCase());
                 let autorsValueReport = [];
                 let autorsEqualReport = [];
 
-                //console.log(separatedAutors);
+                console.log(separatedAutorsReport);
 
-                normalizedInputArrayReport.forEach(value => {
-                    autorsValueReport.push({"autor": value, "valor": normalizedInputArrayReport.filter(el => el === value).length});
-                });
+                if(this.autorCompare == "No existen autores registrados de acuerdo al filtro de búsqueda."){
+                    normalizedInputArrayReport.forEach(value => {
+                        autorsValueReport.push({"autor": value, "valor": 'N/A'});
+                    });
+                } else {
+                    normalizedInputArrayReport.forEach(value => {
+                        autorsValueReport.push({"autor": value, "valor": normalizedInputArrayReport.filter(el => el === value).length});
+                    });
+                }
 
                 autorsValueReport.sort((a, b) => b.valor - a.valor);
-                //console.log(autorsValue);
+                console.log(autorsValueReport);
 
                 autorsValueReport.forEach(autors => {
                     if (!autorsEqualReport.find(aut => aut.autor == autors.autor && aut.valor == autors.valor)) {
@@ -756,21 +817,39 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         autorsEqualReport.push({ autor, valor });
                     }
                 });
-                //console.log(autorsEqual);
+                console.log(autorsEqualReport);
 
+                let autoresFiltrados = [];
+                let autorsObject = [];
+
+                if(!Array.isArray(this.autores) || this.autores.length === 0){
+                    autorsObject = autorsEqualReport;
+                } else {
+                    this.autores.forEach(ele => {
+                        autoresFiltrados.push(autorsEqualReport.filter(element => element.autor == ele.name.toLowerCase()));
+                    });
+
+                    autoresFiltrados.forEach(element => {
+                        element.forEach(ele => {
+                            autorsObject.push({"autor": ele.autor, "valor": ele.valor});
+                        });
+                    });
+                    console.log(autorsObject);
+                }
+                
                 this.arrReporteAutor = [[ 'Autor', 'Cantidad total de iniciativas propuestas']];
 
-                if(autorsEqualReport.length < 5){
-                    for (let i = 0; i < autorsEqualReport.length; i++) {
-                        this.arrReporteAutor.push([autorsEqualReport[i].autor, autorsEqualReport[i].valor]);
+                if(autorsObject.length < 5){
+                    for (let i = 0; i < autorsObject.length; i++) {
+                        this.arrReporteAutor.push([autorsObject[i].autor, autorsObject[i].valor]);
                     }
                 }else{
                     for (let i = 0; i < 5; i++) {
-                        this.arrReporteAutor.push([autorsEqualReport[i].autor, autorsEqualReport[i].valor]);
+                        this.arrReporteAutor.push([autorsObject[i].autor, autorsObject[i].valor]);
                     }
                 }
 
-                //console.log(this.tablaAutors);
+                console.log(this.arrReporteAutor);
                 //console.log(this.arrcreacionGraficaAutoresValor);
 
                 this.arrCreacionGraficaIniciativaAcumulada.forEach(element => {
@@ -817,7 +896,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         this.tablaAdicions.push({"valor": adicionsEqual[i].valor, "adicion": adicionsEqual[i].adicion});
                     }
                 }
-                
+
                 this.tablaAdicionsMostrar = this.tablaAdicions;
 
                 // reporte adicion 
@@ -832,6 +911,11 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     }
                 });
 
+                
+                if(this.adicionCompare === ''){
+                    this.adicionCompare = "No existen autores registrados de acuerdo al filtro de búsqueda.";
+                }
+
                 let separatedAdicionsReport = this.adicionCompare.split(",");
                 let normalizedInputArrayAdicionReport = separatedAdicionsReport.map(el => el.toLowerCase());
                 let adicionsValueReport = [];
@@ -839,9 +923,15 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
 
                 //console.log(separatedAdicions);
 
-                normalizedInputArrayAdicionReport.forEach(value => {
-                    adicionsValueReport.push({"adicion": value, "valor": normalizedInputArrayAdicionReport.filter(el => el === value).length});
-                });
+                if(this.adicionCompare == "No existen autores registrados de acuerdo al filtro de búsqueda."){
+                    normalizedInputArrayAdicionReport.forEach(value => {
+                        adicionsValueReport.push({"adicion": value, "valor": 'N/A'});
+                    });
+                } else {
+                    normalizedInputArrayAdicionReport.forEach(value => {
+                        adicionsValueReport.push({"adicion": value, "valor": normalizedInputArrayAdicionReport.filter(el => el === value).length});
+                    });
+                }
 
                 adicionsValueReport.sort((a, b) => b.valor - a.valor);
                 //console.log(adicionsValue);
@@ -855,19 +945,39 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     }
                 });
 
+                let adicionFiltrado = [];
+                let adicionObject = [];
+
+                if(!Array.isArray(this.autores) || this.autores.length === 0){
+                    adicionObject = adicionsEqualReport;
+                } else {
+                    this.autores.forEach(ele => {
+                        adicionFiltrado.push(adicionsEqualReport.filter(element => element.autor == ele.name.toLowerCase()));
+                    });
+
+                    adicionFiltrado.forEach(element => {
+                        element.forEach(ele => {
+                            adicionObject.push({"autor": ele.autor, "valor": ele.valor});
+                        });
+                    });
+                    console.log(adicionObject);
+                }
+
                 this.arrReporteAdicion = [[ 'Autor', 'Cantidad total de iniciativas propuestas']];
 
                 //console.log(adicionsEqual);
 
-                if(adicionsEqualReport.length < 5){
-                    for (let i = 0; i < adicionsEqualReport.length; i++) {
-                        this.arrReporteAdicion.push([adicionsEqualReport[i].adicion, adicionsEqualReport[i].valor]);
+                if(adicionObject.length < 5){
+                    for (let i = 0; i < adicionObject.length; i++) {
+                        this.arrReporteAdicion.push([adicionObject[i].adicion, adicionObject[i].valor]);
                     }
                 }else{
                     for (let i = 0; i < 5; i++) {
-                        this.arrReporteAdicion.push([adicionsEqualReport[i].adicion, adicionsEqualReport[i].valor]);
+                        this.arrReporteAdicion.push([adicionObject[i].adicion, adicionObject[i].valor]);
                     }
                 }
+
+                this.tablaAutorsMostrar = this.tablaAutors;
                 
                 //console.log(this.tablaAdicions);
 
@@ -891,9 +1001,35 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
 
                 this.arrReporteDictamenes = [['Dictámenes', 'Cantidad total']];
 
-                this.arrReporteDictamenes.push(['Aprobados', reportDictamen[0]]);
+                let dictamenFiltrado = [];
+
+                dictamenFiltrado.push({"dictamen": "Aprobado", "valor": reportDictamen[0]});
+                dictamenFiltrado.push({"dictamen": "No aprobado", "valor": reportDictamen[1]});
+                dictamenFiltrado.push({"dictamen": "Modificación", "valor": reportDictamen[2]});
+
+                /*for (let i = 0, max = dictamenFiltrado.length; i < max; i += 1) {
+                    let dictamen: string = '';
+                    if(i = 0){
+                        dictamen = 'Aprobados';
+                    } else if (i = 1){
+                        dictamen = 'No aprobados';
+                    } else {
+                        dictamen = 'Modificados';
+                    }
+                    if(dictamenFiltrado[i].valor > 0){
+                        this.arrReporteDictamenes.push([dictamen, dictamenFiltrado[i].valor]);
+                    }
+                }*/
+
+                for (let i = 0; i < 3; i++) {
+                    if(dictamenFiltrado[i].valor > 0){
+                        this.arrReporteDictamenes.push([dictamenFiltrado[i].dictamen, dictamenFiltrado[i].valor]);
+                    }
+                }
+                
+                /*this.arrReporteDictamenes.push(['Aprobados', reportDictamen[0]]);
                 this.arrReporteDictamenes.push(['No aprobados', reportDictamen[1]]);
-                this.arrReporteDictamenes.push(['Cantidad total', reportDictamen[2]]);
+                this.arrReporteDictamenes.push(['Modificados', reportDictamen[2]]);*/
 
                 this.tablaDictamenMostrar = this.tablaDictamen;
 
@@ -926,8 +1062,8 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         if(!reportAcumulado[i].legislatura){
                             reportAcumulado[i].legislatura = 'Sin asignar';
                         }
-                        this.arrReportePublicado.push([reportAcumulado[i].id, reportAcumulado[i].fechaIniciativa, 
-                        reportAcumulado[i].fechaFiltro, reportAcumulado[i].estatus, 
+                        this.arrReportePublicado.push([reportAcumulado[i].id, moment(reportAcumulado[i].fechaIniciativa).format('DD-MM-YYYY'), 
+                        moment(reportAcumulado[i].fechaFiltro).format('DD-MM-YYYY'), reportAcumulado[i].estatus, 
                         reportAcumulado[i].autoresText, reportAcumulado[i].temaText]);
                     }else{
 
@@ -963,8 +1099,8 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         if(!reportAcumulado[i].legislatura){
                             reportAcumulado[i].legislatura = 'Sin asignar';
                         }
-                        this.arrReporteEstatusDecreto.push([reportAcumulado[i].id, reportAcumulado[i].fechaIniciativa, 
-                        reportAcumulado[i].fechaFiltro, reportAcumulado[i].estatus, 
+                        this.arrReporteEstatusDecreto.push([reportAcumulado[i].id, moment(reportAcumulado[i].fechaIniciativa).format('DD-MM-YYYY'), 
+                        moment(reportAcumulado[i].fechaFiltro).format('DD-MM-YYYY'), reportAcumulado[i].estatus, 
                         reportAcumulado[i].autoresText, reportAcumulado[i].temaText]);
                     }else{
 
@@ -976,8 +1112,8 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         if(!reportAcumulado[i].legislatura){
                             reportAcumulado[i].legislatura = 'Sin asignar';
                         }
-                        this.arrReporteEstatusDecreto.push([reportAcumulado[i].id, reportAcumulado[i].fechaIniciativa, 
-                        reportAcumulado[i].fechaFiltro, reportAcumulado[i].estatus, 
+                        this.arrReporteEstatusDecreto.push([reportAcumulado[i].id, moment(reportAcumulado[i].fechaIniciativa).format('DD-MM-YYYY'), 
+                        moment(reportAcumulado[i].fechaFiltro).format('DD-MM-YYYY'), reportAcumulado[i].estatus, 
                         reportAcumulado[i].autoresText, reportAcumulado[i].temaText]);
                     }else{
 
@@ -1003,9 +1139,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 this.tablaEstatusIniciativa.push({departamento: 'Centro de Investigación y Estudios Legislativos', valor: this.arrCreacionGraficaEstatusIniciativas[2]});
                 this.tablaEstatusIniciativa.push({departamento: 'Mesa directiva', valor: this.arrCreacionGraficaEstatusIniciativas[3]});
 
-                this.tablaEstatusIniciativaMostrar = this.tablaEstatusIniciativa;
-                this.tablaEstatusIniciativaInicialMostrar = this.tablaEstatusIniciativaInicial;
-
                 let estatusIniciativa = []
 
                 estatusIniciativa.push(reportAcumulado.filter((d) => d['estatus'] === 'Registrada').length);
@@ -1013,10 +1146,35 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 estatusIniciativa.push(reportAcumulado.filter((d) => d['estatus'] === 'Turnar iniciativa a CIEL' || d['estatus'] === 'Turnar dictamen a Secretaría General').length);
                 estatusIniciativa.push(reportAcumulado.filter((d) => d['estatus'] === 'Turnar dictamen a Mesa Directiva').length);
 
-                this.arrReporteEstatusIniciativaInicial.push(['Secretaría General', estatusIniciativa[0], 'Inicial']);
-                this.arrReporteEstatusIniciativa.push(['Secretaría General', estatusIniciativa[1], 'En proceso']);
-                this.arrReporteEstatusIniciativa.push(['Centro de Investigación y Estudios Legislativos', estatusIniciativa[2], 'En proceso']);
-                this.arrReporteEstatusIniciativa.push(['Mesa directiva', estatusIniciativa[3], 'En proceso']);
+                for (let i = 0; i < 4; i++) {
+                    let estatus: string = '';
+                    let etapa: string = '';
+                    if(i == 0){
+                        estatus = 'Secretaría General';
+                        etapa = 'Inicial';
+                    } else if (i == 1){
+                        estatus = 'Secretaría General';
+                        etapa = 'En proceso';
+                    } else if (i == 2){
+                        estatus = 'Centro de Investigación y Estudios Legislativos';
+                        etapa = 'En proceso';
+                    } else {
+                        estatus = 'Mesa directiva';
+                        etapa = 'En proceso';
+                    }
+                    if(i == 0){
+                        if(estatusIniciativa[i] > 0){
+                            this.arrReporteEstatusIniciativaInicial.push([estatus, estatusIniciativa[i], etapa]);
+                        }
+                    } else {
+                        if(estatusIniciativa[i] > 0){
+                            this.arrReporteEstatusIniciativa.push([estatus, estatusIniciativa[i], etapa]);   
+                        }
+                    }
+                }
+
+                this.tablaEstatusIniciativaMostrar = this.tablaEstatusIniciativa;
+                this.tablaEstatusIniciativaInicialMostrar = this.tablaEstatusIniciativaInicial;
 
                 /************************/
                 /* Comisiones asignadas */
@@ -1024,12 +1182,9 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
 
                 this.arrReporteComision = [[ 'Comisión', 'Cantidad total']];
 
-                while (a <= this.arrComisiones.length - 1) {
-                    let comision: string = this.arrComisiones[a].descripcion;
-
-                    this.arrcreacionGraficaComisionesAsignadas.push({"valor": this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['comisiones'] === comision).length, "comision": comision});
-                    a++
-                }
+                this.arrComisiones.forEach(element => {
+                    this.arrcreacionGraficaComisionesAsignadas.push({"valor": this.arrCreacionGraficaIniciativaAcumulada.filter((d) => d['comisiones'] === element.descripcion).length, "comision": element.descripcion});
+                });
 
                 this.arrcreacionGraficaComisionesAsignadas.sort((a, b) => b.valor - a.valor);
 
@@ -1044,7 +1199,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     this.arrcreacionGraficaComisionesAsignadasSorted.push(this.arrcreacionGraficaComisionesAsignadas[i].comision);
                     this.arrcreacionGraficaComisionesAsignadasValor.push(this.arrcreacionGraficaComisionesAsignadas[i].valor);
                     this.tablaComisiones.push({"valor": this.arrcreacionGraficaComisionesAsignadas[i].valor, "comision": this.arrcreacionGraficaComisionesAsignadas[i].comision});
-                    this.arrReporteComision.push([this.arrcreacionGraficaComisionesAsignadas[i].comision, this.arrcreacionGraficaComisionesAsignadas[i].valor]);
+                    //this.arrReporteComision.push([this.arrcreacionGraficaComisionesAsignadas[i].comision, this.arrcreacionGraficaComisionesAsignadas[i].valor]);
                 }
 
                 //console.log('Comisiones');
@@ -1053,6 +1208,20 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
 
                 //console.log(this.arrcreacionGraficaComisionesAsignadasValor);
                 //console.log(this.arrcreacionGraficaComisionesAsignadasSorted);
+
+                let comisionesReport = [];
+
+                this.arrComisiones.forEach(element => {
+                    comisionesReport.push({"valor": reportAcumulado.filter((d) => d['comisiones'] === element.descripcion).length, "comision": element.descripcion});
+                });
+
+                comisionesReport.sort((a, b) => b.valor - a.valor);
+
+                for (let i = 0; i < 5; i++) {
+                    if(comisionesReport[i].valor > 0){
+                        this.arrReporteComision.push([comisionesReport[i].comision, comisionesReport[i].valor]);
+                    }
+                }
 
                 this.activarDescarga = false;
 
@@ -1065,7 +1234,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
             let filtroIniciativasAcumuladas = '';
 
             filtroIniciativasAcumuladas = 'dictamenDeIniciativa=Aprobada&dictamenDeIniciativa=No aprobada' + 
-            '&estatus=Publicada&estatus=Suspendida';
+            '&estatus=Publicada&estatus=Suspendida&_limit=-1';
 
             /*if (this.selectedLegislatura !== undefined && this.selectedLegislatura !== '') {
                 if (filtroIniciativasAcumuladas === '') {
@@ -1091,13 +1260,13 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 }
             }*/
 
-            if (filtroIniciativasAcumuladas === '') {
+            /*if (filtroIniciativasAcumuladas === '') {
                 // tslint:disable-next-line: max-line-length
                 filtroIniciativasAcumuladas = 'createdAt_gte=' + fechaIni + 'T01:00:00.000Z&createdAt_lte=' + fechaFin + 'T24:00:00.000Z&_limit=-1';
             } else {
                 // tslint:disable-next-line: max-line-length
                 filtroIniciativasAcumuladas = filtroIniciativasAcumuladas + '&createdAt_gte=' + fechaIni + 'T01:00:00.000Z&createdAt_lte=' + fechaFin + 'T24:00:00.000Z&_limit=-1';
-            }
+            }*/
             // Obtenemos los entes
 
             //console.log('filtro');
@@ -1125,7 +1294,11 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 if(!Array.isArray(this.autores) || this.autores.length === 0){
 
                     /* No hay autores */
-                    this.arrCreacionGraficaIniciativaAutAcum = this.arrIniciativasAcumuladas;
+                    this.arrIniciativasAcumuladas.forEach(element => {
+                        if(moment(element.fechaFiltro).format('YYYY-MM-DD') >= fechaIni && moment(element.fechaFiltro).format('YYYY-MM-DD') <= fechaFin){
+                            this.arrCreacionGraficaIniciativaAutAcum.push(element);
+                        }
+                    })
 
                 }else{
                     this.arrIniciativasAcumuladas.forEach(element =>{
@@ -1133,7 +1306,14 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                             normalizedAutores.forEach(aut=>{
                                 //console.log(aut.name);
                                 if(ele.name.toLowerCase() == aut){
-                                    this.arrCreacionGraficaIniciativaAutAcum.push(element);
+                                    //Comprobamos si el array ya existe.
+                                    if(!this.arrCreacionGraficaIniciativaAutAcum.includes(element)){
+                                        if(moment(element.fechaFiltro).format('YYYY-MM-DD') >= fechaIni && moment(element.fechaFiltro).format('YYYY-MM-DD') <= fechaFin){
+                                            this.arrCreacionGraficaIniciativaAutAcum.push(element);
+                                        }
+                                    }else{
+                                        console.log('el elemento ya existe');
+                                    }
                                 }
                             })
                         });
@@ -1194,41 +1374,66 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 //console.log(this.arrCreacionGraficaIniciativasAcumuladasN);
                 //console.log(this.arrCreacionGraficaIniciativasAcumuladas);
 
-
-
                 this.arrReporteIniciativaAcumulada = [[ 'Folio', 'Fecha de iniciativa', 'Fecha de estatus', 'Estatus', 'Autores', 'Tema']];
 
                 let reportIniciativaAcumulada = [];
+                let noData = false;
 
                 if(this.selectTipo !== undefined && this.selectTipo !== ''){
                     console.log(this.selectTipo);
-                    reportIniciativaAcumulada = this.arrCreacionGraficaIniciativaAutAcum.filter(element => element.tipoIniciativa.id == this.selectTipo);
+                    reportIniciativaAcumulada = this.arrCreacionGraficaIniciativaAutAcum.filter(element => element.tipoIniciativa.id === this.selectTipo);
+                    if(reportIniciativaAcumulada.length === 0){
+                        noData = true;
+                    }
                 }
 
-                if (!Array.isArray(reportIniciativaAcumulada) || reportIniciativaAcumulada.length === 0){
+                if(noData == true){
+                    reportIniciativaAcumulada = [];
+                } else if (reportIniciativaAcumulada.length === 0){
                     if(this.selectedLegislatura !== undefined && this.selectedLegislatura !== ''){
                         console.log(this.selectedLegislatura);
                         reportIniciativaAcumulada = this.arrCreacionGraficaIniciativaAutAcum.filter(element => element.legislatura == this.selectedLegislatura);
+                        if(reportIniciativaAcumulada.length === 0){
+                            noData = true;
+                        }
                     }
                 } else {
                     if(this.selectedLegislatura !== undefined && this.selectedLegislatura !== ''){
                         reportIniciativaAcumulada = reportIniciativaAcumulada.filter(element => element.legislatura == this.selectedLegislatura);
+                        if(reportIniciativaAcumulada.length === 0){
+                            noData = true;
+                        }
                     }
                 }
 
-                if (!Array.isArray(reportIniciativaAcumulada) || reportIniciativaAcumulada.length === 0){
+                if(noData == true){
+                    reportIniciativaAcumulada = [];
+                } else if (reportIniciativaAcumulada.length === 0){
                     if(this.selectedComision !== undefined && this.selectedComision !== ''){
                         console.log(this.selectedComision);
                         reportIniciativaAcumulada = this.arrCreacionGraficaIniciativaAutAcum.filter(element => element.comisionesId == this.selectedComision);
+                        if(reportIniciativaAcumulada.length === 0){
+                            noData = true;
+                        }
                     }
                 } else {
                     if(this.selectedComision !== undefined && this.selectedComision !== ''){
                         reportIniciativaAcumulada = reportIniciativaAcumulada.filter(element => element.comisionesId == this.selectedComision);
+                        if(reportIniciativaAcumulada.length === 0){
+                            noData = true;
+                        }
                     }
                 }
 
-                if (!Array.isArray(reportIniciativaAcumulada) || reportIniciativaAcumulada.length === 0){
+                if (reportIniciativaAcumulada.length === 0){
                     reportIniciativaAcumulada = this.arrCreacionGraficaIniciativaAutAcum;
+                    if(reportIniciativaAcumulada.length === 0){
+                        noData = true;
+                    }
+                }
+
+                if(noData == true){
+                    reportIniciativaAcumulada = [];
                 }
 
                 console.log(reportIniciativaAcumulada);
@@ -1239,8 +1444,8 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         reportIniciativaAcumulada[i].legislatura = 'Sin asignar';
                     }
 
-                    this.arrReporteIniciativaAcumulada.push([reportIniciativaAcumulada[i].id, reportIniciativaAcumulada[i].fechaIniciativa, 
-                    reportIniciativaAcumulada[i].fechaFiltro, reportIniciativaAcumulada[i].estatus, 
+                    this.arrReporteIniciativaAcumulada.push([reportIniciativaAcumulada[i].id, moment(reportIniciativaAcumulada[i].fechaIniciativa).format('DD-MM-YYYY'), 
+                    moment(reportIniciativaAcumulada[i].fechaFiltro).format('DD-MM-YYYY'), reportIniciativaAcumulada[i].estatus, 
                     reportIniciativaAcumulada[i].autoresText, reportIniciativaAcumulada[i].temaText]);
                 }
 
@@ -1615,7 +1820,16 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         }
                     ]
                 },
-                plugins: {
+                plugins:{
+                    labels: {
+                    render: false,
+                    fontSize: 0,
+                    //fontStyle: 'bold',
+                    fontColor: '#000',
+                    fontFamily: '"Lucida Console", Monaco, monospace',
+                    precision: 2,
+                    arc: false,
+                    },
                     filler: {
                         propagate: false
                     }
@@ -1802,7 +2016,16 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         }
                     ]
                 },
-                plugins: {
+                plugins:{
+                    labels: {
+                    render: false,
+                    fontSize: 0,
+                    //fontStyle: 'bold',
+                    fontColor: '#000',
+                    fontFamily: '"Lucida Console", Monaco, monospace',
+                    precision: 2,
+                    arc: false,
+                    },
                     filler: {
                         propagate: false
                     }
@@ -2186,8 +2409,17 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillColor: "#d9d9d9",
                   fillOpacity: "#d9d9d9"
                 }
-              });
+            });
 
+            if(this.arrReporteAcumulado.length < 2){
+                presente.push({
+                    text: "No existen iniciativas registradas de acuerdo al filtro de búsqueda.",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 5, 0, 0],
+                });
+            }
 
             const aa = {
                 header: {
@@ -2267,7 +2499,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
               };
 
             if(this.arrReporteAcumulado.length < 2){
-                alert('Sin resultados');
+                alert('No existen iniciativas registradas de acuerdo al filtro de búsqueda.');
             }
             pdfMake.createPdf(aa).open();
 
@@ -2360,8 +2592,17 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillColor: "#d9d9d9",
                   fillOpacity: "#d9d9d9"
                 }
-              });
+            });
 
+            if(this.arrReporteIniciativaAcumulada.length < 2){
+                presente.push({
+                    text: "No existen iniciativas registradas de acuerdo al filtro de búsqueda.",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 5, 0, 0],
+                });
+            }
 
             const aa = {
                 header: {
@@ -2441,7 +2682,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
               };
 
             if(this.arrReporteIniciativaAcumulada.length < 2){
-                alert('Sin resultados');
+                alert('No existen iniciativas registradas de acuerdo al filtro de búsqueda');
             }
 
             pdfMake.createPdf(aa).open();
@@ -2535,15 +2776,26 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillColor: "#d9d9d9",
                   fillOpacity: "#d9d9d9"
                 }
-              });
+            });
+
+            if(this.arrReporteAutor.length < 2){
+                presente.push({
+                    text: "No existen autores registrados de acuerdo al filtro de búsqueda.",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 5, 0, 0],
+                });
+            }
 
             presente.push({
                 text: "Listado de autores adheridos",
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
-                margin: [0, 20, 0, 0],
+                margin: [0, 30, 0, 0],
             });
+            
 
             //this.arrReporteAcumulado = [['hola', 'chao', 'efe', 'x', 'y']];
 
@@ -2561,7 +2813,17 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillColor: "#d9d9d9",
                   fillOpacity: "#d9d9d9"
                 }
-              });
+            });
+
+            if(this.arrReporteAdicion.length < 2){
+                presente.push({
+                    text: "No existen autores registrados de acuerdo al filtro de búsqueda.",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 5, 0, 0],
+                });
+            }
 
             const aa = {
                 header: {
@@ -2641,7 +2903,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
               };
             
             if(this.arrReporteAutor.length < 2){
-                alert('Sin resultados');
+                alert('No existen autores registrados de acuerdo al filtro de búsqueda.');
             }
 
             pdfMake.createPdf(aa).open();
@@ -2735,7 +2997,17 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillColor: "#d9d9d9",
                   fillOpacity: "#d9d9d9"
                 }
-              });
+            });
+
+            if(this.arrReporteEstatusIniciativaInicial.length < 2){
+                presente.push({
+                    text: "No existen iniciativas registradas de acuerdo al filtro de búsqueda.",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 5, 0, 0],
+                });
+            }
 
             presente.push({
                 text: "Listado de iniciativas en proceso",
@@ -2761,7 +3033,17 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillColor: "#d9d9d9",
                   fillOpacity: "#d9d9d9"
                 }
-              });
+            });
+
+            if(this.arrReporteEstatusIniciativa.length < 2){
+                presente.push({
+                    text: "No existen iniciativas registradas de acuerdo al filtro de búsqueda.",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 5, 0, 0],
+                });
+            }
 
             const aa = {
                 header: {
@@ -2841,7 +3123,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
               };
 
             if(this.arrReporteEstatusIniciativa.length < 2 && this.arrReporteEstatusIniciativaInicial.length < 2){
-                alert('Sin resultados');
+                alert('No existen iniciativas registradas de acuerdo al filtro de búsqueda.');
             }
 
             pdfMake.createPdf(aa).open();
@@ -2935,8 +3217,17 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillColor: "#d9d9d9",
                   fillOpacity: "#d9d9d9"
                 }
-              });
+            });
 
+            if(this.arrReporteDictamenes.length < 2){
+                presente.push({
+                    text: "No existen iniciativas registradas de acuerdo al filtro de búsqueda.",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 5, 0, 0],
+                });
+            }
 
             const aa = {
                 header: {
@@ -3016,7 +3307,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
               };
 
             if(this.arrReporteDictamenes.length < 2){
-                alert('Sin resultados');
+                alert('No existen iniciativas registradas de acuerdo al filtro de búsqueda.');
             }
 
             pdfMake.createPdf(aa).open();
@@ -3110,8 +3401,17 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillColor: "#d9d9d9",
                   fillOpacity: "#d9d9d9"
                 }
-              });
+            });
 
+            if(this.arrReportePublicado.length < 2){
+                presente.push({
+                    text: "No existen iniciativas registradas de acuerdo al filtro de búsqueda.",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 5, 0, 0],
+                });
+            }
 
             const aa = {
                 header: {
@@ -3191,7 +3491,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
               };
 
             if(this.arrReportePublicado.length < 2){
-                alert('Sin resultados');
+                alert('No existen iniciativas registradas de acuerdo al filtro de búsqueda.');
             }
 
             pdfMake.createPdf(aa).open();
@@ -3285,8 +3585,17 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillColor: "#d9d9d9",
                   fillOpacity: "#d9d9d9"
                 }
-              });
+            });
 
+            if(this.arrReporteEstatusDecreto.length < 2){
+                presente.push({
+                    text: "No existen iniciativas registradas de acuerdo al filtro de búsqueda.",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 5, 0, 0],
+                });
+            }
 
             const aa = {
                 header: {
@@ -3366,7 +3675,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
               };
 
             if(this.arrReporteEstatusDecreto.length < 2){
-                alert('Sin resultados');
+                alert('No existen iniciativas registradas de acuerdo al filtro de búsqueda.');
             }
 
             pdfMake.createPdf(aa).open();
@@ -3460,8 +3769,17 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                   fillColor: "#d9d9d9",
                   fillOpacity: "#d9d9d9"
                 }
-              });
+            });
 
+            if(this.arrReporteComision.length < 2){
+                presente.push({
+                    text: "No existen iniciativas registradas de acuerdo al filtro de búsqueda.",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 5, 0, 0],
+                });
+            }
 
             const aa = {
                 header: {
@@ -3541,7 +3859,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
               };
 
             if(this.arrReporteComision.length < 2){
-                alert('Sin resultados');
+                alert('No existen iniciativas registradas de acuerdo al filtro de búsqueda.');
             }
 
             pdfMake.createPdf(aa).open();

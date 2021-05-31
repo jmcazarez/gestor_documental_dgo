@@ -76,9 +76,9 @@ export class TipoDeExpedientesComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             this.searchText = '';
-            if (result) {
+          
                 this.obtenerTiposExpedientes();
-            }
+           
 
         });
     }
@@ -123,10 +123,10 @@ export class TipoDeExpedientesComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-            if (result) {
+          
                 this.searchText = '';
                 this.obtenerTiposExpedientes();
-            }
+          
         });
     }
 

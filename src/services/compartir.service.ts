@@ -32,15 +32,30 @@ export class DocumentosCompartidosService {
     }
 
     documentoCompartido(id: string){
+        
         return this.http.get(this.baseUrl + this.urlDocumentoPublico + '/' + id);
     }
 
     dowloadDocument(idFile: string, idDocumento: string, usuario: string, nombreDocumento: string): any {
-        return this.http.get(this.baseUrl + this.urlDowloadDocument + '/' + idFile + '/' + idDocumento + '/' + usuario + '/' + nombreDocumento, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
+        return this.http.get(this.baseUrl + this.urlDowloadDocument + '/' + idFile + '/' + idDocumento + '/' + usuario + '/' + nombreDocumento, httpOptions);
     }
 
     dowloadDocumentClasificacion(idFile: string, idDocumento: string, usuario: string, nombreDocumento: string): any {
-        return this.http.get(this.baseUrl + this.urlDescargarDocumentoClasificacion + '/' + idFile + '/' + idDocumento + '/' + usuario + '/' + nombreDocumento, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
+        return this.http.get(this.baseUrl + this.urlDescargarDocumentoClasificacion + '/' + idFile + '/' + idDocumento + '/' + usuario + '/' + nombreDocumento, httpOptions);
     }
 
     downloadAlready(compartidos: CompartirModel): any{
@@ -49,7 +64,14 @@ export class DocumentosCompartidosService {
     }
     
     linkGenerate(documento: string){
+        this.TOKEN = localStorage.getItem('token');
+
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
         //console.log(documento + 'service');
-        return this.http.post(this.baseUrl + this.urlDocumentoPublico, {documento}, this.httpOptions);
+        return this.http.post(this.baseUrl + this.urlDocumentoPublico, {documento}, httpOptions);
     }
 }

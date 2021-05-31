@@ -28,19 +28,42 @@ export class PartidosPoliticosService {
     }
 
     obtenerPartidoPolitico(): any {
-        return this.http.get(this.baseUrl + this.urlPartidosPoliticos, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlPartidosPoliticos, httpOptions);
     }
 
     actualizarPartidoPolitico(partidosPoliticos: PartidosPoliticosModel): any {
-        return this.http.put(this.baseUrl + this.urlPartidosPoliticos + '/' + partidosPoliticos.id, partidosPoliticos, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlPartidosPoliticos + '/' + partidosPoliticos.id, partidosPoliticos, httpOptions);
     }
 
     guardarPartidoPolitico(partidosPoliticos: PartidosPoliticosModel): any {
-        return this.http.post(this.baseUrl + this.urlPartidosPoliticos, partidosPoliticos, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlPartidosPoliticos, partidosPoliticos, httpOptions);
     }
 
     eliminarPartidoPolitico(id: string): any {
-
-        return this.http.delete(this.baseUrl + this.urlPartidosPoliticos + '/' + id, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlPartidosPoliticos + '/' + id, httpOptions);
     }
 }

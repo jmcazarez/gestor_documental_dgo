@@ -76,7 +76,7 @@ export class TableroDeDocumentosComponent implements OnInit {
 
 
     obtenerDocumentos(): void {
-        console.log('entro');
+        
         this.spinner.show();
         const documentosTemp: any[] = [];
         let idDocumento: any;
@@ -102,7 +102,8 @@ export class TableroDeDocumentosComponent implements OnInit {
                 if (this.optConsultar) {
 
                     for (const documento of resp.data) {
-                        console.log('entro');
+                        
+                       
                         //                console.log(documento.tipo_de_documento.bActivo);
                         idDocumento = '';
                         // Validamos permisos
@@ -205,7 +206,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                             }
                         }
                     }
-                    console.log(documentosTemp);
+                    
                     this.documentos = documentosTemp;
                     this.documentosTemporal = this.documentos;
                 }
@@ -368,5 +369,8 @@ export class TableroDeDocumentosComponent implements OnInit {
         }
     }
 
+    onFooterPage(event): void{
+        console.log(event);
+    }
    
 }

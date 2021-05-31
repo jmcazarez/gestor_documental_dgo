@@ -16,7 +16,7 @@ import { GuardarSesionesComponent } from './guardar-sesiones/guardar-sesiones.co
 import { NgxSpinnerModule } from 'ngx-spinner';
 const routes = [
     {
-        path     : 'sesiones',
+        path     : 'tablero-de-sesiones',
         component: SesionesComponent,
         canActivate: [SeguridadGuard],
         

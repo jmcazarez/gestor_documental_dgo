@@ -12,7 +12,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
 
-            <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+            <mat-form-field appearance="outline" *ngIf="sesion.id" fxFlex="1 0 auto" class="pl-4">
                 <mat-label>Id. sesión</mat-label>
                 <input matInput formControlName="id">
             </mat-form-field>

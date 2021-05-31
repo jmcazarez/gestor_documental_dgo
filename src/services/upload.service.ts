@@ -55,12 +55,13 @@ export class UploadFileService {
     }
 */
     subirArchivo(file: any, base64: any): Promise<any> {
-        let options = {
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
             headers: new HttpHeaders({
                 Authorization: this.TOKEN,
-
             }),
-        };
+        }
+
       
         return new Promise(resolve => {
             {
@@ -75,7 +76,7 @@ export class UploadFileService {
                 // formData.append('files', file, data.name);                           
                 formData.append('base64', base64);
 
-                this.http.post(this.urlApi + this.urlUpload, formData, this.httpOptions).subscribe(
+                this.http.post(this.urlApi + this.urlUpload, formData, httpOptions).subscribe(
                     (res) => {
                         resolve(res);
                     },

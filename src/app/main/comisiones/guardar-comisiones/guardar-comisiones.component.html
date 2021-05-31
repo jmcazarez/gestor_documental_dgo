@@ -11,7 +11,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Nombre</mat-label>
+                <mat-label>Nombre *</mat-label>
                 <input matInput formControlName="descripcion" >
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
                 <mat-error *ngIf="form.get('descripcion').hasError('required')">El nombre la comsión es requerido</mat-error>
@@ -22,7 +22,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Tipo de comisión</mat-label>
+                <mat-label>Tipo de comisión *</mat-label>
                 <mat-select formControlName="tipoComision" [(ngModel)]="selectedTipoComision" name="tipoComision">
                     <mat-option *ngFor="let tipoComision of arrTipoComision" [value]="tipoComision.id">
                         {{tipoComision.descripcion}}

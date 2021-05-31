@@ -90,20 +90,19 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
 
         // Validamos si es un documento nuevo
         if (this.recepcion.id) {
-            console.log(this.recepcion);
             this.selectLegislatura = this.recepcion.legislatura.id;
             this.selectEmisor = this.recepcion.emisor[0].id;
             this.selectReceptor = this.recepcion.receptor[0].id;
-            this.recepcion.fechaCreacion =  this.datePipe.transform(this.recepcion.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+            this.recepcion.fechaCreacion = this.datePipe.transform(this.recepcion.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
             this.recepcion.fechaRecepcion = this.recepcion.fechaRecepcion + 'T16:00:00.000Z';
             this.selectEstado = this.recepcion.estatus;
-           
+
         } else {
-            console.log(fechaActual);
+
             // Seteamos la fecha de carga con la fecha actual
             this.selectEstado = 'pendiente'
             this.recepcion.estatus = 'pendiente';
-           // this.recepcion.fechaRecepcion = this.recepcion.fechaRecepcion;
+            // this.recepcion.fechaRecepcion = this.recepcion.fechaRecepcion;
             this.recepcion.fechaCreacion = ano + '-' + mes + '-' + dia;
             this.recepcion.hora = hora;
             this.selectLegislatura = '';
@@ -111,18 +110,18 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
             this.selectReceptor = '';
         }
 
-   
+
         // Form reativo
         this.form = this.formBuilder.group({
             cId: [{ value: this.recepcion.id, disabled: true }],
-            legislatura: [{ value: this.recepcion.legislatura, disabled: false }, Validators.required],
+            legislatura: [{ value: this.recepcion.legislatura, disabled: true }, Validators.required],
             fechaCreacion: [{ value: this.recepcion.fechaCreacion, disabled: true }, Validators.required],
             hora: [{ value: this.recepcion.hora, disabled: true }, Validators.required],
             fechaRecepcion: [{ value: this.recepcion.fechaRecepcion, disabled: false }, Validators.required],
             emisor: [{ value: this.recepcion.emisor, disabled: false }, Validators.required],
             receptor: [{ value: this.recepcion.receptor, disabled: false }, Validators.required],
             estatus: [{ value: this.estados, disabled: false }, Validators.required],
-            notas: [{ value: this.recepcion.notas, disabled: false }, [ Validators.maxLength(500)]],
+            notas: [{ value: this.recepcion.notas, disabled: false }, [Validators.maxLength(500)]],
 
         });
 
@@ -191,7 +190,12 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
         // Obtenemos legislaturas
         this.spinner.show();
         await this.legislaturasService.obtenerLegislatura().subscribe((resp: any) => {
-            
+
+            /*
+            .filter(
+                (item) => item["bActivo"] === true
+            )
+             */
             this.arrLegislaturas = resp;
             this.spinner.hide();
         }, err => {
@@ -206,7 +210,7 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
         await this.empleados.obtenerEmpleados().subscribe((resp: any) => {
 
             this.arrEmisores = resp;
-            this.arrReceptores = resp;
+            this.arrReceptores = this.arrEmisores;
             this.spinner.hide();
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener los empleados.' + err, 'error');
@@ -218,7 +222,6 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
     change(): void {
         this.cambioDocumento = true;
     }
-
 
 
 }

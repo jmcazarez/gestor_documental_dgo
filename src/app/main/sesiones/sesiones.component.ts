@@ -54,7 +54,7 @@ export class SesionesComponent implements OnInit {
         this.sesionesService.obtenerActasSesions().subscribe((resp: any) => {
 
             // Buscamos permisos
-            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === 'sesiones');
+            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === 'tablero-de-sesiones');
             this.optAgregar = opciones.Agregar;
             this.optEditar = opciones.Editar;
             this.optConsultar = opciones.Consultar;
@@ -62,6 +62,7 @@ export class SesionesComponent implements OnInit {
             // Si tiene permisos para consultar
             if (this.optConsultar) {
                 for (const sesion of resp) {
+                  
                     descripcionLegislatura = '';
                     if (sesion.legislatura) {
                         descripcionLegislatura = sesion.legislatura.cLegislatura
@@ -142,13 +143,14 @@ export class SesionesComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        this.sesiones = this.sesionesTemp;
         // Filtramos tabla
         if (value.target.value === '') {
             this.sesiones = this.sesionesTemp;
         } else {
             const val = value.target.value.toLowerCase();
-            const temp = this.sesiones.filter((d) => d.tipoSesion.toLowerCase().indexOf(val) !== -1 || !val || d.fechaSesion.toLowerCase().indexOf(val) !== -1
-                || d.horaSesion.toLowerCase().indexOf(val) !== -1 || d.descripcionLegislatura.toLowerCase().indexOf(val) !== -1);
+            const temp = this.sesiones.filter((d) => d.tipoSesion.toLowerCase().indexOf(val) !== -1 || !val || d.fechaSesionView.toLowerCase().indexOf(val) !== -1
+                || d.horaSesion.toLowerCase().indexOf(val) !== -1 || d.descripcionLegislatura.toLowerCase().indexOf(val) !== -1 || d.id.toLowerCase().indexOf(val) !== -1);
             this.sesiones = temp;
         }
     }

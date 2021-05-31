@@ -10,6 +10,7 @@ import { InventarioFisicoService } from "services/inventario-fisico.service";
 import { InventarioFisicoModels } from "models/inventario-fisico.models";
 import * as moment from "moment";
 import { GuardarInventarioFisicoComponent } from "./guardar-inventario-fisico/guardar-inventario-fisico.component";
+import { Console } from "console";
 
 @Component({
     selector: "app-tablero-de-inventario-fisico",
@@ -64,6 +65,7 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
                 // Si tiene permisos para consultar
                 if (this.optConsultar) {
                     if (resp) {
+                        console.log(resp);
                         for (const inventario of resp) {
                             let cLegislatura = "";
                             let cDescripcionTipoExpediente = "";
@@ -85,7 +87,7 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
                                 cTipoExpediente: cDescripcionTipoExpediente,
                                 cIdExpedienteIni: inventario.cIdExpedienteIni,
                                 cIdExpedienteFin: inventario.cIdExpedienteFin,
-                                dFechaAuditoria: inventario.dFechaAuditoria,
+                                dFechaAuditoria: this.datePipe.transform( inventario.dFechaAuditoria, 'yyyy-MM-dd'),
                                 notas: inventario.notas,
                                 dFechaAuditoriaText: this.datePipe.transform(
                                     inventario.dFechaAuditoria,
@@ -194,7 +196,7 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
                     !val ||
                     d.cIdExpedienteFin.toLowerCase().indexOf(val) !== -1 ||
                     !val ||
-                    d.dFechaAuditoria.toLowerCase().indexOf(val) !== -1
+                    d.dFechaAuditoriaText.toLowerCase().indexOf(val) !== -1
             );
 
             this.inventario = temp;

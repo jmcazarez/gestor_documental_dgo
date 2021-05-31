@@ -7,8 +7,18 @@
         [formGroup]="form">
 
         <div class="h2 mb-24">Configuración de firmas por etapa</div>
+        
+        <div fxLayout="row"  fxLayoutAlign="start center" fxFlex="1 0 auto">
 
-        <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
+            <mat-form-field  appearance="outline" fxFlex="1 0 auto" class="pl-4">
+                <mat-label>Tipo</mat-label>
+                <input matInput  [disabled]="this.ocultarTipo" formControlName="tipoText" >
+                <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
+            </mat-form-field>
+
+
+        </div>
+        <div fxLayout="row" *ngIf="!this.ocultarTipo" fxLayoutAlign="start center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
                 <mat-label>Tipo</mat-label>
                 <mat-select formControlName="tipo" [(ngModel)]="selectTipo" name="tipo">
@@ -25,7 +35,7 @@
                 <mat-label>Participantes</mat-label>
                 <mat-select formControlName="participantes" [(ngModel)]="selectParticipante" name="participante">
                     <mat-option *ngFor="let participante of arrEmpleados" [value]="participante.id">
-                        {{participante.nombre}}
+                        {{participante.nombre + ' ' + participante.apellidoPaterno + ' ' + participante.apellidoMaterno}}
                     </mat-option>
                 </mat-select>
             </mat-form-field>

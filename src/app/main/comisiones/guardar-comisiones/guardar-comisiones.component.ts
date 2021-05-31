@@ -81,7 +81,7 @@ export class GuardarComisionesComponent implements OnInit {
             tipoComision: [{ value: this.comision.tipos_comisione, disabled: false }, [Validators.required]],
             estatus: this.comision.activo,
         });
-
+     
     }
 
     async obtenerDetallesComision(): Promise<void> {
@@ -100,15 +100,13 @@ export class GuardarComisionesComponent implements OnInit {
             this.optEliminar = opciones.Eliminar;
             let i = 0;
             
-            console.log(this.arrPartidos);
-            console.log(this.arrLegislatura);
             // Si tiene permisos para consultar
             if (this.optConsultar) {
                 //Mostramos participantes presidente y vicepresidente
                 for (const detalleComision of resp) {
 
                     if (detalleComision.comisione === this.comision.id) {
-
+                        this.participantesExist = true;
                         const partido = this.arrPartidos.find(meta => meta.id == detalleComision.presidente[0].partidos_politico);
 
                         if (detalleComision.presidente[0]) {
@@ -323,7 +321,6 @@ export class GuardarComisionesComponent implements OnInit {
                     this.participantesExist = true;
                 }
                 this.detalles = result;
-                console.log(this.detalles);
                 this.detallesTemp = this.detalles;
             }
 

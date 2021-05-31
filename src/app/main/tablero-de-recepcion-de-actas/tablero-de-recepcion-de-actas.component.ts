@@ -63,11 +63,16 @@ export class TableroDeRecepcionDeActasComponent implements OnInit {
             this.optEliminar = opciones.Eliminar;
             // Si tiene permisos para consultar
             if (this.optConsultar) {
+                
                 if (resp) {
                     for (const ini of resp) {
                         let descripcionLegislatura = '';
+                        let descripcionTipoSesion = '';
                         if (ini.legislatura) {
                             descripcionLegislatura = ini.legislatura.cLegislatura;
+                        }
+                        if (ini.acta_sesion) {
+                            descripcionTipoSesion = ini.acta_sesion.tipoSesion;
                         }
                         actasTemp.push({
                             id: ini.id,
@@ -80,7 +85,8 @@ export class TableroDeRecepcionDeActasComponent implements OnInit {
                             receptor: ini.receptor,
                             estatus: ini.estatus,
                             hora: ini.hora,
-                            notas: ini.notas
+                            notas: ini.notas,
+                            descripcionTipoSesion
                         });
                     }
                 }
@@ -157,6 +163,7 @@ export class TableroDeRecepcionDeActasComponent implements OnInit {
 
 
     filterDatatable(value): void {
+        this.recepcionDeActas = this.recepcionDeActasTemporal;
         // Filtramos tabla
         if (value.target.value === '') {
             this.recepcionDeActas = this.recepcionDeActasTemporal;
@@ -164,8 +171,10 @@ export class TableroDeRecepcionDeActasComponent implements OnInit {
             const val = value.target.value.toLowerCase();
             const temp = this.recepcionDeActas.filter((d) => d.fechaCreacionText.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.hora.toLowerCase().indexOf(val) !== - 1 || d.descripcionLegislatura.toLowerCase().indexOf(val) !== - 1 ||
-                d.estatus.toLowerCase().indexOf(val) !== - 1);
-
+                d.estatus.toLowerCase().indexOf(val) !== - 1 ||
+                d.id.toLowerCase().indexOf(val) !== - 1 ||
+                d.descripcionTipoSesion.toLowerCase().indexOf(val) !== - 1);
+                
             this.recepcionDeActas = temp;
         }
     }

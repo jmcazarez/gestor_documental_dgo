@@ -455,7 +455,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         let horaSesion;
 
         this.spinner.show();
-
+    
         if (this.cambioInforme) {
             await this.subirAnexos(this.filesInforme);
         } else {
@@ -476,8 +476,9 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         this.iniciativa.clasificaciones = this.clasificaciones;
 
         if(this.selectedComision){
-            console.log('se seleccionó comisión');
             this.iniciativa.comisiones = this.selectedComision;
+        }else{
+            this.iniciativa.comisiones = null;
         }
 
         if (this.iniciativa.informeDeResultadosRevision !== undefined) {
@@ -485,8 +486,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         }
 
         if (this.iniciativa.oficioEnvioDeInforme !== undefined) {
+            console.log(this.iniciativa.oficioEnvioDeInforme)
             this.iniciativa.oficioEnvioDeInforme = this.iniciativa.oficioEnvioDeInforme.id;
         }
+
         legislatura = this.selectedLegislatura;
         tipoSesion = this.form.get('tipoSesion').value;;
         fechaSesion = moment(this.form.get('fechaSesion').value).format('YYYY-MM-DD');
@@ -507,6 +510,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 this.iniciativa.sustentoDeModificacion = this.form.get('sustentoDeModificacion').value;
                 this.iniciativa.dictamenDeIniciativa = this.selectedDictamenDeIniciativa;
             }else if(this.iniciativa.estatus == 'Turnada a publicación'){
+                console.log('publicacion');
                 this.iniciativa.periodicoOficial = this.form.get('periodicoOficial').value;
                 this.iniciativa.fechaPublicacion = moment(this.form.get('fechaPublicacion').value).format('YYYY-MM-DD');
                 this.iniciativa.fechaCreacion = moment().format('YYYY-MM-DD');
@@ -1143,13 +1147,16 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 idPuesto = parametrosSSP005.filter((d) => d['cParametroAdministrado'] === 'SSP-005-Servicios-Parlamentarios-Puesto');
             } if (this.iniciativa.estatus === 'Turnar dictamen a Mesa Directiva'){
                 idPuesto = parametrosSSP008.filter((d) => d['cParametroAdministrado'] === 'SSP-008-Mesa-Directiva-Puesto');
-                console.log('idPuesto');
-                console.log(idPuesto);
             }
 
+            console.log('idPuesto');
+            console.log(idPuesto);
+
             let firmasPorEtapas = await this.obtenerFirma(idFirmasPorEtapas[0]['cValor']);
+
             console.log('firmas por etapas');
             console.log(firmasPorEtapas);
+
             let puesto = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === idPuesto[0]['cValor']);
             console.log(puesto);
 
@@ -1159,7 +1166,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             let tipoIniciativa = this.arrTipo.filter((d) => d['id'] === this.selectTipo);
             let comision: any = this.comisiones.filter(d => d.id === this.selectedComision);
 
-            //console.log(this.arrMesas);
+            console.log(this.arrMesas);
             let mesa_directiva: any = this.arrMesas.filter(meta => meta.legislatura.id === this.selectedLegislatura);
             let legislaturaDoc: any = this.legislatura.filter(meta => meta.id === this.selectedLegislatura);
 
@@ -1522,7 +1529,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
         if(this.iniciativa.estatus=='Turnar dictamen a Mesa Directiva'){
             presente.push({
-                text: "Lic. " + puestoSecretario[1]['nombre'] + ' ' + puestoSecretario[1]['apellidoMaterno'] + ' ' + puestoSecretario[1]['apellidoPaterno'],
+                text: "Lic. " + puestoSecretario[0]['nombre'] + ' ' + puestoSecretario[0]['apellidoMaterno'] + ' ' + puestoSecretario[0]['apellidoPaterno'],
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
@@ -1840,7 +1847,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                         this.documentosGuardar.fechaCarga = this.datePipe.transform(this.documentosGuardar.fechaCarga, 'yyyy-MM-dd');
                         this.documentosGuardar.fechaCreacion = this.datePipe.transform(this.documentosGuardar.fechaCreacion, 'yyyy-MM-dd');
 
-                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[1], this.documentosGuardar.id];
+                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.documentosGuardar.id];
                         resolve(this.documentosGuardar.id);
                     } else {
                         this.spinner.hide();
@@ -1863,7 +1870,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                         this.documentosGuardar.fechaCreacion = this.datePipe.transform(this.documentosGuardar.fechaCreacion, 'yyyy-MM-dd');
 
 
-                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[1], this.documentosGuardar.id];
+                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.documentosGuardar.id];
                         // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
 
                         resolve(this.documentosGuardar.id);
@@ -2666,7 +2673,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             });
 
             this.documentos = this.iniciativa.formatosTipoIniciativa[4];
-            console.log('Turnar dictamen a secretaría de servicios parlamentarios');
+            console.log('Turnar dictamen a Mesa Directiva');
             console.log(this.documentos);
             this.documentos.metacatalogos = [
 
@@ -2854,8 +2861,9 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 d["cParametroAdministrado"] ===
                 "SSP-001-Tipo-de-Informacion"
         );
-        // this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
-        this.documentos.tipo_de_documento = '5f839b713ccdf563ac6ba096';
+        
+        this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
+
         this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
 
         this.documentos.visibilidade = tipoInformacion[0]["cValor"];
@@ -3192,8 +3200,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 d["cParametroAdministrado"] ===
                 "SSP-001-Tipo-de-Informacion"
         );
-        // documento.tipo_de_documento = tipoDocumento[0]["cValor"];
-        documento.tipo_de_documento = '5f839b713ccdf563ac6ba096';
+
+        documento.tipo_de_documento = tipoDocumento[0]["cValor"];
         documento.tipo_de_expediente = tipoExpediente[0]["cValor"];
         documento.visibilidade = tipoInformacion[0]["cValor"];
         documento.disabled = false;

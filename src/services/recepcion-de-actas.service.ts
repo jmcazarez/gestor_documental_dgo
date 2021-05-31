@@ -29,24 +29,52 @@ export class RecepcionDeActasService {
     }
 
     obtenerRecepcionesDeActas(): any {
-        return this.http.get(this.baseUrl + this.urlRecepcionDeActas, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
+        return this.http.get(this.baseUrl + this.urlRecepcionDeActas, httpOptions);
     }
 
     actualizarRecepcionDeActa(partidosPoliticos: RecepcionDeActasModel): any {
-        return this.http.put(this.baseUrl + this.urlRecepcionDeActas + '/' + partidosPoliticos.id, partidosPoliticos, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlRecepcionDeActas + '/' + partidosPoliticos.id, partidosPoliticos, httpOptions);
     }
 
     guardarRecepcionDeActa(partidosPoliticos: RecepcionDeActasModel): any {
-        return this.http.post(this.baseUrl + this.urlRecepcionDeActas, partidosPoliticos, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlRecepcionDeActas, partidosPoliticos, httpOptions);
     }
 
     eliminarRecepcionDeActa(id: string): any {
-
-        return this.http.delete(this.baseUrl + this.urlRecepcionDeActas + '/' + id, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlRecepcionDeActas + '/' + id, httpOptions);
     }
 
     obtenerRecepcionDeActasFiltrado(filtro: string): any {
-
-        return this.http.get(this.baseUrl + this.urlRecepcionDeActasFiltrado + '/' + filtro, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlRecepcionDeActasFiltrado + '/' + filtro, httpOptions);
     }
 }

@@ -264,39 +264,39 @@
                                         </mat-form-field>
                                     </div>
                                     <form #formRef="ngForm">
-                                        <div *ngFor="let meta of arrMetacatalogos; let in=index" class="col-sm-3">
+                                        <div *ngFor="let meta of arrMetacatalogosFiltro; let in=index" class="col-sm-3">
                                             <div class="form-group">
                                                 <div class="select"
-                                                    *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Numérico'">
-                                                    <p class="tag">{{arrMetacatalogos[in].cDescripcionMetacatalogo}}</p>
+                                                    *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Numérico'">
+                                                    <p class="tag">{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}</p>
                                                     <mat-form-field appearance="fill" class="input">
                                                         <mat-label>Capture un numero</mat-label>
                                                         <input type="number"
-                                                            *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Numérico'"
+                                                            *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Numérico'"
                                                             matInput [(ngModel)]="meta.text"
-                                                            name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}"
+                                                            name="{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}"
                                                            >
                                                     </mat-form-field>
                                                 </div>
                                                 <div class="select"
-                                                    *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Texto'">
-                                                    <p class="tag">{{arrMetacatalogos[in].cDescripcionMetacatalogo}}</p>
+                                                    *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Texto'">
+                                                    <p class="tag">{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}</p>
                                                     <mat-form-field appearance="fill" class="input">
                                                         <mat-label>Capture un texto</mat-label>
-                                                        <input *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Texto'"
+                                                        <input *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Texto'"
                                                             matInput [(ngModel)]="meta.text"
-                                                            name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}"
+                                                            name="{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}"
                                                             >
                                                     </mat-form-field>
                                                 </div>
                                                 <div class="select"
-                                                    *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Fecha'">
-                                                    <p class="tag">{{arrMetacatalogos[in].cDescripcionMetacatalogo}}</p>
+                                                    *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Fecha'">
+                                                    <p class="tag">{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}</p>
                                                     <mat-form-field appearance="fill" class="input">
                                                         <mat-label>Seleccione una Fecha</mat-label>
-                                                        <input *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Fecha'"
+                                                        <input *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Fecha'"
                                                             matInput [(ngModel)]="meta.text"
-                                                            name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}"
+                                                            name="{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}"
                                                             [matDatepicker]="picker2"
                                                            >
                                                         <mat-datepicker-toggle matSuffix [for]="picker2">
@@ -306,12 +306,12 @@
                                                 </div>
 
                                                 <div class="select"
-                                                    *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Sí o no'">
-                                                    <p class="tag">{{arrMetacatalogos[in].cDescripcionMetacatalogo}}</p>
+                                                    *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Sí o no'">
+                                                    <p class="tag">{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}</p>
                                                     <mat-form-field appearance="fill" class="input">
                                                         <mat-label>Si/No</mat-label>
                                                         <mat-select [(ngModel)]="meta.text"
-                                                            name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}"
+                                                            name="{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}"
                                                             >
                                                             <mat-option value="Sí">Sí</mat-option>
                                                             <mat-option value="No">No</mat-option>

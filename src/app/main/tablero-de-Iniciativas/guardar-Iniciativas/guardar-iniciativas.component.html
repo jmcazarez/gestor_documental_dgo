@@ -12,7 +12,7 @@
                 <div class="h2 mb-24">Registro de recepción de iniciativa</div>
             </div>
             <div align="end" fxFlex="40">
-                <button *ngIf="this.iniciativa.formatosTipoIniciativa.length > 0 && files.length > 0" mat-raised-button color="warn" align="end"  (click)="clasificarDocumento()">Vista
+                <button *ngIf="this.iniciativa.formatosTipoIniciativa.length > 0 && this.files.length > 0" mat-raised-button color="warn" align="end"  (click)="clasificarDocumento()">Vista
                     previa</button>
                 <button disabled *ngIf="files.length < 1" mat-raised-button color="warn" align="end"  (click)="clasificarDocumento()">
                 Debe anexar 

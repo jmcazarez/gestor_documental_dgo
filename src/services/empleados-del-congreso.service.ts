@@ -28,18 +28,42 @@ export class EmpleadosDelCongresoService {
     }
 
     obtenerEmpleados(): any {
-        return this.http.get(this.baseUrl + this.urlEmpleados, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlEmpleados, httpOptions);
     }
 
     actualizarEmpleado(empleados: EmpleadosModel): any {
-        return this.http.put(this.baseUrl + this.urlEmpleados + '/' + empleados.id, empleados, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlEmpleados + '/' + empleados.id, empleados, httpOptions);
     }
 
     guardarEmpleado(empleados: EmpleadosModel): any {
-        return this.http.post(this.baseUrl + this.urlEmpleados, empleados, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlEmpleados, empleados, httpOptions);
     }
 
     eliminarEmpleado(ruta: string): any {
-        return this.http.delete(this.baseUrl + this.urlEmpleados + '/' + ruta, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlEmpleados + '/' + ruta, httpOptions);
     }
 }

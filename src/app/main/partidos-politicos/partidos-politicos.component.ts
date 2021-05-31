@@ -92,6 +92,7 @@ export class PartidosPoliticosComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        this.partidosPoliticos = this.partidosPoliticosTemp;
         // Filtramos tabla
         if (value.target.value === '') {
             this.partidosPoliticos = this.partidosPoliticosTemp;
@@ -129,4 +130,5 @@ export class PartidosPoliticosComponent implements OnInit {
             }
         });
     }
+
 }

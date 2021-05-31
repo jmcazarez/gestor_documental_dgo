@@ -11,7 +11,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Diputado</mat-label>
+                <mat-label>Diputado *</mat-label>
                 <input matInput formControlName="nombre">
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
                 <mat-error *ngIf="form.get('nombre').hasError('required')">El nombre del diputado es requerido
@@ -24,7 +24,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Distrito</mat-label>
+                <mat-label>Distrito *</mat-label>
                 <mat-select formControlName="distrito" [(ngModel)]="selectedDistrito" name="distrito">
                     <mat-option *ngFor="let distrito of arrDistritos" [value]="distrito.id">
                         {{distrito.descripcion}}
@@ -36,7 +36,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Partido</mat-label>
+                <mat-label>Partido *</mat-label>
                 <mat-select formControlName="partido" [(ngModel)]="selectedPartido" name="partido">
                     <mat-option *ngFor="let partido of arrPartidos" [value]="partido.id">
                         {{partido.cPartidoPolitico}}
@@ -47,10 +47,13 @@
         </div>
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Legislatura</mat-label>
+                <mat-label>Legislatura *</mat-label>
                 <mat-select formControlName="legislatura" [(ngModel)]="selectedLegislatura" name="legislatura">
                     <mat-option *ngFor="let legislatura of arrLegislaturas" [value]="legislatura.id">
                         {{legislatura.cLegislatura}}
+
+                        <span *ngIf="legislatura.bActivo === true" class="activo"> - Activo </span>
+                        <span *ngIf="legislatura.bActivo === false" class="inactivo"> - Inactivo </span>
                     </mat-option>
                 </mat-select>
                 <mat-error>El partido politico es requerido</mat-error>
@@ -59,7 +62,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Telefono</mat-label>
+                <mat-label>Telefono *</mat-label>
                 <input  matInput formControlName="telefono">
                 <mat-icon matSuffix class="secondary-text">phone</mat-icon>
                 <mat-error *ngIf="form.get('telefono').hasError('required')">El teléfono es requerido</mat-error>
@@ -68,7 +71,7 @@
         </div>
 
         <mat-form-field appearance="outline" fxFlex="50" class="pl-4">
-            <mat-label>Email</mat-label>
+            <mat-label>Email *</mat-label>
             <input matInput formControlName="email">
             <mat-icon matSuffix class="secondary-text">email</mat-icon>
             <mat-error *ngIf="form.get('email').hasError('required')">El E-Mail es requerido</mat-error>

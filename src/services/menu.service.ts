@@ -42,6 +42,11 @@ export class MenuService {
     }
 
     async crearMenu(): Promise<void> {
+        this.fuseNavigationService.removeNavigationItem('grupo-Catalogos');
+        this.fuseNavigationService.removeNavigationItem('grupo-Menu');
+        this.fuseNavigationService.removeNavigationItem('grupo-Configuracion');
+        this.fuseNavigationService.removeNavigationItem('grupo-Registros');
+        this.fuseNavigationService.removeNavigationItem('grupo-Reportes');
         let usr = JSON.parse(localStorage.getItem('usr'));
         if (usr) {
             let token = usr[0].data.token
@@ -49,16 +54,16 @@ export class MenuService {
             if (token !== undefined && token !== null) {
                 await this.obtenerTipoOpciones(token).subscribe(async (resp: any) => {
                     this.tipoOpciones = resp;
-                    
+
                     this.tipoDocumentos = [];
                     this.opcionesPerfil = [];
                     this.tipoInformacion = [];
                     let grupoMenu: GrupoMenuModel;
                     let grupoMenuReportes: GrupoMenuModel;
                     let grupoMenuCatalagos: GrupoMenuModel;
-                     let grupoMenuConfiguracion: GrupoMenuModel;
+                    let grupoMenuConfiguracion: GrupoMenuModel;
 
-                    this.limpiarMenu();
+
                     let tipoFormato = '';
                     let visibilidade = '';
                     let metacatalogos = [];
@@ -87,34 +92,36 @@ export class MenuService {
                         };
 
                         grupoMenuConfiguracion = {
-                               id: "grupo-" + "Configuracion",
-                               title: "Configuración",
-                               type: "group",
-                               children: [],
-                           };
+                            id: "grupo-" + "Configuracion",
+                            title: "Configuración",
+                            type: "group",
+                            children: [],
+                        };
 
 
 
                         /*  for (const opciones of usuarioLogin.Opciones) { */
 
                         for (const perfiles of usuarioLogin[0].data.perfiles_de_usuario) {
+                           
                             if (perfiles.bActivo) {
                                 this.perfilUsuario.push({ id: perfiles.id });
                                 for (const visibilidad of perfiles.Visibilidad) {
-
-                                    if (visibilidad.visibilidade.bActivo && visibilidad.Si) {
-                                       // console.log(visibilidad.visibilidade);
-                                        this.tipoInformacion.push({
-                                            id: visibilidad.visibilidade.id,
-                                            cDescripcionVisibilidad: visibilidad.visibilidade.cDescripcionVisibilidad,
-                                        });
+                                    if (visibilidad.visibilidade) {
+                                        if (visibilidad.visibilidade.bActivo && visibilidad.Si) {
+                                            // console.log(visibilidad.visibilidade);
+                                            this.tipoInformacion.push({
+                                                id: visibilidad.visibilidade.id,
+                                                cDescripcionVisibilidad: visibilidad.visibilidade.cDescripcionVisibilidad,
+                                            });
+                                        }
                                     }
                                 }
 
                                 // Agregamos permisos a tipos de documentos
                                 for (const documentos of perfiles.Documentos) {
                                     if (documentos.tipo_de_documento) {
-                                       // console.log(documentos.tipo_de_documento);
+                                        // console.log(documentos.tipo_de_documento);
                                         if (documentos.tipo_de_documento.bActivo) {
                                             const resultado = this.tipoDocumentos.find(tipoDocumento => tipoDocumento.id === documentos.tipo_de_documento.id);
 
@@ -152,8 +159,8 @@ export class MenuService {
                                                     visibilidade = documentos.tipo_de_documento.visibilidade;
                                                 }
 
-                                               
-                                            // console.log(documentos.tipo_de_documento.bObligatorio);
+
+                                                // console.log(documentos.tipo_de_documento.bObligatorio);
                                                 this.tipoDocumentos.push({
                                                     id: documentos.tipo_de_documento.id,
                                                     cDescripcionTipoDocumento: documentos.tipo_de_documento.cDescripcionTipoDocumento,
@@ -180,7 +187,7 @@ export class MenuService {
                                     if (opciones) {
                                         if (opciones.opciones_del_sistema) {
 
-                                            
+
                                             if (opciones.opciones_del_sistema.bActivo) {
                                                 const resultado = this.opcionesPerfil.find(opcion => opcion.id === opciones.opciones_del_sistema.id);
 
@@ -215,14 +222,14 @@ export class MenuService {
                                                                     itemMenu
                                                                 );
                                                             }
-                                                               if (
-                                                                   tipo.cDescripcionTipoOpcion ===
-                                                                   "Catalogos"
-                                                               ) {
-                                                                   grupoMenuCatalagos.children.push(
-                                                                       itemMenu
-                                                                   );
-                                                               }
+                                                            if (
+                                                                tipo.cDescripcionTipoOpcion ===
+                                                                "Catalogos"
+                                                            ) {
+                                                                grupoMenuCatalagos.children.push(
+                                                                    itemMenu
+                                                                );
+                                                            }
 
                                                         } else {
 
@@ -243,14 +250,14 @@ export class MenuService {
                                                             if (tipo.cDescripcionTipoOpcion === 'Catalogos') {
                                                                 grupoMenuCatalagos.children.push(itemMenu);
                                                             }
-                                                             if (
-                                                                 tipo.cDescripcionTipoOpcion ===
-                                                                 "Configuración"
-                                                             ) {
-                                                                 grupoMenuConfiguracion.children.push(
-                                                                     itemMenu
-                                                                 );
-                                                             }
+                                                            if (
+                                                                tipo.cDescripcionTipoOpcion ===
+                                                                "Configuración"
+                                                            ) {
+                                                                grupoMenuConfiguracion.children.push(
+                                                                    itemMenu
+                                                                );
+                                                            }
 
                                                         } else {
 
@@ -305,7 +312,7 @@ export class MenuService {
                             }
                         }
                         if (grupoMenu.children.length === 0 && grupoMenuCatalagos.children.length === 0 && grupoMenuReportes.children.length === 0) {
-                           
+
                             this.router.navigate(['login']);
                             Swal.fire(
                                 'Error',
@@ -324,9 +331,16 @@ export class MenuService {
                         // }
                     }
                 }, err => {
-                    console.log(err);
+                    /*   Swal.fire(
+                           'Error',
+                           err,
+                           'error'
+                       );
+                     */
+
+                    alert(JSON.stringify(err));
                     this.router.navigate(['login']);
-                    
+
                 });
             }
         }
@@ -334,17 +348,18 @@ export class MenuService {
     }
 
     limpiarMenu(): void {
-        const menuActual = this.fuseNavigationService.getCurrentNavigation();
+        this.fuseNavigationService.removeNavigationItem('grupo-Catalogos');
+        this.fuseNavigationService.removeNavigationItem('grupo-Menu');
+        this.fuseNavigationService.removeNavigationItem('grupo-Configuracion');
+        this.fuseNavigationService.removeNavigationItem('grupo-Registros');
+        this.fuseNavigationService.removeNavigationItem('grupo-Reportes');
 
-        for (const itemMenu of menuActual) {
-            this.fuseNavigationService.removeNavigationItem(itemMenu.id);
-        }
     }
 
     obtenerTipoOpciones(token: string): any {
         this.TOKEN = localStorage.getItem('token');
-   
-        if(this.TOKEN === null){
+
+        if (this.TOKEN === null) {
             this.TOKEN = token;
         }
         let options = {

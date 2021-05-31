@@ -25,7 +25,13 @@ export class ParametrosService {
     }
 
      obtenerParametros(filtro: string): any {     
-        return this.http.get(this.baseUrl + this.urlParametros + '/' + filtro , this.httpOptions);      
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlParametros + '/' + filtro , httpOptions);      
     }
 
 }

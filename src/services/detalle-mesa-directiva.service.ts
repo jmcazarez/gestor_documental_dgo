@@ -28,18 +28,42 @@ export class DetalleMesaService {
     }
 
     obtenerDetalleMesa(): any {
-        return this.http.get(this.baseUrl + this.urlDetalleMesa, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlDetalleMesa, httpOptions);
     }
 
     actualizarDetalleMesa(detalleMesas: any): any {
-        return this.http.put(this.baseUrl + this.urlDetalleMesa + '/' + detalleMesas.id, detalleMesas, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlDetalleMesa + '/' + detalleMesas.id, detalleMesas, httpOptions);
     }
 
     guardarDetalleMesa(detalleMesas: any): any {
-        return this.http.post(this.baseUrl + this.urlDetalleMesa, detalleMesas, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlDetalleMesa, detalleMesas, httpOptions);
     }
 
     eliminarDetalleMesa(ruta: string): any {
-        return this.http.delete(this.baseUrl + this.urlDetalleMesa + '/' + ruta, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlDetalleMesa + '/' + ruta, httpOptions);
     }
 }

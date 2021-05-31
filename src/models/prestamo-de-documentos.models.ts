@@ -12,10 +12,10 @@ export class PrestamoDeDocumentosModels {
     tHoraDevolucion: any;
     tHoraDocEntregado: any;
     cSolicitante: string;
-    cTipoPrestamo: string;
-    cTipoExpediente: string;
+    cTipoPrestamo: string;   
     cIdExpediente: string;
     cNotas: string;
     cEstatus: string;
     cTipoDanio: string;
+    tipo_de_expediente: any;
 }

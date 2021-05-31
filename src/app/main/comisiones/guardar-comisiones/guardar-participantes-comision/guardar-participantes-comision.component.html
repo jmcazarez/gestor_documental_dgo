@@ -11,7 +11,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="100">
-                <mat-label>Legislaturas</mat-label>
+                <mat-label>Legislaturas *</mat-label>
                 <mat-select formControlName="legislaturas" [(ngModel)]="selectedLegislatura" name="legislaturas" (ngModelChange)="onSelect($event)">
                     <mat-option *ngFor="let legislaturas of arrLegislatura" [value]="legislaturas.id">
                         {{legislaturas.cLegislatura}}
@@ -23,7 +23,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="100">
-                <mat-label>Presidente</mat-label>
+                <mat-label>Presidente *</mat-label>
                 <mat-select formControlName="presidente" [(ngModel)]="selectedPresidente" name="presidente">
                     <mat-option *ngFor="let presidente of arrDiputados" [value]="presidente.id">
                         {{presidente.nombre}}
@@ -35,7 +35,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="100">
-                <mat-label>VicePresidente</mat-label>
+                <mat-label>VicePresidente *</mat-label>
                 <mat-select formControlName="vicepresidente" [(ngModel)]="selectedVicePresidente" name="vicepresidente">
                     <mat-option *ngFor="let vice of arrDiputados" [value]="vice.id">
                         {{vice.nombre}}
@@ -55,7 +55,7 @@
             <div [formGroupName]="i">
                 <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="50" class="ml-16">
-                        <mat-label [attr.for]="'id' + i">Vocal</mat-label>
+                        <mat-label [attr.for]="'id' + i">Vocal *</mat-label>
                         <mat-select formControlName="id" [attr.id]="'id' + i" name="id">
                             <mat-option *ngFor="let vocals of arrDiputados" [value]="vocals.id">
                                 {{vocals.nombre}}
@@ -83,7 +83,7 @@
             <div [formGroupName]="i">
                 <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="50" class="ml-16">
-                        <mat-label [attr.for]="'id' + i">Vocal</mat-label>
+                        <mat-label [attr.for]="'id' + i">Vocal *</mat-label>
                         <mat-select formControlName="id" [attr.id]="'id' + i" name="id" [(ngModel)]="this.resultado.vocals[+i]">
                             <mat-option *ngFor="let vocals of arrDiputados" [value]="vocals.id">
                                 {{vocals.nombre}}

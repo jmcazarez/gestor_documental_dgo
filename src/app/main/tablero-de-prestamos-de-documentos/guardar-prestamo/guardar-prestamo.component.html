@@ -22,7 +22,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Nombre del solicitante</mat-label>
+                <mat-label>Nombre del solicitante *</mat-label>
                 <input matInput formControlName="cSolicitante" >
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
                 <mat-error *ngIf="form.get('cSolicitante').hasError('required')">El nombre del solicitante</mat-error>
@@ -33,7 +33,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Tipo de prestamo</mat-label>
+                <mat-label>Tipo de prestamo *</mat-label>
                 <mat-select formControlName="cTipoPrestamo" [(ngModel)]="selectPrestamo" name="prestamo">
                     <mat-option *ngFor="let prestamo of tipoPrestamo" [value]="prestamo.descripcion">
                         {{prestamo.descripcion}}
@@ -44,7 +44,7 @@
         </div>
 
         <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-            <mat-label>Fecha solicitud</mat-label>
+            <mat-label>Fecha solicitud *</mat-label>
             <input matInput [matDatepicker]="picker" formControlName="dFechaSolicitud">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
@@ -52,17 +52,17 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-            <mat-label>Hora solicitud</mat-label>
+            <mat-label>Hora solicitud *</mat-label>
             <input matInput type="time" atp-time-picker formControlName="tHoraSolicitud"/>
             <mat-error>La hora del registro no es valida ej. 28/11/2020</mat-error>
         </mat-form-field>
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Tipo de expediente</mat-label>
-                <mat-select formControlName="cTipoExpediente" [(ngModel)]="selectExpediente" name="expediente">
-                    <mat-option *ngFor="let expediente of tipoExpediente" [value]="expediente.descripcion">
-                        {{expediente.descripcion}}
+                <mat-label>Tipo de expediente *</mat-label>
+                <mat-select formControlName="tipoExpediente" [(ngModel)]="selectExpediente" name="expediente">
+                    <mat-option *ngFor="let expediente of tipoExpediente" [value]="expediente.id">
+                        {{expediente.cDescripcionTipoExpediente}}
                     </mat-option>
                 </mat-select>
                 <mat-error>El tipo de expediente es requerido.</mat-error>
@@ -71,7 +71,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Id. expediente</mat-label>
+                <mat-label>Folio de expediente *</mat-label>
                 <input matInput formControlName="cIdExpediente" >
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
                 <mat-error *ngIf="form.get('cIdExpediente').hasError('required')">El identificador del expediente es requerido</mat-error>
@@ -81,7 +81,7 @@
         </div>
 
         <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-            <mat-label>Fecha devolución</mat-label>
+            <mat-label>Fecha devolución *</mat-label>
             <input matInput [matDatepicker]="picker1" formControlName="dFechaDevolucion" [min]="maxDate">
             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
             <mat-datepicker #picker1></mat-datepicker>
@@ -89,13 +89,13 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-            <mat-label>Hora devolución</mat-label>
+            <mat-label>Hora devolución *</mat-label>
             <input matInput type="time" atp-time-picker value="00:00" formControlName="tHoraDevolucion"/>
             <mat-error>La hora del devolución no es valida ej. 28/11/2020</mat-error>
         </mat-form-field>
 
         <mat-form-field  *ngIf="this.prestamo.id" appearance="outline" fxFlex="1 0 auto" class="pl-4">
-            <mat-label>Fecha entrega de documento</mat-label>
+            <mat-label>Fecha entrega de documento *</mat-label>
             <input matInput [matDatepicker]="picker2" formControlName="dFechaDocEntregado" [min]="maxDate">
             <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
             <mat-datepicker #picker2></mat-datepicker>
@@ -103,7 +103,7 @@
         </mat-form-field>
 
         <mat-form-field  *ngIf="this.prestamo.id" appearance="outline" fxFlex="1 0 auto" class="pl-4">
-            <mat-label>Hora de entrega de documento</mat-label>
+            <mat-label>Hora de entrega de documento *</mat-label>
             <input matInput type="time" atp-time-picker formControlName="tHoraDocEntregado"/>
             <mat-error>La hora de entrega de documentos no es valida ej. 28/11/2020</mat-error>
         </mat-form-field>
@@ -111,7 +111,7 @@
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
             
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Estatus</mat-label>
+                <mat-label>Estatus *</mat-label>
                 <mat-select formControlName="cEstatus" [(ngModel)]="selectEstado" name="estatus">
                     <mat-option *ngFor="let estatus of estatusPrestamo" [value]="estatus.descripcion">
                         {{estatus.descripcion}}
@@ -124,7 +124,7 @@
 
         <div *ngIf="this.prestamo.id && selectEstado==='Incompleto'" fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Tipo de daño</mat-label>
+                <mat-label>Tipo de daño *</mat-label>
                 <mat-select formControlName="cTipoDanio" [(ngModel)]="selectDanio" name="danio">
                     <mat-option *ngFor="let danio of tipoDanio" [value]="danio.descripcion">
                         {{danio.descripcion}}

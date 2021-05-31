@@ -39,15 +39,46 @@ export class TipoExpedientesService {
     }
 
     actualizarTipoExpedientes(tipoExpedientes: TipoExpedientesModel): any {
-        return this.http.put(this.baseUrl + this.urlTipoExpedientes + '/' + tipoExpedientes.id, tipoExpedientes, this.httpOptions);
+             this.TOKEN = localStorage.getItem("token");
+
+             let httpOptions = {
+                 headers: new HttpHeaders({
+                     Authorization: this.TOKEN,
+                 }),
+             };
+        return this.http.put(
+            this.baseUrl + this.urlTipoExpedientes + "/" + tipoExpedientes.id,
+            tipoExpedientes,
+            httpOptions
+        );
     }
 
     guardarTipoExpedientes(tipoExpedientes: TipoExpedientesModel): any {
-        return this.http.post(this.baseUrl + this.urlTipoExpedientes, tipoExpedientes, this.httpOptions);
+             this.TOKEN = localStorage.getItem("token");
+
+             let httpOptions = {
+                 headers: new HttpHeaders({
+                     Authorization: this.TOKEN,
+                 }),
+             };
+        return this.http.post(
+            this.baseUrl + this.urlTipoExpedientes,
+            tipoExpedientes,
+            httpOptions
+        );
     }
 
     eliminarTipoExpedientes(ruta: string): any {
+     this.TOKEN = localStorage.getItem("token");
 
-        return this.http.delete(this.baseUrl + this.urlTipoExpedientes + '/' + ruta, this.httpOptions);
+     let httpOptions = {
+         headers: new HttpHeaders({
+             Authorization: this.TOKEN,
+         }),
+     };
+        return this.http.delete(
+            this.baseUrl + this.urlTipoExpedientes + "/" + ruta,
+            httpOptions
+        );
     }
 }

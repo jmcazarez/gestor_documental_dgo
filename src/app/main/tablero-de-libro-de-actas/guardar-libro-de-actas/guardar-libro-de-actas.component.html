@@ -7,10 +7,17 @@
         [formGroup]="form">
 
         <div class="h2 mb-24">Registro de libro de actas</div>
+        <div  fxLayout="row" *ngIf="libro.id" fxLayoutAlign="start center" fxFlex="1 0 auto">
+            <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+                <mat-label>Id. libro de actas</mat-label>
+                <input matInput formControlName="cId" >
+                <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>              
+            </mat-form-field>
+        </div>
 
         <div fxLayout="row" fxLayoutAlign="staLibro de actas guardadart center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Legislatura</mat-label>
+                <mat-label>Legislatura *</mat-label>
                 <mat-select formControlName="legislatura" [(ngModel)]="selectLegislatura" name="legislatura">
                     <mat-option *ngFor="let legislatura of arrLegislaturas" [value]="legislatura.id">
                         {{legislatura.cLegislatura}}
@@ -21,7 +28,7 @@
 
         </div>
         <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-            <mat-label>Fecha de inicio de sesiones integradas</mat-label>
+            <mat-label>Fecha de inicio de sesiones integradas *</mat-label>
             <input matInput [matDatepicker]="picker1" formControlName="fechaDeInicio" [max]="maxDate">
             <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
             <mat-datepicker #picker1></mat-datepicker>
@@ -29,13 +36,21 @@
 
         </mat-form-field>
         <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-            <mat-label>Fecha de fin de sesiones integradas</mat-label>
+            <mat-label>Fecha de fin de sesiones integradas *</mat-label>
             <input matInput [matDatepicker]="picker2" formControlName="fechaDeFin" [max]="maxDate">
             <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
             <mat-datepicker #picker2></mat-datepicker>
             <mat-error>La fecha de fin del registro no es valida ej. 28/11/2020</mat-error>
 
         </mat-form-field>
+
+        <div fxLayout="row" fxLayoutAlign="center" fxFlex="30">
+            <section class="example-section">
+                <mat-slide-toggle formControlName="estatus" class="example-margin">
+                    Estatus
+                </mat-slide-toggle>
+            </section>
+        </div>
     </form>
 </div>
 <div class="content p-24" align="center" style="border: 1px">

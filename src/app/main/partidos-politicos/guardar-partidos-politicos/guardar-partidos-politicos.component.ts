@@ -66,7 +66,7 @@ export class GuardarPartidosPoliticosComponent implements OnInit {
             this.partidosPoliticosService.guardarPartidoPolitico(this.partidoPolitico).subscribe((resp: any) => {
                 if (resp) {
                     this.spinner.hide();
-                    Swal.fire('Éxito', 'Partido político guardada correctamente.', 'success');
+                    Swal.fire('Éxito', 'Partido político guardado correctamente.', 'success');
                     this.cerrar(this.partidoPolitico);
                 } else {
                     this.spinner.hide();

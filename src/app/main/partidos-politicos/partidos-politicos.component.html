@@ -1,4 +1,5 @@
 <ngx-spinner></ngx-spinner>
+
 <div id="clientes" class="page-layout simple fullwidth docs">
 
     <!-- HEADER -->
@@ -19,10 +20,13 @@
             <div class="buscador">
                 <mat-form-field class="buscar">
                     <mat-label>Buscar partido político</mat-label>
-                    <input type='text'  [(ngModel)]="filterName" name="filterName" matInput placeholder='' (keyup)='filterDatatable($event)'>
+                    <input type='text' [(ngModel)]="filterName" name="filterName" matInput placeholder=''
+                        (keyup)='filterDatatable($event)'>
                 </mat-form-field>
-                <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevoPartidoPolitico()" class="button">
-                    <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir una Partido Politico">post_add
+                <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevoPartidoPolitico()"
+                    class="button">
+                    <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir una Partido Politico">
+                        post_add
                     </mat-icon>
                     Agregar partido político
                 </button>
@@ -61,4 +65,11 @@
             </ngx-datatable>
         </div>
     </div>
+
+
+    <table>
+      
+    </table>
+
+ 
 </div>

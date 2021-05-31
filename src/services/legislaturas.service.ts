@@ -28,18 +28,57 @@ export class LegislaturaService {
     }
 
     obtenerLegislatura(): any {
-        return this.http.get(this.baseUrl + this.urlLegislatura, this.httpOptions);
+         this.TOKEN = localStorage.getItem("token");
+
+         let httpOptions = {
+             headers: new HttpHeaders({
+                 Authorization: this.TOKEN,
+             }),
+         };
+        return this.http.get(this.baseUrl + this.urlLegislatura, httpOptions);
     }
 
     actualizarLegislatura(legislatura: LegislaturaModel): any {
-        return this.http.put(this.baseUrl + this.urlLegislatura + '/' + legislatura.id, legislatura, this.httpOptions);
+         this.TOKEN = localStorage.getItem("token");
+
+         let httpOptions = {
+             headers: new HttpHeaders({
+                 Authorization: this.TOKEN,
+             }),
+         };
+        return this.http.put(
+            this.baseUrl + this.urlLegislatura + "/" + legislatura.id,
+            legislatura,
+            httpOptions
+        );
     }
 
     guardarLegislatura(legislatura: LegislaturaModel): any {
-        return this.http.post(this.baseUrl + this.urlLegislatura, legislatura, this.httpOptions);
+         this.TOKEN = localStorage.getItem("token");
+
+         let httpOptions = {
+             headers: new HttpHeaders({
+                 Authorization: this.TOKEN,
+             }),
+         };
+        return this.http.post(
+            this.baseUrl + this.urlLegislatura,
+            legislatura,
+            httpOptions
+        );
     }
 
     eliminarLegislatura(id: string): any {
-        return this.http.delete(this.baseUrl + this.urlLegislatura + '/' + id, this.httpOptions);
+         this.TOKEN = localStorage.getItem("token");
+
+         let httpOptions = {
+             headers: new HttpHeaders({
+                 Authorization: this.TOKEN,
+             }),
+         };
+        return this.http.delete(
+            this.baseUrl + this.urlLegislatura + "/" + id,
+            httpOptions
+        );
     }
 }

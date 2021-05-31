@@ -11,7 +11,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="50" class="ml-16">
-                <mat-label>Nombre</mat-label>
+                <mat-label>Nombre *</mat-label>
                 <input matInput formControlName="nombre" >
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
                 <mat-error *ngIf="form.get('nombre').hasError('required')">El nombre del empleado es requerido.</mat-error>
@@ -20,7 +20,7 @@
             </mat-form-field>
 
             <mat-form-field appearance="outline" fxFlex="50" class="ml-16">
-                <mat-label>Apellido Paterno</mat-label>
+                <mat-label>Apellido Paterno *</mat-label>
                 <input matInput formControlName="apellidoPaterno" >
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
                 <mat-error *ngIf="form.get('apellidoPaterno').hasError('required')">El apellido paterno es requerido.</mat-error>
@@ -31,7 +31,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Apellido Materno</mat-label>
+                <mat-label>Apellido Materno *</mat-label>
                 <input matInput formControlName="apellidoMaterno" >
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
                 <mat-error *ngIf="form.get('apellidoMaterno').hasError('required')">El apellido materno es requerido.</mat-error>
@@ -42,7 +42,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Teléfono</mat-label>
+                <mat-label>Teléfono *</mat-label>
                 <input matInput formControlName="telefono" >
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
                 <mat-error *ngIf="form.get('telefono').hasError('required')">El teléfono es requerido.</mat-error>
@@ -57,7 +57,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>E-mail</mat-label>
+                <mat-label>E-mail *</mat-label>
                 <input matInput type="email" formControlName="email" [class.is-invalid] = "form.get('email').invalid && form.get('email').touched">
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
                 <mat-error *ngIf="form.get('email').hasError('required')">El E-mail es requerido.</mat-error>
@@ -72,7 +72,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="100">
-                <mat-label>Puestos</mat-label>
+                <mat-label>Puestos *</mat-label>
                 <mat-select formControlName="puestos" [(ngModel)]="selectedPuestos" name="puestos">
                     <mat-option *ngFor="let puestos of arrPuestos" [value]="puestos.id">
                         {{puestos.descripcion}}
@@ -84,7 +84,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="100">
-                <mat-label>Secretarias</mat-label>
+                <mat-label>Secretarias *</mat-label>
                 <mat-select formControlName="secretarias" [(ngModel)]="selectedSecretaria" name="secretarias">
                     <mat-option *ngFor="let secretarias of arrSecretarias" [value]="secretarias.id">
                         {{secretarias.cDescripcionSecretaria}}

@@ -28,19 +28,42 @@ export class DiputadosService {
     }
 
     obtenerDiputados(): any {
-        return this.http.get(this.baseUrl + this.urlDiputados, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlDiputados, httpOptions);
     }
 
     actualizarDiputados(Diputados: DiputadosModel): any {
-        return this.http.put(this.baseUrl + this.urlDiputados + '/' + Diputados.id, Diputados, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlDiputados + '/' + Diputados.id, Diputados, httpOptions);
     }
 
     guardarDiputados(Diputados: DiputadosModel): any {
-        return this.http.post(this.baseUrl + this.urlDiputados, Diputados, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlDiputados, Diputados, httpOptions);
     }
 
     eliminarDiputados(id: string): any {
-
-        return this.http.delete(this.baseUrl + this.urlDiputados + '/' + id, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlDiputados + '/' + id, httpOptions);
     }
 }

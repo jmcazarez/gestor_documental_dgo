@@ -53,6 +53,7 @@ export class ComisionesComponent implements OnInit {
             if (this.optConsultar) {
                 this.comisiones = resp;
                 this.comisionesTemp = this.comisiones;
+                console.log(this.comisiones);
             }
             this.loadingIndicator = false;
             this.spinner.hide();
@@ -94,6 +95,7 @@ export class ComisionesComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        this.comisiones = this.comisionesTemp;
         // Filtramos tabla
         if (value.target.value === '') {
             this.comisiones = this.comisionesTemp;
@@ -117,7 +119,7 @@ export class ComisionesComponent implements OnInit {
             if (result.value) {
                 // realizamos delete
                 this.comisionesService.eliminarComision(row.id).subscribe((resp: any) => {
-                    Swal.fire('Eliminado', 'La comisión ha sido eliminado.', 'success');
+                    Swal.fire('Eliminado', 'La comisión ha sido eliminada.', 'success');
                     this.spinner.hide();
                     this.obtenerComisiones();
                 }, err => {

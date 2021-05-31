@@ -28,24 +28,53 @@ export class HistorialCargaService {
     }
 
     obtenerHistorialCarga(idUsuario): any {
-        return this.http.get(this.baseUrl + this.urlHistorialCarga + '/' + idUsuario, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlHistorialCarga + '/' + idUsuario, httpOptions);
     }
 
     obtenerTipoDocumentosPerfil(ruta: string): any {
-        return this.http.get(this.baseUrl + this.urlHistorialCarga + '/' + ruta, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlHistorialCarga + '/' + ruta, httpOptions);
     }
 
     actualizarTipoDocumentos(historial: any): any {
-        return this.http.put(this.baseUrl + this.urlHistorialCarga + '/' + historial.id, historial, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlHistorialCarga + '/' + historial.id, historial, httpOptions);
     }
 
     guardarHistorial(historial: any): any {
-        return this.http.post(this.baseUrl + this.urlHistorialCarga, historial, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlHistorialCarga, historial, httpOptions);
     }
     guardarHistorialDetalle(historialDetalle: any): Promise<any>  {
-
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
         return new Promise(resolve => {
-            {this.http.post(this.baseUrl + this.urlHistorialCargaDetalle, historialDetalle, this.httpOptions).subscribe(
+            {this.http.post(this.baseUrl + this.urlHistorialCargaDetalle, historialDetalle, httpOptions).subscribe(
                 (res) => {                            
                     resolve(res);
                 },
@@ -58,13 +87,31 @@ export class HistorialCargaService {
     }
 
     eliminarHistorialCarga(ruta: string): any {
-        return this.http.delete(this.baseUrl + this.urlHistorialCarga + '/' + ruta, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlHistorialCarga + '/' + ruta, httpOptions);
     }
 
     actualizarHistorial(historial: any, id: string): any {
-        return this.http.put(this.baseUrl + this.urlHistorialCarga + '/' + id, historial, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlHistorialCarga + '/' + id, historial, httpOptions);
     }
     actualizarDetalle(historial: any, id: string): any {
-        return this.http.put(this.baseUrl + this.urlHistorialCargaDetalle + '/' + id, historial, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlHistorialCargaDetalle + '/' + id, historial, httpOptions);
     }
 }

@@ -28,19 +28,42 @@ export class DependenciasService {
     }
 
     obtenerDependencias(): any {
-        return this.http.get(this.baseUrl + this.urlDependencias, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlDependencias, httpOptions);
     }
 
     actualizarDependencias(dependencia: DependenciasModel): any {
-        return this.http.put(this.baseUrl + this.urlDependencias + '/' + dependencia.id, dependencia, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlDependencias + '/' + dependencia.id, dependencia, httpOptions);
     }
 
     guardarDependencias(dependencia: DependenciasModel): any {
-        return this.http.post(this.baseUrl + this.urlDependencias, dependencia, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlDependencias, dependencia, httpOptions);
     }
 
     eliminarDependencias(ruta: string): any {
-
-        return this.http.delete(this.baseUrl + this.urlDependencias + '/' + ruta, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlDependencias + '/' + ruta, httpOptions);
     }
 }

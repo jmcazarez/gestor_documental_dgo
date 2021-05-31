@@ -268,7 +268,7 @@ export class TableroDeBusquedaComponent implements OnInit {
                                         idExpediente = documento.tipo_de_expediente.id;
                                     }
 
-                                    console.log(documento);
+                                    
                                     // tslint:disable-next-line: no-unused-expression
                                     // Seteamos valores y permisos
                                     documentosTemp.push({
@@ -549,7 +549,7 @@ export class TableroDeBusquedaComponent implements OnInit {
                     if (this.fechaCreacion !== '' && this.fechaCreacion !== undefined && this.fechaCreacion !== null) {
                         let fecha: string;
                         fecha = this.datePipe.transform(this.fechaCreacion, 'MM-dd-yyyy');
-                        console.log(fecha);
+                        
                         temp = this.documentos.filter((d) => d.fechaCreacionView === fecha);
                         this.documentos = temp;
                     }
@@ -629,7 +629,7 @@ export class TableroDeBusquedaComponent implements OnInit {
                 });
             }
         } else {
-            console.log('entro');
+            
             if (this.documentoBusqueda !== '' && this.documentoBusqueda !== undefined) {
                 temp = this.documentos.filter((d) => d.cNombreDocumento.toLowerCase().indexOf(this.documentoBusqueda.toLowerCase()) !== -1 || !this.documentoBusqueda);
                 this.documentos = temp;

@@ -28,19 +28,42 @@ export class EntesService {
     }
 
     obtenerEntes(): any {
-        return this.http.get(this.baseUrl + this.urlEntes, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlEntes, httpOptions);
     }
 
     actualizarEnte(entes: EntesModel): any {
-        return this.http.put(this.baseUrl + this.urlEntes + '/' + entes.id, entes, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlEntes + '/' + entes.id, entes, httpOptions);
     }
 
     guardarEnte(entes: EntesModel): any {
-        return this.http.post(this.baseUrl + this.urlEntes, entes, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.post(this.baseUrl + this.urlEntes, entes, httpOptions);
     }
 
     eliminarEnte(ruta: string): any {
-
-        return this.http.delete(this.baseUrl + this.urlEntes + '/' + ruta, this.httpOptions);
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.delete(this.baseUrl + this.urlEntes + '/' + ruta, httpOptions);
     }
 }

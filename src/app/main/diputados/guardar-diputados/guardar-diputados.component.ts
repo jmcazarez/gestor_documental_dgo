@@ -110,7 +110,7 @@ export class GuardarDiputadosComponent implements OnInit {
             this.diputadosService.guardarDiputados(this.diputado).subscribe((resp: any) => {
                 if (resp) {
                     this.spinner.hide();
-                    Swal.fire('Éxito', 'Diputado guardada correctamente.', 'success');
+                    Swal.fire('Éxito', 'Diputado guardado correctamente.', 'success');
                     this.cerrar(this.diputado);
                 } else {
                     this.spinner.hide();
@@ -127,7 +127,9 @@ export class GuardarDiputadosComponent implements OnInit {
         // Obtenemos Distritos
         this.spinner.show();
         await this.distritosService.obtenerDistritos().subscribe((resp: any) => {
-
+           /*.filter(
+                (item) => item["activo"] === true
+            ) */;
             this.arrDistritos = resp;
             this.spinner.hide();
         }, err => {

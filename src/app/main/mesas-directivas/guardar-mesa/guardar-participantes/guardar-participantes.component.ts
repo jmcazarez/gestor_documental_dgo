@@ -45,42 +45,20 @@ export class GuardarParticipantesComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public participantes: any
     ) { }
 
-    ngOnInit(): void {
-
-        console.log(this.participantes);
-        if (this.participantes.detalle_participantes_mesa_directivas) {
-            this.resultado = this.participantes.detalle_participantes_mesa_directivas[0];
-            if (this.resultado.presidentes) {
-                this.selectedPresidente = this.resultado.presidentes[0];
-            }
-            if (this.resultado.vicepresidentes) {
-                this.selectedVicePresidente = this.resultado.vicepresidentes[0];
-            }
-            if (this.resultado.secretario_auxiliar) {
-                this.selectedSecretario = this.resultado.secretario[0];
-            }
-            if (this.resultado.secretario_auxiliar) {
-                this.selectedSecretarioAuxiliar = this.resultado.secretario_auxiliar[0];
-            }
-
-            if (this.resultado.vocals) {
-                this.selectedVocal = this.resultado.vocals[0];
-            }
-            if (this.resultado.vocal_auxiliars) {
-                this.selectedVocalAuxiliar = this.resultado.vocal_auxiliars[0];
-            }
-
-        }else{
-            this.participantes.presidente = '';
-            this.participantes.vicepresidente = '';
-            this.participantes.secretario = '';
-            this.participantes.secretarioAuxiliar = '';
-            this.participantes.vocal = '';
-            this.participantes.vocalAuxiliar = '';
-        }
-        this.obtenerDiputados();
+    async ngOnInit(): Promise<void> {
+        let presidente = [];
+        let visePresidente = [];
+        let secretario = [];
+        let secretarioAuxiliar = [];
+        let vocal = [];
+        let vocalAuxiliar = [];
 
 
+        visePresidente = this.arrDiputados.find(meta => meta.id == this.selectedVicePresidente);
+        secretario = this.arrDiputados.find(meta => meta.id == this.selectedSecretario);
+        secretarioAuxiliar = this.arrDiputados.find(meta => meta.id == this.selectedSecretarioAuxiliar);
+        vocal = this.arrDiputados.find(meta => meta.id == this.selectedVocal);
+        vocalAuxiliar = this.arrDiputados.find(meta => meta.id == this.selectedVocalAuxiliar);
         // Form reactivo      
         this.form = this.formBuilder.group({
             presidente: [this.participantes.presidente, [Validators.required]],
@@ -90,6 +68,78 @@ export class GuardarParticipantesComponent implements OnInit {
             vocal: [this.participantes.vocal, [Validators.required]],
             vocalAuxiliar: [this.participantes.vocalAuxiliar, [Validators.required]],
         });
+        await this.obtenerDiputados();
+
+        if (this.participantes.detalle_participantes_mesa_directivas) {
+            this.resultado = this.participantes.detalle_participantes_mesa_directivas[0];
+            if (this.resultado.presidentes) {
+                presidente = this.arrDiputados.find(meta => meta.id == this.resultado.presidentes[0]);
+                if (presidente) {
+                    this.selectedPresidente = presidente['id'];
+                } else {
+                    this.selectedPresidente = '';
+                }
+
+            }
+            if (this.resultado.vicepresidentes) {
+
+                visePresidente = this.arrDiputados.find(meta => meta.id == this.resultado.vicepresidentes[0]);
+                if (visePresidente) {
+                    this.selectedVicePresidente = visePresidente['id'];
+                } else {
+                    this.selectedVicePresidente = '';
+                }
+            }
+            if (this.resultado.secretario) {
+                console.log(this.resultado.secretario[0]);
+                console.log(secretario);
+                secretario = this.arrDiputados.find(meta => meta.id == this.resultado.secretario[0]);
+                if (secretario) {
+                    this.selectedSecretario = secretario['id'];
+                } else {
+                    this.selectedSecretario = '';
+                }
+            }
+            if (this.resultado.secretario_auxiliar) {
+                console.log(this.resultado.secretario_auxiliar[0]);
+                secretarioAuxiliar = this.arrDiputados.find(meta => meta.id == this.resultado.secretario_auxiliar[0]);
+                console.log(secretarioAuxiliar);
+                if (secretarioAuxiliar) {
+                    this.selectedSecretarioAuxiliar = secretarioAuxiliar['id'];
+                } else {
+                    this.selectedSecretarioAuxiliar = '';
+                }
+            }
+
+            if (this.resultado.vocals) {
+
+                vocal = this.arrDiputados.find(meta => meta.id == this.resultado.vocals[0]);
+                if (vocal) {
+                    this.selectedVocal = vocal['id'];
+                } else {
+                    this.selectedVocal = '';
+                }
+            }
+            if (this.resultado.vocal_auxiliars) {
+                vocalAuxiliar = this.arrDiputados.find(meta => meta.id == this.resultado.vocal_auxiliars[0]);
+                if (vocalAuxiliar) {
+                    this.selectedVocalAuxiliar = vocal['id'];
+                } else {
+                    this.selectedVocalAuxiliar = '';
+                }
+            }
+
+        } else {
+            this.participantes.presidente = '';
+            this.participantes.vicepresidente = '';
+            this.participantes.secretario = '';
+            this.participantes.secretarioAuxiliar = '';
+            this.participantes.vocal = '';
+            this.participantes.vocalAuxiliar = '';
+        }
+
+
+
 
     }
 
@@ -102,18 +152,33 @@ export class GuardarParticipantesComponent implements OnInit {
     }
 
     async obtenerDiputados(): Promise<void> {
-        this.spinner.show();
+        return new Promise(async (resolve) => {
+            {
+                this.spinner.show();
 
-        this.loadingIndicator = true;
-        // Obtenemos los documentos
-        await this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
+                this.loadingIndicator = true;
+                // Obtenemos los documentos
+                await this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
+                    if (this.participantes.legislatura.id) {
+                        this.arrDiputados = resp.filter(
+                            (d) =>
+                                d.legislatura.id === this.participantes.legislatura.id
+                        );
+                    } else {
+                        this.arrDiputados = resp.filter(
+                            (d) =>
+                                d.legislatura.id === this.participantes.legislatura
+                        );
+                    }
 
-            this.arrDiputados = resp;
-            console.log(this.arrDiputados);
-            this.spinner.hide();
-        }, err => {
-            this.loadingIndicator = false;
-            this.spinner.hide();
+                    resolve(resp);
+                    this.spinner.hide();
+                }, err => {
+                    this.loadingIndicator = false;
+                    resolve(err);
+                    this.spinner.hide();
+                });
+            }
         });
     }
 
@@ -121,59 +186,78 @@ export class GuardarParticipantesComponent implements OnInit {
         let repetido: boolean;
         repetido = false;
         this.mesas = [];
-        if (this.selectedPresidente)
+        let presidente = [];
+        let visePresidente = [];
+        let secretario = [];
+        let secretarioAuxiliar = [];
+        let vocal = [];
+        let vocalAuxiliar = [];
+
+        presidente = this.arrDiputados.find(meta => meta.id == this.selectedPresidente);
+        visePresidente = this.arrDiputados.find(meta => meta.id == this.selectedVicePresidente);
+        secretario = this.arrDiputados.find(meta => meta.id == this.selectedSecretario);
+        secretarioAuxiliar = this.arrDiputados.find(meta => meta.id == this.selectedSecretarioAuxiliar);
+        vocal = this.arrDiputados.find(meta => meta.id == this.selectedVocal);
+        vocalAuxiliar = this.arrDiputados.find(meta => meta.id == this.selectedVocalAuxiliar);
+        console.log(vocalAuxiliar);
+        if (this.selectedPresidente && presidente) {
             this.mesas.push({
                 cargo: 'Presidente',
                 idParticipante: this.selectedPresidente,
-                participante: this.arrDiputados.find(meta => meta.id == this.selectedPresidente).nombre,
+                participante: presidente['nombre'],
                 partido: this.arrDiputados.find(meta => meta.id == this.selectedPresidente).partidos_politico.cNomenclatura
             });
+        }
+        if (this.selectedVicePresidente && visePresidente) {
+            this.mesas.push({
+                cargo: 'Vice presidente',
+                idParticipante: this.selectedVicePresidente,
+                participante: visePresidente['nombre'],
+                partido: this.arrDiputados.find(meta => meta.id == this.selectedVicePresidente).partidos_politico.cNomenclatura
+            });
+        }
+        if (this.selectedVicePresidente && secretario) {
+            this.mesas.push({
+                cargo: 'Secretario',
+                idParticipante: this.selectedSecretario,
+                participante: secretario['nombre'],
+                partido: this.arrDiputados.find(meta => meta.id == this.selectedSecretario).partidos_politico.cNomenclatura
 
-        this.mesas.push({
-            cargo: 'Vice presidente',
-            idParticipante: this.selectedVicePresidente,
-            participante: this.arrDiputados.find(meta => meta.id == this.selectedVicePresidente).nombre,
-            partido: this.arrDiputados.find(meta => meta.id == this.selectedVicePresidente).partidos_politico.cNomenclatura
-        });
+            });
+        }
+        if (this.selectedSecretarioAuxiliar && secretarioAuxiliar) {
+            this.mesas.push({
+                cargo: 'Secretario Auxiliar',
+                idParticipante: this.selectedSecretarioAuxiliar,
+                participante: secretarioAuxiliar['nombre'],
+                partido: this.arrDiputados.find(meta => meta.id == this.selectedSecretarioAuxiliar).partidos_politico.cNomenclatura
 
-        this.mesas.push({
-            cargo: 'Secretario',
-            idParticipante: this.selectedSecretario,
-            participante: this.arrDiputados.find(meta => meta.id == this.selectedSecretario).nombre,
-            partido: this.arrDiputados.find(meta => meta.id == this.selectedSecretario).partidos_politico.cNomenclatura
+            });
+        }
+        if (this.selectedVocal && vocal) {
+            this.mesas.push({
+                cargo: 'Vocal',
+                idParticipante: this.selectedVocal,
+                participante: vocal['nombre'],
+                partido: this.arrDiputados.find(meta => meta.id == this.selectedVocal).partidos_politico.cNomenclatura
 
-        });
+            });
+        }
+        if (this.selectedVocalAuxiliar && vocalAuxiliar) {
+            this.mesas.push({
+                cargo: 'Vocal Auxiliar',
+                idParticipante: this.selectedVocalAuxiliar,
+                participante: vocalAuxiliar['nombre'],
+                partido: this.arrDiputados.find(meta => meta.id == this.selectedVocalAuxiliar).partidos_politico.cNomenclatura
 
-        this.mesas.push({
-            cargo: 'Secretario Auxiliar',
-            idParticipante: this.selectedSecretarioAuxiliar,
-            participante: this.arrDiputados.find(meta => meta.id == this.selectedSecretarioAuxiliar).nombre,
-            partido: this.arrDiputados.find(meta => meta.id == this.selectedSecretarioAuxiliar).partidos_politico.cNomenclatura
+            });
 
-        });
-
-        this.mesas.push({
-            cargo: 'Vocal',
-            idParticipante: this.selectedVocal,
-            participante: this.arrDiputados.find(meta => meta.id == this.selectedVocal).nombre,
-            partido: this.arrDiputados.find(meta => meta.id == this.selectedVocal).partidos_politico.cNomenclatura
-
-        });
-
-        this.mesas.push({
-            cargo: 'Vocal Auxiliar',
-            idParticipante: this.selectedVocalAuxiliar,
-            participante: this.arrDiputados.find(meta => meta.id == this.selectedVocalAuxiliar).nombre,
-            partido: this.arrDiputados.find(meta => meta.id == this.selectedVocalAuxiliar).partidos_politico.cNomenclatura
-
-        });
-
-
+        }
         for (let i = 0; i < this.mesas.length; i++) {
             if (this.mesas[i + 1]) {
                 if (this.mesas[i + 1].idParticipante === this.mesas[i].idParticipante) {
                     repetido = true;
-                    Swal.fire('Error', 'Existen participantes repetidos, esto no es correcto, favor de modificarlos.', 'error');
+                    Swal.fire('Error', 'Ocurrió un error al guardar. No debe de haber duplicidad en los participantes..', 'error');
                 }
             }
         }

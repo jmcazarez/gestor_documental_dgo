@@ -17,6 +17,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { RxReactiveFormsModule } from '@rxweb/reactive-form-validators'; // <-- #2 import module
 
 
 const routes = [
@@ -53,7 +54,8 @@ const routes = [
         MatTabsModule,
         MatSlideToggleModule,
         MatDatepickerModule,
-        NgxSpinnerModule
+        NgxSpinnerModule,
+        RxReactiveFormsModule
     ],
     providers: [
         {
