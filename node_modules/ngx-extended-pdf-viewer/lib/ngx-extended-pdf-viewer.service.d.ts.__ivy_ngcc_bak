@@ -1,0 +1,33 @@
+import { PDFPrintRange } from './options/pdf-print-range';
+export interface FindOptions {
+    highlightAll?: boolean;
+    matchCase?: boolean;
+    wholeWords?: boolean;
+    ignoreAccents?: boolean;
+    findMultipleSearchTexts?: boolean;
+    fuzzySearch?: boolean;
+}
+export interface PDFExportScaleFactor {
+    width?: number;
+    height?: number;
+    scale?: number;
+}
+export declare class NgxExtendedPdfViewerService {
+    constructor();
+    findMultiple(text: Array<string>, options?: FindOptions): boolean;
+    find(text: string, options?: FindOptions): boolean;
+    findNext(): boolean;
+    findPrevious(): boolean;
+    print(printRange?: PDFPrintRange): void;
+    removePrintRange(): void;
+    setPrintRange(printRange: PDFPrintRange): void;
+    filteredPageCount(pageCount: number, range: PDFPrintRange): number;
+    isInPDFPrintRange(pageIndex: number, printRange: PDFPrintRange): boolean;
+    getPageAsText(pageNumber: number): Promise<string>;
+    private convertTextInfoToText;
+    getPageAsImage(pageNumber: number, scale: PDFExportScaleFactor): Promise<any>;
+    private draw;
+    private getPageDrawContext;
+    getCurrentDocumentAsBlob(): Promise<Blob>;
+    getFormData(): Promise<Array<Object>>;
+}

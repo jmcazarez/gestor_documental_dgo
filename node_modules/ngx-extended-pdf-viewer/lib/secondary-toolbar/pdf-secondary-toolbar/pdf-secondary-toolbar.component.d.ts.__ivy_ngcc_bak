@@ -1,0 +1,36 @@
+import { OnInit, EventEmitter, OnChanges, SimpleChanges, TemplateRef, ElementRef, AfterViewInit } from '@angular/core';
+import { PDFNotificationService } from './../../pdf-notification-service';
+export declare class PdfSecondaryToolbarComponent implements OnInit, OnChanges, AfterViewInit {
+    private element;
+    private notificationService;
+    customSecondaryToolbar: TemplateRef<any>;
+    secondaryToolbarTop: any;
+    mobileFriendlyZoomScale: number;
+    showPresentationModeButton: boolean;
+    showOpenFileButton: boolean;
+    showPrintButton: boolean;
+    showDownloadButton: boolean;
+    showBookmarkButton: boolean;
+    showPagingButtons: boolean;
+    showRotateButton: boolean;
+    showHandToolButton: boolean;
+    showScrollingButton: boolean;
+    showSpreadButton: boolean;
+    showPropertiesButton: boolean;
+    spreadChange: EventEmitter<string>;
+    secondaryMenuIsEmpty: EventEmitter<boolean>;
+    disablePreviousPage: boolean;
+    disableNextPage: boolean;
+    constructor(element: ElementRef, notificationService: PDFNotificationService);
+    onPdfJsInit(): void;
+    updateUIState(): void;
+    onSpreadChange(newSpread: string): void;
+    ngOnChanges(changes: SimpleChanges): void;
+    onResize(): void;
+    ngAfterViewInit(): void;
+    ngOnInit(): void;
+    checkVisibility(): void;
+    private checkVisibilityRecursively;
+    previousPage(): void;
+    nextPage(): void;
+}
