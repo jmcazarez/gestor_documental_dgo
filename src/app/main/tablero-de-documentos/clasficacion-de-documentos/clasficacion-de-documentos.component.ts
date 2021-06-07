@@ -20,9 +20,11 @@ import { HistorialDeVersionamientoComponent } from "./historial-de-versionamient
 import { LinkPublicoComponent } from "./link-publico/link-publico.component";
 import { LegislaturaService } from "services/legislaturas.service";
 import { IniciativasService } from "services/iniciativas.service";
+import { ParametrosService } from "services/parametros.service";
 import * as moment from "moment";
 import { NgxSpinnerService } from "ngx-spinner";
 import { AutorizarService } from "services/autorizar.service";
+import { FirmasPorEtapaService } from "services/configuracion-de-firmas-por-etapa.service";
 
 export interface Metacatalogos {
     name: string;
@@ -105,12 +107,14 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         private iniciativaService: IniciativasService,
         private usuariosService: UsuariosService,
         private autorizarService: AutorizarService,
+        private parametrosService: ParametrosService,
+        private firmas: FirmasPorEtapaService,
         @Inject(MAT_DIALOG_DATA) public documento,
         @Inject(MAT_DIALOG_DATA) public nuevo
     ) {
         // ---------- Tabla de Prueba - Trazabilidad
         this.pdfSrc = "";
-        
+
     }
 
     async ngOnInit(): Promise<void> {
@@ -458,10 +462,10 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                             const source =
                                 "data:application/pdf;base64," +
                                 resp.data;
-                              
-                                this.pdfSrc = source;
-                           
-                
+
+                            this.pdfSrc = source;
+
+
                             resolve("1");
                         },
                         (err) => {
@@ -495,7 +499,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                     .subscribe(
                         (resp: any) => {
                             const source =
-                            "data:application/pdf;base64," +
+                                "data:application/pdf;base64," +
                                 resp.data;
                             this.pdfSrc = source;
                             resolve("1");
@@ -1051,8 +1055,50 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 }
             );
     }
+    async autorizar(): Promise<void> {
+        this.spinner.show()
+        let fileBase64 = this.pdfSrc;
+        let parametrosSSP004 = [];
+        let firmantes = [];
+        if (this.documento.cNombreDocumento.includes('SSP 01')) {
+            console.log('1');
+        } else if (this.documento.cNombreDocumento.includes('SSP 04')) {
+            console.log('2');
+            parametrosSSP004 = await this.obtenerParametros("SSP-004-Firmas");
 
-    autorizar(): void {
+            let firmasPorEtapas = await this.obtenerFirma(
+                parametrosSSP004[0]["cValor"]
+            );
+            firmantes = firmasPorEtapas[0].participantes;
+        } else if (this.documento.cNombreDocumento.includes('CIEL 08')) {
+            console.log('3');
+        } else if (this.documento.cNombreDocumento.includes('SSP 05')) {
+            console.log('4');
+        } else if (this.documento.cNombreDocumento.includes('SSP 08')) {
+            console.log('5');
+        }
+
+        let fileName = this.documento.cNombreDocumento + '.pdf';
+
+        this.autorizarService.autorizarDocumentoPaso1(fileName, firmantes.length, fileBase64.replace('data:application/pdf;base64,', '')).subscribe(
+            async (resp: any) => {
+                let processID = resp.body.multiSignedMessage_InitResponse.processID;
+                console.log(processID);
+                this.spinner.hide()
+            },
+            (err) => {
+                this.spinner.hide()
+                Swal.fire(
+                    "Error",
+                    "Ocurrió un error al firmar el documento. Paso 1. " + err,
+                    "error"
+                );
+            }
+        );
+
+        this.spinner.hide()
+    }
+    autorizarCompleto(): void {
         this.spinner.show()
         let fileBase64 = this.pdfSrc;
         let cerBase64 = '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';
@@ -1060,7 +1106,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         let serialNumber = '00000000000000000192';
         let numeroFirmantes = 1;
         let filePKCSBase64 = ''
-        this.autorizarService.autorizarDocumentoPaso1(fileName, numeroFirmantes, cerBase64, fileBase64.replace('data:application/pdf;base64,', '')).subscribe(
+        this.autorizarService.autorizarDocumentoPaso11(fileName, numeroFirmantes, cerBase64, fileBase64.replace('data:application/pdf;base64,', '')).subscribe(
             async (resp: any) => {
                 let processID = resp.processID;
                 (<HTMLInputElement>document.getElementById("hashToSign")).value = resp.hash;
@@ -1144,5 +1190,49 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
     pruebaForm(): void {
         console.log(this.form.touched);
+    }
+
+
+    async obtenerParametros(parametro: string): Promise<[]> {
+
+        return new Promise((resolve) => {
+            {
+                this.parametrosService.obtenerParametros(parametro).subscribe(
+                    (resp: any) => {
+                        resolve(resp);
+
+                    },
+                    (err) => {
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al obtener los parametros." + err,
+                            "error"
+                        );
+                        resolve(err);
+                    }
+                );
+            }
+        });
+    }
+
+    async obtenerFirma(id: string): Promise<void> {
+        return new Promise((resolve) => {
+            {
+                this.firmas.obtenerFirmaPorEtapa(id).subscribe(
+                    (resp: any) => {
+                        resolve(resp);
+                    },
+                    (err) => {
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al obtener las firmas por etapas." +
+                            err,
+                            "error"
+                        );
+                        resolve(err);
+                    }
+                );
+            }
+        });
     }
 }

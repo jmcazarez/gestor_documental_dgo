@@ -9,7 +9,8 @@ import { DistritosModel } from 'models/distritos.models';
 export class AutorizarService {
 
     private baseUrl: string;
-    private urlFirmaDigitalPaso1 = 'firmaDigitalPaso1';
+    private urlFirmaDigitalPaso1 = 'multiSignedMessage_Init';
+    private urlFirmaDigitalPaso11 = 'firmaDigitalPaso1';
     private urlFirmaDigitalPaso3 = 'multiSignedMessage_Update';
     private urlFirmaDigitalPaso4 = 'multiSignedMessage_Final';
 
@@ -30,7 +31,22 @@ export class AutorizarService {
         };
     }
 
-    autorizarDocumentoPaso1(fileName, numeroFirmantes, cerBase64, fileBase64): any {
+    autorizarDocumentoPaso1(fileName, numeroFirmantes, fileBase64): any {
+
+
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+
+        let objeto = {
+            fileName, numeroFirmantes,  fileBase64
+        }
+        return this.http.post(this.baseUrl + this.urlFirmaDigitalPaso1, objeto);
+    }
+    autorizarDocumentoPaso11(fileName, numeroFirmantes, cerBase64, fileBase64): any {
 
 
         this.TOKEN = localStorage.getItem('token');
@@ -43,8 +59,10 @@ export class AutorizarService {
         let objeto = {
             fileName, numeroFirmantes, cerBase64, fileBase64
         }
-        return this.http.post(this.baseUrl + this.urlFirmaDigitalPaso1, objeto);
+        return this.http.post(this.baseUrl + this.urlFirmaDigitalPaso11, objeto);
     }
+
+
     autorizarDocumentoPaso3(filePKCSBase64, fileName, processID, serialNumber): any {
 
 
