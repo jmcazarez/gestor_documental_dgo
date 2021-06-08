@@ -1060,6 +1060,17 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         let fileBase64 = this.pdfSrc;
         let parametrosSSP004 = [];
         let firmantes = [];
+        let autorizacion = {};
+        console.log(this.documento.iniciativa.id);
+        autorizacion = {
+            iniciativa: this.documento.iniciativa.id,
+            estatusIniciativa: this.documento.iniciativa.estatus,
+            estatusAutorizacion: 1,
+            idProcesoApi: 0,
+            detalleAutorizaciones: [{
+                empleado: '60b69c087564070e24248568'
+            }]
+        }
         if (this.documento.cNombreDocumento.includes('SSP 01')) {
             console.log('1');
         } else if (this.documento.cNombreDocumento.includes('SSP 04')) {
@@ -1079,11 +1090,10 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         }
 
         let fileName = this.documento.cNombreDocumento + '.pdf';
-
-        this.autorizarService.autorizarDocumentoPaso1(fileName, firmantes.length, fileBase64.replace('data:application/pdf;base64,', '')).subscribe(
+        this.autorizarService.autorizarRegistro(autorizacion).subscribe(
             async (resp: any) => {
-                let processID = resp.body.multiSignedMessage_InitResponse.processID;
-                console.log(processID);
+                 console.log(resp);
+
                 this.spinner.hide()
             },
             (err) => {
@@ -1095,7 +1105,24 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 );
             }
         );
-
+        /*
+                this.autorizarService.autorizarDocumentoPaso1(fileName, firmantes.length, fileBase64.replace('data:application/pdf;base64,', '')).subscribe(
+                    async (resp: any) => {
+                        let processID = resp.body.multiSignedMessage_InitResponse.processID;
+                        console.log(processID);
+        
+                        this.spinner.hide()
+                    },
+                    (err) => {
+                        this.spinner.hide()
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al firmar el documento. Paso 1. " + err,
+                            "error"
+                        );
+                    }
+                );
+        */
         this.spinner.hide()
     }
     autorizarCompleto(): void {

@@ -13,6 +13,7 @@ export class AutorizarService {
     private urlFirmaDigitalPaso11 = 'firmaDigitalPaso1';
     private urlFirmaDigitalPaso3 = 'multiSignedMessage_Update';
     private urlFirmaDigitalPaso4 = 'multiSignedMessage_Final';
+    private urlAutorizarRegistro = 'autorizacion';
 
     private TOKEN = localStorage.getItem('token');
 
@@ -42,7 +43,7 @@ export class AutorizarService {
         }
 
         let objeto = {
-            fileName, numeroFirmantes,  fileBase64
+            fileName, numeroFirmantes, fileBase64
         }
         return this.http.post(this.baseUrl + this.urlFirmaDigitalPaso1, objeto);
     }
@@ -92,5 +93,18 @@ export class AutorizarService {
             processID
         }
         return this.http.post(this.baseUrl + this.urlFirmaDigitalPaso4, objeto);
+    }
+
+
+    autorizarRegistro(objeto: any): any {
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+
+
+        return this.http.post(this.baseUrl + this.urlAutorizarRegistro, objeto);
     }
 }
