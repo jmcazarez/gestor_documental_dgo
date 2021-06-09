@@ -69,7 +69,7 @@ export class MenuService {
                     let metacatalogos = [];
                     let tipo: any;
                     const usuarioLogin = await this.usuarioLoginService.obtenerUsuario();
-                    console.log(usuarioLogin);
+                    console.log(usuarioLogin[0].data.empleado);
                     if (usuarioLogin) {
                         this.usuario = usuarioLogin[0].data.id;
                         grupoMenuCatalagos = {
@@ -103,7 +103,7 @@ export class MenuService {
                         /*  for (const opciones of usuarioLogin.Opciones) { */
 
                         for (const perfiles of usuarioLogin[0].data.perfiles_de_usuario) {
-                           
+
                             if (perfiles.bActivo) {
                                 this.perfilUsuario.push({ id: perfiles.id });
                                 for (const visibilidad of perfiles.Visibilidad) {
@@ -310,6 +310,20 @@ export class MenuService {
                                     }
                                 }
                             }
+                        }
+
+
+                        if(usuarioLogin[0].data.empleado){
+                            const itemMenu: ItemMenuModel = {
+                                id: 'modulo-autoriza-iniciativas',
+                                title: 'Tablero de iniciativas pendientes por firmar',
+                                type: 'item',
+                                icon: 'blur_on',
+                                function: () => {
+                                    this.router.navigate(['iniciativas-pendientes-por-firmar']);
+                                }
+                            };
+                            grupoMenu.children.push(itemMenu);
                         }
                         if (grupoMenu.children.length === 0 && grupoMenuCatalagos.children.length === 0 && grupoMenuReportes.children.length === 0) {
 

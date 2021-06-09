@@ -85,6 +85,7 @@ import { GuardarSesionesModule } from './main/sesiones/guardar-sesiones/guardar-
 import { IniciativaModificadaSuspendidaModule } from './main/tablero-de-iniciativas/iniciativa-modificada-suspendida/iniciativa-modificada-suspendida.module';
 import { DashboardDeIndicadoresDeSesionesModule } from './main/dashboard-de-indicadores-de-sesiones/dashboard-de-indicadores-de-sesiones.module';
 import { DashboardDeIndicadoresIniciativasModule } from './main/dashboard-de-indicadores-iniciativas/dashboard-de-indicadores-iniciativas.module';
+import { IniciativasPendientesPorFirmarModule } from './main/tipo-de-iniciativas-pendientes-por-firmar/tipo-de-iniciativas-pendientes-por-firmar.module';
 
 const appRoutes: Routes = [
     {
@@ -191,7 +192,8 @@ const appRoutes: Routes = [
         GuardarSesionesModule,
         DashboardDeIndicadoresDeSesionesModule,
         IniciativaModificadaSuspendidaModule,
-        DashboardDeIndicadoresIniciativasModule
+        DashboardDeIndicadoresIniciativasModule,
+        IniciativasPendientesPorFirmarModule
     ],             
     bootstrap   : [
         AppComponent
