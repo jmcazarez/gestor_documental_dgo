@@ -72,6 +72,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     fechaCreacionView: string;
     fechaCargaView: string;
     descriptionTipoDocumento: 'Acta';
+    autorizacionPendiente: boolean;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     meta: Metacatalogos[] = [];
 
@@ -118,6 +119,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
+        this.autorizacionPendiente = false;
         this.spinner.show();
         this.documento.usuario = this.menuService.usuario;
         this.version = this.documento.version;
@@ -125,6 +127,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         let cLegislatura = "";
         this.arrMetacatalogos = [];
         let folioExpedienteRequerido = [];
+        let autorizaciones = [];
         await this.obtenerLegislaturas();
         await this.obtenerTiposExpedientes();
 
@@ -147,6 +150,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 } else {
                 }
             } else {
+
                 this.trazabilidad = true;
                 this.arrMetacatalogos = this.menuService.tipoDocumentos.find(
                     (tipoDocumento) =>
@@ -162,6 +166,15 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 }
             }
         } else {
+
+            autorizaciones = await this.obtenerAutorizacionPorLegislatura();
+            // Bloqueamos el boton de autorizar si tiene autorizaciones pendientes por realizar.
+            autorizaciones.forEach(element => {
+                if(element.estatusAutorizacion === 1 || element.estatusAutorizacion === 2){
+                   // this.autorizacionPendiente = true;
+                }
+    
+            });
             this.estatusIniciativa = this.documento.estatus;
             this.arrMetacatalogos = this.documento.metacatalogos;
             this.documento.disabled = true;
@@ -1061,16 +1074,9 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         let parametrosSSP004 = [];
         let firmantes = [];
         let autorizacion = {};
+        let detalleAutorizacion = [];
         console.log(this.documento.iniciativa.id);
-        autorizacion = {
-            iniciativa: this.documento.iniciativa.id,
-            estatusIniciativa: this.documento.iniciativa.estatus,
-            estatusAutorizacion: 1,
-            idProcesoApi: 0,
-            detalleAutorizaciones: [{
-                empleado: '60b69c087564070e24248568'
-            }]
-        }
+
         if (this.documento.cNombreDocumento.includes('SSP 01')) {
             console.log('1');
         } else if (this.documento.cNombreDocumento.includes('SSP 04')) {
@@ -1088,11 +1094,23 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         } else if (this.documento.cNombreDocumento.includes('SSP 08')) {
             console.log('5');
         }
+    
+        firmantes.forEach(element => {
+            detalleAutorizacion.push({ empleado: element.id })
 
+        });
+
+        autorizacion = {
+            iniciativa: this.documento.iniciativa.id,
+            estatusIniciativa: this.documento.iniciativa.estatus,
+            estatusAutorizacion: 1,
+            idProcesoApi: 0,
+            detalleAutorizaciones: detalleAutorizacion
+        }
         let fileName = this.documento.cNombreDocumento + '.pdf';
         this.autorizarService.autorizarRegistro(autorizacion).subscribe(
             async (resp: any) => {
-                 console.log(resp);
+                console.log(resp);
 
                 this.spinner.hide()
             },
@@ -1262,4 +1280,28 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             }
         });
     }
+
+    async obtenerAutorizacionPorLegislatura(): Promise<[]> {
+        return new Promise((resolve) => {
+            {
+                this.autorizarService.obtenerAutorizacionesPorIdLegislatura(this.documento.iniciativa.id).subscribe(
+                    (resp: any) => {
+                        resolve(resp);
+                    },
+                    (err) => {
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al obtener las autorizaciones por legislatura." +
+                            err,
+                            "error"
+                        );
+                        resolve(err);
+                    }
+                );
+            }
+        });
+    }
+
+
+
 }

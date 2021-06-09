@@ -67,7 +67,7 @@
                 [matMenuTriggerFor]="menu">Documento</button>
 
             <mat-menu #menu="matMenu">
-                <button [disabled]="this.documento.formulario" mat-menu-item (click)="autorizar()">
+                <button [disabled]="this.documento.formulario || this.autorizacionPendiente" mat-menu-item (click)="autorizar()">
                     <mat-icon>verified_user</mat-icon>
                     <span>Autorizar</span>
                 </button>

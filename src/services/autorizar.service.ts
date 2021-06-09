@@ -95,7 +95,6 @@ export class AutorizarService {
         return this.http.post(this.baseUrl + this.urlFirmaDigitalPaso4, objeto);
     }
 
-
     autorizarRegistro(objeto: any): any {
         this.TOKEN = localStorage.getItem('token');
         let httpOptions = {
@@ -105,6 +104,17 @@ export class AutorizarService {
         }
 
 
-        return this.http.post(this.baseUrl + this.urlAutorizarRegistro, objeto);
+        return this.http.post(this.baseUrl + this.urlAutorizarRegistro, objeto,httpOptions);
+    }
+    obtenerAutorizacionesPorIdLegislatura(idLegislatura: string): any {
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+
+
+        return this.http.get(this.baseUrl + this.urlAutorizarRegistro + '/'+ idLegislatura ,httpOptions);
     }
 }
