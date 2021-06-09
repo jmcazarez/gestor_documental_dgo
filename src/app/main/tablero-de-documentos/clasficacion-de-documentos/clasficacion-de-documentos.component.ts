@@ -131,10 +131,9 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         await this.obtenerLegislaturas();
         await this.obtenerTiposExpedientes();
 
-        console.log(this.documento);
 
         if (!this.documento.iniciativas) {
-            console.log('sin iniciativa');
+           
             if (this.documento.tipo_de_documento.id) {
                 this.trazabilidad = false;
                 this.arrMetacatalogos = this.menuService.tipoDocumentos.find(
@@ -167,7 +166,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             }
         } else {
 
-            autorizaciones = await this.obtenerAutorizacionPorLegislatura();
+            autorizaciones = await this.obtenerAutorizacionPorDocumento();
             // Bloqueamos el boton de autorizar si tiene autorizaciones pendientes por realizar.
             autorizaciones.forEach(element => {
                 if(element.estatusAutorizacion === 1 || element.estatusAutorizacion === 2){
@@ -1101,11 +1100,11 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         });
 
         autorizacion = {
-            iniciativa: this.documento.iniciativa.id,
+            documento: this.documento.id,
             estatusIniciativa: this.documento.iniciativa.estatus,
             estatusAutorizacion: 1,
             idProcesoApi: 0,
-            detalleAutorizaciones: detalleAutorizacion
+            detalle_autorizacion_iniciativas: detalleAutorizacion
         }
         let fileName = this.documento.cNombreDocumento + '.pdf';
         this.autorizarService.autorizarRegistro(autorizacion).subscribe(
@@ -1281,10 +1280,10 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         });
     }
 
-    async obtenerAutorizacionPorLegislatura(): Promise<[]> {
+    async obtenerAutorizacionPorDocumento(): Promise<[]> {
         return new Promise((resolve) => {
             {
-                this.autorizarService.obtenerAutorizacionesPorIdLegislatura(this.documento.iniciativa.id).subscribe(
+                this.autorizarService.obtenerAutorizacionesPorIdDocumento(this.documento.id).subscribe(
                     (resp: any) => {
                         resolve(resp);
                     },

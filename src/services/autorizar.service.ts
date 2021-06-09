@@ -14,7 +14,7 @@ export class AutorizarService {
     private urlFirmaDigitalPaso3 = 'multiSignedMessage_Update';
     private urlFirmaDigitalPaso4 = 'multiSignedMessage_Final';
     private urlAutorizarRegistro = 'autorizacion';
-
+    
     private TOKEN = localStorage.getItem('token');
 
     private httpOptions = {
@@ -106,7 +106,7 @@ export class AutorizarService {
 
         return this.http.post(this.baseUrl + this.urlAutorizarRegistro, objeto,httpOptions);
     }
-    obtenerAutorizacionesPorIdLegislatura(idLegislatura: string): any {
+    obtenerAutorizacionesPorIdDocumento(idDocumento: string): any {
         this.TOKEN = localStorage.getItem('token');
         let httpOptions = {
             headers: new HttpHeaders({
@@ -115,6 +115,17 @@ export class AutorizarService {
         }
 
 
-        return this.http.get(this.baseUrl + this.urlAutorizarRegistro + '/'+ idLegislatura ,httpOptions);
+        return this.http.get(this.baseUrl + this.urlAutorizarRegistro + '/'+ idDocumento ,httpOptions);
+    }
+    obtenerAutorizacionesPorEmpleado(idEmpleado: string): any {
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+
+
+        return this.http.get(this.baseUrl + this.urlAutorizarRegistro + '-empleado/'+ idEmpleado ,httpOptions);
     }
 }
