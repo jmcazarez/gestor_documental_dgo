@@ -69,7 +69,7 @@ export class MenuService {
                     let metacatalogos = [];
                     let tipo: any;
                     const usuarioLogin = await this.usuarioLoginService.obtenerUsuario();
-                    console.log(usuarioLogin[0].data.empleado);
+
                     if (usuarioLogin) {
                         this.usuario = usuarioLogin[0].data.id;
                         grupoMenuCatalagos = {
@@ -103,7 +103,7 @@ export class MenuService {
                         /*  for (const opciones of usuarioLogin.Opciones) { */
 
                         for (const perfiles of usuarioLogin[0].data.perfiles_de_usuario) {
-
+                           
                             if (perfiles.bActivo) {
                                 this.perfilUsuario.push({ id: perfiles.id });
                                 for (const visibilidad of perfiles.Visibilidad) {
@@ -319,19 +319,6 @@ export class MenuService {
                                 'El usuario no tiene perfil asignado para ingresar al sistema.',
                                 'error'
                             );
-                        }
-
-                        if(usuarioLogin[0].data.empleado){
-                            const itemMenu: ItemMenuModel = {
-                                id: 'modulo-' + 'firma_de_iniciativas_por_empleado',
-                                title: 'Firma de iniciativas',
-                                type: 'item',
-                                icon: 'blur_on',
-                                function: () => {
-                                    this.router.navigate(['firmas-de-iniciativas']);
-                                }
-                            };
-                            grupoMenu.children.push(itemMenu)
                         }
                         this.fuseNavigationService.addNavigationItem(grupoMenuCatalagos, 'end');
                         this.fuseNavigationService.addNavigationItem(grupoMenu, 'end');

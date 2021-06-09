@@ -1,0 +1,32 @@
+<div class="container">
+  
+  
+    <div class="lista">
+        <h3 class="encabezado">Historial de versionamiento</h3>
+        <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="historial"
+            [loadingIndicator]="loadingIndicator"  [columnMode]="'force'"[headerHeight]="50" [footerHeight]="50"
+            rowHeight="auto" [reorderable]="reorderable">
+            <ngx-datatable-column name="Versión" prop="version"></ngx-datatable-column>
+            <ngx-datatable-column name="Fecha" prop="fecha"></ngx-datatable-column>
+            <ngx-datatable-column name="Hora" prop="hora"></ngx-datatable-column>
+            <ngx-datatable-column name="Usuario" prop="usuario"></ngx-datatable-column>
+            <ngx-datatable-column name="Movimiento" prop="movimiento"></ngx-datatable-column>
+            <ngx-datatable-column name="Acciones" sortable="false" prop="id">
+                <ng-template  let-row="row" let-value="value" ngx-datatable-cell-template>
+                    
+                    <a  (click)="consultarDocumento(row)">
+                        <mat-icon color="warn" class="material-icons" matTooltip="Clic para eliminar">remove_red_eye</mat-icon>
+                    </a>
+          
+                    <a  *ngIf="row.movimiento!='Actual'" (click)="restaurarVersion(row)">
+                    <mat-icon color="primary" class="material-icons" matTooltip="Clic para editar">swap_vert</mat-icon>
+                    </a>
+          
+                </ng-template>
+          </ngx-datatable-column>
+        </ngx-datatable>
+    </div>
+    <mat-dialog-actions align="end" class="mat-card">
+        <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
+    </mat-dialog-actions>
+</div>

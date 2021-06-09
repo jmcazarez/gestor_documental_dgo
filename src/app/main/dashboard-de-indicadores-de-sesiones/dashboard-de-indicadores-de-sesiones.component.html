@@ -1,0 +1,331 @@
+<div id="clientes" class="page-layout simple fullwidth docs">
+
+    <!-- HEADER -->
+    <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+
+        <div class="hero-text content">
+            <h1>Dashboard de indicadores de sesiones</h1>
+        </div>
+
+    </div>
+
+    <ngx-spinner></ngx-spinner>
+    <!-- / HEADER -->
+
+    <mat-vertical-stepper [linear]="isLinear" #stepper>
+        <mat-step [stepControl]="firstFormGroup">
+            <form [formGroup]="firstFormGroup">
+                <ng-template matStepLabel>Filtrar búsqueda</ng-template>
+                <section class="container">
+                    <div class="column">
+                        <!--  
+                <div class="select">
+                  <p class="tag">Id Documento</p>
+                  <mat-form-field appearance="fill" class="input">
+                    <input matInput placeholder="000">
+                  </mat-form-field>
+                </div>
+              
+  
+            <div class="select">
+              <p class="tag">Legislatura</p>
+              <mat-form-field appearance="fill" class="input">
+                <input matInput formControlName="documento" [(ngModel)]="documentoBusqueda" placeholder="Nombre">
+              </mat-form-field>
+            </div>
+  -->
+                        <div class="select">
+                            <p class="tag">Legislatura</p>
+                            <mat-form-field appearance="fill" class="input">
+                                <mat-label>Seleccione una legislatura</mat-label>
+                                <mat-select formControlName="legislatura" [(ngModel)]="selectedLegislatura">
+                                    <mat-option *ngFor="let legislatura of arrLegislaturas" [value]="legislatura.id">
+                                        {{legislatura.cLegislatura}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="select">
+                            <p class="tag">Tipo de sesión</p>
+                            <mat-form-field appearance="fill" class="input">
+                                <mat-label>Seleccione un tipo de sesión</mat-label>
+                                <mat-select formControlName="tipoSesion" [(ngModel)]="selectedTipoSesion">
+                                    <mat-option *ngFor="let sesion of tipoSesion" [value]="sesion.descripcion">
+                                        {{sesion.descripcion}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+                        <!-- <div class="select">
+                              <p class="tag">Entidad</p>
+                              <mat-form-field appearance="fill" class="input">
+                                  <mat-label>Seleccionar</mat-label>
+                                  <mat-select>
+                                      <mat-option value="option">Option</mat-option>
+                                  </mat-select>
+                              </mat-form-field>
+                          </div>
+    -->
+
+                    </div>
+                    <div class="column">
+                        <div class="select">
+                            <p class="tag">Fecha inicio</p>
+                            <mat-form-field appearance="fill" class="input">
+                                <mat-label>Seleccione una fecha</mat-label>
+                                <input matInput [matDatepicker]="picker" formControlName="fechaIni"
+                                    [(ngModel)]="fechaIni">
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+
+                        <div class="select">
+                            <p class="tag">Fecha fin</p>
+                            <mat-form-field appearance="fill" class="input">
+                                <mat-label>Seleccione una fecha</mat-label>
+                                <input matInput [matDatepicker]="picker2" formControlName="fechaFin"
+                                    [(ngModel)]="fechaFin">
+                                <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                <mat-datepicker #picker2></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+
+                        <!--
+                          <div class="select">
+                              <p class="tag">Dependencia</p>
+                              <mat-form-field appearance="fill" class="input">
+                                  <mat-label>Seleccionar</mat-label>
+                                  <mat-select>
+                                      <mat-option value="option">Option</mat-option>
+                                  </mat-select>
+                              </mat-form-field>
+                          </div>
+                         
+                          <div class="select">
+                              <p class="tag">Legislatura</p>
+                              <mat-form-field appearance="fill" class="input">
+                                  <mat-label>Seleccionar</mat-label>
+                                  <mat-select>
+                                      <mat-option value="option">Option</mat-option>
+                                  </mat-select>
+                              </mat-form-field>
+                          </div>
+                     
+                          <div class="select">
+                              <p class="tag">Tipo de Información</p>
+                              <mat-form-field appearance="fill" class="input">
+                                  <mat-label>Seleccionar</mat-label>
+                                  <mat-select>
+                                      <mat-option value="option">Option</mat-option>
+                                  </mat-select>
+                              </mat-form-field>
+                          </div>
+                      -->
+
+                        <div class="select buttons">
+                            <button mat-raised-button matStepperNext color="warn" (click)="obtenerMovimientos()"
+                                class="btn-search">Consultar</button>
+                            <button mat-raised-button color="warn" class="btn-search"
+                                (click)="borrarFiltros()">Borrar</button>
+                        </div>
+                    </div>
+                </section>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="secondFormGroup">
+            <form [formGroup]="secondFormGroup">
+                <ng-template matStepLabel>Resultado de búsqueda</ng-template>
+                <div class="content p-24" align="center" style="border: 1px">
+
+                    <!-- Data table-->
+                    <mat-tab-group mat-align-tabs="center">
+                        <mat-tab label="Total de sesiones acumuladas">
+                            <section class="container">
+                                <div class="column">
+                                    
+                                    <div class="select">
+                                        <h3 class="tag">Seleccione Mes y año</h3>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Seleccione una fecha</mat-label>
+                                            <input matInput type="month" formControlName="fechaIni"
+                                                [(ngModel)]="fechaAcumulada" (ngModelChange)="valorMesAnio($event)">
+                                        </mat-form-field>
+                                    </div>
+
+                                </div>
+                                <div class="column">
+                                    <div class="select buttons">
+                                        <button mat-raised-button matStepperNext color="warn" class="btn-search"
+                                        (click)="generaReport()" [disabled]="activarDescarga">Descargar</button>
+                                    </div>
+                                </div>
+                            </section>
+                            <div class="contenedor">
+                                <div class="card">
+                                    <h3 class="card-title">Cantidad total mes</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">folder
+                                        </mat-icon>
+                                        <p>{{sesionesAcumuladasMes}}</p>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <h3 class="card-title">Cantidad total año</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">folder
+                                        </mat-icon>
+                                        <p>{{sesionesAcumuladasAnio}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="fuse-card auto-width">
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">TOTAL DE SESIONES ACUMULADAS</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart id="chart1" [datasets]="grafica.datasets.acumuladas"
+                                            [labels]="grafica.labels" [colors]="grafica.colors"
+                                            [options]="grafica.options" [chartType]="grafica.chartType">
+                                        </canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+                        <mat-tab label="Total de sesiones en proceso">
+                            <section class="container">
+                                <div class="column">
+                                    
+                                    <div class="select">
+                                        <p class="tag">Desde</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Seleccione una fecha</mat-label>
+                                            <input matInput type="month" formControlName="fechaIni"
+                                                [(ngModel)]="fechaProceso" (ngModelChange)="valorMesAnioProcesada($event)">
+                                        </mat-form-field>
+                                    </div>
+
+                                </div>
+                                <div class="column">
+                                    <div class="select buttons">
+                                        <button mat-raised-button matStepperNext color="warn" class="btn-search"
+                                        (click)="generaReportProceso()" [disabled]="activarDescarga">Descargar</button>
+                                    </div>
+                                </div>
+                            </section>
+                            <div class="contenedor">
+                                <div class="card">
+                                    <h3 class="card-title">Cantidad total mes</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{sesionesProcesoMes}}</p>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <h3 class="card-title">Cantidad total año</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">folder
+                                        </mat-icon>
+                                        <p>{{sesionesProcesoAnio}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="fuse-card auto-width">
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">TOTAL DE SESIONES EN PROCESO</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart id="chart2" [datasets]="graficaProceso.datasets.pendientes"
+                                            [labels]="graficaProceso.labels" [colors]="graficaProceso.colors"
+                                            [options]="graficaProceso.options" [chartType]="graficaProceso.chartType">
+                                        </canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+                        <mat-tab label="Total de sesiones archivadas">
+                            <section class="container">
+                                <div class="column">
+                                    
+                                    <div class="select">
+                                        <p class="tag">Desde</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Seleccione una fecha</mat-label>
+                                            <input matInput type="month" formControlName="fechaIni"
+                                                [(ngModel)]="fechaArchivadas" (ngModelChange)="valorMesAnioArchivada($event)">
+                                        </mat-form-field>
+                                    </div>
+
+                                </div>
+                                <div class="column">
+                                    <div class="select buttons">
+                                        <button mat-raised-button matStepperNext color="warn" class="btn-search"
+                                        (click)="generaReportArchivada()" [disabled]="activarDescarga">Descargar</button>
+                                    </div>
+                                </div>
+                            </section>
+                            <div class="contenedor">
+                                <div class="card">
+                                    <h3 class="card-title">Cantidad total mes</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{sesionesArchivadasMes}}</p>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <h3 class="card-title">Cantidad total año</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">folder
+                                        </mat-icon>
+                                        <p>{{sesionesArchivadasAnio}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="fuse-card auto-width">
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">TOTAL DE SESIONES ARCHIVADAS</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart id="chart3" [datasets]="graficaArchivada.datasets.archivada"
+                                            [labels]="graficaArchivada.labels" [colors]="graficaArchivada.colors"
+                                            [options]="graficaArchivada.options" [chartType]="graficaArchivada.chartType">
+                                        </canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+                    </mat-tab-group>
+                </div>
+                <div class="select buttons">
+                    <button mat-raised-button matStepperPrevious color="warn" class="btn-search">Volver</button>
+                </div>
+            </form>
+        </mat-step>
+    </mat-vertical-stepper>
+
+</div>

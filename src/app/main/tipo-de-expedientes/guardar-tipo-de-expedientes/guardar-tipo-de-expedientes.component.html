@@ -1,0 +1,100 @@
+<div class="modal" fxLayout="column" fxLayoutAlign="start" fxLayout.gt-md="row">
+    <!-- REACTIVE FORM EXAMPLE -->
+
+   
+    <form class="mat-card mat-elevation-z4" fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form"
+        [formGroup]="form">
+
+        <div *ngIf="!this.expediente.id" class="h2 mb-24">Crear tipo de expediente</div>
+        <div *ngIf="this.expediente.id" class="h2 mb-24">Modificación o actualización de tipo de expediente</div>
+
+        <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+            <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+                <mat-label>Nombre *</mat-label>
+                <input matInput formControlName="cDescripcionTipoExpediente" >
+                <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
+              
+                <mat-error *ngIf="form.get('cDescripcionTipoExpediente').hasError('required')">El nombre del tipo de expediente requerido</mat-error>
+                <mat-error *ngIf="form.get('cDescripcionTipoExpediente').hasError('minlength') || form.get('cDescripcionTipoExpediente').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
+                    y el máximo son 100 </mat-error>
+            </mat-form-field>
+        </div>
+        
+        <div fxLayout="row" fxLayoutAlign="center" fxFlex="30">
+            <section class="example-section">
+                <mat-slide-toggle formControlName="estatus" class="example-margin">
+                    Estatus
+                </mat-slide-toggle>
+            </section>
+        </div>
+
+
+    </form>
+</div>
+<div align="right" style="border: 1px" class="buttons">
+    <button mat-raised-button color="warn" (click)="nuevoTipoDocumento()">
+        <mat-icon color="white" class="material-icons" 
+            matTooltip="Clic para añadir un nuevo tipo de documento">
+            post_add</mat-icon>
+        Agregar tipo de documento
+    </button>
+</div>
+<mat-form-field >
+
+    <mat-label>Buscar</mat-label>
+    <input  type='text' matInput placeholder='' [(ngModel)]="searchText" (keyup)='filterTiposDocumentos($event)' >   
+  
+</mat-form-field>   
+     
+<mat-icon class="buscar">search</mat-icon>
+Seleccionar todos
+<mat-checkbox class="example-margin"  [(ngModel)]="selectedTipoDocumento" (click)="seleccionarTipoDocumentos()">
+</mat-checkbox>
+
+
+<div class="content" >
+    <ngx-datatable class="material shadow-none buttons" [rows]="rows" [loadingIndicator]="loadingIndicator" [columnMode]="'force'"
+    [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable"
+        [limit]="10" >
+    
+        <!--<ngx-datatable-column name="Id. tipo de documento" prop="id"></ngx-datatable-column>-->
+        <ngx-datatable-column name="Descripción" prop="cDescripcionTipoDocumento"></ngx-datatable-column>    
+        <ngx-datatable-column name="Obligatorio" sortable="false" prop="id">
+            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                <h3 *ngIf="row.bObligatorio">Si</h3>
+                <h3 *ngIf="!row.bObligatorio">No</h3>
+            </ng-template>
+        </ngx-datatable-column>
+        <ngx-datatable-column name="Añadir" sortable="false" prop="id">
+            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                <mat-checkbox class="example-margin" [(ngModel)]="row.selected" (change)="seleccionarTipoDocumento(row.selected)" >
+                </mat-checkbox>
+            </ng-template>
+        </ngx-datatable-column>  
+        <ngx-datatable-column name="Acciones" sortable="false" prop="id">
+            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+    
+                <a *ngIf="row.Eliminar"(click)="eliminarTipoDocumento(row)">
+                    <mat-icon color="warn" class="material-icons pointer" matTooltip="Clic para eliminar">delete</mat-icon>
+                </a>
+                <a *ngIf="row.Editar"(click)="guardarTipoDocumento(row)">
+                    <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">edit</mat-icon>
+                </a>
+    
+                <a *ngIf="!row.Editar"(click)="consultarTipoDocumento(row)">
+                    <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">remove_red_eye
+                    </mat-icon>
+                </a>
+    
+            </ng-template>
+        </ngx-datatable-column>
+    </ngx-datatable>
+
+</div>
+
+<mat-dialog-actions align="end" class="buttons">
+    <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
+    <button [disabled]="form.invalid || !this.selecteds" mat-raised-button color="accent" (click)="guardar()">Guardar</button>
+    <!--<button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
+</mat-dialog-actions>
+

@@ -1,0 +1,52 @@
+<div class="modal" fxLayout="column" fxLayoutAlign="start" fxLayout.gt-md="row">
+    <!-- REACTIVE FORM EXAMPLE -->
+
+   
+    <form class="mat-card mat-elevation-z4" fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form"
+        [formGroup]="form">
+
+        <div *ngIf="!this.entidad.id" class="h2 mb-24">Crear entidad</div>
+        <div *ngIf="this.entidad.id" class="h2 mb-24">Modificación o actualización de entidad</div>
+
+        <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+            <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+                <mat-label>Nombre</mat-label>
+                <input matInput formControlName="descripcionEntidad" >
+                <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
+              
+                <mat-error *ngIf="form.get('descripcionEntidad').hasError('required')">El nombre de la entidad es requerido</mat-error>
+                <mat-error *ngIf="form.get('descripcionEntidad').hasError('minlength') || form.get('descripcionEntidad').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
+                    y el máximo son 100 </mat-error>
+            </mat-form-field>
+        </div>
+        
+        <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
+            <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+                <mat-label>Nomenclatura</mat-label>
+                <input matInput formControlName="nomenclatura" >
+                <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>      
+                <mat-error *ngIf="form.get('nomenclatura').hasError('required')">La nomenclatura es requerida</mat-error>
+                <mat-error *ngIf="form.get('nomenclatura').hasError('minlength') || form.get('nomenclatura').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
+                    y el máximo son 15 </mat-error>
+            </mat-form-field>
+        </div>
+
+        
+        <div fxLayout="row" fxLayoutAlign="center" fxFlex="30">
+            <section class="example-section">
+                <mat-slide-toggle formControlName="estatus" class="example-margin">
+                    Estatus
+                </mat-slide-toggle>
+            </section>
+        </div>
+
+
+    </form>
+</div>
+
+<mat-dialog-actions align="end" class="buttons">
+    <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
+    <button [disabled]="form.invalid" mat-raised-button color="accent" (click)="guardar()">Guardar</button>
+    <!--<button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
+</mat-dialog-actions>

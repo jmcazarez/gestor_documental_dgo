@@ -1,0 +1,30 @@
+.modal{
+    width: 100%;
+  
+    .mat-card{
+      padding: 20px;
+      box-shadow: none;
+    }
+  }
+  
+  .buttons{
+    margin-bottom: 30px;
+  }
+  
+  .button{
+    border-radius: 5px;
+    width: 200px;
+  }
+  
+  .buscador{
+    text-align: center;
+    margin-bottom: 10px;
+
+    .buscar{
+        width: 300px;
+    }
+
+    .button{
+        margin-left: 40%;
+    }
+}

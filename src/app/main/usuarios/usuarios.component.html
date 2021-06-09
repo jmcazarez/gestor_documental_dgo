@@ -1,0 +1,59 @@
+<div id="clientes" class="page-layout simple fullwidth docs">
+
+<!-- HEADER -->
+<div class="header accent p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+
+    <div class="hero-text mb-32">
+        <h1>Usuarios</h1>
+        <h3>Listado de usuarios registrados</h3>
+    </div>
+
+</div>
+<!-- / HEADER -->
+
+    <div class="content p-24" align="right" style="border: 1px">
+        <button mat-raised-button color="accent" (click)="nuevoUsuario()">
+            <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un nuevo usuario">person_add</mat-icon>
+            Nuevo
+        </button>
+    </div>
+    <!-- CONTENT -->
+    <div class="content">
+        <ngx-datatable 
+            class="material"
+            [rows]="rows"
+            [loadingIndicator]="loadingIndicator"
+            [columnMode]="'force'"
+            [headerHeight]="48"
+            [footerHeight]="56"
+            [rowHeight]="'auto'"
+            [scrollbarH]="true"
+            [reorderable]="reorderable"
+            [limit]="10">
+            
+            <ngx-datatable-column name="ID" prop="nIdUsuario"></ngx-datatable-column>
+            <ngx-datatable-column name="Usuario" prop="cLogin"></ngx-datatable-column>
+            <ngx-datatable-column name="Nombre" prop="cNombre"></ngx-datatable-column>
+            <ngx-datatable-column name="Primer apellido" prop="cApellidoPaterno"></ngx-datatable-column>
+            <ngx-datatable-column name="Segundo apellido" prop="cApellidoMaterno"></ngx-datatable-column>    
+
+            <ngx-datatable-column name="Acciones" sortable="false" prop="id">
+                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+          
+                    <a (click)="eliminarUsuario(row)">
+                        <mat-icon color="warn" class="material-icons" matTooltip="Clic para eliminar">delete</mat-icon>
+                    </a>
+          
+                    <a (click)="guardarUsuario(row)">
+                    <mat-icon color="primary" class="material-icons" matTooltip="Clic para editar">edit</mat-icon>
+                    </a>
+          
+                </ng-template>
+          </ngx-datatable-column>
+
+        </ngx-datatable>
+
+    </div>
+
+</div>
+

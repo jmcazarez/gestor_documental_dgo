@@ -1,0 +1,52 @@
+.modal {
+    width: 100%;
+    .mat-card {
+        padding: 20px;
+        box-shadow: none;
+    }
+}
+
+.buttons {
+    margin-bottom: 30px;
+}
+
+.button {
+    margin-bottom: 10px;
+    margin-left: 20px;
+}
+
+
+.time-picker{
+    position:absolute;
+    z-index : 99999999;
+  }
+  
+  .timepicker-overlay{
+    z-index: 99999999 !important;
+  }
+  
+  .timepicker-backdrop-overlay{
+    z-index: 99999999 !important;
+  }
+  
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    background: none; 
+    display:none;
+  }
+
+  p{
+    color: red;
+    font-size: small;
+  }
+
+  .marginTop{
+    margin-top: 20px;
+  }
+
+  .itemsCenter{
+    align-items: center;
+  }
+
+  .texto{
+    text-align: left;
+  }

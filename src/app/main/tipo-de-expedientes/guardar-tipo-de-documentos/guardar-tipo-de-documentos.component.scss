@@ -1,0 +1,34 @@
+.modal{
+  width: 100%;
+}
+
+.buttons{
+  margin-bottom: 30px;
+}
+
+.button{
+  margin-top: 10px;
+  border-radius: 5px;
+  width: 200px;
+}
+
+.content {
+    width: 100% !important;
+    margin: 0 auto;
+}
+
+.shadow-none{
+    box-shadow: none !important;
+    border-radius: 15px;
+}
+
+.border-table{
+    box-shadow: none !important;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 15px;
+    width: 100% !important;
+}
+
+a{
+  cursor: pointer;
+}

@@ -1,0 +1,143 @@
+@import "./../../../@fuse/scss/fuse";
+
+#clientes {
+    max-width: 1800px;
+    margin: 0 auto;
+    background-color: #ffffff;
+
+    a{
+        padding-right: 10px;
+        cursor: pointer;
+    }
+
+    .content {
+        max-width: 2500px;
+        width: 100%;
+        margin: 0 auto;
+        background-color: #ffffff;
+    }
+
+    .header {
+        flex: 1 0 auto;
+        height: 150px;
+        max-height: 150px;
+        background: #ffffff;
+        
+        @include media-breakpoint('xs') {
+            height: 110px;
+            padding: 16px;
+        }
+
+        .hero-text {
+
+            width: 100%;
+
+            h1 {
+                color: #3d3d3d;
+                font-size: 48px;
+                font-weight: 600;
+                letter-spacing: 0.01em;
+                text-align: center;
+                margin-top: 20px;
+                margin-bottom: 15px;
+
+                @include media-breakpoint('xs') {
+                    font-size: 24px;
+                }
+            }
+
+            h3 {
+                color: #4f4f4f;
+                max-width: 480px;
+                text-align: center;
+                font-weight: 400;
+                letter-spacing: 0.075em;
+                margin: 0 auto;
+
+                @include media-breakpoint('xs') {
+                    font-size: 14px;
+                }
+            }
+        }
+    }
+    
+}
+
+.buscador{
+        text-align: center;
+        margin-bottom: 10px;
+
+        .buscar{
+            width: 300px;
+        }
+
+        .button{
+            margin-left: 40%;
+        }
+    }
+
+    .shadow-none{
+        box-shadow: none !important;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 15px;
+    }
+
+.container{
+  margin: 50px 50px 50px 10px;
+
+  display: flex;
+  justify-content: center;
+}
+
+.margin-right{
+  margin-right: 25px;
+}
+
+.column{
+  width: 50%;
+  text-align: center;
+  display: block;
+}
+
+.select{
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.tag{
+  width: 40%;
+  text-align: right;
+  padding: 5px 15px;
+}
+
+.input{
+  width: 60%;
+  margin-left: 10px;
+}
+
+.btn-search{
+  margin-left: 10px;
+}
+
+.buttons{
+  display: block;
+  text-align: right;
+}
+
+a{
+  cursor: pointer;
+}
+
+.btn-width{
+  width: 280px;
+  margin: 0px 20px;
+}
+
+.carga{
+  display: block;
+}
+
+.corte{
+  width: 35% !important;
+}

@@ -1,0 +1,642 @@
+<div id="clientes" class="page-layout simple fullwidth docs">
+
+    <!-- HEADER -->
+    <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+
+        <div class="hero-text content">
+            <h1>Dashboard de indicadores</h1>
+            <h3>Indicadores de documentos digitales</h3>
+        </div>
+
+    </div>
+
+    <ngx-spinner></ngx-spinner>
+    <!-- / HEADER -->
+
+    <mat-vertical-stepper [linear]="isLinear" #stepper>
+        <mat-step [stepControl]="firstFormGroup">
+            <form [formGroup]="firstFormGroup">
+                <ng-template matStepLabel>Filtrar búsqueda</ng-template>
+                <section class="container">
+                    <div class="column">
+                        <!--  
+                <div class="select">
+                  <p class="tag">Id Documento</p>
+                  <mat-form-field appearance="fill" class="input">
+                    <input matInput placeholder="000">
+                  </mat-form-field>
+                </div>
+              
+  
+            <div class="select">
+              <p class="tag">Legislatura</p>
+              <mat-form-field appearance="fill" class="input">
+                <input matInput formControlName="documento" [(ngModel)]="documentoBusqueda" placeholder="Nombre">
+              </mat-form-field>
+            </div>
+  -->
+                        <div class="select">
+                            <p class="tag">Estatus</p>
+                            <mat-form-field appearance="fill" class="input">
+                                <mat-label>Vigente/No Vigente</mat-label>
+                                <mat-select formControlName="vigente" [(ngModel)]="vigenteBusqueda">
+                                    <mat-option value="true">Vigente</mat-option>
+                                    <mat-option value="false">No Vigente</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+
+                        <!-- <div class="select">
+                              <p class="tag">Entidad</p>
+                              <mat-form-field appearance="fill" class="input">
+                                  <mat-label>Seleccionar</mat-label>
+                                  <mat-select>
+                                      <mat-option value="option">Option</mat-option>
+                                  </mat-select>
+                              </mat-form-field>
+                          </div>
+    -->
+
+                    </div>
+                    <div class="column">
+                        <div class="select">
+                            <p class="tag">Tipo de documento</p>
+                            <mat-form-field appearance="fill" class="input">
+                                <mat-label>Seleccionar</mat-label>
+                                <mat-select formControlName="tipoDocumentos" (change)="changeTipoDocumento($event)"
+                                    [(ngModel)]="selectTipoDocumento" name="tipoDocumento">
+                                    <mat-option *ngFor="let tipoDocumento of arrTipoDocumentos"
+                                        [value]="tipoDocumento.id">
+                                        {{tipoDocumento.cDescripcionTipoDocumento}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="select">
+                            <p class="tag">Tipo de información</p>
+                            <mat-form-field appearance="fill" class="input">
+                                <mat-label>Seleccionar</mat-label>
+                                <mat-select formControlName="informacion" [(ngModel)]="selectedInformacion"
+                                    name="informacion">
+                                    <mat-option *ngFor="let informacion of arrInformacion"
+                                        [value]="informacion.cDescripcionVisibilidad">
+                                        {{informacion.cDescripcionVisibilidad}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+
+                        <!--
+                          <div class="select">
+                              <p class="tag">Dependencia</p>
+                              <mat-form-field appearance="fill" class="input">
+                                  <mat-label>Seleccionar</mat-label>
+                                  <mat-select>
+                                      <mat-option value="option">Option</mat-option>
+                                  </mat-select>
+                              </mat-form-field>
+                          </div>
+                         
+                          <div class="select">
+                              <p class="tag">Legislatura</p>
+                              <mat-form-field appearance="fill" class="input">
+                                  <mat-label>Seleccionar</mat-label>
+                                  <mat-select>
+                                      <mat-option value="option">Option</mat-option>
+                                  </mat-select>
+                              </mat-form-field>
+                          </div>
+                     
+                          <div class="select">
+                              <p class="tag">Tipo de Información</p>
+                              <mat-form-field appearance="fill" class="input">
+                                  <mat-label>Seleccionar</mat-label>
+                                  <mat-select>
+                                      <mat-option value="option">Option</mat-option>
+                                  </mat-select>
+                              </mat-form-field>
+                          </div>
+                      -->
+                        <div class="select">
+                            <p class="tag">Tipo de expediente</p>
+                            <mat-form-field appearance="fill" class="input">
+                                <mat-label>Seleccionar</mat-label>
+                                <mat-select formControlName="expediente" [(ngModel)]="selectedExpediente"
+                                    name="expediente">
+                                    <mat-option *ngFor="let expediente of arrExpediente" [value]="expediente.id">
+                                        {{expediente.cDescripcionTipoExpediente}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
+
+                        <div class="select buttons">
+                            <button mat-raised-button matStepperNext color="warn" (click)="obtenerMovimientos()"
+                                class="btn-search">Consultar</button>
+                            <button mat-raised-button color="warn" class="btn-search"
+                                (click)="borrarFiltros()">Borrar</button>
+                        </div>
+                    </div>
+                </section>
+
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="secondFormGroup">
+            <form [formGroup]="secondFormGroup">
+                <ng-template matStepLabel>Resultado de búsqueda</ng-template>
+                <div class="content p-24" align="center" style="border: 1px">
+
+                    <!-- Data table-->
+                    <mat-tab-group mat-align-tabs="center">
+                        <mat-tab label="Ayer">
+                            <div class="contenedor">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos disponibles</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docDisponiblesAyer}}</p>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <h3 class="card-title">Expedientes disponibles</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">folder
+                                        </mat-icon>
+                                        <p>{{docExpedientesAyer}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos cargados</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docCargadosAyer}}</p>
+                                    </div>
+                                </div>
+                                <div class="fuse-card auto-width">
+
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">Documentos ingresados</span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart [datasets]="grafica.datasets.cargados"
+                                            [labels]="grafica.labels" [colors]="grafica.colors"
+                                            [options]="grafica.options" [chartType]="grafica.chartType">
+                                        </canvas>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos consultados</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docConsultadosAyer}}</p>
+                                    </div>
+                                </div>
+                                <div class="fuse-card auto-width">
+
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">Documentos ingresados</span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart [datasets]="grafica.datasets.consultados"
+                                            [labels]="grafica.labels" [colors]="grafica.colors"
+                                            [options]="grafica.options" [chartType]="grafica.chartType">
+                                        </canvas>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos eliminados</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docEliminadosAyer}}</p>
+                                    </div>
+                                </div>
+                                <div class="fuse-card auto-width">
+
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">Documentos ingresados</span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart [datasets]="grafica.datasets.eliminados"
+                                            [labels]="grafica.labels" [colors]="grafica.colors"
+                                            [options]="grafica.options" [chartType]="grafica.chartType">
+                                        </canvas>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </mat-tab>
+                        <mat-tab label="Últimos 7 dias en el mes">
+                            <div class="contenedor">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos disponibles</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docDisponibles7dias}}</p>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <h3 class="card-title">Expedientes disponibles</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">folder
+                                        </mat-icon>
+                                        <p>{{docExpedientes7dias}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos cargados</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docCargados7dias}}</p>
+                                    </div>
+                                </div>
+                                <div class="fuse-card auto-width">
+
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">Documentos ingresados</span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart [datasets]="grafica7dias.datasets.cargados"
+                                            [labels]="grafica7dias.labels" [colors]="grafica7dias.colors"
+                                            [options]="grafica7dias.options" [chartType]="grafica7dias.chartType">
+                                        </canvas>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos consultados</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docConsultados7dias}}</p>
+                                    </div>
+                                </div>
+                                <div class="fuse-card auto-width">
+
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">Documentos ingresados</span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart [datasets]="grafica7dias.datasets.consultados"
+                                            [labels]="grafica7dias.labels" [colors]="grafica7dias.colors"
+                                            [options]="grafica7dias.options" [chartType]="grafica7dias.chartType">
+                                        </canvas>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos eliminados</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docEliminados7dias}}</p>
+                                    </div>
+                                </div>
+                                <div class="fuse-card auto-width">
+
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">Documentos ingresados</span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart [datasets]="grafica7dias.datasets.eliminados"
+                                            [labels]="grafica7dias.labels" [colors]="grafica7dias.colors"
+                                            [options]="grafica7dias.options" [chartType]="grafica7dias.chartType">
+                                        </canvas>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </mat-tab>
+                        <mat-tab label="Último mes">
+                            <div class="contenedor">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos disponibles</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docDisponiblesMes}}</p>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <h3 class="card-title">Expedientes disponibles</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">folder
+                                        </mat-icon>
+                                        <p>{{docExpedientesMes}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos cargados</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docCargadosMes}}</p>
+                                    </div>
+                                </div>
+                                <div class="fuse-card auto-width">
+
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">Documentos ingresados</span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart [datasets]="graficaMes.datasets.cargados"
+                                            [labels]="graficaMes.labels" [colors]="graficaMes.colors"
+                                            [options]="graficaMes.options" [chartType]="graficaMes.chartType">
+                                        </canvas>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos consultados</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docConsultadosMes}}</p>
+                                    </div>
+                                </div>
+                                <div class="fuse-card auto-width">
+
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">Documentos ingresados</span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart [datasets]="graficaMes.datasets.consultados"
+                                            [labels]="graficaMes.labels" [colors]="grafica.Mescolors"
+                                            [options]="graficaMes.options" [chartType]="graficaMes.chartType">
+                                        </canvas>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos eliminados</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docEliminadosMes}}</p>
+                                    </div>
+                                </div>
+                                <div class="fuse-card auto-width">
+
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">Documentos ingresados</span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart [datasets]="graficaMes.datasets.eliminados"
+                                            [labels]="graficaMes.labels" [colors]="graficaMes.colors"
+                                            [options]="graficaMes.options" [chartType]="graficaMes.chartType">
+                                        </canvas>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </mat-tab>
+                        <mat-tab label="Rango de fechas">
+                            <section class="container">
+                                <div class="column">
+                                    <!--  
+                          <div class="select">
+                            <p class="tag">Id Documento</p>
+                            <mat-form-field appearance="fill" class="input">
+                              <input matInput placeholder="000">
+                            </mat-form-field>
+                          </div>
+                          -->
+
+                                    <div class="select">
+                                        <p class="tag">Desde</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Seleccione una fecha</mat-label>
+                                            <input matInput [matDatepicker]="picker" formControlName="fechaIni"
+                                                [(ngModel)]="fechaIni">
+                                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+
+                                </div>
+                                <div class="column">
+                                    <div class="select">
+                                        <p class="tag">Hasta</p>
+                                        <mat-form-field appearance="fill" class="input">
+                                            <mat-label>Seleccione una fecha</mat-label>
+                                            <input matInput [matDatepicker]="picker2" formControlName="fechaFin"
+                                                [(ngModel)]="fechaFin">
+                                            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker2></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="select buttons">
+                                        <button mat-raised-button matStepperNext color="warn" class="btn-search"
+                                            (click)="configurarFechas()">Consultar</button>
+                                        <button mat-raised-button color="warn" class="btn-search"
+                                            (click)="borrarFiltrosFechas()">Borrar</button>
+                                    </div>
+                                </div>
+                            </section>
+                            <div class="contenedor">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos disponibles</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docDisponiblesFechas}}</p>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <h3 class="card-title">Expedientes disponibles</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">folder
+                                        </mat-icon>
+                                        <p>{{docExpedientesFechas}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos cargados</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docCargadosFechas}}</p>
+                                    </div>
+                                </div>
+                                <div class="fuse-card auto-width">
+
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">Documentos Ingresados</span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart [datasets]="graficaFechas.datasets.cargados"
+                                            [labels]="graficaFechas.labels" [colors]="graficaFechas.colors"
+                                            [options]="graficaFechas.options" [chartType]="graficaFechas.chartType">
+                                        </canvas>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos consultados</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docConsultadosFechas}}</p>
+                                    </div>
+                                </div>
+                                <div class="fuse-card auto-width">
+
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">Documentos ingresados</span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart [datasets]="graficaFechas.datasets.consultados"
+                                            [labels]="graficaFechas.labels" [colors]="graficaFechas.colors"
+                                            [options]="graficaFechas.options" [chartType]="graficaFechas.chartType">
+                                        </canvas>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="contenedor-grafica">
+                                <div class="card">
+                                    <h3 class="card-title">Documentos eliminados</h3>
+                                    <div class="contenido">
+                                        <mat-icon color="white" class="material-icons mat-icon"
+                                            matTooltip="Clic para añadir una Ente">assignment
+                                        </mat-icon>
+                                        <p>{{docEliminadosFechas}}</p>
+                                    </div>
+                                </div>
+                                <div class="fuse-card auto-width">
+
+                                    <div class="position-relative p-24" fxLayout="row"
+                                        fxLayoutAlign="space-between center">
+                                        <div fxLayout="column" fxLayoutAlign="start start">
+                                            <span class="h2">Documentos ingresados</span>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="position-relative h-200 pb-16">
+                                        <canvas baseChart [datasets]="graficaFechas.datasets.eliminados"
+                                            [labels]="graficaFechas.labels" [colors]="graficaFechas.colors"
+                                            [options]="graficaFechas.options" [chartType]="graficaFechas.chartType">
+                                        </canvas>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </mat-tab>
+                    </mat-tab-group>
+
+                </div>
+                <div class="select buttons">
+                    <button mat-raised-button matStepperPrevious color="warn" class="btn-search">Volver</button>
+                </div>
+            </form>
+        </mat-step>
+    </mat-vertical-stepper>
+
+</div>

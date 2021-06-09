@@ -1,0 +1,68 @@
+<ngx-spinner></ngx-spinner>
+<div id="clientes" class="page-layout simple fullwidth docs">
+
+    <!-- HEADER -->
+    <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+
+        <div class="hero-text content">
+            <h1>Tablero de empleados</h1>
+            <h3>Listado de empleados</h3>
+        </div>
+
+    </div>
+    <!-- / HEADER -->
+
+    <div class="content p-24" align="center" style="border: 1px">
+        <div class="content">
+            <!-- Data table-->
+
+            <div class="buscador">
+                <mat-form-field class="buscar">
+                    <mat-label>Buscar empleados</mat-label>
+                    <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)' [(ngModel)]="valueBuscador">
+                </mat-form-field>
+                <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="guardarEmpleado()" class="button">
+                    <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un empleado.">post_add
+                    </mat-icon>
+                    Agregar empleado
+                </button>
+            </div>
+
+            <ngx-datatable class="material shadow-none" [rows]="empleados" [loadingIndicator]="loadingIndicator"
+                [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
+
+
+                <!--<ngx-datatable-column name="Id. empleado" prop="id"></ngx-datatable-column>-->
+                <ngx-datatable-column name="Empleado" prop="nombre"></ngx-datatable-column>
+                <ngx-datatable-column name="Apellido P." prop="apellidoPaterno"></ngx-datatable-column>
+                <ngx-datatable-column name="Apellido M." prop="apellidoMaterno"></ngx-datatable-column>
+                <ngx-datatable-column name="Puesto" prop="puesto.descripcion"></ngx-datatable-column>
+                <ngx-datatable-column name="Secretaría" prop="secretaria.cDescripcionSecretaria"></ngx-datatable-column>
+                 <!-- <ngx-datatable-column name="Telefono" prop="telefono"></ngx-datatable-column>-->
+                 <!--<ngx-datatable-column name="E-mail" prop="email"></ngx-datatable-column>-->
+                <ngx-datatable-column name="Estatus" sortable="false" [width]="10">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        <mat-icon *ngIf="row.activo" color="accent" class="material-icons">check_circle</mat-icon>
+                        <mat-icon *ngIf="!row.activo" color="warn" class="material-icons">remove_circle</mat-icon>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Acciones" sortable="false" prop="id" [width]="10">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        <a *ngIf="this.optEliminar" (click)="eliminarEmpleado(row)">
+                            <mat-icon color="warn" class="material-icons pointer" matTooltip="Clic para eliminar">delete
+                            </mat-icon>
+                        </a>
+                        <a *ngIf="this.optConsultar === true && this.optEditar === true"
+                            (click)="editarEmpleado(row)">
+                            <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">edit
+                            </mat-icon>
+                        </a>
+                    </ng-template>
+                </ngx-datatable-column>
+
+            </ngx-datatable>
+        </div>
+    </div>
+</div>

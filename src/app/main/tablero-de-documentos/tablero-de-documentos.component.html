@@ -1,0 +1,113 @@
+<script src='https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'></script>
+<div id="clientes" class="page-layout simple fullwidth docs">
+
+    <!-- HEADER -->
+    <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+
+        <div class="hero-text content">
+            <h1>Tablero de documentos</h1>
+            <h3>Listado de documentos</h3>
+        </div>
+
+    </div>
+    <!-- / HEADER -->
+
+    <ngx-spinner></ngx-spinner>
+
+
+
+    <div class="content p-24" align="center" style="border: 1px">
+        <div class="content">
+            <!-- Data table-->
+
+            <div class="buscador">
+                <mat-form-field class="buscar">
+                    <mat-label>Buscar un documento</mat-label>
+                    <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)' [(ngModel)]="valueBuscador">
+                </mat-form-field>
+                <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevoDocumento()" class="button">
+                    <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un documento">post_add
+                    </mat-icon>
+                    Agregar nuevo documento
+                </button>
+
+            </div>
+
+            <ngx-datatable class="material shadow-none"  [rows]="documentos" [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
+                <!-- <ngx-datatable-column name="Id. documento" prop="id"></ngx-datatable-column> -->
+                <ngx-datatable-column name="Documento" prop="cNombreDocumento"></ngx-datatable-column>
+                <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
+                <ngx-datatable-column name="Tipo de información" prop="informacion"></ngx-datatable-column>
+                <ngx-datatable-column name="Páginas" prop="paginas"></ngx-datatable-column>
+                <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion"></ngx-datatable-column>
+                <ngx-datatable-column name="Fecha de carga" prop="fechaCarga"></ngx-datatable-column>
+                <ngx-datatable-column name="Fecha de modificación" prop="fechaModificacion"></ngx-datatable-column>
+                <ngx-datatable-column name="Versión" prop="version"></ngx-datatable-column>
+                <ngx-datatable-column name="Clasificación" prop="clasificacion"></ngx-datatable-column>
+                <ngx-datatable-column name="Estatus" sortable="false">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        <mat-icon *ngIf="row.bActivo" color="accent" class="material-icons">check_circle</mat-icon>
+                        <mat-icon *ngIf="!row.bActivo" color="warn" class="material-icons">remove_circle</mat-icon>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Acciones" sortable="false" prop="id">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        <a *ngIf="this.optEliminar && row.Eliminar" (click)="eliminarDocumento(row)">
+                            <mat-icon color="warn" class="material-icons pointer" matTooltip="Clic para eliminar">delete
+                            </mat-icon>
+                        </a>
+
+                        <a target="_self" *ngIf="row.idDocumento && row.Consultar" (click)="descargarDocumento(row)">
+                            <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para descargar">
+                                cloud_download</mat-icon>
+
+                        </a>
+
+                        <a *ngIf="row.Consultar === true && (this.optEditar === false || row.Editar === false)" (click)="consultarDcumento(row)">
+                            <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">
+                                remove_red_eye
+                            </mat-icon>
+                        </a>
+
+                        <a *ngIf="row.Consultar === true && this.optEditar === true && row.Editar === true" (click)="editarDocumento(row)">
+                            <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">edit
+                            </mat-icon>
+                        </a>
+
+
+                    </ng-template>
+                </ngx-datatable-column>
+            <!--- <ngx-datatable-footer>
+                    <ng-template 
+                      ngx-datatable-footer-template
+                      let-rowCount="rowCount"
+                      let-pageSize="pageSize"
+                      let-selectedCount="selectedCount"
+                      let-curPage="curPage"
+                      let-offset="offset"
+                      let-isVisible="isVisible">
+                        <div class="page-count">
+                          <span *ngIf="selectedMessage">
+                            {{selectedCount.toLocaleString()}} {{selectedMessage}} / 
+                          </span>
+                          {{rowCount.toLocaleString()}} {{totalMessage}}
+                        </div>
+                        <datatable-pager
+                            [pagerLeftArrowIcon]="'datatable-icon-left'"
+                            [pagerRightArrowIcon]="'datatable-icon-right'"
+                            [pagerPreviousIcon]="'datatable-icon-prev'"
+                            [pagerNextIcon]="'datatable-icon-skip'"
+                            [page]="curPage"
+                            [size]="pageSize"
+                            [count]="rowCount"
+                            [hidden]="!((rowCount / pageSize) > 1)"
+                            (change)="onFooterPage($event)">
+                        </datatable-pager>
+                    </ng-template>
+                  </ngx-datatable-footer>
+                -->
+            </ngx-datatable>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,66 @@
+<ngx-spinner></ngx-spinner>
+<div id="clientes" class="page-layout simple fullwidth docs">
+
+    <!-- HEADER -->
+    <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+        <div class="hero-text content">
+            <h1>Tablero de préstamos de documentos</h1>
+            <h3>Listado de préstamos de documentos</h3>
+        </div>
+
+    </div>
+    <!-- / HEADER -->
+    <ngx-spinner></ngx-spinner>
+   
+
+
+    <div class="content p-24" align="center" style="border: 1px">
+        <div class="content">
+            <!-- Data table-->
+            <div class="buscador">
+                <mat-form-field class="buscar">
+                    <mat-label>Buscar un préstamo de documentos</mat-label>
+                    <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)' [(ngModel)]="valueBuscador">
+                </mat-form-field>
+                <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevoPrestamo()" class="button">
+                    <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un documento">post_add
+                    </mat-icon>
+                    Agregar préstamo de documentos
+                </button>
+                
+            </div>
+
+            <ngx-datatable class="material shadow-none" [rows]="prestamoDocumentos" [loadingIndicator]="loadingIndicator"
+                [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+                [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
+                 <ngx-datatable-column name="Id. Préstamo" prop="id"></ngx-datatable-column>
+                <ngx-datatable-column name="Fecha de préstamo" prop="dFechaSolicitudT"></ngx-datatable-column>
+                <ngx-datatable-column name="Hora" prop="tHoraSolicitud"></ngx-datatable-column>
+                <ngx-datatable-column name="Solicitante" prop="cSolicitante"></ngx-datatable-column>
+                <ngx-datatable-column name="Tipo de préstamo" prop="cTipoPrestamo"></ngx-datatable-column>     
+                <ngx-datatable-column name="Tipo de expediente" prop="cDescripcionTipoExpediente"></ngx-datatable-column>
+                <ngx-datatable-column name="Folio de Expediente" prop="cIdExpediente"></ngx-datatable-column>         
+                <ngx-datatable-column name="Fecha de devolución" prop="dFechaDevolucionT"></ngx-datatable-column>
+                <ngx-datatable-column name="Hora Dev." prop="tHoraDevolucion"></ngx-datatable-column>
+                <ngx-datatable-column name="Estatus" prop="cEstatus"></ngx-datatable-column>
+                <!-- <ngx-datatable-column name="Estatus" sortable="false" [width]="150">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        <p *ngIf="row.bActivo"><mat-icon *ngIf="row.bActivo" color="accent" class="material-icons">check_circle</mat-icon> Entregado</p>
+                        <p *ngIf="!row.bActivo"><mat-icon *ngIf="!row.bActivo" color="warn" class="material-icons">remove_circle</mat-icon> Pendiente</p>
+                    </ng-template>
+                </ngx-datatable-column> -->
+                <ngx-datatable-column name="Acciones" sortable="false" prop="id">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+           
+                        <a (click)="editarPrestamo(row)">
+                            <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">edit
+                            </mat-icon>
+                        </a>
+                     
+
+                    </ng-template>
+                </ngx-datatable-column>
+            </ngx-datatable>
+        </div>
+    </div>
+</div>
