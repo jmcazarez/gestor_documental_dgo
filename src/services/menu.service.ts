@@ -69,7 +69,7 @@ export class MenuService {
                     let metacatalogos = [];
                     let tipo: any;
                     const usuarioLogin = await this.usuarioLoginService.obtenerUsuario();
-
+                    console.log(usuarioLogin);
                     if (usuarioLogin) {
                         this.usuario = usuarioLogin[0].data.id;
                         grupoMenuCatalagos = {
