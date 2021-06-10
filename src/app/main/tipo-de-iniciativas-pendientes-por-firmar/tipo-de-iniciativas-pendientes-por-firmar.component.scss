@@ -79,5 +79,65 @@
         border: 1px solid rgba(0, 0, 0, 0.12);
         border-radius: 15px;
     }
+    .form-quest {
+        // color: var(--color-green-adtu);
+        width: 100%;
+        max-width: 600px;
+        margin: auto;
     
+        mat-form-field{
+            width: 100%;
+        }
+
+        .content {
+            &-radio-button {
+                label {
+                    color: #787878
+                }
+                
+                mat-radio-group{
+                    width: 100%;
+                    display: flex;
+                    padding: 0 20px 1.25em 20px;
+                    flex-direction: column;
+                    * {
+                        color: #787878
+                    }
+                }
+            }
+
+            &-checkbox {
+                label {
+                    color: #787878
+                }
+                ul {
+                    list-style: none;
+                    padding-left: 20px;
+                    margin: 0;
+                }
+                
+            }
+
+            &-slider {
+                .mat-slider {
+                    width: 100%;
+
+                }
+            }
+
+            &-datepicker {
+                mat-form-field{
+                    width: initial;
+                    transform: translateY(-18px);
+
+                }
+            }
+            &-time {
+                mat-form-field{
+                    width: initial;
+                }
+            }
+        }
+        
+    }      
 }

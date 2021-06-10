@@ -133,7 +133,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
 
         if (!this.documento.iniciativas) {
-           
+
             if (this.documento.tipo_de_documento.id) {
                 this.trazabilidad = false;
                 this.arrMetacatalogos = this.menuService.tipoDocumentos.find(
@@ -169,10 +169,10 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             autorizaciones = await this.obtenerAutorizacionPorDocumento();
             // Bloqueamos el boton de autorizar si tiene autorizaciones pendientes por realizar.
             autorizaciones.forEach(element => {
-                if(element.estatusAutorizacion === 1 || element.estatusAutorizacion === 2){
-                   // this.autorizacionPendiente = true;
+                if (element.estatusAutorizacion === 1 || element.estatusAutorizacion === 2) {
+                    // this.autorizacionPendiente = true;
                 }
-    
+
             });
             this.estatusIniciativa = this.documento.estatus;
             this.arrMetacatalogos = this.documento.metacatalogos;
@@ -1070,64 +1070,67 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     async autorizar(): Promise<void> {
         this.spinner.show()
         let fileBase64 = this.pdfSrc;
-        let parametrosSSP004 = [];
+        let parametros = [];
         let firmantes = [];
         let autorizacion = {};
         let detalleAutorizacion = [];
-        console.log(this.documento.iniciativa.id);
-
-        if (this.documento.cNombreDocumento.includes('SSP 01')) {
-            console.log('1');
-        } else if (this.documento.cNombreDocumento.includes('SSP 04')) {
-            console.log('2');
-            parametrosSSP004 = await this.obtenerParametros("SSP-004-Firmas");
-
-            let firmasPorEtapas = await this.obtenerFirma(
-                parametrosSSP004[0]["cValor"]
+        let firmasPorEtapas: any[];
+        if (this.documento.cNombreDocumento.includes('SSP 01')) {        
+            parametros = await this.obtenerParametros("SSP-001-Firmas");
+            firmasPorEtapas = await this.obtenerFirma(
+                parametros[0]["cValor"]
+            );
+        } else if (this.documento.cNombreDocumento.includes('SSP 04')) {        
+            parametros = await this.obtenerParametros("SSP-004-Firmas");
+            firmasPorEtapas = await this.obtenerFirma(
+                parametros[0]["cValor"]
             );
             firmantes = firmasPorEtapas[0].participantes;
-        } else if (this.documento.cNombreDocumento.includes('CIEL 08')) {
-            console.log('3');
-        } else if (this.documento.cNombreDocumento.includes('SSP 05')) {
-            console.log('4');
-        } else if (this.documento.cNombreDocumento.includes('SSP 08')) {
-            console.log('5');
+        } else if (this.documento.cNombreDocumento.includes('CIEL 08')) {        
+            parametros = await this.obtenerParametros("CIEL-008-Firmas");
+            firmasPorEtapas = await this.obtenerFirma(
+                parametros[0]["cValor"]
+            );
+        } else if (this.documento.cNombreDocumento.includes('SSP 05')) {          
+            parametros = await this.obtenerParametros("SSP-005-Firmas");
+            firmasPorEtapas = await this.obtenerFirma(
+                parametros[0]["cValor"]
+            );
+        } else if (this.documento.cNombreDocumento.includes('SSP 08')) {           
+            parametros = await this.obtenerParametros("SSP-008-Firmas");
+            firmasPorEtapas = await this.obtenerFirma(
+                parametros[0]["cValor"]
+            );
         }
-    
+
         firmantes.forEach(element => {
             detalleAutorizacion.push({ empleado: element.id })
 
         });
 
-        autorizacion = {
-            documento: this.documento.id,
-            estatusIniciativa: this.documento.iniciativa.estatus,
-            estatusAutorizacion: 1,
-            idProcesoApi: 0,
-            detalle_autorizacion_iniciativas: detalleAutorizacion
-        }
-        let fileName = this.documento.cNombreDocumento + '.pdf';
-        this.autorizarService.autorizarRegistro(autorizacion).subscribe(
-            async (resp: any) => {
-                console.log(resp);
 
-                this.spinner.hide()
-            },
-            (err) => {
-                this.spinner.hide()
-                Swal.fire(
-                    "Error",
-                    "Ocurrió un error al firmar el documento. Paso 1. " + err,
-                    "error"
-                );
-            }
-        );
-        /*
-                this.autorizarService.autorizarDocumentoPaso1(fileName, firmantes.length, fileBase64.replace('data:application/pdf;base64,', '')).subscribe(
+        let fileName = this.documento.cNombreDocumento + '.pdf';
+
+
+        this.autorizarService.autorizarDocumentoPaso1(fileName, firmantes.length, fileBase64.replace('data:application/pdf;base64,', '')).subscribe(
+            async (resp: any) => {
+                let processID = resp.body.multiSignedMessage_InitResponse.processID;
+
+                autorizacion = {
+                    documento: this.documento.id,
+                    estatusIniciativa: this.documento.iniciativa.estatus,
+                    estatusAutorizacion: 1,
+                    idProcesoApi: processID,
+                    detalle_autorizacion_iniciativas: detalleAutorizacion
+                }
+                this.autorizarService.autorizarRegistro(autorizacion).subscribe(
                     async (resp: any) => {
-                        let processID = resp.body.multiSignedMessage_InitResponse.processID;
-                        console.log(processID);
-        
+                        this.autorizacionPendiente = true;
+                        Swal.fire(
+                            "Éxito",
+                            "Documento en proceso de firma.",
+                            "success"
+                        );
                         this.spinner.hide()
                     },
                     (err) => {
@@ -1139,8 +1142,19 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                         );
                     }
                 );
-        */
-        this.spinner.hide()
+
+            },
+            (err) => {
+                this.spinner.hide()
+                Swal.fire(
+                    "Error",
+                    "Ocurrió un error al firmar el documento. Paso 1. " + err,
+                    "error"
+                );
+            }
+        );
+
+
     }
     autorizarCompleto(): void {
         this.spinner.show()
@@ -1259,7 +1273,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         });
     }
 
-    async obtenerFirma(id: string): Promise<void> {
+    async obtenerFirma(id: string): Promise<[]> {
         return new Promise((resolve) => {
             {
                 this.firmas.obtenerFirmaPorEtapa(id).subscribe(

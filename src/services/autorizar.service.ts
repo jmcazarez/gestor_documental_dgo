@@ -10,11 +10,12 @@ export class AutorizarService {
 
     private baseUrl: string;
     private urlFirmaDigitalPaso1 = 'multiSignedMessage_Init';
+    private urlFirmaDigitalPaso2 = 'multiSignedMessage_GetHash';
     private urlFirmaDigitalPaso11 = 'firmaDigitalPaso1';
     private urlFirmaDigitalPaso3 = 'multiSignedMessage_Update';
     private urlFirmaDigitalPaso4 = 'multiSignedMessage_Final';
     private urlAutorizarRegistro = 'autorizacion';
-    
+
     private TOKEN = localStorage.getItem('token');
 
     private httpOptions = {
@@ -46,6 +47,22 @@ export class AutorizarService {
             fileName, numeroFirmantes, fileBase64
         }
         return this.http.post(this.baseUrl + this.urlFirmaDigitalPaso1, objeto);
+    }
+
+    autorizarDocumentoPaso2(processID: number, cerBase64: String): any {
+
+
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+
+        let objeto = {
+            processID, cerBase64
+        }
+        return this.http.post(this.baseUrl + this.urlFirmaDigitalPaso2, objeto);
     }
     autorizarDocumentoPaso11(fileName, numeroFirmantes, cerBase64, fileBase64): any {
 
@@ -104,7 +121,7 @@ export class AutorizarService {
         }
 
 
-        return this.http.post(this.baseUrl + this.urlAutorizarRegistro, objeto,httpOptions);
+        return this.http.post(this.baseUrl + this.urlAutorizarRegistro, objeto, httpOptions);
     }
     obtenerAutorizacionesPorIdDocumento(idDocumento: string): any {
         this.TOKEN = localStorage.getItem('token');
@@ -115,7 +132,7 @@ export class AutorizarService {
         }
 
 
-        return this.http.get(this.baseUrl + this.urlAutorizarRegistro + '/'+ idDocumento ,httpOptions);
+        return this.http.get(this.baseUrl + this.urlAutorizarRegistro + '/' + idDocumento, httpOptions);
     }
     obtenerAutorizacionesPorEmpleado(idEmpleado: string): any {
         this.TOKEN = localStorage.getItem('token');
@@ -126,6 +143,6 @@ export class AutorizarService {
         }
 
 
-        return this.http.get(this.baseUrl + this.urlAutorizarRegistro + '-empleado/'+ idEmpleado ,httpOptions);
+        return this.http.get(this.baseUrl + this.urlAutorizarRegistro + '-empleado/' + idEmpleado, httpOptions);
     }
 }

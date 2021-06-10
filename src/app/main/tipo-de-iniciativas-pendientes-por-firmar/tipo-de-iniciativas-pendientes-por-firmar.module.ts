@@ -13,6 +13,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatDividerModule} from '@angular/material/divider';
 import { MatInputModule } from '@angular/material/input';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { MaterialFileInputModule } from 'ngx-material-file-input';
+ 
 const routes = [
     {
         path     : 'iniciativas-pendientes-por-firmar',
@@ -45,7 +47,8 @@ const routes = [
         MatIconModule,
         MatDividerModule,
         MatInputModule ,
-        NgxSpinnerModule
+        NgxSpinnerModule,
+        MaterialFileInputModule
     ],
     providers: [
         {
