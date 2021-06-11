@@ -58,15 +58,15 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
 
         this.estados.push({
             id: '001',
-            descripcion: 'pendiente'
+            descripcion: 'Pendiente'
         });
         this.estados.push({
             id: '002',
-            descripcion: 'incompleto'
+            descripcion: 'Incompleto'
         });
         this.estados.push({
             id: '003',
-            descripcion: 'completo'
+            descripcion: 'Completo'
         });
 
         await this.obtenerTiposLegislaturas();
@@ -98,6 +98,7 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
             this.selectEstado = this.recepcion.estatus;
 
         } else {
+
             // Seteamos la fecha de carga con la fecha actual
             this.selectEstado = 'pendiente'
             this.recepcion.estatus = 'pendiente';
@@ -113,7 +114,7 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
         // Form reativo
         this.form = this.formBuilder.group({
             cId: [{ value: this.recepcion.id, disabled: true }],
-            legislatura: [{ value: this.recepcion.legislatura, disabled: true }, Validators.required],
+            legislatura: [{ value: this.recepcion.legislatura, disabled: false }, Validators.required],
             fechaCreacion: [{ value: this.recepcion.fechaCreacion, disabled: true }, Validators.required],
             hora: [{ value: this.recepcion.hora, disabled: true }, Validators.required],
             fechaRecepcion: [{ value: this.recepcion.fechaRecepcion, disabled: false }, Validators.required],
@@ -202,6 +203,8 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
             this.spinner.hide();
         });
     }
+
+    
 
     async obtenerEmpleados(): Promise<void> {
         // Obtenemos empleados

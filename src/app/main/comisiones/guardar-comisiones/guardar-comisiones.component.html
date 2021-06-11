@@ -14,7 +14,7 @@
                 <mat-label>Nombre *</mat-label>
                 <input matInput formControlName="descripcion" >
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
-                <mat-error *ngIf="form.get('descripcion').hasError('required')">El nombre la comsión es requerido</mat-error>
+                <mat-error *ngIf="form.get('descripcion').hasError('required')"> El nombre de la comisión es requerido.</mat-error>
                 <mat-error *ngIf="form.get('descripcion').hasError('minlength') || form.get('descripcion').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
                     y el máximo son 100 </mat-error>
             </mat-form-field>
@@ -43,7 +43,15 @@
 </div>
 
 <h3>Lista de participantes de comisión por legislatura</h3>
-<div align="right" style="border: 1px" class="buttons">
+<div *ngIf="this.comision.id" align="right" style="border: 1px" class="buttons">
+    <button mat-raised-button color="warn" (click)="configurarParticipantes()">
+        <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un nuevo participante">
+            post_add</mat-icon>
+        Editar participante
+    </button>
+</div>
+
+<div *ngIf="!this.comision.id" align="right" style="border: 1px" class="buttons">
     <button mat-raised-button color="warn" (click)="configurarParticipantes()">
         <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un nuevo participante">
             post_add</mat-icon>

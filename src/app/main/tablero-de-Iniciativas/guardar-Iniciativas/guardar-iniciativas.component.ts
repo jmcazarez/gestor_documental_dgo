@@ -58,6 +58,7 @@ export class GuardarIniciativasComponent implements OnInit {
     selectTipo: any;
     arrTipo: any[] = [];
     files = [];
+    fileCheck = [];
     filesTemp = [];
     fileName: string;
     cambioFile: boolean;
@@ -289,6 +290,7 @@ export class GuardarIniciativasComponent implements OnInit {
                     }
                 }
                 this.files = documentosTemp;
+                this.fileCheck = documentosTemp;
                 this.filesTemp = this.files;
                 console.log(this.files);
             
@@ -530,7 +532,15 @@ export class GuardarIniciativasComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        this.files = this.filesTemp;
         // Filtramos tabla
+        if (value.target.value === '') {
+            this.files = this.filesTemp;
+        } else {
+            const val = value.target.value.toLowerCase();
+            const temp = this.files.filter((d) => d.cNombreDocumento.toLowerCase().indexOf(val) !== -1);
+            this.files = temp;
+        }
     }
     
     async obtenerLegislatura(): Promise<void> {
@@ -1148,7 +1158,7 @@ export class GuardarIniciativasComponent implements OnInit {
 
         this.documentos.legislatura = legislaturas[0].id;
         this.documentos.folioExpediente = legislaturas[0].cLegislatura + '-' + Number(legislaturas[0].documentos + 1);
-        this.documentos.tipo_de_documento = '609041c3b507671ee42ae0ab';
+        this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
         this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
         this.documentos.visibilidade = tipoInformacion[0]["cValor"];
 
@@ -1198,6 +1208,15 @@ export class GuardarIniciativasComponent implements OnInit {
                 cAutores = element.name;
             } else {
                 cAutores = cAutores + ", " + element.name;
+            }
+        });
+
+        let cTema = "";
+        this.temas.forEach((element) => {
+            if (cTema === "") {
+                cTema = element.name;
+            } else {
+                cTema = cTema + ", " + element.name;
             }
         });
         this.documentos.metacatalogos = [

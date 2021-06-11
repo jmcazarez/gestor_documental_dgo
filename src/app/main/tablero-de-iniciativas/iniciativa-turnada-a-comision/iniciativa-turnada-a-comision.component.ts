@@ -93,6 +93,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     filesInforme = [];
     fileOficioName: string;
     fileInformeName: string;
+    fileActaDeSesion: string;
+    fileActaDeSesionSend: any;
     cambioFile: boolean;
     date = new Date(2020, 1, 1);
     cambioInforme: boolean;
@@ -148,6 +150,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     filesTemp = [];
     cargando: boolean;
     disable = false;
+    sinActa = false;
     constructor(
         private spinner: NgxSpinnerService,
         private formBuilder: FormBuilder,
@@ -354,6 +357,13 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             this.selectedLegislatura = this.iniciativa.actasSesion[0].legislatura;
             this.selectedSesion = this.iniciativa.actasSesion[0].tipoSesion;
+            if (this.iniciativa.actasSesion[0].actasSesion) {
+                this.fileActaDeSesion = this.iniciativa.actasSesion[0].actasSesion;
+                this.fileActaDeSesionSend = this.iniciativa.actasSesion[0].actasSesion;
+            } else {
+                this.fileActaDeSesion = "";
+            }
+
             // Form reativo
             this.form = this.formBuilder.group({
                 id: [{ value: this.iniciativa.id, disabled: true }],
@@ -396,6 +406,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 fechaPublicacion: [{ value: this.iniciativa.fechaPublicacion, disabled: false }, validatosPublicacion],
             });
         } else {
+            this.sinActa = true;
             // Form reativo
             this.form = this.formBuilder.group({
                 id: [{ value: this.iniciativa.id, disabled: true }],
@@ -453,6 +464,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         let fechaSesion;
         let hora;
         let horaSesion;
+        let actasSesion;
 
         this.spinner.show();
     
@@ -469,6 +481,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             if (this.iniciativa.anexosTipoCuentaPublica[1]) {
                 this.anexos.push(this.iniciativa.anexosTipoCuentaPublica[1]);
             }
+        }
+
+        if (this.fileActaDeSesionSend !== undefined) {
+            actasSesion = this.fileActaDeSesionSend.id;
         }
 
         this.iniciativa.anexosTipoCuentaPublica = this.anexos;
@@ -545,7 +561,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     legislatura: legislatura,
                     tipoSesion: tipoSesion,
                     fechaSesion: fechaSesion,
-                    horaSesion: horaSesion
+                    horaSesion: horaSesion,
+                    actasSesion: actasSesion
                 }).subscribe((resp: any) => {
                     if (resp) {
                         this.iniciativa.actasSesion = [resp.data.id];
@@ -585,7 +602,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     legislatura: legislatura,
                     tipoSesion: tipoSesion,
                     fechaSesion: fechaSesion,
-                    horaSesion: horaSesion
+                    horaSesion: horaSesion,
+                    actasSesion: actasSesion,
                 }).subscribe((resp: any) => {
                     if (resp) {
                         this.iniciativa.actasSesion = [resp.data.id];
@@ -938,15 +956,18 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     }
 
     async obtenerLegislatura(): Promise<void> {
+        let legislaturas: any[] = []
         return new Promise((resolve) => {
             {
                 this.legislaturaService.obtenerLegislatura().subscribe(
                     (resp: any) => {
                         for (const legislatura of resp) {
                             if (legislatura.bActual && legislatura.bActivo) {
-                                this.legislatura.push(legislatura);
+                                legislaturas.push(legislatura);
                             }
                         }
+
+                        this.legislatura = legislaturas;
                         resolve(resp);
 
                         //seleccionamos legislatura por default
@@ -972,7 +993,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 this.mesasDirectivasService.obtenerMesas().subscribe(
                     (resp: any) => {
                         for (const mesa_directiva of resp) {
-                            if (mesa_directiva.activo) {
+                            if (mesa_directiva.activo && mesa_directiva.legislatura) {
                                 this.arrMesas.push(mesa_directiva);
                             }
                         }
@@ -1170,6 +1191,11 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             let mesa_directiva: any = this.arrMesas.filter(meta => meta.legislatura.id === this.selectedLegislatura);
             let legislaturaDoc: any = this.legislatura.filter(meta => meta.id === this.selectedLegislatura);
 
+            if(mesa_directiva.length == 0){
+                Swal.fire('Error', 'La legislatura que seleccionó no tiene asignada Mesa Directiva.', 'error');
+                this.spinner.hide();
+            }
+
             let detalle_mesa: any = this.arrDetalleMesas.filter(meta => meta.mesas_directiva === mesa_directiva[0].id);
             console.log('detalleMesa');
             console.log(detalle_mesa);
@@ -1191,7 +1217,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 } else {
                     cTemas = cTemas + ', ' + element.name;
                 }
-
             });
 
             this.autores.forEach(element => {
@@ -1214,7 +1239,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 alignment: "left",
                 margin: [0, 10, 0, 0],
             });
-            if (this.iniciativa.estatus === 'Turnar iniciativa a comisión' || this.iniciativa.estatus === '') {
+            if (this.iniciativa.estatus === 'Turnar iniciativa a comisión' || this.iniciativa.estatus === 'Turnada a comisión para modificación') {
                 presente.push({
                     text: "Director del Centro de Investigación y",
                     fontSize: 14,
@@ -1311,8 +1336,58 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 })
             }
 
-            if (this.iniciativa.estatus === 'Turnar iniciativa a comisión' ||
-            this.iniciativa.estatus === 'Turnada a comisión para modificación' && this.iniciativa.tipo_de_iniciativa == 'Iniciativa') {
+            if (this.iniciativa.estatus === 'Turnar iniciativa a comisión') {
+                //verificamos si es uno o varios autores.
+                //console.log(this.autores.length);
+                if (this.autores.length <= 1) {
+                    presente.push({
+                        text:
+                            [
+                                'Por instrucciones del C. ',
+                                { text: detalle_mesa[0].presidentes[0].nombre, bold: true },
+                                ', presidente de la mesa directiva, en sesión ',
+                                { text: tipoSesion, bold: true },
+                                ' verificada el ',
+                                { text: diaSesion + ' de ' + mesSesion + ' del año ' + anioSesion, bold: true },
+                                ' se acordó turnar a la comisión de ',
+                                { text: comision[0].descripcion, bold: true },
+                                ', iniciativa, presentada por el C. ',
+                                { text: cAutores, bold: true },
+                                ', que contiene ',
+                                { text: cTemas, bold: true },
+                                '.'
+                            ],
+                        fontSize: 12,
+                        bold: false,
+                        alignment: "justify",
+                        margin: [0, 50, 5, 5],
+                    });
+                } if (this.autores.length >= 2) {
+
+                    presente.push({
+                        text:
+                            [
+                                'Por instrucciones del C. ',
+                                { text: detalle_mesa[0].presidentes[0].nombre, bold: true },
+                                ', presidente de la mesa directiva, en sesión ',
+                                { text: tipoSesion, bold: true },
+                                ' verificada el ',
+                                { text: diaSesion + ' de ' + mesSesion + ' del año ' + anioSesion, bold: true },
+                                ' se acordó turnar a la comisión de ',
+                                { text: comision[0].descripcion, bold: true },
+                                ', iniciativa, presentada por los CC. ',
+                                { text: cAutores, bold: true },
+                                ', que contiene ',
+                                { text: cTemas, bold: true },
+                                '.'
+                            ],
+                        fontSize: 12,
+                        bold: false,
+                        alignment: "justify",
+                        margin: [0, 50, 5, 5],
+                    });
+                }
+            } if (this.iniciativa.estatus === 'Turnada a comisión para modificación') {
                 //verificamos si es uno o varios autores.
                 //console.log(this.autores.length);
                 if (this.autores.length <= 1) {
@@ -2954,6 +3029,11 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.documentos.iniciativaInformeDeResultadosRevision = this.iniciativa.id;
         } else if (tipo === '1') {
 
+        } else if (tipo === '4'){
+            if (this.iniciativa.actasSesion.id) {
+                this.documentos.actasSesion = this.iniciativa.actasSesion.id;
+                this.fileActaDeSesion = this.documentos.cNombreDocumento;
+            }
         }
 
         this.documentoService
@@ -3007,6 +3087,11 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             } else if (tipo === '3') {
                                 this.iniciativa.informeDeResultadosRevision = this.documentos;
                                 this.fileInformeName = this.iniciativa.informeDeResultadosRevision.cNombreDocumento;
+                            } else if (tipo === '4'){
+                                this.fileActaDeSesionSend = this.documentos;
+                                console.log(this.fileActaDeSesionSend);
+                                this.fileActaDeSesion = this.documentos.cNombreDocumento;
+                                this.sinActa = false;
                             }
                             if(this.iniciativa.estatus == 'Turnar dictamen a Secretaría General' || 
                             this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' ||

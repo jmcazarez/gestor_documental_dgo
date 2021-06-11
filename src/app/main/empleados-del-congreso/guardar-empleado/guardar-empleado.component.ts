@@ -50,11 +50,11 @@ export class GuardarEmpleadoComponent implements OnInit {
         if (this.empleados.id === undefined) {
             this.empleados.activo = true;
         }
-      
+
         this.form = this.formBuilder.group({
             nombre: [this.empleados.nombre, [Validators.required, ,Validators.minLength(3), Validators.maxLength(100)]],
             apellidoPaterno: [this.empleados.apellidoPaterno, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-            apellidoMaterno: [this.empleados.apellidoMaterno, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+            apellidoMaterno: [this.empleados.apellidoMaterno, [Validators.minLength(3), Validators.maxLength(100)]],
             telefono: [this.empleados.telefono, [RxwebValidators.mask({ mask: '(999)-999 9999' }), Validators.required]],
             email: [this.empleados.email, [Validators.required, Validators.minLength(6), Validators.maxLength(100), Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")]],
             puestos: [{ value: this.arrPuestos }, [Validators.required]],

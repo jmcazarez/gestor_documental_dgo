@@ -387,7 +387,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 this.legislaturaService.obtenerLegislatura().subscribe(
                     (resp: any) => {
                         for (const legislatura of resp) {
-                            if (legislatura.bActual && legislatura.bActivo) {
+                            if (legislatura.bActivo) {
                                 this.arrLegislaturas.push(legislatura);
                             }
                         }

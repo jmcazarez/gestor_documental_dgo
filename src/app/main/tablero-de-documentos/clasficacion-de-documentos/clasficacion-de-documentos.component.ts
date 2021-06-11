@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ViewChild } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import {
     MatDialog,
@@ -20,12 +20,11 @@ import { HistorialDeVersionamientoComponent } from "./historial-de-versionamient
 import { LinkPublicoComponent } from "./link-publico/link-publico.component";
 import { LegislaturaService } from "services/legislaturas.service";
 import { IniciativasService } from "services/iniciativas.service";
-import { ParametrosService } from "services/parametros.service";
 import * as moment from "moment";
 import { NgxSpinnerService } from "ngx-spinner";
 import { AutorizarService } from "services/autorizar.service";
+import { ParametrosService } from "services/parametros.service";
 import { FirmasPorEtapaService } from "services/configuracion-de-firmas-por-etapa.service";
-
 export interface Metacatalogos {
     name: string;
 }
@@ -36,8 +35,6 @@ export interface Metacatalogos {
     providers: [DatePipe],
 })
 export class ClasficacionDeDocumentosComponent implements OnInit {
-    @ViewChild('signature') signature: any;
-
     pdfSrc: any;
     form: FormGroup;
     selectedEntes: any;
@@ -104,38 +101,36 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         private menuService: MenuService,
         private legislaturaService: LegislaturaService,
         private trazabilidadService: TrazabilidadService,
+        private autorizarService: AutorizarService,
         private tipoExpedientesService: TipoExpedientesService,
         public dialog: MatDialog,
         private iniciativaService: IniciativasService,
         private usuariosService: UsuariosService,
-        private autorizarService: AutorizarService,
-        private parametrosService: ParametrosService,
+        private parametros: ParametrosService,
         private firmas: FirmasPorEtapaService,
         @Inject(MAT_DIALOG_DATA) public documento,
         @Inject(MAT_DIALOG_DATA) public nuevo
     ) {
         // ---------- Tabla de Prueba - Trazabilidad
-        this.pdfSrc = "";
-
     }
 
     async ngOnInit(): Promise<void> {
         this.autorizacionPendiente = false;
         this.turnarDocumento = false;
         this.spinner.show();
+        let autorizaciones: any;
         this.documento.usuario = this.menuService.usuario;
         this.version = this.documento.version;
         let cFolioExpediente = "";
         let cLegislatura = "";
         this.arrMetacatalogos = [];
         let folioExpedienteRequerido = [];
-        let autorizaciones = [];
         await this.obtenerLegislaturas();
         await this.obtenerTiposExpedientes();
 
+        console.log(this.documento);
 
         if (!this.documento.iniciativas) {
-
             if (this.documento.tipo_de_documento.id) {
                 this.trazabilidad = false;
                 this.arrMetacatalogos = this.menuService.tipoDocumentos.find(
@@ -151,7 +146,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 } else {
                 }
             } else {
-
                 this.trazabilidad = true;
                 this.arrMetacatalogos = this.menuService.tipoDocumentos.find(
                     (tipoDocumento) =>
@@ -307,7 +301,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 },
                 folioExpedienteRequerido,
             ],
-            // informacion: [{ value: this.documento.visibilidade, disabled: this.documento.disabled }, [Validators.required]]
+            informacion: [{ value: this.documento.visibilidade.cDescripcionVisibilidad, disabled: this.documento.disabled }, [Validators.required]]
             //   imagen        : [this.usuario.cPassword,[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
         });
 
@@ -479,12 +473,9 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                     .subscribe(
                         (resp: any) => {
                             const source =
-                                "data:application/pdf;base64," +
+                                "data:application/octet-stream;base64," +
                                 resp.data;
-
                             this.pdfSrc = source;
-
-
                             resolve("1");
                         },
                         (err) => {
@@ -518,7 +509,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                     .subscribe(
                         (resp: any) => {
                             const source =
-                                "data:application/pdf;base64," +
+                                "data:application/octet-stream;base64," +
                                 resp.data;
                             this.pdfSrc = source;
                             resolve("1");
@@ -1164,106 +1155,11 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
 
     }
-    autorizarCompleto(): void {
-        this.spinner.show()
-        let fileBase64 = this.pdfSrc;
-        let cerBase64 = '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';
-        let fileName = this.documento.cNombreDocumento + '.pdf';
-        let serialNumber = '00000000000000000192';
-        let numeroFirmantes = 1;
-        let filePKCSBase64 = ''
-        this.autorizarService.autorizarDocumentoPaso11(fileName, numeroFirmantes, cerBase64, fileBase64.replace('data:application/pdf;base64,', '')).subscribe(
-            async (resp: any) => {
-                let processID = resp.processID;
-                (<HTMLInputElement>document.getElementById("hashToSign")).value = resp.hash;
-                let element: HTMLElement = document.getElementById("btnSing");
-                element.click();
-                setTimeout(() => {
-                    filePKCSBase64 = (<HTMLInputElement>document.getElementById("signature")).value;
-
-                    if (filePKCSBase64.length > 0) {
-                        this.autorizarService.autorizarDocumentoPaso3(filePKCSBase64, fileName, processID, serialNumber).subscribe(
-                            async (resp: any) => {
-                                if (resp.body.multiSignedMessage_UpdateResponse) {
-                                    await this.autorizarService.autorizarDocumentoPaso4(processID).subscribe(
-                                        (resp: any) => {
-                                            if (resp) {
-                                                console.log(resp.body.multiSignedMessage_FinalResponse[0].data);
-                                                const source =
-                                                    "data:application/pdf;base64," +
-                                                    resp.body.multiSignedMessage_FinalResponse[0].data;
-                                                this.pdfSrc = source;
-                                                this.spinner.hide()
-                                            } else {
-                                                this.spinner.hide()
-                                                Swal.fire(
-                                                    "Error",
-                                                    "Ocurrió un error al firmar el documento. Paso 4.",
-                                                    "error"
-                                                );
-                                            }
-                                        },
-                                        (err) => {
-                                            this.spinner.hide()
-                                            Swal.fire(
-                                                "Error",
-                                                "Ocurrió un error al firmar el documento. Paso 4. " + err,
-                                                "error"
-                                            );
-                                        }
-                                    );
-                                } else {
-                                    this.spinner.hide()
-                                    Swal.fire(
-                                        "Error",
-                                        "Ocurrió un error al firmar el documento. Paso 3.",
-                                        "error"
-                                    );
-                                }
-                            },
-                            (err) => {
-                                this.spinner.hide()
-                                Swal.fire(
-                                    "Error",
-                                    "Ocurrió un error al firmar el documento. Paso 3. " + err,
-                                    "error"
-                                );
-                            }
-                        );
-                    } else {
-                        this.spinner.hide()
-                        Swal.fire(
-                            "Error",
-                            "Ocurrió un error al firmar el documento. Paso 1.",
-                            "error"
-                        );
-                    }
-
-                }, 500);
-
-
-                this.spinner.hide()
-            },
-            (err) => {
-                this.spinner.hide()
-                Swal.fire(
-                    "Error",
-                    "Ocurrió un error al firmar el documento. Paso 1. " + err,
-                    "error"
-                );
-            }
-        );
-    }
-    pruebaForm(): void {
-        console.log(this.form.touched);
-    }
-
-
-    async obtenerParametros(parametro: string): Promise<[]> {
+    async obtenerParametros(parametro: string): Promise < [] > {
 
         return new Promise((resolve) => {
             {
-                this.parametrosService.obtenerParametros(parametro).subscribe(
+                this.parametros.obtenerParametros(parametro).subscribe(
                     (resp: any) => {
                         resolve(resp);
 
@@ -1281,7 +1177,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         });
     }
 
-    async obtenerFirma(id: string): Promise<[]> {
+    async obtenerFirma(id: string): Promise < [] > {
         return new Promise((resolve) => {
             {
                 this.firmas.obtenerFirmaPorEtapa(id).subscribe(
@@ -1302,7 +1198,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         });
     }
 
-    async obtenerAutorizacionPorDocumento(): Promise<[]> {
+    async obtenerAutorizacionPorDocumento(): Promise < [] > {
         return new Promise((resolve) => {
             {
                 this.autorizarService.obtenerAutorizacionesPorIdDocumento(this.documento.id).subscribe(
@@ -1322,7 +1218,4 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             }
         });
     }
-
-
-
-}
+  }

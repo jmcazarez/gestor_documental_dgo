@@ -34,7 +34,6 @@
                 <mat-label>Apellido Materno *</mat-label>
                 <input matInput formControlName="apellidoMaterno" >
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
-                <mat-error *ngIf="form.get('apellidoMaterno').hasError('required')">El apellido materno es requerido.</mat-error>
                 <mat-error *ngIf="form.get('apellidoMaterno').hasError('minlength') || form.get('apellidoMaterno').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
                     y el máximo son 100 </mat-error>
             </mat-form-field>
@@ -42,16 +41,11 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Teléfono *</mat-label>
-                <input matInput formControlName="telefono" >
-                <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
-                <mat-error *ngIf="form.get('telefono').hasError('required')">El teléfono es requerido.</mat-error>
-                <mat-error *ngIf="form.get('telefono').hasError('minlength') || form.get('telefono').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 9
-                    y el máximo son 14 </mat-error>
-                    <div *ngIf="(telf.invalid && primEmail.touched) || telf.dirty">
-                        <!--question mark(?) is a safe navigation operator-->
-                        <small *ngIf="telf.errors?.pattern" class="text-danger">Por favor ingrese un teléfono valido.</small>
-                      </div>
+                <mat-label>Telefono *</mat-label>
+                <input  matInput formControlName="telefono">
+                <mat-icon matSuffix class="secondary-text">phone</mat-icon>
+                <mat-error *ngIf="form.get('telefono').hasError('required')">El teléfono es requerido</mat-error>
+              
             </mat-form-field>
         </div>
 

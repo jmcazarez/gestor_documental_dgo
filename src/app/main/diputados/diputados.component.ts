@@ -37,6 +37,8 @@ export class DiputadosComponent implements OnInit {
         this.spinner.show();
         this.filterName = '';
         this.loadingIndicator = true;
+        let diputados = [];
+        let legislatura: string;
         // Obtenemos los documentos
         this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
 
@@ -49,7 +51,27 @@ export class DiputadosComponent implements OnInit {
             this.optEliminar = opciones.Eliminar;
             // Si tiene permisos para consultar
             if (this.optConsultar) {
-                this.Diputados = resp;
+                for(const diputado of resp){
+                    if(diputado.legislatura){
+                        legislatura = diputado.legislatura.cLegislatura;
+                    } else {
+                        legislatura = 'N/A';
+                    }
+                    diputados.push({
+                        nombre: diputado.nombre,
+                        distrito: diputado.distrito,
+                        partidos_politico: diputado.partidos_politico,
+                        legislatura: diputado.legislatura,
+                        legislaturaText: legislatura,
+                        telefono: diputado.telefono,
+                        email: diputado.email,
+                        activo: diputado.activo,
+                        detalle_participantes_mesa_directiva: diputado.detalle_participantes_mesa_directiva,
+                        detalle_participantes_mesa_directivas: diputado.detalle_participantes_mesa_directivas,
+                        detalle_participantes_comisions: diputado.detalle_participantes_comisions
+                    });
+                }
+                this.Diputados = diputados;
                 this.DiputadosTemp = this.Diputados;
             }
             this.loadingIndicator = false;
@@ -100,7 +122,7 @@ export class DiputadosComponent implements OnInit {
             const val = value.target.value.toLowerCase();
             const temp = this.Diputados.filter((d) => d.nombre.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.distrito.descripcion.toLowerCase().indexOf(val) !== -1 || d.partidos_politico.cPartidoPolitico.toLowerCase().indexOf(val) !== -1 ||
-                d.legislatura.cLegislatura.toLowerCase().indexOf(val) !== -1 );
+                d.legislaturaText.toLowerCase().indexOf(val) !== -1 );
             this.Diputados = temp;
         }
     }

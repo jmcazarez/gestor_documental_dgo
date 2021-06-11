@@ -19,3 +19,8 @@
 .example-margin{
     margin-left: 0px;
 }
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  background: none; 
+  display:none;
+}

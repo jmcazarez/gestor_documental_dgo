@@ -293,7 +293,7 @@ export class TableroDeIniciativasComponent implements OnInit {
         } else {
             const val = value.target.value.toLowerCase();
             const temp = this.iniciativas.filter((d) => d.tipo_de_iniciativa.descripcion.toLowerCase().indexOf(val) !== -1 || !val ||
-                d.fechaIniciativa.toLowerCase().indexOf(val) !== - 1 || d.fechaCreacion.toLowerCase().indexOf(val) !== - 1 ||
+                d.fechaIniciativaText.toLowerCase().indexOf(val) !== - 1 || d.fechaCreacionText.toLowerCase().indexOf(val) !== - 1 ||
                 d.estatus.toLowerCase().indexOf(val) !== - 1 || d.autoresText.toLowerCase().indexOf(val) !== - 1 ||
                 d.temaText.toLowerCase().indexOf(val) !== - 1);
 

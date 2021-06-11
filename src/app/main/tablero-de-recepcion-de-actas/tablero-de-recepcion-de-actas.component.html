@@ -25,12 +25,12 @@
                     <mat-label>Buscar una recepción de actas</mat-label>
                     <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)' [(ngModel)]="valueBuscador">
                 </mat-form-field>
-                <!--   <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevaRecepcionDeActas()" class="button">
+                  <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevaRecepcionDeActas()" class="button">
                     <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un documento">post_add
                     </mat-icon>
                     Agregar recepción de actas
                 </button>
-                -->
+                
             </div>
 
             <ngx-datatable class="material shadow-none" [rows]="recepcionDeActas" [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">

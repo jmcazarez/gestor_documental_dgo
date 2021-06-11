@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { EntesModel } from 'models/entes.models';
 import { SesionesModel } from 'models/sesion.models';
 import * as moment from 'moment';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -98,7 +97,22 @@ export class GuardarSesionesComponent implements OnInit {
             descripcion: 'Asambleas legislativas'
         });
 
-
+        if (this.sesion.id) {
+            this.sesion.fechaSesion =
+                moment(this.sesion.fechaSesion).format('YYYY-MM-DD') + "T16:00:00.000Z";
+            this.sesion.horaSesion =
+                moment(this.sesion.horaSesion, 'h:mm').format('HH:mm');
+            if (this.sesion.legislatura) {
+                this.selectedLegislatura = this.sesion.legislatura.id;
+            } else {
+                this.selectedLegislatura = '';
+            }
+            console.log(this.sesion.tipoSesion);
+            this.selectedSesion = this.sesion.tipoSesion;
+        }else{
+            //this.sesion.fechaSesion = moment().format('YYYY-MM-DD');
+            //this.sesion.horaSesion = moment('24/12/2019 00:10:00', "DD MM YYYY hh:mm:ss").format('HH:mm');
+        }
 
         this.form = this.formBuilder.group({
             id: [{ value: this.sesion.id, disabled: true }],
@@ -112,23 +126,12 @@ export class GuardarSesionesComponent implements OnInit {
         await this.obtenerLegislatura();
         await this.obtenerTiposIniciativas();
 
-        if (this.sesion.id) {
-            this.sesion.fechaSesion =
-                moment(this.sesion.fechaSesion).format('YYYY-MM-DD') + "T16:00:00.000Z";
-            this.sesion.horaSesion =
-                moment(this.sesion.horaSesion, 'h:mm').format('HH:mm');
-            if (this.sesion.legislatura) {
-                this.selectedLegislatura = this.sesion.legislatura.id;
-            } else {
-                this.selectedLegislatura = '';
-            }
-            console.log(this.sesion.tipoSesion);
-            this.selectedSesion = this.sesion.tipoSesion;
-        }
         this.spinner.hide();
     }
 
     async guardar(): Promise<void> {
+        this.spinner.show();
+
         let legislatura;
         let tipoSesion;
         let fechaSesion;
@@ -151,9 +154,11 @@ export class GuardarSesionesComponent implements OnInit {
         if (this.sesion.actasSesion) {
             this.sesion.actasSesion = this.sesion.actasSesion.id
         }
+
+        console.log(this.sesion);
         // Asignamos valores a objeto
         if (this.sesion.id) {
-            // Actualizamos la comision 
+            console.log('actualizamos la comision')
             this.actasSesionsService.actualizarActasSesions(this.sesion).subscribe((resp: any) => {
                 if (resp) {
                     this.sesion = resp.data
@@ -164,11 +169,12 @@ export class GuardarSesionesComponent implements OnInit {
                     Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
                 }
             }, err => {
+                console.log(err);
                 this.spinner.hide();
                 Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
             });
         } else {
-
+            console.log('guardamos la comision')
             this.actasSesionsService.guardarActasSesions(this.sesion).subscribe((resp: any) => {
                 if (resp) {
                     this.sesion = resp.data
@@ -237,6 +243,7 @@ export class GuardarSesionesComponent implements OnInit {
             }
         });
     }
+    
     cerrar(ent): void {
         if (ent) {
             this.dialogRef.close(ent);
@@ -259,6 +266,7 @@ export class GuardarSesionesComponent implements OnInit {
         let legislaturaFolio: any;
         this.documentos.bActivo = true;
         let parametrosSSP001 = await this.obtenerParametros("SSP-001");
+        /* Parametros administrados */
         let tipoDocumento = parametrosSSP001.filter(
             (d) =>
                 d["cParametroAdministrado"] === "SSP-001-Tipo-de-Documento"
@@ -269,12 +277,11 @@ export class GuardarSesionesComponent implements OnInit {
         );
         let tipoInformacion = parametrosSSP001.filter(
             (d) =>
-                d["cParametroAdministrado"] ===
-                "SSP-001-Tipo-de-Informacion"
+                d["cParametroAdministrado"] === "SSP-001-Tipo-de-Informacion"
         );
-        // this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
-        this.documentos.tipo_de_documento = '5f839b713ccdf563ac6ba096';
-        console.log(tipoExpediente[0]["cValor"]);
+
+        this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
+        console.log(tipoDocumento[0]["cValor"]);
         this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
         this.documentos.visibilidade = tipoInformacion[0]["cValor"];
         this.documentos.formulario = 'Tablero de sesiones';
@@ -282,6 +289,8 @@ export class GuardarSesionesComponent implements OnInit {
         legislaturaFolio = this.legislatura.filter(d => d.id === this.selectedLegislatura);
         this.documentos.legislatura = this.selectedLegislatura;
         this.documentos.folioExpediente = legislaturaFolio[0].cLegislatura + '-' + Number(legislaturaFolio[0].documentos + 1);
+
+        console.log(this.documentos)
 
         const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
             width: '60%',
@@ -421,7 +430,7 @@ export class GuardarSesionesComponent implements OnInit {
 
         if (!this.sesion.id) {
 
-            documento.fechaCreacion = moment(documento.fechaCreacion).format('YYYY-MM-DD')
+            documento.fechaCreacion = moment(documento.fechaCreacion).format('YYYY-MM-DD');
             console.log(documento.fechaCreacion);
         } else {
             documento.fechaCreacion = documento.fechaCreacion.replace('T16:00:00.000Z', '');
@@ -444,8 +453,8 @@ export class GuardarSesionesComponent implements OnInit {
                 d["cParametroAdministrado"] ===
                 "SSP-001-Tipo-de-Informacion"
         );
-        // documento.tipo_de_documento = tipoDocumento[0]["cValor"];
-        documento.tipo_de_documento = '5f839b713ccdf563ac6ba096';
+        documento.tipo_de_documento = tipoDocumento[0]["cValor"];
+        //documento.tipo_de_documento = '5f839b713ccdf563ac6ba096';
         documento.tipo_de_expediente = tipoExpediente[0]["cValor"];
         documento.visibilidade = tipoInformacion[0]["cValor"];
         documento.disabled = false;
@@ -486,6 +495,7 @@ export class GuardarSesionesComponent implements OnInit {
             }
         });
     }
+    
     async obtenerParametros(parametro: string): Promise<[]> {
         return new Promise((resolve) => {
             {

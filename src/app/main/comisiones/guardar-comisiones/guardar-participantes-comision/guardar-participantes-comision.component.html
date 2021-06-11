@@ -57,14 +57,14 @@
                     <mat-form-field appearance="outline" fxFlex="50" class="ml-16">
                         <mat-label [attr.for]="'id' + i">Vocal *</mat-label>
                         <mat-select formControlName="id" [attr.id]="'id' + i" name="id">
-                            <mat-option *ngFor="let vocals of arrDiputados" [value]="vocals.id">
-                                {{vocals.nombre}}
+                            <mat-option *ngFor="let vocalsg of arrDiputados" [value]="vocalsg.id">
+                                {{vocalsg.nombre}}
                             </mat-option>
                         </mat-select>
                         <mat-error>El vocal es requerido.</mat-error>
                     </mat-form-field>
 
-                    <button mat-raised-button color="warn" (click)="removeVocalsg()" class="button ml-16" fxFlex="50">
+                    <button mat-raised-button color="warn" (click)="removeVocalsg(i)" class="button ml-16" fxFlex="50">
                         <mat-icon color="white" class="material-icons" matTooltip="Clic para eliminar un vocals">post_add
                         </mat-icon>
                         Eliminar Vocal
@@ -76,7 +76,7 @@
         <button *ngIf="this.participantes.detalle_participantes_comisions" mat-raised-button color="warn" (click)="addVocals()" class="button">
             <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un vocals">post_add
             </mat-icon>
-            Actualizar vocal
+            Agregar vocal
         </button>
 
         <div formArrayName="vocals" *ngFor="let vocal of vocals.controls; let i=index">
@@ -95,7 +95,7 @@
                         </label>
                     </mat-form-field>
 
-                    <button mat-raised-button color="warn" (click)="removeVocals()" class="button ml-16" fxFlex="50">
+                    <button mat-raised-button color="warn" (click)="removeVocals(i)" class="button ml-16" fxFlex="50">
                         <mat-icon color="white" class="material-icons" matTooltip="Clic para eliminar un vocals">post_add
                         </mat-icon>
                         Eliminar Vocal
@@ -109,5 +109,5 @@
 <mat-dialog-actions align="end" class="buttons">
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
     <!-- <button [disabled]="form.invalid" mat-raised-button color="accent" (click)="pruebaFormArray()">prueba</button>  -->
-    <button [disabled]="form.invalid" mat-raised-button color="accent" (click)="guardar()">Guardar</button> 
+    <button [disabled]="form.invalid || this.vocalsg.length == 0 && this.vocals.length == 0" mat-raised-button color="accent" (click)="guardar()">Guardar</button> 
 </mat-dialog-actions>

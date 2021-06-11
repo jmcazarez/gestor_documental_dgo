@@ -11,7 +11,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Presidente</mat-label>
+                <mat-label>Presidente *</mat-label>
                 <mat-select formControlName="presidente" [(ngModel)]="selectedPresidente" name="presidente">
                     <mat-option *ngFor="let presidente of arrDiputados" [value]="presidente.id">
                         {{presidente.nombre}}
@@ -23,7 +23,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Vice Presidente</mat-label>
+                <mat-label>Vice Presidente *</mat-label>
                 <mat-select formControlName="vicePresidente" [(ngModel)]="selectedVicePresidente" name="vicePresidente">
                     <mat-option *ngFor="let vice of arrDiputados" [value]="vice.id">
                         {{vice.nombre}}
@@ -34,7 +34,7 @@
         </div>
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Secretario</mat-label>
+                <mat-label>Secretario *</mat-label>
                 <mat-select formControlName="secretario" [(ngModel)]="selectedSecretario" name="secretario">
                     <mat-option *ngFor="let secretario of arrDiputados" [value]="secretario.id">
                         {{secretario.nombre}}
@@ -46,7 +46,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Secretario Auxiliar</mat-label>
+                <mat-label>Secretario Auxiliar *</mat-label>
                 <mat-select formControlName="secretarioAuxiliar" [(ngModel)]="selectedSecretarioAuxiliar" name="secretarioAuxiliar">
                     <mat-option *ngFor="let secAux of arrDiputados" [value]="secAux.id">
                         {{secAux.nombre}}
@@ -58,7 +58,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Vocal</mat-label>
+                <mat-label>Vocal *</mat-label>
                 <mat-select formControlName="vocal" [(ngModel)]="selectedVocal">
                     <mat-option *ngFor="let vocal of arrDiputados" [value]="vocal.id">
                         {{vocal.nombre}}
@@ -70,7 +70,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Vocal Auxiliar</mat-label>
+                <mat-label>Vocal Auxiliar *</mat-label>
                 <mat-select formControlName="vocalAuxiliar" [(ngModel)]="selectedVocalAuxiliar" name="vocalAuxiliar">
                     <mat-option *ngFor="let vocalAuxiliar of arrDiputados" [value]="vocalAuxiliar.id">
                         {{vocalAuxiliar.nombre}}
