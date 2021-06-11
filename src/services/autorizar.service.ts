@@ -178,6 +178,6 @@ export class AutorizarService {
                 Authorization: this.TOKEN,
             }),
         }
-        return this.http.put(this.baseUrl + this.urlAutorizarRegistro + '--actualiza-documento/' + documento.id, documento, httpOptions);
+        return this.http.put(this.baseUrl + this.urlAutorizarRegistro + '-actualiza-documento/' + documento.id, documento, httpOptions);
     }
 }

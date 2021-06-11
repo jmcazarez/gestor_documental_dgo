@@ -311,6 +311,20 @@ export class MenuService {
                                 }
                             }
                         }
+
+
+                        if(usuarioLogin[0].data.empleado){
+                            const itemMenu: ItemMenuModel = {
+                                id: 'modulo-autoriza-iniciativas',
+                                title: 'Tablero de iniciativas pendientes por firmar',
+                                type: 'item',
+                                icon: 'blur_on',
+                                function: () => {
+                                    this.router.navigate(['iniciativas-pendientes-por-firmar']);
+                                }
+                            };
+                            grupoMenu.children.push(itemMenu);
+                        }
                         if (grupoMenu.children.length === 0 && grupoMenuCatalagos.children.length === 0 && grupoMenuReportes.children.length === 0) {
 
                             this.router.navigate(['login']);

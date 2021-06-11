@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from "@angular/core";
+import { Component, Inject, OnInit, ViewChild } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import {
     MatDialog,
@@ -35,7 +35,7 @@ export interface Metacatalogos {
     providers: [DatePipe],
 })
 export class ClasficacionDeDocumentosComponent implements OnInit {
-    pdfSrc: any;
+    pdfSrc: string;
     form: FormGroup;
     selectedEntes: any;
     selectedSecretaria: any;
@@ -115,6 +115,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
+        this.pdfSrc = '';
         this.autorizacionPendiente = false;
         this.turnarDocumento = false;
         this.spinner.show();
@@ -127,8 +128,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         let folioExpedienteRequerido = [];
         await this.obtenerLegislaturas();
         await this.obtenerTiposExpedientes();
-
-        console.log(this.documento);
 
         if (!this.documento.iniciativas) {
             if (this.documento.tipo_de_documento.id) {
@@ -163,9 +162,10 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         } else {
 
             autorizaciones = await this.obtenerAutorizacionPorDocumento();
+            console.log(autorizaciones);
             // Bloqueamos el boton de autorizar si tiene autorizaciones pendientes por realizar.
             autorizaciones.forEach(element => {
-                console.log(element);
+               
                 if (element.estatusAutorizacion === 1 || element.estatusAutorizacion === 2) {
                     this.autorizacionPendiente = true;
                     this.turnarDocumento = true;
@@ -473,9 +473,9 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                     .subscribe(
                         (resp: any) => {
                             const source =
-                                "data:application/octet-stream;base64," +
+                                "data:application/pdf;base64," +
                                 resp.data;
-                            this.pdfSrc = source;
+                            this.pdfSrc = source.toString();
                             resolve("1");
                         },
                         (err) => {
@@ -509,7 +509,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                     .subscribe(
                         (resp: any) => {
                             const source =
-                                "data:application/octet-stream;base64," +
+                                "data:application/pdf;base64," +
                                 resp.data;
                             this.pdfSrc = source;
                             resolve("1");
@@ -1155,7 +1155,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
 
     }
-    async obtenerParametros(parametro: string): Promise < [] > {
+    async obtenerParametros(parametro: string): Promise<[]> {
 
         return new Promise((resolve) => {
             {
@@ -1177,7 +1177,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         });
     }
 
-    async obtenerFirma(id: string): Promise < [] > {
+    async obtenerFirma(id: string): Promise<[]> {
         return new Promise((resolve) => {
             {
                 this.firmas.obtenerFirmaPorEtapa(id).subscribe(
@@ -1198,7 +1198,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         });
     }
 
-    async obtenerAutorizacionPorDocumento(): Promise < [] > {
+    async obtenerAutorizacionPorDocumento(): Promise<[]> {
         return new Promise((resolve) => {
             {
                 this.autorizarService.obtenerAutorizacionesPorIdDocumento(this.documento.id).subscribe(
@@ -1218,4 +1218,4 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             }
         });
     }
-  }
+}
