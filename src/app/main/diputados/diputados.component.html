@@ -37,7 +37,7 @@
                 <ngx-datatable-column name="Diputado" prop="nombre"></ngx-datatable-column>     
                 <ngx-datatable-column name="Distrito" prop="distrito.descripcion"></ngx-datatable-column>     
                 <ngx-datatable-column name="Partido" prop="partidos_politico.cPartidoPolitico"></ngx-datatable-column>    
-                <ngx-datatable-column name="Legislatura" prop="legislatura.cLegislatura"></ngx-datatable-column>        
+                <ngx-datatable-column name="Legislatura" prop="legislaturaText"></ngx-datatable-column>        
                 <ngx-datatable-column name="Estatus" sortable="false" [width]="10">
                     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                         <mat-icon *ngIf="row.activo" color="accent" class="material-icons">check_circle</mat-icon>

@@ -54,7 +54,7 @@ export class SesionesComponent implements OnInit {
         this.sesionesService.obtenerActasSesions().subscribe((resp: any) => {
 
             // Buscamos permisos
-            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === 'tablero-de-sesiones');
+            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === 'sesiones');
             this.optAgregar = opciones.Agregar;
             this.optEditar = opciones.Editar;
             this.optConsultar = opciones.Consultar;
@@ -77,7 +77,6 @@ export class SesionesComponent implements OnInit {
                         legislatura: sesion.legislatura,
                         descripcionLegislatura: descripcionLegislatura,
                         iniciativas: sesion.iniciativas,
-                        bActivo: sesion.bActivo,
                         ordenDelDia: sesion.ordenDelDia,
                         listaDeAsistencia: sesion.listaDeAsistencia,
                         actasSesion: sesion.actasSesion
@@ -175,7 +174,7 @@ export class SesionesComponent implements OnInit {
                     this.cargando = false;
                     Swal.fire(
                         'Error',
-                        'Ocurrió un error al eliminar la sesión.' + err,
+                        'Ocurrió un error al eliminar la sesión.' + err.data,
                         'error'
                     );
                 });

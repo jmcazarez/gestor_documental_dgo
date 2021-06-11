@@ -99,15 +99,26 @@ export class GuardarComisionesComponent implements OnInit {
             this.optConsultar = opciones.Consultar;
             this.optEliminar = opciones.Eliminar;
             let i = 0;
-            
+            let legislaturaId: string;
+            let legislatura: string;
             // Si tiene permisos para consultar
             if (this.optConsultar) {
                 //Mostramos participantes presidente y vicepresidente
                 for (const detalleComision of resp) {
 
                     if (detalleComision.comisione === this.comision.id) {
+                        console.log(detalleComision)
                         this.participantesExist = true;
                         const partido = this.arrPartidos.find(meta => meta.id == detalleComision.presidente[0].partidos_politico);
+                        const partidoVice = this.arrPartidos.find(meta => meta.id == detalleComision.vicepresidente[0].partidos_politico);
+
+                        if(detalleComision.legislatura == null|| detalleComision.legislatura == undefined){
+                            legislaturaId = 'N/A'
+                            legislatura = 'N/A';
+                        } else {
+                            legislaturaId = detalleComision.legislatura.id;
+                            legislatura = detalleComision.legislatura.cLegislatura;
+                        }
 
                         if (detalleComision.presidente[0]) {
                             detallesComisionTemp.push({
@@ -116,8 +127,8 @@ export class GuardarComisionesComponent implements OnInit {
                                 idParticipante: detalleComision.presidente[0].id,
                                 participante: detalleComision.presidente[0].nombre,
                                 partido: partido.cNomenclatura,
-                                idLegislatura: detalleComision.legislatura.id,
-                                legislatura: detalleComision.legislatura.cLegislatura
+                                idLegislatura: legislaturaId,
+                                legislatura: legislatura
 
                             });
 
@@ -129,8 +140,8 @@ export class GuardarComisionesComponent implements OnInit {
                                 cargo: 'Vice presidente',
                                 idParticipante: detalleComision.vicepresidente[0].id,
                                 participante: detalleComision.vicepresidente[0].nombre,
-                                partido: partido.cNomenclatura,
-                                legislatura: detalleComision.legislatura.cLegislatura
+                                partido: partidoVice.cNomenclatura,
+                                legislatura: legislatura
 
                             });
 
@@ -143,8 +154,8 @@ export class GuardarComisionesComponent implements OnInit {
                                     cargo: 'Vocal',
                                     idParticipante: detalleComision.vocals[i].id,
                                     participante: detalleComision.vocals[i].nombre,
-                                    partido: partido.cNomenclatura,
-                                    legislatura: detalleComision.legislatura.cLegislatura
+                                    partido: this.arrPartidos.find(meta => meta.id == detalleComision.vocals[i].partidos_politico).cNomenclatura,
+                                    legislatura: legislatura
 
                                 });
                             }
@@ -328,6 +339,7 @@ export class GuardarComisionesComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        this.detalles = this.detallesTemp;
         // Filtramos tabla
         if (value.target.value === '') {
             this.detalles = this.detallesTemp;

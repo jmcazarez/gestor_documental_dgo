@@ -51,7 +51,7 @@ export class GuardarMesaComponent implements OnInit {
         private router: Router,
         private partidoPoliticoService: PartidosPoliticosService,
         @Inject(MAT_DIALOG_DATA) public mesas: MesasDirectivasModel
-    ) {}
+    ) { }
 
     async ngOnInit(): Promise<void> {
         console.log(this.mesas);
@@ -337,6 +337,7 @@ export class GuardarMesaComponent implements OnInit {
                 // Si tiene permisos para consultar
                 if (this.optConsultar) {
                     for (const detalleMesa of resp) {
+                        console.log(detalleMesa);
                         // secretariaId = '';
                         if (detalleMesa.mesas_directiva === this.mesas.id) {
                             const partido = this.arrPartidos.find(
@@ -363,7 +364,11 @@ export class GuardarMesaComponent implements OnInit {
                                         detalleMesa.vicepresidentes[0].id,
                                     participante:
                                         detalleMesa.vicepresidentes[0].nombre,
-                                    partido: partido.cNomenclatura,
+                                    partido: this.arrPartidos.find(
+                                        (meta) =>
+                                            meta.id ==
+                                            detalleMesa.vicepresidentes[0].partidos_politico
+                                    ).cNomenclatura,
                                 });
                             }
 
@@ -374,7 +379,11 @@ export class GuardarMesaComponent implements OnInit {
                                         detalleMesa.secretario[0].id,
                                     participante:
                                         detalleMesa.secretario[0].nombre,
-                                    partido: partido.cNomenclatura,
+                                    partido: this.arrPartidos.find(
+                                        (meta) =>
+                                            meta.id ==
+                                            detalleMesa.secretario[0].partidos_politico
+                                    ).cNomenclatura,
                                 });
                             }
 
@@ -386,7 +395,11 @@ export class GuardarMesaComponent implements OnInit {
                                     participante:
                                         detalleMesa.secretario_auxiliar[0]
                                             .nombre,
-                                    partido: partido.cNomenclatura,
+                                    partido: this.arrPartidos.find(
+                                        (meta) =>
+                                            meta.id ==
+                                            detalleMesa.secretario_auxiliar[0].partidos_politico
+                                    ).cNomenclatura,
                                 });
                             }
 
@@ -395,7 +408,11 @@ export class GuardarMesaComponent implements OnInit {
                                     cargo: "Vocal",
                                     idParticipante: detalleMesa.vocals[0].id,
                                     participante: detalleMesa.vocals[0].nombre,
-                                    partido: partido.cNomenclatura,
+                                    partido: this.arrPartidos.find(
+                                        (meta) =>
+                                            meta.id ==
+                                            detalleMesa.vocals[0].partidos_politico
+                                    ).cNomenclatura,
                                 });
                             }
 
@@ -406,7 +423,11 @@ export class GuardarMesaComponent implements OnInit {
                                         detalleMesa.vocal_auxiliars[0].id,
                                     participante:
                                         detalleMesa.vocal_auxiliars[0].nombre,
-                                    partido: partido.cNomenclatura,
+                                        partido: this.arrPartidos.find(
+                                            (meta) =>
+                                                meta.id ==
+                                                detalleMesa.vocal_auxiliars[0].partidos_politico
+                                        ).cNomenclatura,
                                 });
                             }
                         }
@@ -436,6 +457,7 @@ export class GuardarMesaComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        this.detalles = this.detallesTemp;
         // Filtramos tabla
         if (value.target.value === "") {
             this.detalles = this.detallesTemp;
@@ -472,9 +494,9 @@ export class GuardarMesaComponent implements OnInit {
     }
 
     configurarParticipantes(): void {
-        if(!this.mesas.id){
-            this.mesas.legislatura = this.selectedLegislatura;
-        }
+        
+        this.mesas.legislatura = this.selectedLegislatura;
+        
         const dialogRef = this.dialog.open(GuardarParticipantesComponent, {
             width: "50%",
             height: "80%",

@@ -234,6 +234,23 @@
             <mat-error>La hora del registro no es valida ej. 01:00</mat-error>
         </mat-form-field>
 
+        <div fxLayout="row" *ngIf="iniciativa.estatus=='Turnar iniciativa a comisión'" fxLayoutAlign="start center" fxFlex="100">
+            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40"></div>
+            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
+                <button *ngIf="sinActa == true" color="warn" mat-raised-button
+                    (click)="cargaClasificacionDocumento('4')">
+                    Anexar acta de sesión <mat-icon>add</mat-icon>
+                </button>
+                <button *ngIf="sinActa == false" color="accent" mat-raised-button
+                    (click)="editarDocumento(this.iniciativa.actasSesion[0].actasSesion,'4')">
+                    Editar acta de sesión <mat-icon>add</mat-icon>
+                </button>
+            </div>
+            <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
+                <mat-label class="example-margin">{{fileActaDeSesion}} </mat-label>
+            </div>
+        </div>
+
         <!-- <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto" 
         *ngIf="selectedDictamenDeIniciativa=='Modificación'">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
@@ -375,8 +392,6 @@ iniciativa.estatus!=='Turnada a comisión para modificación'">
 </ngx-datatable>
 
 </div>
-
-
 
 <mat-dialog-actions align="end" class="buttons">
 

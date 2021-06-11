@@ -9,12 +9,13 @@ import { FuseSearchBarModule, FuseShortcutsModule } from '@fuse/components';
 import { FuseSharedModule } from '@fuse/shared.module';
 
 import { ToolbarComponent } from 'app/layout/components/toolbar/toolbar.component';
-import { SafePipe } from 'pipes/pipe.pipe';
+import { SafePipePipe } from 'pipes/safe-pipe.pipe';
+import { SafePipeModule } from 'safe-pipe';
 
 @NgModule({
     declarations: [
         ToolbarComponent,
-        SafePipe
+        SafePipePipe
     ],
     imports     : [
         RouterModule,

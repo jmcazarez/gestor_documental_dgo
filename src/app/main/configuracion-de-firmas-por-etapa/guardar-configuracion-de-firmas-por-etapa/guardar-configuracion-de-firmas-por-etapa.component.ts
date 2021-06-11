@@ -49,8 +49,6 @@ export class GuardarConfiguracionFirmasPorEtapaComponent implements OnInit {
         this.fileName = '';
 
 
-        await this.obtenerEmpleados();
-        await this.obtenerTiposEtapas();
         // Validamos si es un documento nuevo
         if (this.firmasPorEtapa.id) {
             this.selectTipo = this.firmasPorEtapa.etapa.id;
@@ -95,6 +93,8 @@ export class GuardarConfiguracionFirmasPorEtapaComponent implements OnInit {
             }
         });
 
+           await this.obtenerEmpleados();
+           await this.obtenerTiposEtapas();
 
     }
 

@@ -129,9 +129,9 @@ export class GuardarDocumentosComponent implements OnInit {
         // Form reativo
         this.form = this.formBuilder.group({
             tipoDocumentos: [{ value: this.documentos.tipo_de_documento, disabled: this.documentos.disabled }, Validators.required],
-            nombreDocumento: [{ value: this.documentos.cNombreDocumento, disabled: this.documentos.disabled }, Validators.required],
+            nombreDocumento: [{ value: this.documentos.cNombreDocumento, disabled: this.documentos.disabled }, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
             estatus: { value: this.documentos.bActivo, disabled: this.documentos.disabled },
-            fechaCreacion: [{ value: this.documentos.fechaCreacion, disabled: this.documentos.disabled }, [RxwebValidators.mask({ mask: '01/01/1990' })]],
+            fechaCreacion: [{ value: this.documentos.fechaCreacion, disabled: this.documentos.disabled }, [Validators.required, RxwebValidators.mask({ mask: '01/01/1990' })]],
             fechaCarga: [{ value: this.documentos.fechaCarga, disabled: true }],
             paginas: [{ value: this.documentos.paginas, disabled: this.paginasEditar }]
         });
@@ -144,6 +144,8 @@ export class GuardarDocumentosComponent implements OnInit {
                 this.cambioFecha = true;
             }
         });
+
+        console.log(this.arrTipoDocumentos);
 
         this.spinner.hide();
 
@@ -297,7 +299,7 @@ export class GuardarDocumentosComponent implements OnInit {
                     }, (err: any) => {
                         this.spinner.hide();
                         console.log(err);
-                        Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + err.error.data, 'error');
                     });
                 }
             }

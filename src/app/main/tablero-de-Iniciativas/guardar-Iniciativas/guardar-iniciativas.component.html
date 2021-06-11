@@ -12,9 +12,9 @@
                 <div class="h2 mb-24">Registro de recepción de iniciativa</div>
             </div>
             <div align="end" fxFlex="40">
-                <button *ngIf="this.iniciativa.formatosTipoIniciativa.length > 0 && this.files.length > 0" mat-raised-button color="warn" align="end"  (click)="clasificarDocumento()">Vista
+                <button *ngIf="this.iniciativa.formatosTipoIniciativa.length > 0 && this.fileCheck.length > 0" mat-raised-button color="warn" align="end"  (click)="clasificarDocumento()">Vista
                     previa</button>
-                <button disabled *ngIf="files.length < 1" mat-raised-button color="warn" align="end"  (click)="clasificarDocumento()">
+                <button disabled *ngIf="fileCheck.length < 1" mat-raised-button color="warn" align="end"  (click)="clasificarDocumento()">
                 Debe anexar 
                 un documento.</button>
             </div>
@@ -22,7 +22,7 @@
         </div>
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Tipo</mat-label>
+                <mat-label>Tipo *</mat-label>
                 <mat-select formControlName="tipo" [(ngModel)]="selectTipo" name="tipo">
                     <mat-option *ngFor="let tipo of arrTipo" [value]="tipo.id">
                         {{tipo.descripcion}}
@@ -31,7 +31,7 @@
                 <mat-error>El tipo de iniciativa es requerido</mat-error>
             </mat-form-field>
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Estatus</mat-label>
+                <mat-label>Estatus *</mat-label>
                 <input matInput formControlName="estatus">
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
 
@@ -40,13 +40,13 @@
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
 
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Folio</mat-label>
+                <mat-label>Folio *</mat-label>
                 <input matInput formControlName="id">
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
 
             </mat-form-field>
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Fecha de registro</mat-label>
+                <mat-label>Fecha de registro *</mat-label>
                 <input matInput [matDatepicker]="picker2" formControlName="fechaRegistro" (change)="change()"
                     [max]="maxDate">
                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
@@ -60,7 +60,7 @@
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
 
             <mat-form-field appearance="outline" fxFlex="30" class="pl-4">
-                <mat-label>Fecha de iniciativa</mat-label>
+                <mat-label>Fecha de iniciativa *</mat-label>
                 <input matInput [matDatepicker]="picker1" formControlName="fechaIniciativa" (change)="change()"
                     [max]="maxDate">
                 <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
@@ -71,7 +71,7 @@
 
         </div>
         <mat-form-field>
-            <mat-label>Autor (s)</mat-label>
+            <mat-label>Autor (s) *</mat-label>
             <mat-chip-list #chipList aria-label="Selección de autores">
                 <mat-chip *ngFor="let autor of autores" [selectable]="selectable" [removable]="removable"
                     (removed)="eliminarAutor(autor)">
@@ -84,7 +84,7 @@
             </mat-chip-list>
         </mat-form-field>
         <mat-form-field class="example-chip-list">
-            <mat-label>Tema</mat-label>
+            <mat-label>Tema *</mat-label>
             <mat-chip-list #chipList2 aria-label="Selección de temas">
                 <mat-chip *ngFor="let tema of temas" [selectable]="selectable2" [removable]="removable2"
                     (removed)="eliminarTema(tema)">
@@ -97,7 +97,7 @@
             </mat-chip-list>
         </mat-form-field>
 
-        <div class="h3 mb-24">Anexar documentos</div>
+        <div class="h3 mb-24">Anexar documentos *</div>
         <div fxLayout="row" fxLayoutAlign="end" fxFlex="1 0 auto">
             <mat-form-field class="buscar">
                 <mat-label>Buscar un documento</mat-label>

@@ -21,7 +21,6 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatChipsModule } from '@angular/material/chips';
 import {MatMenuModule} from '@angular/material/menu';
 import { NgxSpinnerModule } from "ngx-spinner";
-import { SafePipePipe } from 'pipes/safe-pipe.pipe';
 const routes: Routes = [
     {
         path: 'clasificacion-documentos',
@@ -31,8 +30,7 @@ const routes: Routes = [
 
 @NgModule({
     declarations: [
-        ClasficacionDeDocumentosComponent,
-        SafePipePipe
+        ClasficacionDeDocumentosComponent
     ],
     imports: [
         RouterModule.forChild(routes),

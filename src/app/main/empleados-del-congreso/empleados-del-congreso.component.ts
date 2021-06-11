@@ -9,9 +9,9 @@ import { EmpleadosModel } from 'models/empleados.models';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
-    selector: 'app-empleados-del-congreso',
-    templateUrl: './empleados-del-congreso.component.html',
-    styleUrls: ['./empleados-del-congreso.component.scss']
+  selector: 'app-empleados-del-congreso',
+  templateUrl: './empleados-del-congreso.component.html',
+  styleUrls: ['./empleados-del-congreso.component.scss']
 })
 export class EmpleadosDelCongresoComponent implements OnInit {
     loadingIndicator: boolean;
@@ -25,10 +25,10 @@ export class EmpleadosDelCongresoComponent implements OnInit {
     optEliminar: boolean;
     valueBuscador: string = '';
     constructor(private router: Router,
-        public dialog: MatDialog,
-        private menuService: MenuService,
-        private spinner: NgxSpinnerService,
-        private empleadosService: EmpleadosDelCongresoService) { }
+                public dialog: MatDialog,
+                private menuService: MenuService,
+                private spinner: NgxSpinnerService,
+                private empleadosService: EmpleadosDelCongresoService) { }
 
     ngOnInit(): void {
         this.obtenerEmpleados();
@@ -48,7 +48,7 @@ export class EmpleadosDelCongresoComponent implements OnInit {
             this.optEliminar = opciones.Eliminar;
             // Si tiene permisos para consultar
             if (this.optConsultar) {
-
+              
                 this.empleados = resp;
                 this.empleadosTemp = this.empleados;
             }
@@ -68,13 +68,13 @@ export class EmpleadosDelCongresoComponent implements OnInit {
         } else {
             const val = value.target.value.toLowerCase();
             //agregamos campos a filtrar
-            const temp = this.empleados.filter((d) => d.nombre.toLowerCase().indexOf(val) !== -1 || !val ||
-                d.apellidoPaterno.toLowerCase().indexOf(val) !== -1 || !val ||
-                d.apellidoMaterno.toLowerCase().indexOf(val) !== -1 || !val ||
-                d.email.toLowerCase().indexOf(val) !== -1 || !val ||
-                d.telefono.toLowerCase().indexOf(val) !== -1 || !val ||
-                d.puesto.descripcion.toLowerCase().indexOf(val) !== -1 || !val ||
-                d.secretaria.cDescripcionSecretaria.toLowerCase().indexOf(val) !== -1);
+            const temp = this.empleados.filter((d) => d.nombre.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.apellidoPaterno.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.apellidoMaterno.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.email.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.telefono.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.puesto.descripcion.toLowerCase().indexOf(val) !== -1 || !val || 
+            d.secretaria.cDescripcionSecretaria.toLowerCase().indexOf(val) !== -1);
             this.empleados = temp;
         }
     }
@@ -82,41 +82,45 @@ export class EmpleadosDelCongresoComponent implements OnInit {
 
     editarEmpleado(empleados: EmpleadosModel): void {
 
-        // Abrimos modal de guardar empleado
-        const dialogRef = this.dialog.open(GuardarEmpleadoComponent, {
-            width: '60%',
-            height: '80%',
-            disableClose: true,
-            data: empleados,
-        });
+      // Abrimos modal de guardar empleado
+      const dialogRef = this.dialog.open(GuardarEmpleadoComponent, {
+        width: '60%',
+        height: '80%',
+        disableClose: true,
+        data: empleados,
+      });
 
-        dialogRef.afterClosed().subscribe(result => {
+      dialogRef.afterClosed().subscribe(result => {
+          if (result) {
             this.limpiar();
             this.obtenerEmpleados();
+          }
 
-        });
-    }
+      });
+  }
 
-    guardarEmpleado(): void {
-        // Abrimos modal de guardar empleado
-        const dialogRef = this.dialog.open(GuardarEmpleadoComponent, {
-            width: '50%',
-            height: '80%',
-            disableClose: true,
-            data: new EmpleadosModel(),
+  guardarEmpleado(): void {
+      // Abrimos modal de guardar empleado
+      const dialogRef = this.dialog.open(GuardarEmpleadoComponent, {
+          width: '50%',
+          height: '80%',
+          disableClose: true,
+          data: new EmpleadosModel(),
 
-        });
+      });
 
-        dialogRef.afterClosed().subscribe(result => {
+      dialogRef.afterClosed().subscribe(result => {
+          if (result) {
             this.limpiar();
-                this.obtenerEmpleados();
-        });
-    }
+            this.obtenerEmpleados();
+          }
+      });
+  }
 
-    limpiar(): void {
-        //Limpiamos buscador
-        this.valueBuscador = '';
-        //console.log('buscador' + this.valueBuscador);
+  limpiar(): void{
+    //Limpiamos buscador
+    this.valueBuscador = '';
+    //console.log('buscador' + this.valueBuscador);
     }
 
     eliminarEmpleado(row: { id: string; }): void {

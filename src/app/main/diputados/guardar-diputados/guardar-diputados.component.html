@@ -52,8 +52,8 @@
                     <mat-option *ngFor="let legislatura of arrLegislaturas" [value]="legislatura.id">
                         {{legislatura.cLegislatura}}
 
-                        <span *ngIf="legislatura.bActivo === true" class="activo"> - Activo </span>
-                        <span *ngIf="legislatura.bActivo === false" class="inactivo"> - Inactivo </span>
+                        <!-- <span *ngIf="legislatura.bActivo === true" class="activo"> - Activo </span>
+                        <span *ngIf="legislatura.bActivo === false" class="inactivo"> - Inactivo </span> -->
                     </mat-option>
                 </mat-select>
                 <mat-error>El partido politico es requerido</mat-error>

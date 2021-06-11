@@ -285,6 +285,7 @@ export class GuardarlibroDeActasComponent implements OnInit {
             //this.libro.fechaDeFin = ano + '-' + mes + '-' + dia;
             this.selectLegislatura = "";
         }
+
     }
 
     async guardar(): Promise<void> {

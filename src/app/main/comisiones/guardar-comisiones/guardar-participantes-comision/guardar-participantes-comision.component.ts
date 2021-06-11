@@ -35,6 +35,7 @@ export class GuardarParticipantesComisionComponent implements OnInit {
     selectedPuestos: any;
     resultado: any;
     comision: any = [];
+    primeraVez = 0;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -75,7 +76,7 @@ export class GuardarParticipantesComisionComponent implements OnInit {
         if (this.participantes.id === undefined) {
             this.participantes.activo = true;
         }
-        await this.obtenerDiputados();
+        //await this.obtenerDiputados();
 
         this.form = this.formBuilder.group({
             legislaturas: [{ value: this.arrLegislatura }, [Validators.required]],
@@ -92,9 +93,9 @@ export class GuardarParticipantesComisionComponent implements OnInit {
             this.addVocalsg();
         }
         //Mostramos los select dinamicos dependiendo del largo del array de vocales
-        if(this.resultado.vocals){
+        if(this.resultado.vocals !== undefined){
             while(i<=this.resultado.vocals.length-1){
-                this.addVocals();
+                this.addVocalsIni();
                 i++
             }
         }
@@ -108,26 +109,39 @@ export class GuardarParticipantesComisionComponent implements OnInit {
     addVocals() {
         const vocalsFormGroup = this.formBuilder.group({ id: ['', [Validators.required]]});
         this.vocals.push(vocalsFormGroup);
+        this.resultado.vocals.push('');
+        console.log(this.vocals);
+    }
+
+        //Añadir select vocals adicional actualizar
+    addVocalsIni() {
+        const vocalsFormGroup = this.formBuilder.group({ id: ['', [Validators.required]]});
+        this.vocals.push(vocalsFormGroup);
+        console.log(this.vocals);
     }
 
     //Remover select vocals adicional, removemos por indice. actualizar
-    removeVocals(indice: number){
-        this.vocals.removeAt(indice);
+    removeVocals(i: number){
+        console.log(this.resultado.vocals);
+        this.vocals.removeAt(i);
+        this.resultado.vocals.splice(i, 1);
     }
     //vocals guardado
     get vocalsg() {
         return this.form.get('vocalsg') as FormArray;
-      }
+    }
 
     //Añadir select vocals adicional guardado
     addVocalsg() {
         const vocalsgFormGroup = this.formBuilder.group({ id: ['', [Validators.required]]});
         this.vocalsg.push(vocalsgFormGroup);
+        console.log(this.vocalsg);
     }
   
     //Remover select vocals adicional, removemos por indice. guardado
-    removeVocalsg(indice: number){
-        this.vocalsg.removeAt(indice);
+    removeVocalsg(i: number){
+        console.log(i);
+        this.vocalsg.removeAt(i);
     }
 
     async obtenerLegislatura(): Promise<void> {
@@ -136,10 +150,11 @@ export class GuardarParticipantesComisionComponent implements OnInit {
         await this.legislaturaService.obtenerLegislatura().subscribe((resp: any) => {
 
             this.arrLegislatura = resp;
-            console.log(this.arrLegislatura);
+            //this.selectedLegislatura = this.arrLegislatura[0].id;
+            //console.log(this.arrLegislatura);
             this.spinner.hide();
         }, err => {
-            Swal.fire('Error', 'Ocurrió un error obtener los puestos.' + err, 'error');
+            Swal.fire('Error', 'Ocurrió un error obtener las legislaturas.' + err, 'error');
             this.spinner.hide();
         });
     }
@@ -148,8 +163,15 @@ export class GuardarParticipantesComisionComponent implements OnInit {
       // Obtenemos empleados
       this.spinner.show();
       await this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
-         
-          this.arrDiputados = resp;
+        for(const diputados of resp){
+            if(diputados.legislatura){
+                this.arrDiputados.push(diputados);
+            } else {
+
+            }
+        }
+          //this.arrDiputados = resp;
+          this.arrDiputados = this.arrDiputados.filter(meta => meta.legislatura.id == this.selectedLegislatura);
           this.spinner.hide();
       }, err => {
           Swal.fire('Error', 'Ocurrió un error obtener los diputados.' + err, 'error');
@@ -161,14 +183,26 @@ export class GuardarParticipantesComisionComponent implements OnInit {
           // Obtenemos empleados
           this.spinner.show();
           await this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
-           
-              this.arrDiputados = resp;
-              this.arrDiputados = this.arrDiputados.filter(meta => meta.legislatura.id == id);
-              this.spinner.hide();
-          }, err => {
-              Swal.fire('Error', 'Ocurrió un error obtener los diputados.' + err, 'error');
-              this.spinner.hide();
-          });
+           console.log(this.arrDiputados);
+           for(const diputados of resp){
+            if(diputados.legislatura){
+                this.arrDiputados.push(diputados);
+            } else {
+
+            }
+        }
+            //this.arrDiputados = resp;
+            this.arrDiputados = this.arrDiputados.filter(meta => meta.legislatura.id == this.selectedLegislatura);
+
+            if(this.arrDiputados.length == 0 && this.primeraVez == 1){
+                Swal.fire('Error', 'No se encontraron diputados en la legislatura seleccionada.', 'error');
+            }
+            this.primeraVez = 1;
+            this.spinner.hide();
+        }, err => {
+            Swal.fire('Error', 'Ocurrió un error obtener los diputados.' + err, 'error');
+            this.spinner.hide();
+        });
   }
 
   guardar(): void {
@@ -219,14 +253,77 @@ export class GuardarParticipantesComisionComponent implements OnInit {
             });
         });
       
-        for (let i = 0; i < this.comision.length; i++) {
+        /*for (let i = 0; i < this.comision.length; i++) {
             if (this.comision[i + 1]) {
                 if (this.comision[i + 1].idParticipante === this.comision[i].idParticipante) {
                     repetido = true;
                     Swal.fire('Error', 'Existen participantes repetidos, esto no es correcto, favor de modificarlos.', 'error');
                 }
+
+                if(this.comision[i + 1].cargo == 'Vocal'){
+                    if(this.comision[i + 1].idParticipante.hasOwnProperty('id')){
+                        console.log('existe Id');
+                        if (this.comision[i + 1].idParticipante.id === this.comision[i].idParticipante) {
+                            repetido = true;
+                            Swal.fire('Error', 'Existen participantes repetidos, esto no es correcto, favor de modificarlos.', 'error');
+                        }
+                    }
+                }
+
+                if(this.comision[i + 1].cargo == 'Vocal'){
+                    if(this.comision[i].cargo == 'Vocal'){
+                        if(this.comision[i + 1].idParticipante.id === this.comision[i].idParticipante.id){
+                            console.log('cargo vocal');
+                            repetido = true;
+                            Swal.fire('Error', 'Existen participantes repetidos, esto no es correcto, favor de modificarlos.', 'error');
+                        }
+                    }
+                }
+            }
+        }*/
+
+        let idDiputados = []
+        let idCompare = '';
+
+        for (let i = 0; i < this.comision.length; i++) {
+            if (this.comision[i].idParticipante.hasOwnProperty('id')) {
+                idDiputados.push({"id": this.comision[i].idParticipante.id});
+            }else{
+                idDiputados.push({"id": this.comision[i].idParticipante});
             }
         }
+
+        idDiputados.forEach(element => {
+            if(idCompare === ''){
+                idCompare = element.id;
+            }else{
+                idCompare = idCompare + ',' + element.id;
+            }
+        });
+
+        let separatedId = idCompare.split(",");
+        let normalizedInputArray = separatedId.map(el => el.toLowerCase());
+        let idValue = [];
+        let idEqual = [];
+
+        //console.log(separatedAutors);
+
+        normalizedInputArray.forEach(value => {
+            idValue.push({"diputado": value, "valor": normalizedInputArray.filter(el => el === value).length});
+        });
+
+        idValue.forEach(dip => {
+            if(dip.valor>1){
+                repetido = true;
+                Swal.fire('Error', 'Ocurrió un error al guardar. No debe haber duplicidad en los participantes.', 'error');
+            }
+        });
+
+        console.log(this.comision);
+        console.log(idDiputados);
+        console.log(idValue);
+        console.log(idEqual);
+
         if (repetido === false) {
             this.cerrar(this.comision);
         }
