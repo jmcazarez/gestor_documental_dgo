@@ -1,4 +1,4 @@
-<ngx-spinner></ngx-spinner>
+<ngx-spinner type="timer"></ngx-spinner>
 <div id="clientes" class="page-layout simple fullwidth docs">
     <!-- HEADER -->
     <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
@@ -17,8 +17,8 @@
                     <mat-form-field>
                         <mat-label>Subir certificado </mat-label>
                         <!-- placeholder="Removable Input" -->
-                        <ngx-mat-file-input #removableCertificado [accept]="'.cer'"
-                            formControlName="cSubirCertificado"  (change)="cambioCertificado($event)">
+                        <ngx-mat-file-input #removableCertificado [accept]="'.cer'" formControlName="cSubirCertificado"
+                            (change)="cambioCertificado($event)">
                         </ngx-mat-file-input>
                         <button *ngIf="!removableCertificado.empty" mat-icon-button matSuffix
                             (click)="removableCertificado.clear($event)">
@@ -31,8 +31,8 @@
                     <mat-form-field>
                         <mat-label>Subir llave </mat-label>
                         <!-- placeholder="Removable Input" -->
-                        <ngx-mat-file-input #removableLlave [accept]="'.key'"
-                            formControlName="cSubirLlave" (change)="cambioLlave($event)">
+                        <ngx-mat-file-input #removableLlave [accept]="'.key'" formControlName="cSubirLlave"
+                            (change)="cambioLlave($event)">
                         </ngx-mat-file-input>
                         <button *ngIf="!removableLlave.empty" mat-icon-button matSuffix
                             (click)="removableLlave.clear($event)">
@@ -53,12 +53,46 @@
                         <input type='text' matInput placeholder='' [(ngModel)]="searchText"
                             (keyup)='filterDatatable($event)'>
                     </mat-form-field>
-                    <button [disabled]="form.invalid" mat-raised-button color="warn" (click)="firmarDocumentos()"  class="button">
+                    <button [disabled]="form.invalid" mat-raised-button color="warn" (click)="firmarDocumentos()"
+                        class="button">
                         <mat-icon color="white" class="material-icons" matTooltip="Clic para firmar documentos">post_add
                         </mat-icon>
                         Firmar documentos
                     </button>
                 </div>
+
+                <table class="ocultar">
+                    <tr>
+                        <td><textarea id="certificado" #certificado cols="68" rows="4"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><textarea id="llave" #llave cols="68" rows="4"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><textarea id="password" #password cols="68" rows="4"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><textarea id="hashToSign" #hashToSign cols="68" rows="4"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                            <textarea id="signature" #signature name="signature" cols="68" rows="4"></textarea>
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td><button id="btnSing" name="button" onclick="signData()">Sign</button></td>
+                    </tr>
+
+                </table>
             </form>
             <ngx-datatable class="material shadow-none" [rows]="documentosPendientes"
                 [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50"
@@ -67,6 +101,8 @@
                 <ngx-datatable-column name="Documento" prop="documento.cNombreDocumento" [width]="20">
                 </ngx-datatable-column>
                 <ngx-datatable-column name="Proceso" prop="estatusIniciativa"></ngx-datatable-column>
+                <ngx-datatable-column name="Autorizaciones pendientes" prop="autorizacionesPendientes">
+                </ngx-datatable-column>
 
                 <ngx-datatable-column name="Firmar" sortable="false" prop="id">
                     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>

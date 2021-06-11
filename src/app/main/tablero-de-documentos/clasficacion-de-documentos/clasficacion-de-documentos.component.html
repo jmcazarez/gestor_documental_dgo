@@ -4,9 +4,7 @@
     <mat-drawer *ngIf="this.documento.documento.ext === '.pdf'" mode="side" opened position="start"
         [style.width]="'55%'">
 
-             <object
-             [data]="this.pdfSrc | safePipe"
-             type="application/pdf" width="100%" height="100%"></object>
+        <object [data]="this.pdfSrc | safePipe" type="application/pdf" width="100%" height="100%"></object>
         <!-- <ngx-extended-pdf-viewer [(src)]="pdfSource" useBrowserLocale="true" height="80vh"></ngx-extended-pdf-viewer>
          <pdf-viewer *ngIf="this.documento.documento.ext === '.pdf' && this.ocultarPreview === false"
             [render-text]="true" [original-size]="false" [autoresize]="true" [src]="pdfSrc"></pdf-viewer>
@@ -67,7 +65,8 @@
                 [matMenuTriggerFor]="menu">Documento</button>
 
             <mat-menu #menu="matMenu">
-                <button [disabled]="this.documento.formulario || this.autorizacionPendiente" mat-menu-item (click)="autorizar()">
+                <button [disabled]="this.documento.formulario || this.autorizacionPendiente" mat-menu-item
+                    (click)="autorizar()">
                     <mat-icon>verified_user</mat-icon>
                     <span>Autorizar</span>
                 </button>
@@ -75,7 +74,7 @@
                     <mat-icon>cloud_download</mat-icon>
                     <span>Descargar</span>
                 </button>
-                <button [disabled]="this.documento.formulario" mat-menu-item (click)="turnarIniciativa()">
+                <button [disabled]="this.documento.formulario || this.turnarDocumento" mat-menu-item (click)="turnarIniciativa()">
                     <mat-icon>keyboard_tab</mat-icon>
                     <span>Turnar</span>
                 </button>
@@ -387,7 +386,9 @@
 
         <mat-dialog-actions align="end" class="mat-card">
             <button mat-raised-button color="warn" (click)="cerrar(true)">Cerrar</button>
-            <button *ngIf="!this.documento.iniciativas" [disabled]="!formRef.form.valid ||  form.invalid || disabledGuardar || this.documento.disabled || !this.form.touched " mat-raised-button color="accent" (click)="guardar()">Guardar</button>
+            <button *ngIf="!this.documento.iniciativas"
+                [disabled]="!formRef.form.valid ||  form.invalid || disabledGuardar || this.documento.disabled || !this.form.touched "
+                mat-raised-button color="accent" (click)="guardar()">Guardar</button>
             <!--  <button  mat-raised-button color="accent" (click)="pruebaForm()">Upload</button> -->
 
         </mat-dialog-actions>

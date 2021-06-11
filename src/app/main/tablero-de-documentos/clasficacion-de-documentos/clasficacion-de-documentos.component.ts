@@ -73,6 +73,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     fechaCargaView: string;
     descriptionTipoDocumento: 'Acta';
     autorizacionPendiente: boolean;
+    turnarDocumento: boolean;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     meta: Metacatalogos[] = [];
 
@@ -120,6 +121,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         this.autorizacionPendiente = false;
+        this.turnarDocumento = false;
         this.spinner.show();
         this.documento.usuario = this.menuService.usuario;
         this.version = this.documento.version;
@@ -169,8 +171,13 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             autorizaciones = await this.obtenerAutorizacionPorDocumento();
             // Bloqueamos el boton de autorizar si tiene autorizaciones pendientes por realizar.
             autorizaciones.forEach(element => {
+                console.log(element);
                 if (element.estatusAutorizacion === 1 || element.estatusAutorizacion === 2) {
-                    // this.autorizacionPendiente = true;
+                    this.autorizacionPendiente = true;
+                    this.turnarDocumento = true;
+                } else if (element.estatusAutorizacion === 3) {
+                    this.autorizacionPendiente = true;
+                    this.turnarDocumento = false;
                 }
 
             });
@@ -1075,28 +1082,28 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         let autorizacion = {};
         let detalleAutorizacion = [];
         let firmasPorEtapas: any[];
-        if (this.documento.cNombreDocumento.includes('SSP 01')) {        
+        if (this.documento.cNombreDocumento.includes('SSP 01')) {
             parametros = await this.obtenerParametros("SSP-001-Firmas");
             firmasPorEtapas = await this.obtenerFirma(
                 parametros[0]["cValor"]
             );
-        } else if (this.documento.cNombreDocumento.includes('SSP 04')) {        
+        } else if (this.documento.cNombreDocumento.includes('SSP 04')) {
             parametros = await this.obtenerParametros("SSP-004-Firmas");
             firmasPorEtapas = await this.obtenerFirma(
                 parametros[0]["cValor"]
             );
             firmantes = firmasPorEtapas[0].participantes;
-        } else if (this.documento.cNombreDocumento.includes('CIEL 08')) {        
+        } else if (this.documento.cNombreDocumento.includes('CIEL 08')) {
             parametros = await this.obtenerParametros("CIEL-008-Firmas");
             firmasPorEtapas = await this.obtenerFirma(
                 parametros[0]["cValor"]
             );
-        } else if (this.documento.cNombreDocumento.includes('SSP 05')) {          
+        } else if (this.documento.cNombreDocumento.includes('SSP 05')) {
             parametros = await this.obtenerParametros("SSP-005-Firmas");
             firmasPorEtapas = await this.obtenerFirma(
                 parametros[0]["cValor"]
             );
-        } else if (this.documento.cNombreDocumento.includes('SSP 08')) {           
+        } else if (this.documento.cNombreDocumento.includes('SSP 08')) {
             parametros = await this.obtenerParametros("SSP-008-Firmas");
             firmasPorEtapas = await this.obtenerFirma(
                 parametros[0]["cValor"]
@@ -1126,6 +1133,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 this.autorizarService.autorizarRegistro(autorizacion).subscribe(
                     async (resp: any) => {
                         this.autorizacionPendiente = true;
+                        this.turnarDocumento = true;
                         Swal.fire(
                             "Éxito",
                             "Documento en proceso de firma.",

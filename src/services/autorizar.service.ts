@@ -80,7 +80,6 @@ export class AutorizarService {
         return this.http.post(this.baseUrl + this.urlFirmaDigitalPaso11, objeto);
     }
 
-
     autorizarDocumentoPaso3(filePKCSBase64, fileName, processID, serialNumber): any {
 
 
@@ -144,5 +143,41 @@ export class AutorizarService {
 
 
         return this.http.get(this.baseUrl + this.urlAutorizarRegistro + '-empleado/' + idEmpleado, httpOptions);
+    }
+    atualizarAutorizacionEncabezado(autorizacion: any): any {
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlAutorizarRegistro + '-encabezado/' + autorizacion.id, autorizacion, httpOptions);
+    }
+    atualizarAutorizacionDetalle(autorizacionDetalle: any): any {
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlAutorizarRegistro + '-detalle/' + autorizacionDetalle.id, autorizacionDetalle, httpOptions);
+    }
+    obtenerDetalleAutorizacionPorId(id: string): any {
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlAutorizarRegistro + '-detalle/' + id, httpOptions);
+    }
+    actualizaPfdDocumento(documento: any): any {
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.put(this.baseUrl + this.urlAutorizarRegistro + '--actualiza-documento/' + documento.id, documento, httpOptions);
     }
 }
