@@ -1180,13 +1180,23 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             let puesto = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === idPuesto[0]['cValor']);
             console.log(puesto);
+            if(puesto.length === 0){
+                Swal.fire('Error', 'Configuración de participantes incorrecta.', 'error');
+                this.spinner.hide();
+                return
+            }
 
             let puestoSecretario = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === puestoSecretarioGeneral[0].cValor);
+            if(puestoSecretario.length === 0){
+                Swal.fire('Error', 'Configuración de secretario general incorrecto.', 'error');
+                this.spinner.hide();
+                return
+            }
             console.log('puesto secretario');
             console.log(puestoSecretario);
             let tipoIniciativa = this.arrTipo.filter((d) => d['id'] === this.selectTipo);
             let comision: any = this.comisiones.filter(d => d.id === this.selectedComision);
-
+          
             console.log(this.arrMesas);
             let mesa_directiva: any = this.arrMesas.filter(meta => meta.legislatura.id === this.selectedLegislatura);
             let legislaturaDoc: any = this.legislatura.filter(meta => meta.id === this.selectedLegislatura);
@@ -1194,6 +1204,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             if(mesa_directiva.length == 0){
                 Swal.fire('Error', 'La legislatura que seleccionó no tiene asignada Mesa Directiva.', 'error');
                 this.spinner.hide();
+                return
             }
 
             let detalle_mesa: any = this.arrDetalleMesas.filter(meta => meta.mesas_directiva === mesa_directiva[0].id);

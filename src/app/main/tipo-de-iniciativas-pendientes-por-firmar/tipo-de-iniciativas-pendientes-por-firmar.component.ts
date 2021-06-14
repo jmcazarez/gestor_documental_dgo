@@ -52,11 +52,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
 
         });
         this.usuario = await this.usuarioLoginService.obtenerUsuario();
-        this.documentosPendientes = await this.obtenerAutorizacionPorLegislatura();
-        this.documentosPendientesTemp = this.documentosPendientes
-
-
-
+        await this.obtenerAutorizacionPorLegislatura();
     }
 
 
@@ -68,6 +64,11 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                 this.autorizarService.obtenerAutorizacionesPorEmpleado(this.usuario[0].data.empleado.id).subscribe(
                     (resp: any) => {
                         this.spinner.hide();
+                        this.documentosPendientes = resp.filter(
+                            (d) => d["estatusAutorizacion"] <= 2 && d["autorizacionesPendientes"] >= 1 && d["idDetalleAutorizacion"] !== ''
+                            // (d) => d["estatusAutorizacion"] <= 2
+                        )
+                        this.documentosPendientesTemp = this.documentosPendientes
                         resolve(resp.filter(
                             (d) => d["estatusAutorizacion"] <= 2 && d["autorizacionesPendientes"] >= 1
                             // (d) => d["estatusAutorizacion"] <= 2
@@ -175,7 +176,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                                                                     this.autorizarService.autorizarDocumentoPaso4(Number(element.idProcesoApi)).subscribe(
                                                                         async (resp: any) => {
                                                                             let idDocumento = await this.upload(resp.body.multiSignedMessage_FinalResponse[0].data, element.documento.cNombreDocumento + '.pdf');
-                                                                            if (idDocumento) {                                                                             
+                                                                            if (idDocumento) {
                                                                                 this.autorizarService.actualizaPfdDocumento({ id: element.documento.id, documento: idDocumento }).subscribe(async (resp: any) => {
                                                                                     await this.obtenerAutorizacionPorLegislatura();
                                                                                     this.spinner.hide();
@@ -252,7 +253,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                                         }
                                     );
 
-                                }, 500);
+                                }, 1000);
 
 
                             } else {

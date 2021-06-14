@@ -117,7 +117,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     async ngOnInit(): Promise<void> {
         this.pdfSrc = '';
         this.autorizacionPendiente = false;
-        this.turnarDocumento = false;
+        this.turnarDocumento = true;
         this.spinner.show();
         let autorizaciones: any;
         this.documento.usuario = this.menuService.usuario;
@@ -165,7 +165,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             console.log(autorizaciones);
             // Bloqueamos el boton de autorizar si tiene autorizaciones pendientes por realizar.
             autorizaciones.forEach(element => {
-               
+
                 if (element.estatusAutorizacion === 1 || element.estatusAutorizacion === 2) {
                     this.autorizacionPendiente = true;
                     this.turnarDocumento = true;
@@ -1078,6 +1078,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             firmasPorEtapas = await this.obtenerFirma(
                 parametros[0]["cValor"]
             );
+            firmantes = firmasPorEtapas[0].participantes;
         } else if (this.documento.cNombreDocumento.includes('SSP 04')) {
             parametros = await this.obtenerParametros("SSP-004-Firmas");
             firmasPorEtapas = await this.obtenerFirma(
@@ -1089,16 +1090,19 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             firmasPorEtapas = await this.obtenerFirma(
                 parametros[0]["cValor"]
             );
+            firmantes = firmasPorEtapas[0].participantes;
         } else if (this.documento.cNombreDocumento.includes('SSP 05')) {
             parametros = await this.obtenerParametros("SSP-005-Firmas");
             firmasPorEtapas = await this.obtenerFirma(
                 parametros[0]["cValor"]
             );
+            firmantes = firmasPorEtapas[0].participantes;
         } else if (this.documento.cNombreDocumento.includes('SSP 08')) {
             parametros = await this.obtenerParametros("SSP-008-Firmas");
             firmasPorEtapas = await this.obtenerFirma(
                 parametros[0]["cValor"]
             );
+            firmantes = firmasPorEtapas[0].participantes;
         }
 
         firmantes.forEach(element => {
@@ -1106,53 +1110,60 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
         });
 
+        if (firmantes.length === 0) {
+            this.spinner.hide()
 
-        let fileName = this.documento.cNombreDocumento + '.pdf';
+            Swal.fire(
+                "Error",
+                "Ocurrió un error no existen firmantes configrados para esta etapa..  ",
+                "error"
+            );
 
+        } else {
+            let fileName = this.documento.cNombreDocumento + '.pdf';
+            this.autorizarService.autorizarDocumentoPaso1(fileName, firmantes.length, fileBase64.replace('data:application/pdf;base64,', '')).subscribe(
+                async (resp: any) => {
+                    let processID = resp.body.multiSignedMessage_InitResponse.processID;
 
-        this.autorizarService.autorizarDocumentoPaso1(fileName, firmantes.length, fileBase64.replace('data:application/pdf;base64,', '')).subscribe(
-            async (resp: any) => {
-                let processID = resp.body.multiSignedMessage_InitResponse.processID;
-
-                autorizacion = {
-                    documento: this.documento.id,
-                    estatusIniciativa: this.documento.iniciativa.estatus,
-                    estatusAutorizacion: 1,
-                    idProcesoApi: processID,
-                    detalle_autorizacion_iniciativas: detalleAutorizacion
-                }
-                this.autorizarService.autorizarRegistro(autorizacion).subscribe(
-                    async (resp: any) => {
-                        this.autorizacionPendiente = true;
-                        this.turnarDocumento = true;
-                        Swal.fire(
-                            "Éxito",
-                            "Documento en proceso de firma.",
-                            "success"
-                        );
-                        this.spinner.hide()
-                    },
-                    (err) => {
-                        this.spinner.hide()
-                        Swal.fire(
-                            "Error",
-                            "Ocurrió un error al firmar el documento. Paso 1. " + err,
-                            "error"
-                        );
+                    autorizacion = {
+                        documento: this.documento.id,
+                        estatusIniciativa: this.documento.iniciativa.estatus,
+                        estatusAutorizacion: 1,
+                        idProcesoApi: processID,
+                        detalle_autorizacion_iniciativas: detalleAutorizacion
                     }
-                );
+                    this.autorizarService.autorizarRegistro(autorizacion).subscribe(
+                        async (resp: any) => {
+                            this.autorizacionPendiente = true;
+                            this.turnarDocumento = true;
+                            Swal.fire(
+                                "Éxito",
+                                "Documento en proceso de firma.",
+                                "success"
+                            );
+                            this.spinner.hide()
+                        },
+                        (err) => {
+                            this.spinner.hide()
+                            Swal.fire(
+                                "Error",
+                                "Ocurrió un error al firmar el documento. Paso 1. " + err,
+                                "error"
+                            );
+                        }
+                    );
 
-            },
-            (err) => {
-                this.spinner.hide()
-                Swal.fire(
-                    "Error",
-                    "Ocurrió un error al firmar el documento. Paso 1. " + err,
-                    "error"
-                );
-            }
-        );
-
+                },
+                (err) => {
+                    this.spinner.hide()
+                    Swal.fire(
+                        "Error",
+                        "Ocurrió un error al firmar el documento. Paso 1. " + err,
+                        "error"
+                    );
+                }
+            );
+        }
 
     }
     async obtenerParametros(parametro: string): Promise<[]> {
