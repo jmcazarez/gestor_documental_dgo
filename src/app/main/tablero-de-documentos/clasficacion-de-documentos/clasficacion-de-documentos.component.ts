@@ -1142,6 +1142,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                                 "success"
                             );
                             this.spinner.hide()
+                            this.cerrar(true);
                         },
                         (err) => {
                             this.spinner.hide()

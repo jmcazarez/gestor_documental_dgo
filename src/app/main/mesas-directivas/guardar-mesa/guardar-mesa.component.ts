@@ -18,6 +18,7 @@ import { RxwebValidators } from "@rxweb/reactive-form-validators";
 import { DetalleMesaModels } from "models/detalle-mesa-directiva.models";
 import { PartidosPoliticosService } from "services/partidos-politicos.service";
 import { GuardarParticipantesComponent } from "./guardar-participantes/guardar-participantes.component";
+import { DiputadosService } from "services/diputados.service";
 @Component({
     selector: "app-guardar-mesa",
     templateUrl: "./guardar-mesa.component.html",
@@ -39,6 +40,7 @@ export class GuardarMesaComponent implements OnInit {
     optEliminar: boolean;
     detalleMesa: DetalleMesaModels;
     valueBuscador = "";
+    arrDiputados: any[];
     constructor(
         public dialog: MatDialog,
         private formBuilder: FormBuilder,
@@ -49,6 +51,7 @@ export class GuardarMesaComponent implements OnInit {
         private detalleMesaService: DetalleMesaService,
         private menuService: MenuService,
         private router: Router,
+        private diputadosService: DiputadosService,
         private partidoPoliticoService: PartidosPoliticosService,
         @Inject(MAT_DIALOG_DATA) public mesas: MesasDirectivasModel
     ) { }
@@ -57,6 +60,7 @@ export class GuardarMesaComponent implements OnInit {
         console.log(this.mesas);
         this.selectedLegislatura = '';
         await this.obtenerPartidos();
+        await this.obtenerDiputados();
         await this.obtenerLegislaturas();
         await this.obtenerDetallesMesa();
 
@@ -83,6 +87,16 @@ export class GuardarMesaComponent implements OnInit {
                 [Validators.required],
             ],
             estatus: this.mesas.activo,
+        });
+
+        this.form.get('legislatura').valueChanges.subscribe(val => {
+            let arrDiputadosTemp = [];
+            if (val.length > 0) {
+                arrDiputadosTemp = this.arrDiputados.filter(meta => meta.legislatura.id === val);
+                if(arrDiputadosTemp.length === 0){
+                    Swal.fire('Error', 'No se encontraron diputados en la legislatura seleccionada.', 'error');
+                }
+            }
         });
     }
 
@@ -111,7 +125,8 @@ export class GuardarMesaComponent implements OnInit {
         );
 
         if (this.mesas.id) {
-            if (this.mesas.detalle_participantes_mesa_directivas) {
+            console.log(this.mesas.detalle_participantes_mesa_directivas);
+            if (this.mesas.detalle_participantes_mesa_directivas.lenght) {
                 // Actualizamos el mesa directiva
                 this.detalleMesaService
                     .actualizarDetalleMesa({
@@ -151,10 +166,10 @@ export class GuardarMesaComponent implements OnInit {
                         }
                     );
             } else {
+                delete  this.mesas.detalle_participantes_mesa_directivas; 
                 this.detalleMesaService
                     .guardarDetalleMesa({
-                        id: this.mesas.detalle_participantes_mesa_directivas[0]
-                            .id,
+                       
                         mesas_directiva: this.mesas.id,
                         presidentes: [presidente.idParticipante],
                         vicepresidentes: [vicepresidentes.idParticipante],
@@ -169,6 +184,9 @@ export class GuardarMesaComponent implements OnInit {
                     .subscribe(
                         (resp: any) => {
                             if (resp) {
+                                console.log(resp);
+                              
+                              
                             } else {
                                 this.spinner.hide();
                                 Swal.fire(
@@ -294,11 +312,29 @@ export class GuardarMesaComponent implements OnInit {
         }
     }
 
+    async obtenerDiputados(): Promise<void> {
+        // Obtenemos empleados
+        this.spinner.show();
+        await this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
+ 
+          
+            console.log(resp);
+            this.arrDiputados = resp;
+            console.log(this.arrDiputados);
+            //this.arrDiputados = this.arrDiputados.filter(meta => meta.legislatura.id === this.participantes.legislatura);
+
+            this.spinner.hide();
+        }, err => {
+            Swal.fire('Error', 'Ocurrió un error obtener los diputados.' + err, 'error');
+            this.spinner.hide();
+        });
+    }
     async obtenerLegislaturas(): Promise<void> {
         // Obtenemos Legislaturas
         this.spinner.show();
         await this.legislaturasService.obtenerLegislatura().subscribe(
             (resp: any) => {
+                console.log(resp);
                 this.arrLegislaturas = resp;
                 this.spinner.hide();
             },

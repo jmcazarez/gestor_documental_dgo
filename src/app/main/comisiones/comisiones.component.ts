@@ -51,7 +51,20 @@ export class ComisionesComponent implements OnInit {
             this.optEliminar = opciones.Eliminar;
             // Si tiene permisos para consultar
             if (this.optConsultar) {
-                this.comisiones = resp;
+                resp.forEach(element => {
+                    let descripcionComicion = '';
+                    if(element.tipos_comisione){
+                        descripcionComicion = element.tipos_comisione.descripcion
+                    }
+                    this.comisiones.push({
+                        id: element.id,
+                        descripcion: element.descripcion,
+                        detalle_participantes_comisions: element.detalle_participantes_comisions,
+                        tipos_comisione: element.tipos_comisione,
+                        descripcionComicion
+                    })
+                });
+                this.comisiones = [...this.comisiones];
                 this.comisionesTemp = this.comisiones;
                 console.log(this.comisiones);
             }
@@ -95,13 +108,14 @@ export class ComisionesComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        console.log(this.comisiones);
         this.comisiones = this.comisionesTemp;
         // Filtramos tabla
         if (value.target.value === '') {
             this.comisiones = this.comisionesTemp;
         } else {
             const val = value.target.value.toLowerCase();
-            const temp = this.comisiones.filter((d) => d.descripcion.toLowerCase().indexOf(val) !== -1 || !val || d.tipos_comisione.descripcion.toLowerCase().indexOf(val) !== -1);
+            const temp = this.comisiones.filter((d) => d.descripcion.toLowerCase().indexOf(val) !== -1 || !val || d.descripcionComicion.toLowerCase().indexOf(val) !== -1);
             this.comisiones = temp;
         }
     }

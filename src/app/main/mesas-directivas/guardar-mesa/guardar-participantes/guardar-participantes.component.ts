@@ -45,32 +45,45 @@ export class GuardarParticipantesComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public participantes: any
     ) { }
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
+        this.spinner.show();
 
-        console.log(this.participantes);
+        await this.obtenerDiputados();
+
         if (this.participantes.detalle_participantes_mesa_directivas) {
-            this.resultado = this.participantes.detalle_participantes_mesa_directivas[0];
-            if (this.resultado.presidentes) {
-                this.selectedPresidente = this.resultado.presidentes[0];
-            }
-            if (this.resultado.vicepresidentes) {
-                this.selectedVicePresidente = this.resultado.vicepresidentes[0];
-            }
-            if (this.resultado.secretario_auxiliar) {
-                this.selectedSecretario = this.resultado.secretario[0];
-            }
-            if (this.resultado.secretario_auxiliar) {
-                this.selectedSecretarioAuxiliar = this.resultado.secretario_auxiliar[0];
-            }
 
-            if (this.resultado.vocals) {
-                this.selectedVocal = this.resultado.vocals[0];
-            }
-            if (this.resultado.vocal_auxiliars) {
-                this.selectedVocalAuxiliar = this.resultado.vocal_auxiliars[0];
-            }
+            if (this.participantes.detalle_participantes_mesa_directivas.length > 0) {
 
-        }else{
+                this.resultado = this.participantes.detalle_participantes_mesa_directivas[0];
+                if (this.resultado.presidentes) {
+                    this.selectedPresidente = this.resultado.presidentes[0];
+                }
+                if (this.resultado.vicepresidentes) {
+                    this.selectedVicePresidente = this.resultado.vicepresidentes[0];
+                }
+                if (this.resultado.secretario_auxiliar) {
+                    this.selectedSecretario = this.resultado.secretario[0];
+                }
+                if (this.resultado.secretario_auxiliar) {
+                    this.selectedSecretarioAuxiliar = this.resultado.secretario_auxiliar[0];
+                }
+
+                if (this.resultado.vocals) {
+                    this.selectedVocal = this.resultado.vocals[0];
+                }
+                if (this.resultado.vocal_auxiliars) {
+                    this.selectedVocalAuxiliar = this.resultado.vocal_auxiliars[0];
+                }
+
+            } else {
+                this.participantes.presidente = '';
+                this.participantes.vicepresidente = '';
+                this.participantes.secretario = '';
+                this.participantes.secretarioAuxiliar = '';
+                this.participantes.vocal = '';
+                this.participantes.vocalAuxiliar = '';
+            }
+        } else {
             this.participantes.presidente = '';
             this.participantes.vicepresidente = '';
             this.participantes.secretario = '';
@@ -78,7 +91,7 @@ export class GuardarParticipantesComponent implements OnInit {
             this.participantes.vocal = '';
             this.participantes.vocalAuxiliar = '';
         }
-        this.obtenerDiputados();
+
 
 
         // Form reactivo      
@@ -90,7 +103,7 @@ export class GuardarParticipantesComponent implements OnInit {
             vocal: [this.participantes.vocal, [Validators.required]],
             vocalAuxiliar: [this.participantes.vocalAuxiliar, [Validators.required]],
         });
-
+        this.spinner.hide();
     }
 
     cerrar(ent): void {
@@ -105,18 +118,21 @@ export class GuardarParticipantesComponent implements OnInit {
         // Obtenemos empleados
         this.spinner.show();
         await this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
-          for(const diputados of resp){
-              if(diputados.legislatura){
-                  this.arrDiputados.push(diputados);
-              } else {
-  
-              }
-          }
-        if(this.arrDiputados.length == 0){
-            Swal.fire('Error', 'No se encontraron diputados en la legislatura seleccionada.', 'error');
-        }
+            for (const diputados of resp) {
+                if (diputados.legislatura) {
+
+                    this.arrDiputados.push(diputados);
+                } else {
+
+                }
+            }
+            if (this.arrDiputados.length == 0) {
+                Swal.fire('Error', 'No se encontraron diputados en la legislatura seleccionada.', 'error');
+            }
+
             //this.arrDiputados = resp;
-            this.arrDiputados = this.arrDiputados.filter(meta => meta.legislatura.id == this.participantes.legislatura);
+            this.arrDiputados = this.arrDiputados.filter(meta => meta.legislatura.id === this.participantes.legislatura);
+
             this.spinner.hide();
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener los diputados.' + err, 'error');
@@ -189,16 +205,16 @@ export class GuardarParticipantesComponent implements OnInit {
 
         for (let i = 0; i < this.mesas.length; i++) {
             if (this.mesas[i].idParticipante.hasOwnProperty('id')) {
-                idDiputados.push({"id": this.mesas[i].idParticipante.id});
-            }else{
-                idDiputados.push({"id": this.mesas[i].idParticipante});
+                idDiputados.push({ "id": this.mesas[i].idParticipante.id });
+            } else {
+                idDiputados.push({ "id": this.mesas[i].idParticipante });
             }
         }
 
         idDiputados.forEach(element => {
-            if(idCompare === ''){
+            if (idCompare === '') {
                 idCompare = element.id;
-            }else{
+            } else {
                 idCompare = idCompare + ',' + element.id;
             }
         });
@@ -211,11 +227,11 @@ export class GuardarParticipantesComponent implements OnInit {
         //console.log(separatedAutors);
 
         normalizedInputArray.forEach(value => {
-            idValue.push({"diputado": value, "valor": normalizedInputArray.filter(el => el === value).length});
+            idValue.push({ "diputado": value, "valor": normalizedInputArray.filter(el => el === value).length });
         });
 
         idValue.forEach(dip => {
-            if(dip.valor>1){
+            if (dip.valor > 1) {
                 repetido = true;
                 Swal.fire('Error', 'Ocurrió un error al guardar. No debe haber duplicidad en los participantes.', 'error');
             }
