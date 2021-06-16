@@ -15,6 +15,8 @@ import { ParametrosService } from 'services/parametros.service';
 import { GuardarDocumentosComponent } from 'app/main/tablero-de-documentos/guardar-documentos/guardar-documentos.component';
 import { ClasficacionDeDocumentosComponent } from 'app/main/tablero-de-documentos/clasficacion-de-documentos/clasficacion-de-documentos.component';
 import { DocumentosService } from 'services/documentos.service';
+import { RecepcionDeActasService } from 'services/recepcion-de-actas.service';
+import { RecepcionDeActasModel } from 'models/recepcion-de-actas.models';
 
 export interface Estado {
     id: string;
@@ -39,6 +41,7 @@ export class GuardarSesionesComponent implements OnInit {
     fileOrdenDelDia = '';
     fileListaDeAsistencia = '';
     fileActaDeSesion = '';
+    recepcion: RecepcionDeActasModel = new RecepcionDeActasModel();
     constructor(
         private spinner: NgxSpinnerService,
         private parametros: ParametrosService,
@@ -50,6 +53,7 @@ export class GuardarSesionesComponent implements OnInit {
         private actasSesionsService: ActasSesionsService,
         private iniciativaService: IniciativasService,
         private atp: AmazingTimePickerService,
+        private recepcionDeActasService: RecepcionDeActasService,
         @Inject(MAT_DIALOG_DATA) public sesion: SesionesModel
     ) { }
 
@@ -155,6 +159,8 @@ export class GuardarSesionesComponent implements OnInit {
             this.sesion.actasSesion = this.sesion.actasSesion.id
         }
 
+
+
         console.log(this.sesion);
         // Asignamos valores a objeto
         if (this.sesion.id) {
@@ -179,6 +185,32 @@ export class GuardarSesionesComponent implements OnInit {
                 if (resp) {
                     this.sesion = resp.data
                     Swal.fire('Éxito', 'Sesión guardada correctamente.', 'success');
+
+                    if(this.sesion.actasSesion && this.sesion.listaDeAsistencia && this.sesion.ordenDelDia){
+
+                        this.recepcion.legislatura = this.selectedLegislatura;
+                        this.recepcion.emisor = [];
+                        this.recepcion.receptor = [];
+                        this.recepcion.fechaRecepcion = moment().format('YYYY-MM-DD');
+                        this.recepcion.estatus = 'Pendiente';
+                        this.recepcion.notas = '';
+
+                        // Guardamos el recepcion de actas
+                        this.recepcionDeActasService.guardarRecepcionDeActa(this.recepcion).subscribe((resp: any) => {
+                            if (resp) {
+                                this.spinner.hide();
+                                Swal.fire('Éxito', 'Recepción de acta guardada correctamente.', 'success');
+                                this.cerrar(this.recepcion);
+                            } else {
+                                this.spinner.hide();
+                                Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                            }
+                        }, err => {
+                            this.spinner.hide();
+                            Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                        });
+                    }
+
                     this.cerrar(this.sesion);
                 } else {
                     this.spinner.hide();
