@@ -169,6 +169,9 @@ export class GuardarSesionesComponent implements OnInit {
                 if (resp) {
                     this.sesion = resp.data
                     Swal.fire('Éxito', 'Sesión actualizada correctamente.', 'success');
+
+                    
+
                     this.cerrar(this.sesion);
                 } else {
                     this.spinner.hide();
