@@ -322,7 +322,7 @@
 			} else if (crypto.subtle) { // all others
 				cryptoSubtle = crypto.subtle;
 			} else {
-				reject(Error("Web Cryptography API not supported. [No Crypto.Subtle Namespace]"));
+				reject(Error("Web Cryptography API not supported. [No Crypto.Subtle Namespace] 5"));
 			}
 			
 			var salt = new Uint8Array(8);

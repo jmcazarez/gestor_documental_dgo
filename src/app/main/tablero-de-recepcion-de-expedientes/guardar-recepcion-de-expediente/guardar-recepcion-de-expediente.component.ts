@@ -74,7 +74,9 @@ export class GuardarRecepcionDeExpedienteComponent implements OnInit {
         if (this.recepcion.id) {
             console.log(this.recepcion);
             this.idExpediente = this.recepcion.idExpediente;
-            this.selectedLegislatura = this.recepcion.legislatura.id;
+            if (this.recepcion.legislatura) {
+                this.selectedLegislatura = this.recepcion.legislatura.id;
+            }
             this.selectedEmisor = this.recepcion.emisor[0].id;
             this.selectedReceptor = this.recepcion.receptor[0].id;
             this.recepcion.fechaRecepcion = this.recepcion.fechaRecepcion + 'T16:00:00.000Z';

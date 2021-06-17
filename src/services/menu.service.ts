@@ -352,7 +352,7 @@ export class MenuService {
                        );
                      */
 
-                    alert(JSON.stringify(err));
+                   // alert(JSON.stringify(err));
                     this.router.navigate(['login']);
 
                 });

@@ -1,4 +1,4 @@
-<ngx-spinner></ngx-spinner>
+<ngx-spinner type="timer"></ngx-spinner>
 <div id="clientes" class="page-layout simple fullwidth docs">
 
     <!-- HEADER -->
@@ -11,7 +11,6 @@
 
     </div>
     <!-- / HEADER -->
-    <ngx-spinner></ngx-spinner>
    
 
 
@@ -39,7 +38,7 @@
                 [{prop: 'fechaRecepcion' , dir: 'desc' }]">
                 <ngx-datatable-column name="Folio de Expediente" prop="idExpediente"></ngx-datatable-column>
                 <ngx-datatable-column name="Fecha" prop="fechaRecepcionFormato"></ngx-datatable-column>
-                <ngx-datatable-column name="Legislatura" prop="legislatura.cLegislatura"></ngx-datatable-column>
+                <ngx-datatable-column name="Legislatura" prop="cLegislatura"></ngx-datatable-column>
                 <ngx-datatable-column name="Tema" prop="notas"></ngx-datatable-column>      
                 <ngx-datatable-column name="Estatus" prop="estatus"></ngx-datatable-column>        
                 <ngx-datatable-column name="Acciones" sortable="false" prop="id">

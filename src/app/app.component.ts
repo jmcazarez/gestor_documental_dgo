@@ -29,7 +29,7 @@ import { locale as navigationTurkish } from "app/translate/tr";
 export class AppComponent implements OnInit, OnDestroy {
     @HostListener("window:unload", ["$event"])
     async unloadHandler(event) {
-        console.log(  PerformanceNavigation.TYPE_RELOAD);
+      
         if (
             event.currentTarget.performance.navigation.type ===
             PerformanceNavigation.TYPE_RELOAD || event.currentTarget.performance.navigation.type === 0

@@ -39,7 +39,7 @@ export interface Estado {
 })
 export class GuardarInventarioFisicoComponent implements OnInit {
     form: FormGroup;
-    
+
     selectLegislatura: any;
     arrLegislaturas: any[] = [];
     selectTipoExpediente: any;
@@ -64,10 +64,12 @@ export class GuardarInventarioFisicoComponent implements OnInit {
         await this.obtenerTiposLegislaturas();
         await this.obtenerTiposExpedientes();
 
-        
+
         // Validamos si es un documento nuevo
         if (this.inventario.id) {
-            this.selectLegislatura = this.inventario.legislatura.id;
+            if (this.inventario.legislatura) {
+                this.selectLegislatura = this.inventario.legislatura.id;
+            }
             if (this.inventario.tipo_de_expediente) {
                 this.selectTipoExpediente = this.inventario.tipo_de_expediente.id;
             }
@@ -126,11 +128,11 @@ export class GuardarInventarioFisicoComponent implements OnInit {
         this.inventario.cIdExpedienteIni = this.form.get(
             "expedienteInicio"
         ).value;
-      
+
         this.inventario.cIdExpedienteFin = this.form.get("expedienteFin").value;
-     
-        this.inventario.dFechaAuditoria =       this.datePipe.transform( this.form.get("fechaAuditoria").value, 'yyyy-MM-dd');
-            
+
+        this.inventario.dFechaAuditoria = this.datePipe.transform(this.form.get("fechaAuditoria").value, 'yyyy-MM-dd');
+
         this.inventario.notas = this.form.get("notas").value;
 
         if (this.inventario.id) {
@@ -217,7 +219,7 @@ export class GuardarInventarioFisicoComponent implements OnInit {
         await this.legislaturasService.obtenerLegislatura().subscribe(
             (resp: any) => {
                 this.arrLegislaturas = resp;
-         
+
             },
             (err) => {
                 Swal.fire(

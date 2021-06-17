@@ -136,7 +136,7 @@
 			} else if (crypto.subtle) { // all others
 				cryptoSubtle = crypto.subtle;
 			} else {
-				reject(Error("Web Cryptography API not supported. [No Crypto.Subtle Namespace]"));
+				reject(Error("Web Cryptography API not supported. [No Crypto.Subtle Namespace] 6"));
 			}
 
 			SDSgLib_openPKCS8PrivateKey(cipheredKey,
@@ -208,7 +208,7 @@
 			} else if (crypto.subtle) { // all others
 				cryptoSubtle = crypto.subtle;
 			} else {
-				reject(Error("Web Cryptography API not supported. [No Crypto.Subtle Namespace]"));
+				reject(Error("Web Cryptography API not supported. [No Crypto.Subtle Namespace] 7"));
 			}
 
 			SDSgLib_openPKCS8PrivateKey(cipheredKey,
@@ -258,7 +258,7 @@
 			} else if (crypto.subtle) { // all others
 				cryptoSubtle = crypto.subtle;
 			} else {
-				reject(Error("Web Cryptography API not supported. [No Crypto.Subtle Namespace]"));
+				reject(Error("Web Cryptography API not supported. [No Crypto.Subtle Namespace] 8"));
 			}
 
 			SDSgLib_openPKCS8PrivateKey(cipheredKey,
@@ -299,14 +299,14 @@
 			} else {
 				reject(Error("Web Cryptography API not supported. [No Crypto Namespace]"));
 			}
-			
+	
 			// get crypto.subtle
 			if (crypto.webkitSubtle) {  // Safari
 				cryptoSubtle = crypto.webkitSubtle;
 			} else if (crypto.subtle) { // all others
 				cryptoSubtle = crypto.subtle;
 			} else {
-				reject(Error("Web Cryptography API not supported. [No Crypto.Subtle Namespace]"));
+				reject(Error("Web Cryptography API not supported. [No Crypto.Subtle Namespace] 9" + JSON.stringify(crypto) ));
 			}
 
 			SDSgLib_openPKCS8PrivateKey(cipheredKey,
@@ -375,6 +375,8 @@
 			} else {
 				reject(Error("Web Cryptography API not supported. [No Crypto Namespace]"));
 			}
+
+		
 			
 			// get crypto.subtle
 			if (crypto.webkitSubtle) {  // Safari
@@ -382,7 +384,7 @@
 			} else if (crypto.subtle) { // all others
 				cryptoSubtle = crypto.subtle;
 			} else {
-				reject(Error("Web Cryptography API not supported. [No Crypto.Subtle Namespace]"));
+				reject(Error("Web Cryptography API not supported. [No Crypto.Subtle Namespace] 10"));
 			}
 			
 			SDSgLib_openPKCS8PrivateKey(cipheredKey,
@@ -451,7 +453,7 @@
 			} else if (crypto.subtle) { // all others
 				cryptoSubtle = crypto.subtle;
 			} else {
-				reject(Error("Web Cryptography API not supported. [No Crypto.Subtle Namespace]"));
+				reject(Error("Web Cryptography API not supported. [No Crypto.Subtle Namespace] 11"));
 			}
 
 			SDSgLib_openPKCS8PrivateKey(cipheredKey,

@@ -71,7 +71,10 @@ export class TableroDeRecepcionDeExpedientesComponent implements OnInit {
           if (this.optConsultar) {
               if (resp) {
                   for (const expediente of resp) {
-                      
+                    let cLegislatura = '';
+                    if(expediente.legislatura){
+                        cLegislatura = expediente.legislatura.cLegislatura
+                    }
                       expedientesTemp.push({
                           id: expediente.id,
                           idExpediente: expediente.idExpediente,
@@ -83,6 +86,7 @@ export class TableroDeRecepcionDeExpedientesComponent implements OnInit {
                           estatus: expediente.estatus,
                           notas: expediente.notas,
                           hora: expediente.hora,
+                          cLegislatura
                       });
                   }
               }
@@ -174,7 +178,7 @@ export class TableroDeRecepcionDeExpedientesComponent implements OnInit {
           d.notas.toLowerCase().indexOf(val) !== -1 || d.fechaRecepcionFormato.toLowerCase().indexOf(val) !== -1 || !val || 
 
           d.estatus.toLowerCase().indexOf(val) !== -1 || !val ||
-          d.legislatura.cLegislatura.toLowerCase().indexOf(val) !== -1);
+          d.cLegislatura.toLowerCase().indexOf(val) !== -1);
           this.recepcionExpedientes = temp;
       }
     }

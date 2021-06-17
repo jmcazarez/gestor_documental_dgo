@@ -1,4 +1,4 @@
-<ngx-spinner></ngx-spinner>
+<ngx-spinner type="timer"></ngx-spinner>
 <mat-drawer-container class="example-container">
 
     <mat-drawer *ngIf="this.documento.documento.ext === '.pdf'" mode="side" opened position="start" [style.width]="'55%'">
@@ -49,7 +49,8 @@
             <button *ngIf="this.documento.iniciativas" mat-raised-button color="warn" [matMenuTriggerFor]="menu">Documento</button>
 
             <mat-menu #menu="matMenu">
-                <button [disabled]="this.documento.formulario || this.autorizacionPendiente" mat-menu-item
+               
+                <button *ngIf="!this.autorizacionPendiente" [disabled]="this.documento.formulario || this.autorizacionPendiente" mat-menu-item
                     (click)="autorizar()">
                     <mat-icon>verified_user</mat-icon>
                     <span>Autorizar</span>
@@ -58,7 +59,7 @@
                   <mat-icon>cloud_download</mat-icon>
                   <span>Descargar</span>
                 </button>
-                <button [disabled]="this.documento.formulario || this.turnarDocumento" mat-menu-item (click)="turnarIniciativa()">
+                <button *ngIf="!this.turnarDocumento" [disabled]="this.documento.formulario || this.turnarDocumento" mat-menu-item (click)="turnarIniciativa()">
                     <mat-icon>keyboard_tab</mat-icon>
                     <span>Turnar</span>
                 </button>
