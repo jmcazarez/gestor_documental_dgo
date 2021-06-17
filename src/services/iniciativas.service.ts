@@ -7,7 +7,6 @@ import { IniciativasModel } from 'models/iniciativas.models';
     providedIn: 'root'
 })
 export class IniciativasService {
-
     private baseUrl: string;
     private urlIniciativas = 'iniciativas';
     private urlTipoIniciativas = 'tipo-iniciativas';
@@ -29,14 +28,16 @@ export class IniciativasService {
         };
     }
 
-    obtenerIniciativas(): any {
+     obtenerIniciativas(): any {
+        let usr = JSON.parse(localStorage.getItem('usr'));
+        console.log(usr[0].data.id);
         this.TOKEN = localStorage.getItem('token');
         let httpOptions = {
             headers: new HttpHeaders({
                 Authorization: this.TOKEN,
             }),
         }
-        return this.http.get(this.baseUrl + this.urlIniciativas, httpOptions);
+        return this.http.get(this.baseUrl + this.urlIniciativas + '/' + usr[0].data.id, httpOptions);
     }
 
     actualizarIniciativa(iniciativa: any): any {

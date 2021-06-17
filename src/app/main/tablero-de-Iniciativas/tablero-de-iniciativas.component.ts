@@ -191,6 +191,7 @@ export class TableroDeIniciativasComponent implements OnInit {
                         });
                     }
                 }
+                
                 this.iniciativas = iniciativasTemp;
                 this.iniciativasTemporal = this.iniciativas;
             }
