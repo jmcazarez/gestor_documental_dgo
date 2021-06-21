@@ -160,9 +160,10 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 }
             }
         } else {
-
+            this.turnarDocumento = true; // Pruebas Hilda
+            this.autorizacionPendiente = true;  // Pruebas Hilda
             autorizaciones = await this.obtenerAutorizacionPorDocumento();
-            console.log(autorizaciones);
+            
             // Bloqueamos el boton de autorizar si tiene autorizaciones pendientes por realizar.
             autorizaciones.forEach(element => {
 
