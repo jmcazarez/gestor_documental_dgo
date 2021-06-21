@@ -169,9 +169,9 @@ export class GuardarIniciativasComponent implements OnInit {
                 { value: this.iniciativa.estatus, disabled: true },
                 Validators.required,
             ],
-            autores: [""],
+            autores: ["", [ Validators.minLength(3), Validators.maxLength(200)]],
             etiquetasAutores: [{ value: "", disabled: false }],
-            tema: [""],
+            tema: ["", [ Validators.minLength(3), Validators.maxLength(200)]],
             etiquetasTema: [{ value: "", disabled: false }],
         });
     }
@@ -385,7 +385,7 @@ export class GuardarIniciativasComponent implements OnInit {
                         this.iniciativa = resp.data;
                         Swal.fire(
                             "Éxito",
-                            "Iniciativa actualizada correctamente.",
+                            "Iniciativa guardada correctamente.",
                             "success"
                         );
 
@@ -1234,6 +1234,7 @@ export class GuardarIniciativasComponent implements OnInit {
             },
         ];
         console.log(this.documentos);
+        delete this.documentos['tipo_de_documento'];
         this.documentoService
             .actualizarDocumentosSinVersion(this.documentos)
             .subscribe(

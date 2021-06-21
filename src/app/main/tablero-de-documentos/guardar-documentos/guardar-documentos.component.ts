@@ -186,7 +186,7 @@ export class GuardarDocumentosComponent implements OnInit {
             }
             this.documentos.fechaCreacion = moment(this.form.get('fechaCreacion').value).format('YYYY-MM-DD') + 'T16:00:00.000Z';
             this.documentos.fechaCarga = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
-
+            console.log(this.selectTipoDocument);
             this.documentos.tipo_de_documento = this.selectTipoDocument;
             
             let tipoDoc = this.arrTipoDocumentos.filter((tipo) => tipo.id === this.selectTipoDocument);
@@ -194,7 +194,7 @@ export class GuardarDocumentosComponent implements OnInit {
                 
                 this.documentos.visibilidade = tipoDoc[0]['visibilidade'];
             }
-        
+            console.log( this.documentos.tipo_de_documento);
             if (this.paginasInput.nativeElement.value > 0) {
                 this.documentos.paginas = this.paginasInput.nativeElement.value;
             }
@@ -250,6 +250,7 @@ export class GuardarDocumentosComponent implements OnInit {
                                 }
                             });
                         } else {
+                            this.documentos.tipo_de_documento = this.selectTipoDocument;
 
                             this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
 
@@ -278,8 +279,11 @@ export class GuardarDocumentosComponent implements OnInit {
                     }
                 } else {
                     // Seteamos version
+                   
+                    this.documentos.tipo_de_documento = this.selectTipoDocument;
                     this.documentos.version = 1;
                     this.documentos.usuario = this.menu.usuario;
+                    console.log(this.documentos);
                     // Guardamos documento
                     this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
 
