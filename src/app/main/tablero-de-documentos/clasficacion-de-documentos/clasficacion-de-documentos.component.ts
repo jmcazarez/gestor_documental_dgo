@@ -73,7 +73,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     turnarDocumento: boolean;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     meta: Metacatalogos[] = [];
-
+  
     // ---------- Tabla de Prueba - Trazabilidad
     hoy = [];
     ayer = [];

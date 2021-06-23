@@ -19,7 +19,7 @@ import { NgxSpinnerService } from "ngx-spinner";
 import { IniciativasService } from "services/iniciativas.service";
 import { IniciativasModel } from "models/iniciativas.models";
 import { MatChipInputEvent } from "@angular/material/chips";
-import { COMMA, ENTER } from "@angular/cdk/keycodes";
+import { COMMA, ENTER, M } from "@angular/cdk/keycodes";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs; // fonts provided for pdfmake
@@ -2399,6 +2399,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
             this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
             let cAutores = '';
+            let cTema = '';
             this.autores.forEach(element => {
                 if (cAutores === '') {
                     cAutores = element.name;
@@ -2408,6 +2409,13 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             });
 
+            this.temas.forEach((element) => {
+                if (cTema === "") {
+                    cTema = element.name;
+                } else {
+                    cTema = cTema + ", " + element.name;
+                }
+            });
             this.documentos = this.iniciativa.formatosTipoIniciativa[1];
             console.log(this.documentos);
             this.documentos.metacatalogos = [
@@ -2419,10 +2427,16 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     "text": this.documentos.fechaCarga
                 },
                 {
-                    "cDescripcionMetacatalogo": "Documento",
+                    "cDescripcionMetacatalogo": "Autores",
                     "bOligatorio": true,
                     "cTipoMetacatalogo": "Texto",
                     "text": cAutores
+                },
+                {
+                    "cDescripcionMetacatalogo": "Temas",
+                    "bOligatorio": true,
+                    "cTipoMetacatalogo": "Texto",
+                    "text": cTema
                 }
             ]
             this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
@@ -2486,6 +2500,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
             this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
             let cAutores = '';
+            let cTema = '';
             this.autores.forEach(element => {
                 if (cAutores === '') {
                     cAutores = element.name;
@@ -2494,7 +2509,13 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 }
 
             });
-
+            this.temas.forEach((element) => {
+                if (cTema === "") {
+                    cTema = element.name;
+                } else {
+                    cTema = cTema + ", " + element.name;
+                }
+            });
             this.documentos = this.iniciativa.formatosTipoIniciativa[2];
             console.log('turnada a secretaria general');
             console.log(this.documentos);
@@ -2507,10 +2528,16 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     "text": this.documentos.fechaCarga
                 },
                 {
-                    "cDescripcionMetacatalogo": "Documento",
+                    "cDescripcionMetacatalogo": "Autores",
                     "bOligatorio": true,
                     "cTipoMetacatalogo": "Texto",
                     "text": cAutores
+                },
+                {
+                    "cDescripcionMetacatalogo": "Temas",
+                    "bOligatorio": true,
+                    "cTipoMetacatalogo": "Texto",
+                    "text": cTema
                 }
             ]
             this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
@@ -2573,6 +2600,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
             this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
             let cAutores = '';
+            let cTema = '';
             this.autores.forEach(element => {
                 if (cAutores === '') {
                     cAutores = element.name;
@@ -2581,7 +2609,13 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 }
 
             });
-
+            this.temas.forEach((element) => {
+                if (cTema === "") {
+                    cTema = element.name;
+                } else {
+                    cTema = cTema + ", " + element.name;
+                }
+            });
             this.documentos = this.iniciativa.formatosTipoIniciativa[3];
             console.log('Turnar dictamen a secretaría de servicios parlamentarios');
             console.log(this.documentos);
@@ -2594,10 +2628,16 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     "text": this.documentos.fechaCarga
                 },
                 {
-                    "cDescripcionMetacatalogo": "Documento",
+                    "cDescripcionMetacatalogo": "Autores",
                     "bOligatorio": true,
                     "cTipoMetacatalogo": "Texto",
                     "text": cAutores
+                },
+                {
+                    "cDescripcionMetacatalogo": "Temas",
+                    "bOligatorio": true,
+                    "cTipoMetacatalogo": "Texto",
+                    "text": cTema
                 }
             ]
             this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
@@ -2661,6 +2701,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
             this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
             let cAutores = '';
+            let cTema = '';
             this.autores.forEach(element => {
                 if (cAutores === '') {
                     cAutores = element.name;
@@ -2668,6 +2709,14 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     cAutores = cAutores + ', ' + element.name;
                 }
 
+            });
+
+            this.temas.forEach((element) => {
+                if (cTema === "") {
+                    cTema = element.name;
+                } else {
+                    cTema = cTema + ", " + element.name;
+                }
             });
 
             this.documentos = this.iniciativa.formatosTipoIniciativa[2];
@@ -2682,10 +2731,16 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     "text": this.documentos.fechaCarga
                 },
                 {
-                    "cDescripcionMetacatalogo": "Documento",
+                    "cDescripcionMetacatalogo": "Autores",
                     "bOligatorio": true,
                     "cTipoMetacatalogo": "Texto",
                     "text": cAutores
+                },
+                {
+                    "cDescripcionMetacatalogo": "Temas",
+                    "bOligatorio": true,
+                    "cTipoMetacatalogo": "Texto",
+                    "text": cTema
                 }
             ]
             this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
@@ -2749,6 +2804,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
             this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
             let cAutores = '';
+            let cTema = '';
             this.autores.forEach(element => {
                 if (cAutores === '') {
                     cAutores = element.name;
@@ -2756,6 +2812,14 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     cAutores = cAutores + ', ' + element.name;
                 }
 
+            });
+
+            this.temas.forEach((element) => {
+                if (cTema === "") {
+                    cTema = element.name;
+                } else {
+                    cTema = cTema + ", " + element.name;
+                }
             });
 
             this.documentos = this.iniciativa.formatosTipoIniciativa[4];
@@ -2770,10 +2834,16 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     "text": this.documentos.fechaCarga
                 },
                 {
-                    "cDescripcionMetacatalogo": "Documento",
+                    "cDescripcionMetacatalogo": "Autores",
                     "bOligatorio": true,
                     "cTipoMetacatalogo": "Texto",
                     "text": cAutores
+                },
+                {
+                    "cDescripcionMetacatalogo": "Temas",
+                    "bOligatorio": true,
+                    "cTipoMetacatalogo": "Texto",
+                    "text": cTema
                 }
             ]
             this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
@@ -2838,6 +2908,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
             this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
             let cAutores = '';
+            let cTema = '';
             this.autores.forEach(element => {
                 if (cAutores === '') {
                     cAutores = element.name;
@@ -2845,6 +2916,14 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     cAutores = cAutores + ', ' + element.name;
                 }
 
+            });
+
+            this.temas.forEach((element) => {
+                if (cTema === "") {
+                    cTema = element.name;
+                } else {
+                    cTema = cTema + ", " + element.name;
+                }
             });
 
             this.documentos = this.iniciativa.formatosTipoIniciativa[3];
@@ -2859,10 +2938,16 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     "text": this.documentos.fechaCarga
                 },
                 {
-                    "cDescripcionMetacatalogo": "Documento",
+                    "cDescripcionMetacatalogo": "Autores",
                     "bOligatorio": true,
                     "cTipoMetacatalogo": "Texto",
                     "text": cAutores
+                },
+                {
+                    "cDescripcionMetacatalogo": "Temas",
+                    "bOligatorio": true,
+                    "cTipoMetacatalogo": "Texto",
+                    "text": cTema
                 }
             ]
             this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
@@ -3012,11 +3097,20 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
         this.documentos = result;
         let cAutores = "";
+        let cTema = "";
         this.autores.forEach((element) => {
             if (cAutores === "") {
                 cAutores = element.name;
             } else {
                 cAutores = cAutores + ", " + element.name;
+            }
+        });
+
+        this.temas.forEach((element) => {
+            if (cTema === "") {
+                cTema = element.name;
+            } else {
+                cTema = cTema + ", " + element.name;
             }
         });
         this.documentos.metacatalogos = [
@@ -3027,10 +3121,17 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 text: this.documentos.fechaCarga,
             },
             {
-                cDescripcionMetacatalogo: "Documento",
+                cDescripcionMetacatalogo: "Autores",
                 bOligatorio: true,
                 cTipoMetacatalogo: "Texto",
                 text: cAutores,
+            },
+
+            {
+                cDescripcionMetacatalogo: "Temas",
+                bOligatorio: true,
+                cTipoMetacatalogo: "Texto",
+                text: cTema,
             },
         ];
 

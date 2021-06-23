@@ -298,7 +298,7 @@
                 </div>
  -->
                 <form #formRef="ngForm">
-                    <div *ngFor="let meta of arrMetacatalogos; let in=index" class="col-sm-3">
+                    <div *ngFor="let meta of arrMetacatalogos; let in=index" class="col-sm-1">
                         <div class="form-group">
                             <div fxLayout="row" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Numérico'" fxLayoutAlign="start center" fxFlex="1 0 auto">
                                 <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
@@ -331,12 +331,15 @@
                                     </mat-slide-toggle>
                                 </section>
                             </div>
+                         
                             <!--<p [hidden]="words2[in].value">Field is required</p>
                           {{formRef.form.name1}}-->
                         </div>
+                   
                     </div>
-
+           
                 </form>
+                
             </form>
         </div>
 

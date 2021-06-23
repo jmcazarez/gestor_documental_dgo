@@ -41,7 +41,7 @@ export interface Temas {
     name: string;
 }
 
-export class Documentos{
+export class Documentos {
     id: string;
 }
 
@@ -169,14 +169,14 @@ export class GuardarIniciativasComponent implements OnInit {
                 { value: this.iniciativa.estatus, disabled: true },
                 Validators.required,
             ],
-            autores: ["", [ Validators.minLength(3), Validators.maxLength(200)]],
+            autores: ["", [Validators.minLength(3), Validators.maxLength(200)]],
             etiquetasAutores: [{ value: "", disabled: false }],
-            tema: ["", [ Validators.minLength(3), Validators.maxLength(200)]],
+            tema: ["", [Validators.minLength(3), Validators.maxLength(200)]],
             etiquetasTema: [{ value: "", disabled: false }],
         });
     }
 
-    async obtenerDocumento(){
+    async obtenerDocumento() {
         this.spinner.show();
         const documentosTemp: any[] = [];
         let idDocumento: any;
@@ -188,32 +188,33 @@ export class GuardarIniciativasComponent implements OnInit {
         this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
 
             // Buscamos permisos
-         
-
-                for (const documento of resp.data) {
-                    //                console.log(documento.tipo_de_documento.bActivo);
-                    idDocumento = '';
-                    // Validamos permisos
-
-                    if (documento.tipo_de_documento) {
-                        const encontro = this.menu.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento.id);
-
-                        if (documento.visibilidade) {
-                            info = this.menu.tipoInformacion.find((tipo: { id: string; }) => tipo.id === documento.visibilidade.id);
-                        }
-                        if (encontro) {
-                            if (documento.tipo_de_documento.bActivo && encontro.Consultar && info) {
-
-                                if (documento.documento) {
-
-                                    idDocumento = documento.documento.hash + documento.documento.ext;
 
 
+            for (const documento of resp.data) {
+                //                console.log(documento.tipo_de_documento.bActivo);
+                idDocumento = '';
+                // Validamos permisos
+
+                if (documento.tipo_de_documento) {
+                    const encontro = this.menu.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento.id);
+
+                    if (documento.visibilidade) {
+                        info = this.menu.tipoInformacion.find((tipo: { id: string; }) => tipo.id === documento.visibilidade.id);
+                    }
+                    if (encontro) {
+                        if (documento.tipo_de_documento.bActivo && encontro.Consultar && info) {
+
+                            if (documento.documento) {
+
+                                idDocumento = documento.documento.hash + documento.documento.ext;
+
+
+                                if (documento.metacatalogos) {
+                                    meta = '';
                                     if (documento.metacatalogos) {
-                                        meta = '';
-                                        if (documento.metacatalogos) {
-                                            for (const x of documento.metacatalogos) {
-
+                                        for (const x of documento.metacatalogos) {
+                                            console.log(documento.metacatalogos);
+                                            if (x) {
                                                 if (meta === '') {
 
                                                     if (x.cTipoMetacatalogo === 'Fecha') {
@@ -240,60 +241,61 @@ export class GuardarIniciativasComponent implements OnInit {
                                             }
                                         }
                                     }
-                                    visibilidad = '';
-                                    if (documento.visibilidade) {
-                                        visibilidad = documento.visibilidade.cDescripcionVisibilidad;
-                                    }
+                                }
+                                visibilidad = '';
+                                if (documento.visibilidade) {
+                                    visibilidad = documento.visibilidade.cDescripcionVisibilidad;
+                                }
 
-                                    if(documento.iniciativa === undefined || documento.iniciativa === null){
-                                        documento.iniciativa = '';
-                                    }else{
-                                    if(documento.iniciativa.id == this.iniciativa.id && documento.formulario == 'Iniciativas'){
-                                    // tslint:disable-next-line: no-unused-expression
-                                    // Seteamos valores y permisos
-                                    documentosTemp.push({
-                                        id: documento.id,
-                                        cNombreDocumento: documento.cNombreDocumento,
-                                        tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
-                                        tipo_de_documento: documento.tipo_de_documento.id,
-                                        fechaCarga: this.datePipe.transform(documento.fechaCarga, 'yyyy-MM-dd'),
-                                        fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
-                                        paginas: documento.paginas,
-                                        bActivo: documento.bActivo,
-                                        fechaModificacion: this.datePipe.transform(documento.updatedAt, 'yyyy-MM-dd'),
-                                        Agregar: encontro.Agregar,
-                                        Eliminar: encontro.Eliminar,
-                                        Editar: encontro.Editar,
-                                        Consultar: encontro.Consultar,
-                                        idDocumento: idDocumento,
-                                        version: parseFloat(documento.version).toFixed(1),
-                                        documento: documento.documento,
-                                        iniciativa: documento.iniciativa,
-                                        //ente: documento.ente,
-                                        // secretaria: documento.secretaria,
-                                        // direccione: documento.direccione,
-                                        // departamento: documento.departamento,
-                                        folioExpediente: documento.folioExpediente,
-                                        clasificacion: meta,
-                                        metacatalogos: documento.metacatalogos,
-                                        informacion: visibilidad,
-                                        visibilidade: documento.visibilidade,
-                                        tipo_de_expediente: documento.tipo_de_expediente,
-                                        usuario: this.menu.usuario
-                                    });
+                                if (documento.iniciativa === undefined || documento.iniciativa === null) {
+                                    documento.iniciativa = '';
+                                } else {
+                                    if (documento.iniciativa.id == this.iniciativa.id && documento.formulario == 'Iniciativas') {
+                                        // tslint:disable-next-line: no-unused-expression
+                                        // Seteamos valores y permisos
+                                        documentosTemp.push({
+                                            id: documento.id,
+                                            cNombreDocumento: documento.cNombreDocumento,
+                                            tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
+                                            tipo_de_documento: documento.tipo_de_documento.id,
+                                            fechaCarga: this.datePipe.transform(documento.fechaCarga, 'yyyy-MM-dd'),
+                                            fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
+                                            paginas: documento.paginas,
+                                            bActivo: documento.bActivo,
+                                            fechaModificacion: this.datePipe.transform(documento.updatedAt, 'yyyy-MM-dd'),
+                                            Agregar: encontro.Agregar,
+                                            Eliminar: encontro.Eliminar,
+                                            Editar: encontro.Editar,
+                                            Consultar: encontro.Consultar,
+                                            idDocumento: idDocumento,
+                                            version: parseFloat(documento.version).toFixed(1),
+                                            documento: documento.documento,
+                                            iniciativa: documento.iniciativa,
+                                            //ente: documento.ente,
+                                            // secretaria: documento.secretaria,
+                                            // direccione: documento.direccione,
+                                            // departamento: documento.departamento,
+                                            folioExpediente: documento.folioExpediente,
+                                            clasificacion: meta,
+                                            metacatalogos: documento.metacatalogos,
+                                            informacion: visibilidad,
+                                            visibilidade: documento.visibilidade,
+                                            tipo_de_expediente: documento.tipo_de_expediente,
+                                            usuario: this.menu.usuario
+                                        });
+                                    }
                                 }
-                            }
-                                    meta = '';
-                                }
+                                meta = '';
                             }
                         }
                     }
                 }
-                this.files = documentosTemp;
-                this.fileCheck = documentosTemp;
-                this.filesTemp = this.files;
-                console.log(this.files);
-            
+            }
+            this.files = documentosTemp;
+            this.fileCheck = documentosTemp;
+            this.filesTemp = this.files;
+            console.log(this.files);
+
             this.loadingIndicator = false;
             this.spinner.hide();
         }, err => {
@@ -542,7 +544,7 @@ export class GuardarIniciativasComponent implements OnInit {
             this.files = temp;
         }
     }
-    
+
     async obtenerLegislatura(): Promise<void> {
 
         return new Promise((resolve) => {
@@ -873,9 +875,9 @@ export class GuardarIniciativasComponent implements OnInit {
                     ],
                 },
                 footer: {
-                    columns: [ 
+                    columns: [
                         '',
-                        { 
+                        {
                             alignment: 'right',
                             text: 'Id. Documento: ' + this.idDocumento
                         }
@@ -1039,48 +1041,48 @@ export class GuardarIniciativasComponent implements OnInit {
             console.log(this.iniciativa.formatosTipoIniciativa);
             if (this.iniciativa.formatosTipoIniciativa.length > 0 || this.idDocumento.length > 5) {
 
-                if(this.idDocumento.length > 5){
+                if (this.idDocumento.length > 5) {
                     console.log('despues');
                     this.documentos.id = this.idDocumento;
                     console.log(this.documentos.id);
-                }else{
+                } else {
                     this.documentos.id = this.iniciativa.formatosTipoIniciativa[0].id;
                 }
 
                 console.log(this.documentos);
 
                 this.documentoService.actualizarDocumentos(this.documentos).subscribe(
-                        (resp: any) => {
-                            if (resp.data) {
-                                this.documentos = resp.data;
-                                console.log('respuesta');
-                                console.log(resp.data.id);
-                                this.idDocumento = resp.data._id;
-                                
-                                this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0]];
-                                
-                                resolve(this.documentos.id);
-                            } else {
-                                this.spinner.hide();
-                                Swal.fire(
-                                    "Error",
-                                    "Ocurrió un error al guardar. " +
-                                    JSON.stringify(resp.error.data),
-                                    "error"
-                                );
-                            }
-                        },
-                        (err: any) => {
+                    (resp: any) => {
+                        if (resp.data) {
+                            this.documentos = resp.data;
+                            console.log('respuesta');
+                            console.log(resp.data.id);
+                            this.idDocumento = resp.data._id;
+
+                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0]];
+
+                            resolve(this.documentos.id);
+                        } else {
                             this.spinner.hide();
-                            console.log(err);
                             Swal.fire(
                                 "Error",
-                                "Ocurrió un error al guardar." +
-                                JSON.stringify(err.error.data),
+                                "Ocurrió un error al guardar. " +
+                                JSON.stringify(resp.error.data),
                                 "error"
                             );
                         }
-                    );
+                    },
+                    (err: any) => {
+                        this.spinner.hide();
+                        console.log(err);
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al guardar." +
+                            JSON.stringify(err.error.data),
+                            "error"
+                        );
+                    }
+                );
             } else {
                 this.documentoService
                     .guardarDocumentos(this.documentos)
@@ -1100,7 +1102,7 @@ export class GuardarIniciativasComponent implements OnInit {
                                     this.documentos.fechaCreacion,
                                     "yyyy-MM-dd"
                                 );
-                                
+
                                 this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0]];
 
                                 resolve(this.documentos.id);
@@ -1164,20 +1166,20 @@ export class GuardarIniciativasComponent implements OnInit {
 
         this.spinner.hide();
 
-            const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
-                width: '60%',
-                height: '80%',
-                disableClose: true,
-                data: this.documentos,
-            });
-    
-            dialogRef.afterClosed().subscribe(result => {
-                if (result) {
-                    if (result.documento) {
-                        this.clasificarDocAnex(result);
-                    }
+        const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
+            width: '60%',
+            height: '80%',
+            disableClose: true,
+            data: this.documentos,
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                if (result.documento) {
+                    this.clasificarDocAnex(result);
                 }
-            });
+            }
+        });
     }
 
     clasificarDocAnex(result: any): void {
@@ -1196,9 +1198,9 @@ export class GuardarIniciativasComponent implements OnInit {
         }
         const fechaActual = dia + "/" + mes + "/" + anio;
         this.documentos.bActivo = true;
-        console.log( this.documentos);
-        this.documentos.fechaCreacion =  this.documentos.fechaCreacion + 'T16:00:00.000Z';
-        this.documentos.fechaCarga =  this.documentos.fechaCarga + 'T16:00:00.000Z';
+        console.log('clasifi');
+        this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
+        this.documentos.fechaCarga = this.documentos.fechaCarga + 'T16:00:00.000Z';
 
         this.documentos = result;
         console.log(this.documentos);
@@ -1227,13 +1229,20 @@ export class GuardarIniciativasComponent implements OnInit {
                 text: this.documentos.fechaCarga,
             },
             {
-                cDescripcionMetacatalogo: "Documento",
+                cDescripcionMetacatalogo: "Autores",
                 bOligatorio: true,
                 cTipoMetacatalogo: "Texto",
                 text: cAutores,
+            },           
+            {
+                cDescripcionMetacatalogo: "Temas",
+                bOligatorio: true,
+                cTipoMetacatalogo: "Texto",
+                text: cTema,
             },
         ];
-        console.log(this.documentos);
+
+        console.log(this.documentos.metacatalogos);
         delete this.documentos['tipo_de_documento'];
         this.documentoService
             .actualizarDocumentosSinVersion(this.documentos)
@@ -1256,7 +1265,7 @@ export class GuardarIniciativasComponent implements OnInit {
                                 "Turnar iniciativa a comisión";
                         } else {
                             this.documentosTemp.estatus =
-                            "Turnar cuenta pública a EASE";
+                                "Turnar cuenta pública a EASE";
                         }
 
                         //this.documentosTemp.fechaCreacion = fechaActual;
@@ -1276,10 +1285,10 @@ export class GuardarIniciativasComponent implements OnInit {
 
                         // tslint:disable-next-line: no-shadowed-variable
                         dialogRef.afterClosed().subscribe((result) => {
-                            
-                        /*asignamos valores a iniciativa.documentos debido a que al
-                        iniciar el componente inicia como [] y al guardar asi se desasignan
-                        los documentos*/
+
+                            /*asignamos valores a iniciativa.documentos debido a que al
+                            iniciar el componente inicia como [] y al guardar asi se desasignan
+                            los documentos*/
 
                             this.iniciativa.documentos.push(this.documentos.id);
                             //this.iniciativa.documentos = [this.documentos.id];
@@ -1328,7 +1337,7 @@ export class GuardarIniciativasComponent implements OnInit {
             }
         });
     }
-    
+
 
     clasificarDocumento(): void {
         this.spinner.show();
@@ -1346,17 +1355,25 @@ export class GuardarIniciativasComponent implements OnInit {
         }
         const fechaActual = dia + "/" + mes + "/" + anio;
         this.documentos.bActivo = true;
-        console.log( this.documentos);
-        this.documentos.fechaCreacion =  this.documentos.fechaCreacion + 'T16:00:00.000Z';
-        this.documentos.fechaCarga =  this.documentos.fechaCreacion + 'T16:00:00.000Z';
+        console.log(this.documentos);
+        this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
+        this.documentos.fechaCarga = this.documentos.fechaCreacion + 'T16:00:00.000Z';
 
         console.log(this.documentos);
         let cAutores = "";
+        let cTema = "";
         this.autores.forEach((element) => {
             if (cAutores === "") {
                 cAutores = element.name;
             } else {
                 cAutores = cAutores + ", " + element.name;
+            }
+        });
+        this.temas.forEach((element) => {
+            if (cTema === "") {
+                cTema = element.name;
+            } else {
+                cTema = cTema + ", " + element.name;
             }
         });
         this.documentos = this.iniciativa.formatosTipoIniciativa[0];
@@ -1368,13 +1385,18 @@ export class GuardarIniciativasComponent implements OnInit {
                 text: this.documentos.fechaCarga,
             },
             {
-                cDescripcionMetacatalogo: "Documento",
+                cDescripcionMetacatalogo: "Autores",
                 bOligatorio: true,
                 cTipoMetacatalogo: "Texto",
                 text: cAutores,
             },
+            {
+                cDescripcionMetacatalogo: "Temas",
+                bOligatorio: true,
+                cTipoMetacatalogo: "Texto",
+                text: cTema,
+            },
         ];
-        console.log(this.documentos);
         this.documentoService
             .actualizarDocumentosSinVersion(this.documentos)
             .subscribe(
@@ -1393,7 +1415,7 @@ export class GuardarIniciativasComponent implements OnInit {
                         ) {
                             this.documentosTemp.estatus =
                                 "Turnar iniciativa a comisión";
-                        } if(this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública') {
+                        } if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública') {
                             this.documentosTemp.estatus = "Turnar cuenta pública a EASE";
                         }
 
