@@ -73,7 +73,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     turnarDocumento: boolean;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     meta: Metacatalogos[] = [];
-  
+
     // ---------- Tabla de Prueba - Trazabilidad
     hoy = [];
     ayer = [];
@@ -117,7 +117,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     async ngOnInit(): Promise<void> {
         this.pdfSrc = '';
         this.autorizacionPendiente = false;
-        this.turnarDocumento = true;
+        this.turnarDocumento = false;
         this.spinner.show();
         let autorizaciones: any;
         this.documento.usuario = this.menuService.usuario;
@@ -160,10 +160,13 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 }
             }
         } else {
-            this.turnarDocumento = true; // Pruebas Hilda
-            this.autorizacionPendiente = true;  // Pruebas Hilda
+            console.log(this.documento.formulario);
+            if (!this.documento.formulario) {
+                this.turnarDocumento = true; // Pruebas Hilda
+                this.autorizacionPendiente = false;  // Pruebas Hilda
+            }
             autorizaciones = await this.obtenerAutorizacionPorDocumento();
-            
+
             // Bloqueamos el boton de autorizar si tiene autorizaciones pendientes por realizar.
             autorizaciones.forEach(element => {
 

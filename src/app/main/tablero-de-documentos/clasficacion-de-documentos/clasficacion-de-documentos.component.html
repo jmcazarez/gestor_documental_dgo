@@ -50,7 +50,7 @@
 
             <mat-menu #menu="matMenu">
                
-                <button *ngIf="!this.autorizacionPendiente" [disabled]="this.documento.formulario || this.autorizacionPendiente" mat-menu-item
+                <button *ngIf="this.autorizacionPendiente" [disabled]="!this.autorizacionPendiente" mat-menu-item
                     (click)="autorizar()">
                     <mat-icon>verified_user</mat-icon>
                     <span>Autorizar</span>
@@ -59,7 +59,7 @@
                   <mat-icon>cloud_download</mat-icon>
                   <span>Descargar</span>
                 </button>
-                <button *ngIf="!this.turnarDocumento" [disabled]="this.documento.formulario || this.turnarDocumento" mat-menu-item (click)="turnarIniciativa()">
+                <button *ngIf="this.turnarDocumento" [disabled]="!this.turnarDocumento" mat-menu-item (click)="turnarIniciativa()">
                     <mat-icon>keyboard_tab</mat-icon>
                     <span>Turnar</span>
                 </button>

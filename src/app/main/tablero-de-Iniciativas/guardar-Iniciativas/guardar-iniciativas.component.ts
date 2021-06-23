@@ -213,7 +213,6 @@ export class GuardarIniciativasComponent implements OnInit {
                                     meta = '';
                                     if (documento.metacatalogos) {
                                         for (const x of documento.metacatalogos) {
-                                            console.log(documento.metacatalogos);
                                             if (x) {
                                                 if (meta === '') {
 
@@ -1242,7 +1241,6 @@ export class GuardarIniciativasComponent implements OnInit {
             },
         ];
 
-        console.log(this.documentos.metacatalogos);
         delete this.documentos['tipo_de_documento'];
         this.documentoService
             .actualizarDocumentosSinVersion(this.documentos)
