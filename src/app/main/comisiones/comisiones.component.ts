@@ -38,6 +38,7 @@ export class ComisionesComponent implements OnInit {
     obtenerComisiones(): void {
         this.spinner.show();
         this.loadingIndicator = true;
+        this.comisiones = [];
         this.filterName = '';
         // Obtenemos los documentos
         this.comisionesService.obtenerComisiones().subscribe((resp: any) => {

@@ -187,7 +187,8 @@ export class TableroDeIniciativasComponent implements OnInit {
                             sustentoDeModificacion: ini.sustentoDeModificacion,
                             motivoDeSuspension: ini.motivoDeSuspension,
                             fechaPublicacion: ini.fechaPublicacion,
-                            periodicoOficial: ini.periodicoOficial
+                            periodicoOficial: ini.periodicoOficial,
+                            folioExpediente: ini.folioExpediente
                         });
                     }
                 }

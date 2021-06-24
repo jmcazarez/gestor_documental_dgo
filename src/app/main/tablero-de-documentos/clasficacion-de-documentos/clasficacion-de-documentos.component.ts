@@ -55,6 +55,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     arrExpediente: any[];
     arrLegislaturas: any[];
     selectedExpediente: "";
+    selectedFolioExpediente: number = 0;
     visible = true;
     selectable = true;
     removable = true;
@@ -115,6 +116,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
+        this.disableFolioExpediente = false;
         this.pdfSrc = '';
         this.autorizacionPendiente = false;
         this.turnarDocumento = false;
@@ -128,7 +130,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         let folioExpedienteRequerido = [];
         await this.obtenerLegislaturas();
         await this.obtenerTiposExpedientes();
-
         if (!this.documento.iniciativas) {
             if (this.documento.tipo_de_documento.id) {
                 this.trazabilidad = false;
@@ -160,10 +161,13 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 }
             }
         } else {
-            console.log(this.documento.formulario);
             if (!this.documento.formulario) {
                 this.turnarDocumento = true; // Pruebas Hilda
                 this.autorizacionPendiente = false;  // Pruebas Hilda
+            }
+
+            if (this.documento.iniciativa) {
+                this.disableFolioExpediente = true;
             }
             autorizaciones = await this.obtenerAutorizacionPorDocumento();
 
@@ -211,6 +215,9 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             if (this.documento.metacatalogos) {
                 // this.arrMetacatalogos = this.documento.metacatalogos;
                 // tslint:disable-next-line: forin
+                if (this.documento.iniciativa) {
+                    this.disableFolioExpediente = true;
+                }
                 for (const i in this.arrMetacatalogos) {
                     this.arrMetacatalogos[i].text = "";
                     const filtro = this.documento.metacatalogos.find(
@@ -259,15 +266,8 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             cLegislatura = this.documento.legislatura.id;
         }
 
-        if (this.documento.folioExpediente == "") {
-            this.selectedLegislaturas = this.documento.legislatura.id;
-        } else {
-            cFolioExpediente = this.documento.folioExpediente;
-        }
 
-        if (this.documento.formulario || this.documento.disabled) {
-            this.disableFolioExpediente = true;
-        }
+        this.selectedFolioExpediente = this.documento.folioExpediente;
 
         if (this.documento.tipo_de_documento) {
             this.descriptionTipoDocumento = this.documento.tipo_de_documento.cDescripcionTipoDocumento;
@@ -276,8 +276,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             }
 
         }
-
-
 
         this.form = this.formBuilder.group({
             // entes: [{ value: this.documento.ente, disabled: this.documento.disabled }],
@@ -305,13 +303,18 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 },
                 folioExpedienteRequerido,
             ],
+            folioExpediente2: [
+                {
+                    value: 'hola'
+                }
+            ],
             informacion: [{ value: this.documento.visibilidade.cDescripcionVisibilidad, disabled: this.documento.disabled }, [Validators.required]]
             //   imagen        : [this.usuario.cPassword,[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
         });
 
+
         // Obtenemos las entes
         // await this.obtenerEntes();
-
         this.documento.fechaCarga = this.documento.fechaCarga.replace(
             "T16:00:00.000Z",
             ""
@@ -362,31 +365,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         this.form.get("legislatura").valueChanges.subscribe((val) => {
             if (val) {
                 if (val.length > 0) {
-                    if (this.arrLegislaturas) {
-                        if (cLegislatura == val) {
-                            this.form.controls["folioExpediente"].setValue(
-                                cFolioExpediente
-                            );
-                        } else {
 
-                            if (
-                                this.documento.formulario ||
-                                this.documento.disabled
-                            ) {
-                                let arrFolioExpediente = this.arrLegislaturas.filter(
-                                    (item) => item["id"] === val
-                                );
-
-                                this.form.controls["folioExpediente"].setValue(
-                                    arrFolioExpediente[0].cLegislatura +
-                                    "-" +
-                                    Number(
-                                        arrFolioExpediente[0].documentos + 1
-                                    )
-                                );
-                            }
-                        }
-                    }
                 }
             }
         });
@@ -409,6 +388,11 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         } else {
             await this.descargarDocumento();
         }
+
+        this.form.controls["folioExpediente2"].setValue(
+            'hola'
+        );
+
         this.spinner.hide();
     }
 

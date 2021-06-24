@@ -169,6 +169,20 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
+
+                        <div class="select">
+                            <p class="tag">Legislatura</p>
+                            <mat-form-field appearance="fill" class="input">
+                                <mat-label>Seleccionar</mat-label>
+                                <mat-select formControlName="legislatura" [(ngModel)]="selectedLegislatura"
+                                    name="legislatura">
+                                    <mat-option *ngFor="let legislatura of arrLegislaturas" [value]="legislatura.id">
+                                        {{legislatura.cLegislatura}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+
                         <div class="select">
                             <p class="tag">Folio de expediente</p>
                             <mat-form-field appearance="fill" class="input">
@@ -181,7 +195,8 @@
                             <mat-form-field appearance="fill" class="input">
                                 <input matInput placeholder="Texto en documento" minlength="4"
                                     formControlName="textoDocumento" [(ngModel)]="selectedTextoDocumento">
-                                <mat-error>El texto en el filtrado de documentos tiene que ser mayor a 3 caracteres.</mat-error>
+                                <mat-error>El texto en el filtrado de documentos tiene que ser mayor a 3 caracteres.
+                                </mat-error>
                             </mat-form-field>
                         </div>
                         <br>
@@ -214,7 +229,7 @@
                                             <input *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Fecha'" matInput
                                                 [(ngModel)]="meta.text"
                                                 name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}"
-                                                [matDatepicker]="picker2" >
+                                                [matDatepicker]="picker2">
                                             <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                                             <mat-datepicker #picker2></mat-datepicker>
                                         </mat-form-field>
@@ -263,7 +278,8 @@
                             <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
                             <ngx-datatable-column name="Tipo de información" prop="informacion"></ngx-datatable-column>
                             <ngx-datatable-column name="Páginas" prop="paginas" [width]="100"></ngx-datatable-column>
-                            <ngx-datatable-column name="Fecha de creación" prop="fechaCreacionView"></ngx-datatable-column>
+                            <ngx-datatable-column name="Fecha de creación" prop="fechaCreacionView">
+                            </ngx-datatable-column>
                             <ngx-datatable-column name="Fecha de carga" prop="fechaCargaView"></ngx-datatable-column>
                             <ngx-datatable-column name="Fecha de modificación" prop="fechaModificacionView">
                             </ngx-datatable-column>
@@ -273,6 +289,8 @@
                             <!--<ngx-datatable-column name="Tipo de expediente"
                                 prop="tipo_de_expediente.cDescripcionTipoExpediente"></ngx-datatable-column>
                                 -->
+                            <ngx-datatable-column name="Legislatura" prop="legislatura.cLegislatura">
+                            </ngx-datatable-column>
                             <ngx-datatable-column name="Folio de expediente" prop="folioExpediente">
                             </ngx-datatable-column>
                             <ngx-datatable-column name="Estatus" sortable="false" [width]="100">
@@ -332,5 +350,5 @@
             </form>
         </mat-step>
     </mat-vertical-stepper>
-  
+
 </div>

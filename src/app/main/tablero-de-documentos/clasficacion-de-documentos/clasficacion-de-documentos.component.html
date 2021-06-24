@@ -277,8 +277,9 @@
                 <div fxLayout="row" *ngIf="this.descriptionTipoDocumento !== 'Acta'" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
                         <mat-label>Folio de expediente *</mat-label>
-                        <input matInput formControlName="folioExpediente" name="folioExpediente">
+                        <input matInput formControlName="folioExpediente" type="number"  [(ngModel)]="this.selectedFolioExpediente" pattern="[0-9]+" name="folioExpediente" [disabled]="disableFolioExpediente">
                         <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
+                        <mat-error>El folio de expediente invalido</mat-error>
                     </mat-form-field>
                 </div>
                 <!-- 

@@ -1913,8 +1913,9 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             if (this.documentosGuardar.legislatura != legislatura.id) {
                 this.documentosGuardar.legislatura = legislatura.id;
                 //Cambiado legislatura.documentosGuardar por legislatura.documentos para que muestre el numero del folio.
-                this.documentosGuardar.folioExpediente = legislatura.cLegislatura + '-' + Number(legislatura.documentos + 1);
+              
             }
+            this.documentos.folioExpediente = this.iniciativa.folioExpediente;
             console.log('guardando documento');
             console.log(this.documentosGuardar);
             if (this.iniciativa.formatosTipoIniciativa.length > 1) {
@@ -2003,7 +2004,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             if (this.documentos.legislatura != legislatura.id) {
                 this.documentos.legislatura = legislatura.id;
-                this.documentos.folioExpediente = legislatura.cLegislatura + '-' + Number(legislatura.documentos + 1);
+                this.documentos.folioExpediente = this.iniciativa.folioExpediente;
             }
 
             if (this.iniciativa.formatosTipoIniciativa.length > 2) {
@@ -2092,7 +2093,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             if (this.documentos.legislatura != legislatura.id) {
                 this.documentos.legislatura = legislatura.id;
-                this.documentos.folioExpediente = legislatura.cLegislatura + '-' + Number(legislatura.documentos + 1);
+                this.documentos.folioExpediente = this.iniciativa.folioExpediente;
             }
 
             if(this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa'){
@@ -2246,7 +2247,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             if (this.documentos.legislatura != legislatura.id) {
                 this.documentos.legislatura = legislatura.id;
-                this.documentos.folioExpediente = legislatura.cLegislatura + '-' + Number(legislatura.documentos + 1);
+                this.documentos.folioExpediente = this.iniciativa.folioExpediente;
             }
 
             if(this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa'){
@@ -3052,7 +3053,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         legislaturaFolio = this.legislatura.filter(d => d.id === this.selectedLegislatura);
         console.log(this.documentos);
         this.documentos.legislatura = legislaturaFolio[0].id;
-        this.documentos.folioExpediente = legislaturaFolio[0].cLegislatura + '-' + Number(legislaturaFolio[0].documentos + 1);
+        this.documentos.folioExpediente = this.iniciativa.folioExpediente;
 
         this.spinner.hide();
 

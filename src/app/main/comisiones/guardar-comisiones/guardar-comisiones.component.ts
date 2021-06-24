@@ -64,11 +64,7 @@ export class GuardarComisionesComponent implements OnInit {
         // Form reactivo
 
         console.log(this.comision.detalle_participantes_comisions);
-        await this.obtenerLegislaturas();
-        await this.obtenerPartidos();
-        await this.obtenerTipoComisiones();
-        await this.obtenerDetallesComision();
-
+    
         if (this.comision.activo === undefined) {
             this.comision.activo = true;
         }
@@ -81,7 +77,13 @@ export class GuardarComisionesComponent implements OnInit {
             tipoComision: [{ value: this.comision.tipos_comisione, disabled: false }, [Validators.required]],
             estatus: this.comision.activo,
         });
-     
+
+        await this.obtenerLegislaturas();
+        await this.obtenerPartidos();
+        await this.obtenerTipoComisiones();
+        await this.obtenerDetallesComision();
+
+
     }
 
     async obtenerDetallesComision(): Promise<void> {
@@ -112,7 +114,7 @@ export class GuardarComisionesComponent implements OnInit {
                         const partido = this.arrPartidos.find(meta => meta.id == detalleComision.presidente[0].partidos_politico);
                         const partidoVice = this.arrPartidos.find(meta => meta.id == detalleComision.vicepresidente[0].partidos_politico);
 
-                        if(detalleComision.legislatura == null|| detalleComision.legislatura == undefined){
+                        if (detalleComision.legislatura == null || detalleComision.legislatura == undefined) {
                             legislaturaId = 'N/A'
                             legislatura = 'N/A';
                         } else {
@@ -181,7 +183,7 @@ export class GuardarComisionesComponent implements OnInit {
     async guardar(): Promise<void> {
 
         if (this.detalles.length === 0) {
-            Swal.fire('Error', 'Es necesario capturar los participantes para poder guardar la comisión.' , 'error');
+            Swal.fire('Error', 'Es necesario capturar los participantes para poder guardar la comisión.', 'error');
         } else {
             this.spinner.show();
             // Asignamos valores a objeto
@@ -306,7 +308,7 @@ export class GuardarComisionesComponent implements OnInit {
         this.spinner.show();
         this.filterName = '';
         await this.comsionesService.obtenerTipoComisiones().subscribe((resp: any) => {
-           
+
             this.arrTipoComision = resp;
             this.spinner.hide();
         }, err => {
@@ -351,14 +353,20 @@ export class GuardarComisionesComponent implements OnInit {
     }
 
     async obtenerPartidos(): Promise<void> {
-        // Obtenemos Partidos Politicos
-        this.spinner.show();
-        await this.partidoPoliticoService.obtenerPartidoPolitico().subscribe((resp: any) => {
-            this.arrPartidos = resp;
-            this.spinner.hide();
-        }, err => {
-            Swal.fire('Error', 'Ocurrió un error obtener los partidos politicos.' + err, 'error');
-            this.spinner.hide();
+        return new Promise(async (resolve) => {
+            {
+                // Obtenemos Partidos Politicos
+                this.spinner.show();
+                await this.partidoPoliticoService.obtenerPartidoPolitico().subscribe((resp: any) => {
+                    this.arrPartidos = resp;
+                    resolve(resp)
+                    this.spinner.hide();
+                }, err => {
+                    Swal.fire('Error', 'Ocurrió un error obtener los partidos politicos.' + err, 'error');
+                    resolve(err)
+                    this.spinner.hide();
+                });
+            }
         });
     }
 

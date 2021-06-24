@@ -13,6 +13,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsuariosService } from 'services/usuarios.service';
 import { TipoExpedientesService } from 'services/tipo-expedientes.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { LegislaturaService } from 'services/legislaturas.service';
 
 @Component({
     selector: 'app-tablero-de-búsqueda',
@@ -32,6 +33,8 @@ export class TableroDeBusquedaComponent implements OnInit {
     documentosTemporal = [];
     optAgregar: boolean;
     optConsultar: boolean;
+    arrLegislaturas;
+    selectedLegislatura = '';
     optEditar: boolean;
     optEliminar: boolean;
     fileBase64: any;
@@ -58,6 +61,7 @@ export class TableroDeBusquedaComponent implements OnInit {
     constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe,
         private usuariosService: UsuariosService,
         private router: Router,
+        private legislaturaService: LegislaturaService,
         public dialog: MatDialog,
         private documentoService: DocumentosService,
         private menuService: MenuService,
@@ -67,15 +71,14 @@ export class TableroDeBusquedaComponent implements OnInit {
         this.url = 'tablero-de-búsqueda';
         // this.url = this.router.routerState.snapshot.url.replace('/', '').replace('%C3%BA', 'ú');
         // Obtenemos documentos
-        this.obtenerDocumentos();
+      
     }
 
     async ngOnInit(): Promise<void> {
         this.pdfBase64 = '';
         this.spinner.show();
         // await this.obtenerEntes();
-        await this.obtenerTiposExpedientes();
-     
+        
         for (const documentosAgregar of this.menuService.tipoDocumentos) {
 
             // Si tiene permisos de agregar estos documentos los guardamos en una array
@@ -102,6 +105,7 @@ export class TableroDeBusquedaComponent implements OnInit {
             tipoDocumentos: [''],
             entes: [''],
             expediente: [''],
+            legislatura: [''],
             folioExpediente: [''],
             textoDocumento: ['']
         });
@@ -109,8 +113,10 @@ export class TableroDeBusquedaComponent implements OnInit {
             secondCtrl: ['', Validators.required],
             documento: ['', Validators.required],
         });
-
-
+        await this.obtenerDocumentos();
+        await this.obtenerLegislaturas();
+        await this.obtenerTiposExpedientes();
+     
         this.firstFormGroup.get('tipoDocumentos').valueChanges.subscribe(val => {
             this.arrMetacatalogos = [];
             if (val) {
@@ -203,7 +209,7 @@ export class TableroDeBusquedaComponent implements OnInit {
             // Si tiene permisos para consultar
             if (this.optConsultar) {
                 for (const documento of resp.data) {
-
+                    let idIniciativa = '';
                     idDocumento = '';
                     // Validamos permisos
                     if (documento.tipo_de_documento) {
@@ -267,7 +273,9 @@ export class TableroDeBusquedaComponent implements OnInit {
 
                                         idExpediente = documento.tipo_de_expediente.id;
                                     }
-
+                                    if(documento.legislatura){
+                                        idIniciativa = documento.legislatura.id;
+                                    }
                                     
                                     // tslint:disable-next-line: no-unused-expression
                                     // Seteamos valores y permisos
@@ -304,7 +312,8 @@ export class TableroDeBusquedaComponent implements OnInit {
                                         idEnte,
                                         tipo_de_expediente: documento.tipo_de_expediente,
                                         idExpediente,
-                                        legislatura: documento.legislatura
+                                        legislatura: documento.legislatura,
+                                        legislaturaid: idIniciativa,
                                     });
 
                                     meta = '';
@@ -608,7 +617,12 @@ export class TableroDeBusquedaComponent implements OnInit {
                         temp = this.documentos.filter((d) => d.idExpediente === this.selectedExpediente);
                         this.documentos = temp;
                     }
-
+                    if (this.selectedLegislatura !== '' && this.selectedLegislatura !== undefined && this.selectedLegislatura !== null) {
+                        
+                        temp = this.documentos.filter((d) => d.legislaturaid !== undefined && d.legislaturaid !== null && d.legislaturaid !== '' );
+                        temp = temp.filter((d) => d.legislaturaid.toString() === this.selectedLegislatura);
+                        this.documentos = temp;
+                    }
                     if (this.selectedFolioExpediente !== '' && this.selectedFolioExpediente !== undefined && this.selectedFolioExpediente !== null) {
                         temp = this.documentos.filter((d) => d.folioExpediente !== undefined && d.folioExpediente !== null && d.folioExpediente !== '' );
                         temp = temp.filter((d) => d.folioExpediente.toString() === this.selectedFolioExpediente);
@@ -712,6 +726,13 @@ export class TableroDeBusquedaComponent implements OnInit {
                 this.documentos = temp;
             }
 
+            if (this.selectedLegislatura !== '' && this.selectedLegislatura !== undefined && this.selectedLegislatura !== null) {
+                        
+                temp = this.documentos.filter((d) => d.legislaturaid !== undefined && d.legislaturaid !== null && d.legislaturaid !== '' );
+                temp = temp.filter((d) => d.legislaturaid.toString() === this.selectedLegislatura);
+                this.documentos = temp;
+            }
+
             if (this.selectedFolioExpediente !== '' && this.selectedFolioExpediente !== undefined && this.selectedFolioExpediente !== null) {
                
                 temp = this.documentos.filter((d) => d.folioExpediente !== undefined && d.folioExpediente !== null && d.folioExpediente !== '' );
@@ -743,13 +764,30 @@ export class TableroDeBusquedaComponent implements OnInit {
         this.selectedEntes = '';
         this.selectedExpediente = '';
         this.selectedFolioExpediente = '';
+        this.selectedLegislatura = '';
         this.arrMetacatalogos = [];
         this.arrDocumentosTexto = [];
         this.selectedTextoDocumento = '';
         this.obtenerDocumentos();
     }
 
+    async obtenerLegislaturas(): Promise<void> {
+        // Obtenemos secretarias
 
+        await this.legislaturaService.obtenerLegislatura().subscribe(
+            (resp: any) => {
+
+                this.arrLegislaturas = resp;
+            },
+            (err) => {
+                Swal.fire(
+                    "Error",
+                    "Ocurrió un error obtener las legislaturas." + err,
+                    "error"
+                );
+            }
+        );
+    }
     changeTipoDocumento(event: any): void {
 
     }

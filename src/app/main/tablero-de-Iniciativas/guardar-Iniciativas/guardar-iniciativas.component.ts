@@ -32,6 +32,7 @@ import { ClasficacionDeDocumentosComponent } from "app/main/tablero-de-documento
 import { DocumentosService } from "services/documentos.service";
 import * as moment from 'moment';
 import { GuardarDocumentosComponent } from '../../tablero-de-documentos/guardar-documentos/guardar-documentos.component';
+import { LegislaturaModel } from "models/legislaturas.models";
 
 export interface Autores {
     name: string;
@@ -84,7 +85,7 @@ export class GuardarIniciativasComponent implements OnInit {
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     autores: Autores[] = [];
     temas: Temas[] = [];
-    legislatura: any[] = [];
+    legislatura: LegislaturaModel = new LegislaturaModel();;
     imageBase64: any;
     documentos: DocumentosModel = new DocumentosModel();
     documentosTemp: DocumentosModel = new DocumentosModel();
@@ -332,7 +333,6 @@ export class GuardarIniciativasComponent implements OnInit {
             if (this.iniciativa.estatus == "Registrada") {
                 await this.generaReport();
             }
-            console.log(this.iniciativa);
             if (this.iniciativa.formatosTipoIniciativa) {
                 this.iniciativaService
                     .actualizarIniciativa(this.iniciativa)
@@ -550,11 +550,10 @@ export class GuardarIniciativasComponent implements OnInit {
             {
                 this.legislaturaService.obtenerLegislatura().subscribe(
                     (resp: any) => {
-                        for (const legislatura of resp) {
-                            if (legislatura.bActual && legislatura.bActivo) {
-                                this.legislatura.push(legislatura);
-                            }
-                        }
+                        this.legislatura = resp.filter(element => {
+                            return element.bActual && element.bActivo
+                        })
+
                         resolve(resp);
                     },
                     (err) => {
@@ -1032,12 +1031,9 @@ export class GuardarIniciativasComponent implements OnInit {
 
             if (this.documentos.legislatura != legislatura.id) {
                 this.documentos.legislatura = legislatura.id;
-                this.documentos.folioExpediente =
-                    legislatura.cLegislatura +
-                    "-" +
-                    Number(legislatura.documentos + 1);
+
             }
-            console.log(this.iniciativa.formatosTipoIniciativa);
+
             if (this.iniciativa.formatosTipoIniciativa.length > 0 || this.idDocumento.length > 5) {
 
                 if (this.idDocumento.length > 5) {
@@ -1048,7 +1044,6 @@ export class GuardarIniciativasComponent implements OnInit {
                     this.documentos.id = this.iniciativa.formatosTipoIniciativa[0].id;
                 }
 
-                console.log(this.documentos);
 
                 this.documentoService.actualizarDocumentos(this.documentos).subscribe(
                     (resp: any) => {
@@ -1083,6 +1078,11 @@ export class GuardarIniciativasComponent implements OnInit {
                     }
                 );
             } else {
+                this.documentos.folioExpediente =
+                    Number(Number(legislatura.folioExpediente) + 1);
+                delete this.legislatura[0].documentos;
+                this.iniciativa.folioExpediente = this.documentos.folioExpediente;
+                this.legislatura[0].folioExpediente = this.documentos.folioExpediente;
                 this.documentoService
                     .guardarDocumentos(this.documentos)
                     .subscribe(
@@ -1090,8 +1090,6 @@ export class GuardarIniciativasComponent implements OnInit {
                             if (resp) {
                                 console.log("nuevo");
                                 this.documentos = resp.data;
-                                console.log('respuesta');
-                                console.log(resp.data.id);
                                 this.idDocumento = resp.data._id;
                                 this.documentos.fechaCarga = this.datePipe.transform(
                                     this.documentos.fechaCarga,
@@ -1103,7 +1101,7 @@ export class GuardarIniciativasComponent implements OnInit {
                                 );
 
                                 this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0]];
-
+                                this.legislaturaService.actualizarLegislatura(this.legislatura[0]).subscribe()
                                 resolve(this.documentos.id);
                                 // this.clasificarDocumento(this.documentos)
                             } else {
@@ -1158,7 +1156,8 @@ export class GuardarIniciativasComponent implements OnInit {
         );
 
         this.documentos.legislatura = legislaturas[0].id;
-        this.documentos.folioExpediente = legislaturas[0].cLegislatura + '-' + Number(legislaturas[0].documentos + 1);
+        console.log(this.iniciativa.folioExpediente);
+        this.documentos.folioExpediente = this.iniciativa.folioExpediente;
         this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
         this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
         this.documentos.visibilidade = tipoInformacion[0]["cValor"];
@@ -1202,7 +1201,7 @@ export class GuardarIniciativasComponent implements OnInit {
         this.documentos.fechaCarga = this.documentos.fechaCarga + 'T16:00:00.000Z';
 
         this.documentos = result;
-        console.log(this.documentos);
+
         let cAutores = "";
         this.autores.forEach((element) => {
             if (cAutores === "") {
@@ -1232,7 +1231,7 @@ export class GuardarIniciativasComponent implements OnInit {
                 bOligatorio: true,
                 cTipoMetacatalogo: "Texto",
                 text: cAutores,
-            },           
+            },
             {
                 cDescripcionMetacatalogo: "Temas",
                 bOligatorio: true,
@@ -1240,14 +1239,14 @@ export class GuardarIniciativasComponent implements OnInit {
                 text: cTema,
             },
         ];
-
+        this.documentos.folioExpediente = Number(this.documentos.folioExpediente);
+        console.log(this.documentos.folioExpediente);
         delete this.documentos['tipo_de_documento'];
         this.documentoService
             .actualizarDocumentosSinVersion(this.documentos)
             .subscribe(
                 (resp: any) => {
                     if (resp.data) {
-                        console.log(resp.data);
                         this.documentosTemp = resp.data;
                         this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
                         this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
@@ -1290,7 +1289,6 @@ export class GuardarIniciativasComponent implements OnInit {
 
                             this.iniciativa.documentos.push(this.documentos.id);
                             //this.iniciativa.documentos = [this.documentos.id];
-                            console.log(this.iniciativa.documentos);
                             this.obtenerDocumento();
                             if (result == "0") {
                                 this.cerrar("");
@@ -1354,10 +1352,11 @@ export class GuardarIniciativasComponent implements OnInit {
         const fechaActual = dia + "/" + mes + "/" + anio;
         this.documentos.bActivo = true;
         console.log(this.documentos);
-        this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
-        this.documentos.fechaCarga = this.documentos.fechaCreacion + 'T16:00:00.000Z';
+        if (!this.documentos.id) {
+            this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
+            this.documentos.fechaCarga = this.documentos.fechaCreacion + 'T16:00:00.000Z';
+        }
 
-        console.log(this.documentos);
         let cAutores = "";
         let cTema = "";
         this.autores.forEach((element) => {
@@ -1395,6 +1394,9 @@ export class GuardarIniciativasComponent implements OnInit {
                 text: cTema,
             },
         ];
+
+
+        this.documentos.folioExpediente = Number(this.documentos.folioExpediente);
         this.documentoService
             .actualizarDocumentosSinVersion(this.documentos)
             .subscribe(

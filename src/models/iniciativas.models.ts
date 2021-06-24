@@ -27,4 +27,5 @@ export class IniciativasModel {
     periodicoOficial: any;
     fechaPublicacion: any;
     disabled: any;
+    folioExpediente: number;
 }

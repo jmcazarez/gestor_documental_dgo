@@ -3,4 +3,5 @@ export class LegislaturaModel {
     bActivo: boolean;
     cLegislatura: string;
     bActual: boolean;
+    folioExpediente: any;
 };

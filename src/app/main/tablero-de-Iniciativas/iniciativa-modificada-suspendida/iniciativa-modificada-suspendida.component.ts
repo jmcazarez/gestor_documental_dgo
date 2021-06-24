@@ -476,9 +476,9 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
         }
 
         legislaturaFolio = this.legislatura.filter(d => d.id === this.selectedLegislatura);
-        console.log(this.documentos);
+     
         this.documentos.legislatura = legislaturaFolio[0].id;
-        this.documentos.folioExpediente = legislaturaFolio[0].cLegislatura + '-' + Number(legislaturaFolio[0].documentos + 1);
+        this.documentos.folioExpediente = this.iniciativa.folioExpediente;
 
         this.spinner.hide();
 
@@ -568,6 +568,8 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
 
         }
 
+        this.documentos.folioExpediente = this.iniciativa.folioExpediente;
+        
         this.documentoService
             .actualizarDocumentosSinVersion(this.documentos)
             .subscribe(

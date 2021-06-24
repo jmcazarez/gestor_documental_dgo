@@ -46,6 +46,7 @@ export class LegislaturaService {
                  Authorization: this.TOKEN,
              }),
          };
+
         return this.http.put(
             this.baseUrl + this.urlLegislatura + "/" + legislatura.id,
             legislatura,
