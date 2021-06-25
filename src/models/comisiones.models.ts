@@ -4,5 +4,6 @@ export class ComisionesModel {
     descripcion: string;
     detalle_participantes_comisions: any;
     tipos_comisione: any;
+    iniciativas: number;
 }
 

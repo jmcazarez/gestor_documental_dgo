@@ -64,7 +64,7 @@ export class GuardarComisionesComponent implements OnInit {
         // Form reactivo
 
         console.log(this.comision.detalle_participantes_comisions);
-    
+
         if (this.comision.activo === undefined) {
             this.comision.activo = true;
         }
@@ -78,6 +78,9 @@ export class GuardarComisionesComponent implements OnInit {
             estatus: this.comision.activo,
         });
 
+        if (this.comision.iniciativas > 0) {
+            this.form.disable();
+        }
         await this.obtenerLegislaturas();
         await this.obtenerPartidos();
         await this.obtenerTipoComisiones();

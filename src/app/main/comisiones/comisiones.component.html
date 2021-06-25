@@ -47,8 +47,12 @@
 
                 <ngx-datatable-column name="Acciones" sortable="false" prop="id" [width]="10">
                     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                        <a *ngIf="this.optEliminar" (click)="eliminarComision(row)">
+                        <a *ngIf="this.optEliminar && row.iniciativas === 0" (click)="eliminarComision(row)" >
                             <mat-icon color="warn" class="material-icons pointer" matTooltip="Clic para eliminar">delete
+                            </mat-icon>
+                        </a>
+                        <a *ngIf="this.optEliminar && row.iniciativas > 0"  style="pointer-events: none; " >
+                            <mat-icon  class="material-icons pointer" matTooltip="Clic para eliminar">delete
                             </mat-icon>
                         </a>
                         <a *ngIf="this.optConsultar === true && this.optEditar === true"

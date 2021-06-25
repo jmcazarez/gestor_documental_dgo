@@ -62,7 +62,8 @@ export class ComisionesComponent implements OnInit {
                         descripcion: element.descripcion,
                         detalle_participantes_comisions: element.detalle_participantes_comisions,
                         tipos_comisione: element.tipos_comisione,
-                        descripcionComicion
+                        descripcionComicion,
+                        iniciativas: element.iniciativas.length
                     })
                 });
                 this.comisiones = [...this.comisiones];
@@ -78,7 +79,7 @@ export class ComisionesComponent implements OnInit {
     }
 
     editarComision(comision: ComisionesModel): void {
-
+       
         // Abrimos modal de guardar perfil
         const dialogRef = this.dialog.open(GuardarComisionesComponent, {
             width: '60%',
@@ -109,7 +110,6 @@ export class ComisionesComponent implements OnInit {
     }
 
     filterDatatable(value): void {
-        console.log(this.comisiones);
         this.comisiones = this.comisionesTemp;
         // Filtramos tabla
         if (value.target.value === '') {
