@@ -544,7 +544,7 @@ export class GuardarIniciativasComponent implements OnInit {
         }
     }
 
-    async obtenerLegislatura(): Promise<void> {
+    async obtenerLegislatura(): Promise<LegislaturaModel> {
 
         return new Promise((resolve) => {
             {
@@ -554,7 +554,7 @@ export class GuardarIniciativasComponent implements OnInit {
                             return element.bActual && element.bActivo
                         })
 
-                        resolve(resp);
+                        resolve(this.legislatura);
                     },
                     (err) => {
                         Swal.fire(
