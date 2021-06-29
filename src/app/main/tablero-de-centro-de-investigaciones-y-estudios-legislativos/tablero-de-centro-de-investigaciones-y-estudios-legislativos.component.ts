@@ -173,13 +173,16 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
                               receptor: receptor,
                               receptorId: receptorId,
                               anexosTipoCuentaPublica: ini.anexosTipoCuentaPublica,
-                              anexosTipoIniciativa: ini.anexosTipoIniciativa
+                              anexosTipoIniciativa: ini.anexosTipoIniciativa,
+                              folioExpediente: ini.folioExpediente
                         });
                       }
                     }
                 }
+             
                 this.iniciativas = iniciativasTemp;
                 this.iniciativasTemporal = this.iniciativas;
+                console.log(this.iniciativas);
             }
             this.loadingIndicator = false;
             this.spinner.hide();
@@ -190,6 +193,7 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
     }
 
     turnarIniciativaDictamen(iniciativa: IniciativasModel): void {
+        console.log(iniciativa);
         this.valueBuscador = '';
         // Abrimos modal de guardar perfil
         if (iniciativa.estatus == 'Turnada a dictamen' || iniciativa.estatus == 'Turnar iniciativa a CIEL' || iniciativa.estatus == 'Pendiente') {

@@ -145,7 +145,7 @@ export class RecepcionDeIniciativasComponent implements OnInit {
       this.obtenerComisiones();
       this.obtenerEmpleados();
       this.obtenerLegislatura();
-      console.log(this.iniciativa.formatosTipoIniciativa);
+      console.log(this.iniciativa);
       this.tipoSesion.push({
           id: '001',
           descripcion: 'Ordinaria'
@@ -979,7 +979,7 @@ async clasificarDocAnex(result: any): Promise<void> {
         legislaturaFolio = this.legislatura.filter(d => d.id === this.selectedLegislatura);
         console.log(this.documentos);
         this.documentos.legislatura = legislaturaFolio[0].id;
-        this.documentos.folioExpediente = legislaturaFolio[0].cLegislatura + '-' + Number(legislaturaFolio[0].documentos + 1);
+        this.documentos.folioExpediente = this.iniciativa.folioExpediente;
 
             this.spinner.hide();
 

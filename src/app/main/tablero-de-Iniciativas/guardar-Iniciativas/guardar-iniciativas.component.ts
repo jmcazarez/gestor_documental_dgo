@@ -1250,8 +1250,6 @@ export class GuardarIniciativasComponent implements OnInit {
                         this.documentosTemp = resp.data;
                         this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
                         this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
-                        console.log(this.documentosTemp.fechaCreacion);
-                        console.log(this.documentosTemp);
                         this.documentosTemp.iniciativas = true;
                         this.documentosTemp.iniciativa = this.iniciativa;
                         if (
@@ -1406,7 +1404,6 @@ export class GuardarIniciativasComponent implements OnInit {
                         this.documentosTemp = resp.data;
                         this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
                         this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
-                        console.log(this.documentosTemp);
                         this.documentosTemp.iniciativas = true;
                         this.documentosTemp.iniciativa = this.iniciativa;
                         if (

@@ -255,6 +255,7 @@ export class DocumentosService {
         nombreDocumento: string
     ): any {
         console.log("urlDescargarDocumentoClasificacion");
+        console.log(idDocumento);
         let options = {
             headers: new HttpHeaders({
                 Authorization: localStorage.getItem("token"),

@@ -223,6 +223,7 @@ export class TableroDeIniciativasComponent implements OnInit {
 
     iniciativaTurnada(iniciativa: IniciativasModel): void {
         // Abrimos modal de guardar perfil
+        console.log(iniciativa);
        // if (iniciativa.estatus == 'Turnado de iniciativa a comisión') {
             const dialogRef = this.dialog.open(IniciativaTurnadaAComisionComponent, {
                 width: '60%',

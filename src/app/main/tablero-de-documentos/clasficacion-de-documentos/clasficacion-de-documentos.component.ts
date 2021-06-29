@@ -161,9 +161,12 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 }
             }
         } else {
+            this.autorizacionPendiente = true;
+            this.turnarDocumento = true
             if (!this.documento.formulario) {
+               
                 this.turnarDocumento = true; // Pruebas Hilda
-                this.autorizacionPendiente = false;  // Pruebas Hilda
+              //  this.autorizacionPendiente = false;  // Pruebas Hilda
             }
 
             if (this.documento.iniciativa) {
@@ -1112,13 +1115,14 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             this.autorizarService.autorizarDocumentoPaso1(fileName, firmantes.length, fileBase64.replace('data:application/pdf;base64,', '')).subscribe(
                 async (resp: any) => {
                     let processID = resp.body.multiSignedMessage_InitResponse.processID;
-
+                    console.log(this.documento.iniciativa.id);
                     autorizacion = {
                         documento: this.documento.id,
                         estatusIniciativa: this.documento.iniciativa.estatus,
                         estatusAutorizacion: 1,
                         idProcesoApi: processID,
-                        detalle_autorizacion_iniciativas: detalleAutorizacion
+                        detalle_autorizacion_iniciativas: detalleAutorizacion,
+                        iniciativa: this.documento.iniciativa.id
                     }
                     this.autorizarService.autorizarRegistro(autorizacion).subscribe(
                         async (resp: any) => {

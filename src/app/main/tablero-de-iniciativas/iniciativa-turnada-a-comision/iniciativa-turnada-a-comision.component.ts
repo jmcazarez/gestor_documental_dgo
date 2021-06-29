@@ -69,7 +69,7 @@ export interface DictamenDeSesion {
     descripcion: string;
 }
 
-export class Documentos{
+export class Documentos {
     id: string;
 }
 
@@ -175,7 +175,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     ) {
         this.tipoSesion = [];
 
-        console.log(this.iniciativa.informeDeResultadosRevision);
         this.tipoSesion.push({
             id: '001',
             descripcion: 'Ordinaria'
@@ -205,7 +204,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             id: '002',
             descripcion: 'No aprobada'
         });
-        if(this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa'){
+        if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
             this.dictamenDeSesion.push({
                 id: '003',
                 descripcion: 'Modificación'
@@ -216,7 +215,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
 
-        if(this.iniciativa.estatus !== 'Turnar dictamen a secretaría de servicios parlamentarios'){
+        if (this.iniciativa.estatus !== 'Turnar dictamen a secretaría de servicios parlamentarios') {
             await this.obtenerDocumento();
         }
         this.obtenerTiposIniciativas();
@@ -268,7 +267,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
         }
 
-        if(this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'){
+        if (this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios') {
             this.disable = true;
         }
         const fecha = new Date(); // Fecha actual
@@ -310,11 +309,11 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 this.iniciativa.fechaCreacion + "T16:00:00.000Z";
             this.iniciativa.fechaIniciativa =
                 this.iniciativa.fechaIniciativa + "T16:00:00.000Z";
-            if(this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva'){
+            if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
                 this.selectedDictamenDeIniciativa = this.iniciativa.dictamenDeIniciativa;
-            } if (this.iniciativa.estatus == 'Turnada a comisión para modificación'){
+            } if (this.iniciativa.estatus == 'Turnada a comisión para modificación') {
                 this.selectedDictamenDeIniciativa = this.iniciativa.dictamenDeIniciativa;
-            } if (this.iniciativa.estatus == 'Turnada a publicación'){
+            } if (this.iniciativa.estatus == 'Turnada a publicación') {
                 this.selectedDictamenDeIniciativa = this.iniciativa.dictamenDeIniciativa;
             }
         } else {
@@ -341,7 +340,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             ];
 
             validatosPublicacionText = [
-                Validators.minLength(3), 
+                Validators.minLength(3),
                 Validators.maxLength(100),
                 Validators.required
             ]
@@ -447,12 +446,12 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 fechaPublicacion: [{ value: this.iniciativa.fechaPublicacion, disabled: false }],
             });
         }
-        if(this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios' 
-        && this.iniciativa.formatosTipoIniciativa.length < 4 
-        && this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa'
-        || this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios' 
-        && this.iniciativa.formatosTipoIniciativa.length < 3 
-        && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública'){
+        if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios'
+            && this.iniciativa.formatosTipoIniciativa.length < 4
+            && this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa'
+            || this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios'
+            && this.iniciativa.formatosTipoIniciativa.length < 3
+            && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública') {
             await this.guardar();
         }
     }
@@ -467,7 +466,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         let actasSesion;
 
         this.spinner.show();
-    
+
         if (this.cambioInforme) {
             await this.subirAnexos(this.filesInforme);
         } else {
@@ -491,9 +490,9 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
         this.iniciativa.clasificaciones = this.clasificaciones;
 
-        if(this.selectedComision){
+        if (this.selectedComision) {
             this.iniciativa.comisiones = this.selectedComision;
-        }else{
+        } else {
             this.iniciativa.comisiones = null;
         }
 
@@ -511,42 +510,42 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         fechaSesion = moment(this.form.get('fechaSesion').value).format('YYYY-MM-DD');
         hora = this.form.get('horaSesion').value;
         horaSesion = hora + ':00.000';
-        
+        console.log(this.iniciativa);
         if (this.iniciativa.id) {
-            if(this.iniciativa.estatus == 'Turnada a comisión para modificación'){
+            if (this.iniciativa.estatus == 'Turnada a comisión para modificación') {
                 console.log('Turnada a comisión para modificación Crea report');
                 await this.generaReport();
-            }else if(this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.selectedDictamenDeIniciativa == 'No aprobada'){
+            } else if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.selectedDictamenDeIniciativa == 'No aprobada') {
                 //this.iniciativa.estatus = 'Suspendida';
                 this.iniciativa.motivoDeSuspension = this.form.get('motivoDeSuspension').value;
                 this.iniciativa.dictamenDeIniciativa = this.selectedDictamenDeIniciativa;
-            }else if(this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.selectedDictamenDeIniciativa == 'Modificación'){
+            } else if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.selectedDictamenDeIniciativa == 'Modificación') {
                 console.log('Turnada a comisión para modificación cValor');
                 //this.iniciativa.estatus = 'Turnada a comisión para modificación';
                 this.iniciativa.sustentoDeModificacion = this.form.get('sustentoDeModificacion').value;
                 this.iniciativa.dictamenDeIniciativa = this.selectedDictamenDeIniciativa;
-            }else if(this.iniciativa.estatus == 'Turnada a publicación'){
+            } else if (this.iniciativa.estatus == 'Turnada a publicación') {
                 console.log('publicacion');
                 this.iniciativa.periodicoOficial = this.form.get('periodicoOficial').value;
                 this.iniciativa.fechaPublicacion = moment(this.form.get('fechaPublicacion').value).format('YYYY-MM-DD');
                 this.iniciativa.fechaCreacion = moment().format('YYYY-MM-DD');
                 this.iniciativa.estatus = 'Publicada';
-            }else if(this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa' &&
-            this.selectedDictamenDeIniciativa == 'Aprobada'){
+            } else if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa' &&
+                this.selectedDictamenDeIniciativa == 'Aprobada') {
                 this.iniciativa.adicion = this.adicion;
                 this.iniciativa.etiquetas = this.etiquetas;
                 this.iniciativa.dictamenDeIniciativa = this.selectedDictamenDeIniciativa;
                 await this.generaReport();
-            }else if(this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública' &&
-            this.selectedDictamenDeIniciativa == 'Aprobada'){
+            } else if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública' &&
+                this.selectedDictamenDeIniciativa == 'Aprobada') {
                 console.log('aprobada');
                 this.iniciativa.dictamenDeIniciativa = this.selectedDictamenDeIniciativa;
                 await this.generaReport();
-            }else{
+            } else {
                 console.log('Else');
                 await this.generaReport();
             }
-            if(this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'){
+            if (this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios') {
                 legislatura = this.selectedLegislatura;
                 tipoSesion = this.form.get('tipoSesion').value;;
                 fechaSesion = moment(this.form.get('fechaSesion').value).format('YYYY-MM-DD');
@@ -1151,14 +1150,14 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             //console.log(parametrosSSP008);
             puestoSecretarioGeneral = await this.obtenerParametros('Id-Puesto-Secretario-General');
 
-            if(this.iniciativa.estatus  == 'Turnar dictamen a Mesa Directiva'){
+            if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
                 idFirmasPorEtapas = parametrosSSP008.filter((d) => d['cParametroAdministrado'] === 'SSP-008-Firmas');
             } else {
                 idFirmasPorEtapas = parametrosSSP004.filter((d) => d['cParametroAdministrado'] === 'SSP-004-Firmas');
             }
 
-            if (this.iniciativa.estatus === 'Turnar iniciativa a comisión' || 
-            this.iniciativa.estatus === 'Turnada a comisión para modificación' ) {
+            if (this.iniciativa.estatus === 'Turnar iniciativa a comisión' ||
+                this.iniciativa.estatus === 'Turnada a comisión para modificación') {
                 idPuesto = parametrosSSP004.filter((d) => d['cParametroAdministrado'] === 'SSP-004-Iniciativa-Puesto');
             } if (this.iniciativa.estatus === 'Turnar cuenta pública a EASE') {
                 idPuesto = parametrosSSP004.filter((d) => d['cParametroAdministrado'] === 'SSP-004-EASE-Puesto');
@@ -1166,7 +1165,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 idPuesto = parametrosCIEL008.filter((d) => d['cParametroAdministrado'] === 'CIEL-008-Secretaría-General-Puesto');
             } if (this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios') {
                 idPuesto = parametrosSSP005.filter((d) => d['cParametroAdministrado'] === 'SSP-005-Servicios-Parlamentarios-Puesto');
-            } if (this.iniciativa.estatus === 'Turnar dictamen a Mesa Directiva'){
+            } if (this.iniciativa.estatus === 'Turnar dictamen a Mesa Directiva') {
                 idPuesto = parametrosSSP008.filter((d) => d['cParametroAdministrado'] === 'SSP-008-Mesa-Directiva-Puesto');
             }
 
@@ -1180,14 +1179,14 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             let puesto = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === idPuesto[0]['cValor']);
             console.log(puesto);
-            if(puesto.length === 0){
+            if (puesto.length === 0) {
                 Swal.fire('Error', 'Configuración de participantes incorrecta.', 'error');
                 this.spinner.hide();
                 return
             }
 
             let puestoSecretario = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === puestoSecretarioGeneral[0].cValor);
-            if(puestoSecretario.length === 0){
+            if (puestoSecretario.length === 0) {
                 Swal.fire('Error', 'Configuración de secretario general incorrecto.', 'error');
                 this.spinner.hide();
                 return
@@ -1196,12 +1195,12 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             console.log(puestoSecretario);
             let tipoIniciativa = this.arrTipo.filter((d) => d['id'] === this.selectTipo);
             let comision: any = this.comisiones.filter(d => d.id === this.selectedComision);
-          
+
             console.log(this.arrMesas);
             let mesa_directiva: any = this.arrMesas.filter(meta => meta.legislatura.id === this.selectedLegislatura);
             let legislaturaDoc: any = this.legislatura.filter(meta => meta.id === this.selectedLegislatura);
 
-            if(mesa_directiva.length == 0){
+            if (mesa_directiva.length == 0) {
                 Swal.fire('Error', 'La legislatura que seleccionó no tiene asignada Mesa Directiva.', 'error');
                 this.spinner.hide();
                 return
@@ -1301,7 +1300,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     bold: true,
                     alignment: "left",
                 })
-            } if(this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios'){
+            } if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios') {
                 presente.push({
                     text: "SECRETARIA DE SERVICIOS",
                     fontSize: 14,
@@ -1326,7 +1325,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     bold: true,
                     alignment: "left",
                 })
-            }if(this.iniciativa.estatus === 'Turnar dictamen a Mesa Directiva'){
+            } if (this.iniciativa.estatus === 'Turnar dictamen a Mesa Directiva') {
                 presente.push({
                     text: "GOBERNADOR DEL ESTADO",
                     fontSize: 14,
@@ -1450,7 +1449,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     });
                 }
             } if (this.iniciativa.estatus === 'Turnar cuenta pública a EASE' ||
-            this.iniciativa.estatus === 'Turnada a comisión para modificación' && this.iniciativa.tipo_de_iniciativa == 'Cuenta Pública') {
+                this.iniciativa.estatus === 'Turnada a comisión para modificación' && this.iniciativa.tipo_de_iniciativa == 'Cuenta Pública') {
 
                 if (this.autores.length <= 1) {
                     presente.push({
@@ -1591,44 +1590,44 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 margin: [0, 80, 0, 0],
             });
 
-            if(this.iniciativa.estatus === 'Turnar dictamen a Secretaría General'){
-            presente.push({
-                text: "DIRECTOR DEL CENTRO DE INVESTIGACIONES Y",
-                fontSize: 12,
-                bold: true,
-                alignment: "center",
-            });
-            presente.push({
-                text: "ESTUDIOS LEGISLATIVOS",
-                fontSize: 12,
-                bold: true,
-                alignment: "center",
-            });
-        } else {
-            presente.push({
-                text: "SECRETARIO GENERAL DEL H. CONGRESO DEL ESTADO",
-                fontSize: 12,
-                bold: true,
-                alignment: "center",
-            });
-        }
+            if (this.iniciativa.estatus === 'Turnar dictamen a Secretaría General') {
+                presente.push({
+                    text: "DIRECTOR DEL CENTRO DE INVESTIGACIONES Y",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                });
+                presente.push({
+                    text: "ESTUDIOS LEGISLATIVOS",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                });
+            } else {
+                presente.push({
+                    text: "SECRETARIO GENERAL DEL H. CONGRESO DEL ESTADO",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                });
+            }
 
-        if(this.iniciativa.estatus=='Turnar dictamen a Mesa Directiva'){
-            presente.push({
-                text: "Lic. " + puestoSecretario[0]['nombre'] + ' ' + puestoSecretario[0]['apellidoMaterno'] + ' ' + puestoSecretario[0]['apellidoPaterno'],
-                fontSize: 12,
-                bold: true,
-                alignment: "center",
-                margin: [0, 70, 0, 0],
-            });
+            if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
+                presente.push({
+                    text: "Lic. " + puestoSecretario[0]['nombre'] + ' ' + puestoSecretario[0]['apellidoMaterno'] + ' ' + puestoSecretario[0]['apellidoPaterno'],
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                    margin: [0, 70, 0, 0],
+                });
 
-            presente.push({
-                text: "SECRETARIO GENERAL DEL H. CONGRESO DEL ESTADO",
-                fontSize: 12,
-                bold: true,
-                alignment: "center",
-            });
-        }
+                presente.push({
+                    text: "SECRETARIO GENERAL DEL H. CONGRESO DEL ESTADO",
+                    fontSize: 12,
+                    bold: true,
+                    alignment: "center",
+                });
+            }
 
             const aa = {
                 header: {
@@ -1679,12 +1678,12 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             };
 
             //pdfMake.createPdf(aa).open();
-        
+
             let pdfDocGenerator = pdfMake.createPdf(aa);
             let base64 = await this.pdfBase64(pdfDocGenerator);
 
             if (this.iniciativa.estatus === 'Turnar iniciativa a comisión' || this.iniciativa.estatus === 'Turnar cuenta pública a EASE' ||
-            this.iniciativa.estatus === 'Turnada a comisión para modificación') {
+                this.iniciativa.estatus === 'Turnada a comisión para modificación') {
                 await this.uploadSP04(base64, 'SSP 04.pdf');
                 await this.guardarDocumento(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
             } if (this.iniciativa.estatus === 'Turnar dictamen a Secretaría General') {
@@ -1693,7 +1692,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             } if (this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios') {
                 await this.upload(base64, 'SSP 005.pdf');
                 await this.guardarSSP05(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
-            } if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva'){
+            } if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
                 await this.upload(base64, 'SSP 008.pdf');
                 await this.guardarSSP08(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
             }
@@ -1767,7 +1766,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             } if (this.iniciativa.estatus === 'Turnar dictamen a Secretaría General') {
                 await this.upload(base64, 'Formato CIEL 08.pdf');
                 await this.guardarDocumentoCiel(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
-            } if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva'){
+            } if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
                 await this.upload(base64, 'SSP 005.pdf');
                 await this.guardarSSP08(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
             }
@@ -1903,19 +1902,22 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.documentosGuardar.tipo_de_documento = tipoDocumento;
             this.documentosGuardar.tipo_de_expediente = tipoExpediente;
             this.documentosGuardar.visibilidade = tipoInformacion;
+            console.log(this.iniciativa);
             if (this.documentosGuardar.iniciativaOficioEnvioDeInforme !== undefined) {
                 this.documentosGuardar.iniciativaOficioEnvioDeInforme = this.documentosGuardar.iniciativaOficioEnvioDeInforme.id
             }
-
+            this.documentosGuardar.folioExpediente = this.iniciativa.folioExpediente;
             if (this.documentosGuardar.iniciativa !== undefined) {
-                this.documentosGuardar.iniciativa = this.documentosGuardar.iniciativa.id
+              
+                this.documentosGuardar.iniciativa = this.documentosGuardar.iniciativa.id;
+
             }
             if (this.documentosGuardar.legislatura != legislatura.id) {
                 this.documentosGuardar.legislatura = legislatura.id;
                 //Cambiado legislatura.documentosGuardar por legislatura.documentos para que muestre el numero del folio.
-              
+
             }
-            this.documentos.folioExpediente = this.iniciativa.folioExpediente;
+          
             console.log('guardando documento');
             console.log(this.documentosGuardar);
             if (this.iniciativa.formatosTipoIniciativa.length > 1) {
@@ -2096,7 +2098,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 this.documentos.folioExpediente = this.iniciativa.folioExpediente;
             }
 
-            if(this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa'){
+            if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
                 if (this.iniciativa.formatosTipoIniciativa.length > 3) {
 
                     this.documentos.id = this.iniciativa.formatosTipoIniciativa[3].id
@@ -2155,7 +2157,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                         Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
                     });
                 }
-            }else{
+            } else {
                 if (this.iniciativa.formatosTipoIniciativa.length > 2) {
 
                     this.documentos.id = this.iniciativa.formatosTipoIniciativa[2].id
@@ -2250,7 +2252,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 this.documentos.folioExpediente = this.iniciativa.folioExpediente;
             }
 
-            if(this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa'){
+            if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
                 if (this.iniciativa.formatosTipoIniciativa.length > 4) {
 
                     this.documentos.id = this.iniciativa.formatosTipoIniciativa[4].id
@@ -2271,8 +2273,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
                             this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
 
-                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], 
-                            this.iniciativa.formatosTipoIniciativa[1], this.iniciativa.formatosTipoIniciativa[2], 
+                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0],
+                            this.iniciativa.formatosTipoIniciativa[1], this.iniciativa.formatosTipoIniciativa[2],
                             this.iniciativa.formatosTipoIniciativa[3], this.documentos.id];
                             resolve(this.documentos.id);
                         } else {
@@ -2296,8 +2298,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
 
 
-                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], 
-                            this.iniciativa.formatosTipoIniciativa[1], this.iniciativa.formatosTipoIniciativa[2], 
+                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0],
+                            this.iniciativa.formatosTipoIniciativa[1], this.iniciativa.formatosTipoIniciativa[2],
                             this.iniciativa.formatosTipoIniciativa[3], this.documentos.id];
                             // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
 
@@ -2313,7 +2315,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                         Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
                     });
                 }
-            }else{
+            } else {
                 if (this.iniciativa.formatosTipoIniciativa.length > 3) {
 
                     this.documentos.id = this.iniciativa.formatosTipoIniciativa[3].id
@@ -2334,7 +2336,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
                             this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
 
-                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], 
+                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1],
                             this.iniciativa.formatosTipoIniciativa[2], this.documentos.id];
                             resolve(this.documentos.id);
                         } else {
@@ -2358,7 +2360,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
 
 
-                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], 
+                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1],
                             this.iniciativa.formatosTipoIniciativa[2], this.documentos.id];
                             // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
 
@@ -2380,7 +2382,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
     clasificarDocumento(): void {
         if (this.iniciativa.estatus == 'Turnar cuenta pública a EASE' || this.iniciativa.estatus == 'Turnar iniciativa a comisión' ||
-        this.iniciativa.estatus == 'Turnada a comisión para modificación') {
+            this.iniciativa.estatus == 'Turnada a comisión para modificación') {
             this.spinner.show();
             const fecha = new Date(); // Fecha actual
             let mes: any = fecha.getMonth() + 1; // obteniendo mes
@@ -2681,7 +2683,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 console.log(err);
                 Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
             });
-        } if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública'){
+        } if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública') {
             this.spinner.show();
             console.log('cuenta publica');
             const fecha = new Date(); // Fecha actual
@@ -2888,7 +2890,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 console.log(err);
                 Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
             });
-        } if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública'){
+        } if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública') {
             this.spinner.show();
             console.log('cuenta publica');
             const fecha = new Date(); // Fecha actual
@@ -3033,20 +3035,20 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 d["cParametroAdministrado"] ===
                 "SSP-001-Tipo-de-Informacion"
         );
-        
+
         this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
 
         this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
 
         this.documentos.visibilidade = tipoInformacion[0]["cValor"];
         this.documentos.iniciativa = this.iniciativa.id;
-        if(this.iniciativa.estatus == 'Turnar cuenta pública a EASE'){
+        if (this.iniciativa.estatus == 'Turnar cuenta pública a EASE') {
             this.documentos.formulario = 'Turnar cuenta pública a EASE';
         } else if (this.iniciativa.estatus == 'Turnar dictamen a Secretaría General') {
             this.documentos.formulario = 'Turnar dictamen a Secretaría General';
         } else if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
             this.documentos.formulario = 'Turnar dictamen a Mesa Directiva';
-        } else if (this.iniciativa.estatus == 'Turnada a comisión para modificación'){
+        } else if (this.iniciativa.estatus == 'Turnada a comisión para modificación') {
             this.documentos.formulario = 'Turnada a comisión para modificación';
         }
 
@@ -3091,9 +3093,9 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         const fechaActual = dia + "/" + mes + "/" + anio;
         this.documentos.bActivo = true;
 
-        if(this.iniciativa.estatus==='Turnar dictamen a Secretaría General'){
-            this.documentos.fechaCreacion =  this.documentos.fechaCreacion + 'T16:00:00.000Z';
-            this.documentos.fechaCarga =  this.documentos.fechaCreacion + 'T16:00:00.000Z';
+        if (this.iniciativa.estatus === 'Turnar dictamen a Secretaría General') {
+            this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
+            this.documentos.fechaCarga = this.documentos.fechaCreacion + 'T16:00:00.000Z';
         }
 
         this.documentos = result;
@@ -3142,7 +3144,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.documentos.iniciativaInformeDeResultadosRevision = this.iniciativa.id;
         } else if (tipo === '1') {
 
-        } else if (tipo === '4'){
+        } else if (tipo === '4') {
             if (this.iniciativa.actasSesion.id) {
                 this.documentos.actasSesion = this.iniciativa.actasSesion.id;
                 this.fileActaDeSesion = this.documentos.cNombreDocumento;
@@ -3200,19 +3202,19 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             } else if (tipo === '3') {
                                 this.iniciativa.informeDeResultadosRevision = this.documentos;
                                 this.fileInformeName = this.iniciativa.informeDeResultadosRevision.cNombreDocumento;
-                            } else if (tipo === '4'){
+                            } else if (tipo === '4') {
                                 this.fileActaDeSesionSend = this.documentos;
                                 console.log(this.fileActaDeSesionSend);
                                 this.fileActaDeSesion = this.documentos.cNombreDocumento;
                                 this.sinActa = false;
                             }
-                            if(this.iniciativa.estatus == 'Turnar dictamen a Secretaría General' || 
-                            this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' ||
-                            this.iniciativa.estatus == 'Turnada a comisión para modificación'){
+                            if (this.iniciativa.estatus == 'Turnar dictamen a Secretaría General' ||
+                                this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' ||
+                                this.iniciativa.estatus == 'Turnada a comisión para modificación') {
 
-                            /*asignamos valores a iniciativa.documentos debido a que al
-                            iniciar el componente inicia como [] y al guardar asi se desasignan
-                            los documentos*/
+                                /*asignamos valores a iniciativa.documentos debido a que al
+                                iniciar el componente inicia como [] y al guardar asi se desasignan
+                                los documentos*/
 
                                 //this.iniciativa.documentos.push(this.documentos);
                                 this.iniciativa.documentos = [this.documentos.id];
@@ -3448,7 +3450,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 // realizamos delete
                 this.documentoService.borrarDocumentos(row).subscribe((resp: any) => {
                     Swal.fire('Eliminado', 'El documento ha sido eliminado.', 'success');
-                    
+
                     this.obtenerDocumento();
                 }, err => {
                     this.cargando = false;
