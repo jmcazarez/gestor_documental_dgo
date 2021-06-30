@@ -34,6 +34,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
     usuario: any;
     certificadoB64: any;
     llaveB64: any;
+    arrTipo: any[] = [];
     constructor(
         private spinner: NgxSpinnerService,
         private formBuilder: FormBuilder,
@@ -55,6 +56,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
         });
         this.usuario = await this.usuarioLoginService.obtenerUsuario();
         await this.obtenerAutorizacionPorLegislatura();
+        await this.obtenerTiposIniciativas();
     }
 
 
@@ -181,6 +183,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                                                                             let idDocumento = await this.upload(resp.body.multiSignedMessage_FinalResponse[0].data, element.documento.cNombreDocumento + '.pdf');
                                                                             if (idDocumento) {
                                                                                 this.autorizarService.actualizaPfdDocumento({ id: element.documento.id, documento: idDocumento }).subscribe(async (resp: any) => {
+                                                                                    await this.turnarIniciativa(element);
                                                                                     await this.obtenerAutorizacionPorLegislatura();
                                                                                     this.spinner.hide();
                                                                                     Swal.fire(
@@ -219,6 +222,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
 
                                                                 } else {
                                                                     await this.obtenerAutorizacionPorLegislatura();
+                                                                
                                                                     Swal.fire(
                                                                         "Éxito",
                                                                         "Documento firmado correctamente, faltan por firmar " + firmasPendientes + " integrantes.",
@@ -346,92 +350,126 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
         });
     }
     async turnarIniciativa(iniciativa: any): Promise<void> {
-        const fecha = new Date(); // Fecha actual
-        let mes: any = fecha.getMonth() + 1; // obteniendo mes
-        let dia: any = fecha.getDate(); // obteniendo dia
-        let estatus = '';
-        const ano = fecha.getFullYear(); // obteniendo año
+        try {
+            const fecha = new Date(); // Fecha actual
+            let mes: any = fecha.getMonth() + 1; // obteniendo mes
+            let dia: any = fecha.getDate(); // obteniendo dia
+            let estatus = '';
+            const ano = fecha.getFullYear(); // obteniendo año
 
-        if (dia < 10) {
-            dia = "0" + dia; // agrega cero si el menor de 10
-        }
-        if (mes < 10) {
-            mes = "0" + mes; // agrega cero si el menor de 10
-        }
-        const fechaActual = ano + "-" + mes + "-" + dia;
-        if (iniciativa.estatus === "Registrada") {
-            if (
-                iniciativa.tipo_de_iniciativa.descripcion ==
-                "Iniciativa"
-            ) {
-                estatus =
-                    "Turnar iniciativa a comisión";
+            if (dia < 10) {
+                dia = "0" + dia; // agrega cero si el menor de 10
+            }
+            if (mes < 10) {
+                mes = "0" + mes; // agrega cero si el menor de 10
+            }
+            const fechaActual = ano + "-" + mes + "-" + dia;
+           
+            if (iniciativa.iniciativa.estatus === "Registrada") {
+                let tipoIniciativa: any;
+        
+                tipoIniciativa = this.arrTipo.filter(value => {
+                    return (value.id === iniciativa.iniciativa.tipo_de_iniciativa)
+                });
+                if (
+                    tipoIniciativa[0].descripcion ==
+                    "Iniciativa"
+                ) {
+                    estatus =
+                        "Turnar iniciativa a comisión";
+                } else {
+                    estatus =
+                        "Turnar cuenta pública a EASE";
+                }
             } else {
-                estatus =
-                    "Turnar cuenta pública a EASE";
-            }
-        } else {
-            switch (iniciativa.estatusIniciativa) {
+                switch (iniciativa.iniciativa.estatus) {
 
-                case "Turnar cuenta pública a EASE": {
-                    estatus =
-                        "Dictaminaciòn de cuenta pública";
-                    break;
-                }
-                case "Dictaminaciòn de cuenta pública": {
-                    estatus =
-                        "Turnar dictamen a Secretaría de Servicios Parlamentarios";
-                    break;
-                }
-                case "Turnar dictamen a Secretaría de Servicios Parlamentarios": {
-                    estatus =
-                        "Turnar dictamen a Mesa Directiva";
-                    break;
-                }
-                case "Turnar dictamen a Mesa Directiva": {
-                    estatus = 'Turnada a publicación'
-                    break;
-                }
-                case "Turnada a publicación": {
-                    estatus = 'Publicada'
-                    break;
-                }
-                case "Turnar iniciativa a comisión": {
-                    estatus = 'Turnado a CIEL'
-                    break;
-                }
-                case "Turnar dictamen a Secretaría General": {
-                    estatus = 'Turnar dictamen a Secretaría de Servicios Parlamentarios'
-                    break;
-                }
-                default: {
-                    //statements; 
-                    break;
+                    case "Turnar cuenta pública a EASE": {
+                        //  estatus = "Dictaminaciòn de cuenta pública";
+                        estatus = "Turnar dictamen a secretaría de servicios parlamentarios";
+                        break;
+                    }
+                    case "Dictaminaciòn de cuenta pública": {
+                        estatus =
+                            "Turnar dictamen a secretaría de servicios parlamentarios";
+                        break;
+                    }
+                    case "Turnar dictamen a secretaría de servicios parlamentarios": {
+                        estatus =
+                            "Turnar dictamen a Mesa Directiva";
+                        break;
+                    }
+                    case "Turnar dictamen a Mesa Directiva": {
+                        estatus = 'Turnada a publicación'
+                        break;
+                    }
+                    case "Turnada a publicación": {
+                        estatus = 'Publicada'
+                        break;
+                    }
+                    case "Turnar iniciativa a comisión": {
+                        estatus = 'Turnado a CIEL'
+                        break;
+                    }
+                    case "Turnar dictamen a Secretaría General": {
+                        estatus = 'Turnar dictamen a secretaría de servicios parlamentarios'
+                        break;
+                    }
+                    default: {
+                        //statements; 
+                        break;
+                    }
                 }
             }
-        }
-        iniciativa.estatus = '';
-        iniciativa.fechaCreacion = fechaActual + "T16:00:00.000Z";
-        this.iniciativaService
-            .actualizarIniciativa({
-                id: iniciativa.id,
-                fechaCreacion: iniciativa.fechaCreacion,
-                estatus: iniciativa.estatus,
-            })
-            .subscribe(
-                (resp: any) => {
+            iniciativa.iniciativa.estatus = estatus;
+            iniciativa.iniciativa.fechaCreacion = fechaActual + "T16:00:00.000Z";
+            this.iniciativaService
+                .actualizarIniciativa({
+                    id: iniciativa.iniciativa.id,
+                    fechaCreacion: iniciativa.iniciativa.fechaCreacion,
+                    estatus: iniciativa.iniciativa.estatus,
+                })
+                .subscribe(
+                    (resp: any) => {
 
-                },
-                (err) => {
-                    console.log(err);
+                    },
+                    (err) => {
+                        console.log(err);
 
-                    Swal.fire(
-                        "Error",
-                        "Ocurrió un error al turnar." + err.error.data,
-                        "error"
-                    );
-                }
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al turnar." + err.error.data,
+                            "error"
+                        );
+                    }
+                );
+        } catch (err) {
+
+            Swal.fire(
+                "Error",
+                "Ocurrió un error al turnar." + err,
+                "error"
             );
+        }
+    }
+
+    async obtenerTiposIniciativas(): Promise<void> {
+        // Obtenemos Distritos
+        this.spinner.show();
+        await this.iniciativaService.obtenerTiposIniciativas().subscribe(
+            (resp: any) => {
+                this.arrTipo = resp;
+                this.spinner.hide();
+            },
+            (err) => {
+                Swal.fire(
+                    "Error",
+                    "Ocurrió un error obtener los tipos de iniciativas." + err,
+                    "error"
+                );
+                this.spinner.hide();
+            }
+        );
     }
 
 }

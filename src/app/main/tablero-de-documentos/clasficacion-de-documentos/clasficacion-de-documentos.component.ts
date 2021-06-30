@@ -161,12 +161,11 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 }
             }
         } else {
-            this.autorizacionPendiente = true;
-            this.turnarDocumento = true
+         
             if (!this.documento.formulario) {
                
-                this.turnarDocumento = true; // Pruebas Hilda
-              //  this.autorizacionPendiente = false;  // Pruebas Hilda
+                this.turnarDocumento = false; // Pruebas Hilda
+                this.autorizacionPendiente = true;  // Pruebas Hilda
             }
 
             if (this.documento.iniciativa) {
@@ -179,10 +178,10 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
                 if (element.estatusAutorizacion === 1 || element.estatusAutorizacion === 2) {
                     this.autorizacionPendiente = true;
-                    this.turnarDocumento = true;
+                  //  this.turnarDocumento = true;
                 } else if (element.estatusAutorizacion === 3) {
                     this.autorizacionPendiente = true;
-                    this.turnarDocumento = false;
+                  //  this.turnarDocumento = false;
                 }
 
             });
@@ -1095,7 +1094,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             );
             firmantes = firmasPorEtapas[0].participantes;
         }
-
+        console.log(firmantes);
         firmantes.forEach(element => {
             detalleAutorizacion.push({ empleado: element.id })
 
