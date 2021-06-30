@@ -54,8 +54,12 @@ export class ComisionesComponent implements OnInit {
             if (this.optConsultar) {
                 resp.forEach(element => {
                     let descripcionComicion = '';
+                    let iniciativas = 0;
                     if(element.tipos_comisione){
                         descripcionComicion = element.tipos_comisione.descripcion
+                    }
+                    if(element.iniciativas){
+                        iniciativas = element.iniciativas.length
                     }
                     this.comisiones.push({
                         id: element.id,
@@ -63,7 +67,7 @@ export class ComisionesComponent implements OnInit {
                         detalle_participantes_comisions: element.detalle_participantes_comisions,
                         tipos_comisione: element.tipos_comisione,
                         descripcionComicion,
-                        iniciativas: element.iniciativas.length
+                        iniciativas
                     })
                 });
                 this.comisiones = [...this.comisiones];
