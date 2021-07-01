@@ -661,7 +661,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 this.documento.fechaCreacion + "T16:00:00.000Z";
         }
 
-        if (this.documento.trazabilidads.lenght === 0) {
+        if (this.documento.trazabilidads.length === 0) {
             delete this.documento["trazabilidads"];
         }
         if (this.selectedExpediente === "") {

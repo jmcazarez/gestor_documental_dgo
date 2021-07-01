@@ -126,7 +126,7 @@ export class GuardarMesaComponent implements OnInit {
 
         if (this.mesas.id) {
             console.log(this.mesas.detalle_participantes_mesa_directivas);
-            if (this.mesas.detalle_participantes_mesa_directivas.lenght) {
+            if (this.mesas.detalle_participantes_mesa_directivas.length) {
                 // Actualizamos el mesa directiva
                 this.detalleMesaService
                     .actualizarDetalleMesa({

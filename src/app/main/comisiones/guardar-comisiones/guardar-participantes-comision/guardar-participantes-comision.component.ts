@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ComisionesModel } from 'models/comisiones.models';
 import { UsuariosService } from 'services/usuarios.service';
@@ -15,13 +15,13 @@ import { GuardarComisionesComponent } from '../guardar-comisiones.component';
 import { DiputadosService } from 'services/diputados.service';
 
 @Component({
-  selector: 'app-guardar-participantes-comision',
-  templateUrl: './guardar-participantes-comision.component.html',
-  styleUrls: ['./guardar-participantes-comision.component.scss']
+    selector: 'app-guardar-participantes-comision',
+    templateUrl: './guardar-participantes-comision.component.html',
+    styleUrls: ['./guardar-participantes-comision.component.scss']
 })
 
 export class GuardarParticipantesComisionComponent implements OnInit {
-    
+
     loadingIndicator: boolean;
     reorderable: boolean;
 
@@ -54,20 +54,34 @@ export class GuardarParticipantesComisionComponent implements OnInit {
         let i = 0;
         console.log('participantes');
         console.log(this.participantes);
+
         if (this.participantes.detalle_participantes_comisions) {
+
             this.resultado = this.participantes.detalle_participantes_comisions[0];
             //Seteamos valor del select presidente
-            if(this.resultado.legislatura){
-                this.selectedLegislatura = this.resultado.legislatura;
+            console.log(this.resultado);
+            if (this.resultado) {
+                if (this.resultado.legislatura) {
+                    this.selectedLegislatura = this.resultado.legislatura;
+                }
+                if (this.resultado.presidente) {
+                    this.selectedPresidente = this.resultado.presidente[0];
+                }
+                //Seteamos valor del select vicePresidente
+                if (this.resultado.vicepresidente) {
+                    this.selectedVicePresidente = this.resultado.vicepresidente[0];
+                }
+            } else {
+                this.resultado = {
+                    activo: true,
+                    presidente: "",
+                    vicepresidente: "",
+                    vocals: "",
+                };
+
+                console.log(this.resultado);
             }
-            if (this.resultado.presidente) {
-                this.selectedPresidente = this.resultado.presidente[0];
-            }
-            //Seteamos valor del select vicePresidente
-            if (this.resultado.vicepresidente) {
-                this.selectedVicePresidente = this.resultado.vicepresidente[0];
-            }
-        }else{
+        } else {
             this.participantes.presidente = '';
             this.participantes.vicepresidente = '';
             this.participantes.vocals = '';
@@ -87,41 +101,55 @@ export class GuardarParticipantesComisionComponent implements OnInit {
             estatus: this.participantes.activo
         });
         //iniciar con 3 vocals 
-        if(!this.participantes.detalle_participantes_comisions){
+        console.log(this.participantes.detalle_participantes_comisions);
+        if (!this.participantes.detalle_participantes_comisions) {
+            console.log('entro');
             this.addVocalsg();
             this.addVocalsg();
             this.addVocalsg();
+        }else{
+            console.log(this.participantes.detalle_participantes_comisions);
+            
+            
+            if(this.participantes.detalle_participantes_comisions.length === 0){
+                console.log('entro');
+                this.addVocalsg();
+                this.addVocalsg();
+                this.addVocalsg(); 
+            }
         }
         //Mostramos los select dinamicos dependiendo del largo del array de vocales
-        if(this.resultado.vocals !== undefined){
-            while(i<=this.resultado.vocals.length-1){
-                this.addVocalsIni();
-                i++
+        if (this.resultado) {
+            if (this.resultado.vocals !== undefined) {
+                while (i <= this.resultado.vocals.length - 1) {
+                    this.addVocalsIni();
+                    i++
+                }
             }
         }
     }
     //vocals actualizar
     get vocals() {
-      return this.form.get('vocals') as FormArray;
+        return this.form.get('vocals') as FormArray;
     }
 
     //Añadir select vocals adicional actualizar
     addVocals() {
-        const vocalsFormGroup = this.formBuilder.group({ id: ['', [Validators.required]]});
+        const vocalsFormGroup = this.formBuilder.group({ id: ['', [Validators.required]] });
         this.vocals.push(vocalsFormGroup);
         this.resultado.vocals.push('');
         console.log(this.vocals);
     }
 
-        //Añadir select vocals adicional actualizar
+    //Añadir select vocals adicional actualizar
     addVocalsIni() {
-        const vocalsFormGroup = this.formBuilder.group({ id: ['', [Validators.required]]});
+        const vocalsFormGroup = this.formBuilder.group({ id: ['', [Validators.required]] });
         this.vocals.push(vocalsFormGroup);
         console.log(this.vocals);
     }
 
     //Remover select vocals adicional, removemos por indice. actualizar
-    removeVocals(i: number){
+    removeVocals(i: number) {
         console.log(this.resultado.vocals);
         this.vocals.removeAt(i);
         this.resultado.vocals.splice(i, 1);
@@ -133,13 +161,13 @@ export class GuardarParticipantesComisionComponent implements OnInit {
 
     //Añadir select vocals adicional guardado
     addVocalsg() {
-        const vocalsgFormGroup = this.formBuilder.group({ id: ['', [Validators.required]]});
+        const vocalsgFormGroup = this.formBuilder.group({ id: ['', [Validators.required]] });
         this.vocalsg.push(vocalsgFormGroup);
-        console.log(this.vocalsg);
+        console.log(this.vocalsg,'entro');
     }
-  
+
     //Remover select vocals adicional, removemos por indice. guardado
-    removeVocalsg(i: number){
+    removeVocalsg(i: number) {
         console.log(i);
         this.vocalsg.removeAt(i);
     }
@@ -160,41 +188,41 @@ export class GuardarParticipantesComisionComponent implements OnInit {
     }
 
     async obtenerDiputados(): Promise<void> {
-      // Obtenemos empleados
-      this.spinner.show();
-      await this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
-        for(const diputados of resp){
-            if(diputados.legislatura){
-                this.arrDiputados.push(diputados);
-            } else {
+        // Obtenemos empleados
+        this.spinner.show();
+        await this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
+            for (const diputados of resp) {
+                if (diputados.legislatura) {
+                    this.arrDiputados.push(diputados);
+                } else {
 
+                }
             }
-        }
-          //this.arrDiputados = resp;
-          this.arrDiputados = this.arrDiputados.filter(meta => meta.legislatura.id == this.selectedLegislatura);
-          this.spinner.hide();
-      }, err => {
-          Swal.fire('Error', 'Ocurrió un error obtener los diputados.' + err, 'error');
-          this.spinner.hide();
-      });
-  }
+            //this.arrDiputados = resp;
+            this.arrDiputados = this.arrDiputados.filter(meta => meta.legislatura.id == this.selectedLegislatura);
+            this.spinner.hide();
+        }, err => {
+            Swal.fire('Error', 'Ocurrió un error obtener los diputados.' + err, 'error');
+            this.spinner.hide();
+        });
+    }
 
-  async onSelect(id: any): Promise<void>{
-          // Obtenemos empleados
-          this.spinner.show();
-          await this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
-           console.log(this.arrDiputados);
-           for(const diputados of resp){
-            if(diputados.legislatura){
-                this.arrDiputados.push(diputados);
-            } else {
+    async onSelect(id: any): Promise<void> {
+        // Obtenemos empleados
+        this.spinner.show();
+        await this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
+            console.log(this.arrDiputados);
+            for (const diputados of resp) {
+                if (diputados.legislatura) {
+                    this.arrDiputados.push(diputados);
+                } else {
 
+                }
             }
-        }
             //this.arrDiputados = resp;
             this.arrDiputados = this.arrDiputados.filter(meta => meta.legislatura.id == this.selectedLegislatura);
 
-            if(this.arrDiputados.length == 0 && this.primeraVez == 1){
+            if (this.arrDiputados.length == 0 && this.primeraVez == 1) {
                 Swal.fire('Error', 'No se encontraron diputados en la legislatura seleccionada.', 'error');
             }
             this.primeraVez = 1;
@@ -203,22 +231,22 @@ export class GuardarParticipantesComisionComponent implements OnInit {
             Swal.fire('Error', 'Ocurrió un error obtener los diputados.' + err, 'error');
             this.spinner.hide();
         });
-  }
+    }
 
-  guardar(): void {
-    let repetido: boolean;
-    repetido = false;
-    this.comision = [];
+    guardar(): void {
+        let repetido: boolean;
+        repetido = false;
+        this.comision = [];
         if (this.selectedPresidente)
 
-        this.comision.push({
-            cargo: 'Presidente',
-            idParticipante: this.selectedPresidente,
-            participante: this.arrDiputados.find(meta => meta.id == this.selectedPresidente).nombre,
-            partido: this.arrDiputados.find(meta => meta.id == this.selectedPresidente).partidos_politico.cNomenclatura,
-            idLegislatura: this.selectedLegislatura,
-            legislatura: this.arrLegislatura.find(meta => meta.id == this.selectedLegislatura).cLegislatura
-        });
+            this.comision.push({
+                cargo: 'Presidente',
+                idParticipante: this.selectedPresidente,
+                participante: this.arrDiputados.find(meta => meta.id == this.selectedPresidente).nombre,
+                partido: this.arrDiputados.find(meta => meta.id == this.selectedPresidente).partidos_politico.cNomenclatura,
+                idLegislatura: this.selectedLegislatura,
+                legislatura: this.arrLegislatura.find(meta => meta.id == this.selectedLegislatura).cLegislatura
+            });
 
         this.comision.push({
             cargo: 'Vice presidente',
@@ -229,20 +257,8 @@ export class GuardarParticipantesComisionComponent implements OnInit {
             legislatura: this.arrLegislatura.find(meta => meta.id == this.selectedLegislatura).cLegislatura
         });
 
-        this.vocals.controls.forEach(element =>{
+        this.vocals.controls.forEach(element => {
 
-        this.comision.push({
-                cargo: 'Vocal',
-                idParticipante: element.value,
-                participante: this.arrDiputados.find(meta => meta.id == element.value.id).nombre,
-                partido: this.arrDiputados.find(meta => meta.id == element.value.id).partidos_politico.cNomenclatura,
-                idLegislatura: this.selectedLegislatura,
-                legislatura: this.arrLegislatura.find(meta => meta.id == this.selectedLegislatura).cLegislatura
-            });
-        });
-
-        this.vocalsg.controls.forEach(element =>{
-            
             this.comision.push({
                 cargo: 'Vocal',
                 idParticipante: element.value,
@@ -252,7 +268,19 @@ export class GuardarParticipantesComisionComponent implements OnInit {
                 legislatura: this.arrLegislatura.find(meta => meta.id == this.selectedLegislatura).cLegislatura
             });
         });
-      
+
+        this.vocalsg.controls.forEach(element => {
+
+            this.comision.push({
+                cargo: 'Vocal',
+                idParticipante: element.value,
+                participante: this.arrDiputados.find(meta => meta.id == element.value.id).nombre,
+                partido: this.arrDiputados.find(meta => meta.id == element.value.id).partidos_politico.cNomenclatura,
+                idLegislatura: this.selectedLegislatura,
+                legislatura: this.arrLegislatura.find(meta => meta.id == this.selectedLegislatura).cLegislatura
+            });
+        });
+
         /*for (let i = 0; i < this.comision.length; i++) {
             if (this.comision[i + 1]) {
                 if (this.comision[i + 1].idParticipante === this.comision[i].idParticipante) {
@@ -287,16 +315,16 @@ export class GuardarParticipantesComisionComponent implements OnInit {
 
         for (let i = 0; i < this.comision.length; i++) {
             if (this.comision[i].idParticipante.hasOwnProperty('id')) {
-                idDiputados.push({"id": this.comision[i].idParticipante.id});
-            }else{
-                idDiputados.push({"id": this.comision[i].idParticipante});
+                idDiputados.push({ "id": this.comision[i].idParticipante.id });
+            } else {
+                idDiputados.push({ "id": this.comision[i].idParticipante });
             }
         }
 
         idDiputados.forEach(element => {
-            if(idCompare === ''){
+            if (idCompare === '') {
                 idCompare = element.id;
-            }else{
+            } else {
                 idCompare = idCompare + ',' + element.id;
             }
         });
@@ -309,11 +337,11 @@ export class GuardarParticipantesComisionComponent implements OnInit {
         //console.log(separatedAutors);
 
         normalizedInputArray.forEach(value => {
-            idValue.push({"diputado": value, "valor": normalizedInputArray.filter(el => el === value).length});
+            idValue.push({ "diputado": value, "valor": normalizedInputArray.filter(el => el === value).length });
         });
 
         idValue.forEach(dip => {
-            if(dip.valor>1){
+            if (dip.valor > 1) {
                 repetido = true;
                 Swal.fire('Error', 'Ocurrió un error al guardar. No debe haber duplicidad en los participantes.', 'error');
             }
@@ -329,7 +357,7 @@ export class GuardarParticipantesComisionComponent implements OnInit {
         }
     }
 
-    pruebaFormArray(){
+    pruebaFormArray() {
         console.log(this.form.value);
     }
 

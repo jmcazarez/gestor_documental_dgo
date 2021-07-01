@@ -63,8 +63,6 @@ export class GuardarComisionesComponent implements OnInit {
     async ngOnInit(): Promise<void> {
         // Form reactivo
 
-        console.log(this.comision.detalle_participantes_comisions);
-
         if (this.comision.activo === undefined) {
             this.comision.activo = true;
         }
@@ -195,43 +193,98 @@ export class GuardarComisionesComponent implements OnInit {
             this.comision.descripcion = this.form.get('descripcion').value;
             this.comision.tipos_comisione = this.selectedTipoComision;
 
-            console.log(this.detalles);
             let presidente = this.detalles.find(meta => meta.cargo == 'Presidente');
             let vicepresidentes = this.detalles.find(meta => meta.cargo == 'Vice presidente');
             //Obtenermos los vocals
             this.vocals = this.detalles.filter(meta => meta.cargo == 'Vocal');
-
-
-            console.log(this.vocals);
+            delete this.comision.iniciativas;
 
             if (this.comision.id) {
 
 
                 if (this.comision.detalle_participantes_comisions) {
-                    // Actualizamos la comision 
-                    this.detalleComisionsService.actualizarDetalleComisions({
-                        id: this.comision.detalle_participantes_comisions[0].id,
-                        comisione: this.comision.id,
-                        legislatura: [presidente.idLegislatura],
-                        presidente: [presidente.idParticipante],
-                        vicepresidente: [vicepresidentes.idParticipante],
-                        vocals: [this.vocals],
-                        activo: true
-                    }).subscribe((resp: any) => {
-                        if (resp) {
+                    if (this.comision.detalle_participantes_comisions.length > 0) {
+                        console.log('0');
+                        // Actualizamos la comision 
+                        this.detalleComisionsService.actualizarDetalleComisions({
+                            id: this.comision.detalle_participantes_comisions[0].id,
+                            comisione: this.comision.id,
+                            legislatura: [presidente.idLegislatura],
+                            presidente: [presidente.idParticipante],
+                            vicepresidente: [vicepresidentes.idParticipante],
+                            vocals: [this.vocals],
+                            activo: true
+                        }).subscribe((resp: any) => {
+                            if (resp) {
+                                // Actualizamos la comisión
+                                this.comision.detalle_participantes_comisions = [resp.data.id];
+                                this.comsionesService.actualizarComision(this.comision).subscribe((resp: any) => {
+                                    if (resp) {
+                                        this.spinner.hide();
+                                        Swal.fire('Éxito', 'Comisión actualizada correctamente.', 'success');
+                                        this.comision = resp.data;
 
-                        } else {
+                                        this.cerrar(this.comision);
+                                    } else {
+                                        this.spinner.hide();
+                                        Swal.fire('Error', 'Ocurrió un error al actualizar. ' + resp.error.data, 'error');
+                                    }
+                                }, err => {
+                                    this.spinner.hide();
+                                    Swal.fire('Error', 'Ocurrió un error al actualizar.' + err.error.data, 'error');
+                                });
+                            } else {
+                                this.spinner.hide();
+                                Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                            }
+                        }, err => {
                             this.spinner.hide();
-                            Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
-                        }
-                    }, err => {
-                        this.spinner.hide();
-                        Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
-                    });
-                } else {
+                            Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                        });
+                    } else {
+                        
+                        this.detalleComisionsService.guardarDetalleComision({
+                            //   id: this.comision.detalle_participantes_comisions[0].id,
+                            comisione: this.comision.id,
+                            legislatura: [presidente.idLegislatura],
+                            presidente: [presidente.idParticipante],
+                            vicepresidente: [vicepresidentes.idParticipante],
+                            vocals: [this.vocals],
+                            activo: true
+                        }).subscribe((resp: any) => {
+                            if (resp) {
+                                console.log('1');
+                                this.comision.detalle_participantes_comisions = [resp.data.id];
+                                // Actualizamos la comisión
+                                this.comsionesService.actualizarComision(this.comision).subscribe((resp: any) => {
+                                    if (resp) {
+                                        this.spinner.hide();
+                                        Swal.fire('Éxito', 'Comisión actualizada correctamente.', 'success');
+                                        this.comision = resp.data;
 
+                                        this.cerrar(this.comision);
+                                    } else {
+                                        this.spinner.hide();
+                                        Swal.fire('Error', 'Ocurrió un error al actualizar. ' + resp.error.data, 'error');
+                                    }
+                                }, err => {
+                                    this.spinner.hide();
+                                    Swal.fire('Error', 'Ocurrió un error al actualizar.' + err.error.data, 'error');
+                                });
+                            } else {
+                                this.spinner.hide();
+                                Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                            }
+                        }, err => {
+                            this.spinner.hide();
+                            Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                        });
+
+                    }
+                } else {
+                   
                     this.detalleComisionsService.guardarDetalleComision({
-                        id: this.comision.detalle_participantes_comisions[0].id,
+                        //   id: this.comision.detalle_participantes_comisions[0].id,
                         comisione: this.comision.id,
                         legislatura: [presidente.idLegislatura],
                         presidente: [presidente.idParticipante],
@@ -240,7 +293,24 @@ export class GuardarComisionesComponent implements OnInit {
                         activo: true
                     }).subscribe((resp: any) => {
                         if (resp) {
+                            console.log('2');
+                            this.comision.detalle_participantes_comisions = [resp.data.id];
+                            // Actualizamos la comisión
+                            this.comsionesService.actualizarComision(this.comision).subscribe((resp: any) => {
+                                if (resp) {
+                                    this.spinner.hide();
+                                    Swal.fire('Éxito', 'Comisión actualizada correctamente.', 'success');
+                                    this.comision = resp.data;
 
+                                    this.cerrar(this.comision);
+                                } else {
+                                    this.spinner.hide();
+                                    Swal.fire('Error', 'Ocurrió un error al actualizar. ' + resp.error.data, 'error');
+                                }
+                            }, err => {
+                                this.spinner.hide();
+                                Swal.fire('Error', 'Ocurrió un error al actualizar.' + err.error.data, 'error');
+                            });
                         } else {
                             this.spinner.hide();
                             Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
@@ -252,22 +322,7 @@ export class GuardarComisionesComponent implements OnInit {
 
                 }
 
-                // Actualizamos la comisión
-                this.comsionesService.actualizarComision(this.comision).subscribe((resp: any) => {
-                    if (resp) {
-                        this.spinner.hide();
-                        Swal.fire('Éxito', 'Comisión actualizada correctamente.', 'success');
-                        this.comision = resp.data;
 
-                        this.cerrar(this.comision);
-                    } else {
-                        this.spinner.hide();
-                        Swal.fire('Error', 'Ocurrió un error al actualizar. ' + resp.error.data, 'error');
-                    }
-                }, err => {
-                    this.spinner.hide();
-                    Swal.fire('Error', 'Ocurrió un error al actualizar.' + err.error.data, 'error');
-                });
 
             } else {
                 // Guardamos la comisión
@@ -280,6 +335,7 @@ export class GuardarComisionesComponent implements OnInit {
                     activo: true
                 }).subscribe((resp: any) => {
                     if (resp) {
+                        console.log('3');
                         this.comision.detalle_participantes_comisions = [resp.data.id];
                         this.comsionesService.guardarComision(this.comision).subscribe((resp: any) => {
                             if (resp) {
