@@ -72,7 +72,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     descriptionTipoDocumento: 'Acta';
     autorizacionPendiente: boolean;
     turnarDocumento: boolean;
-    pasarAAutorizacion: boolean;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     meta: Metacatalogos[] = [];
 
@@ -121,7 +120,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         this.pdfSrc = '';
         this.autorizacionPendiente = false;
         this.turnarDocumento = false;
-        this.pasarAAutorizacion = false;
         this.spinner.show();
         let autorizaciones: any;
         this.documento.usuario = this.menuService.usuario;
@@ -163,15 +161,13 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 }
             }
         } else {
-
+         
             if (!this.documento.formulario) {
-
+               
                 this.turnarDocumento = false; // Pruebas Hilda
                 this.autorizacionPendiente = true;  // Pruebas Hilda
             }
-            if (this.documento.iniciativa.confirmaAutorizacion) {
-                this.pasarAAutorizacion = true;
-            }
+
             if (this.documento.iniciativa) {
                 this.disableFolioExpediente = true;
             }
@@ -181,11 +177,11 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             autorizaciones.forEach(element => {
 
                 if (element.estatusAutorizacion === 1 || element.estatusAutorizacion === 2) {
-                    this.autorizacionPendiente = false;
-                    //  this.turnarDocumento = true;
+                    this.autorizacionPendiente = true;
+                  //  this.turnarDocumento = true;
                 } else if (element.estatusAutorizacion === 3) {
                     this.autorizacionPendiente = true;
-                    //  this.turnarDocumento = false;
+                  //  this.turnarDocumento = false;
                 }
 
             });
@@ -1059,46 +1055,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 }
             );
     }
-
-    async pasarAutorizacion(): Promise<void> {
-     
-        let iniciativa = this.documento.iniciativa;
-
-        iniciativa.estatus = this.estatusIniciativa;
-        this.iniciativaService
-            .actualizarIniciativa({
-                id: iniciativa.id,
-                confirmaAutorizacion: true
-            })
-            .subscribe(
-                (resp: any) => {
-                    if (resp) {
-                        this.version = resp.version;
-                        Swal.fire(
-                            "Éxito",
-                            "Iniciativa pasada a autorización correctamente.",
-                            "success"
-                        );
-                        this.cerrarIniciativa("0");
-                    } else {
-                        Swal.fire(
-                            "Error",
-                            "Ocurrió un error al guardar. " + resp.error.data,
-                            "error"
-                        );
-                    }
-                },
-                (err) => {
-                    console.log(err);
-                    this.cerrarIniciativa("1");
-                    Swal.fire(
-                        "Error",
-                        "Ocurrió un error al guardar." + err.error.data,
-                        "error"
-                    );
-                }
-            );
-    }
     async autorizar(): Promise<void> {
         this.spinner.show()
         let fileBase64 = this.pdfSrc;
@@ -1138,7 +1094,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             );
             firmantes = firmasPorEtapas[0].participantes;
         }
-
+        console.log(firmantes);
         firmantes.forEach(element => {
             detalleAutorizacion.push({ empleado: element.id })
 
