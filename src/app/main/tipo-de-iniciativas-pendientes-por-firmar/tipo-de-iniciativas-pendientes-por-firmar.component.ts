@@ -428,6 +428,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                     id: iniciativa.iniciativa.id,
                     fechaCreacion: iniciativa.iniciativa.fechaCreacion,
                     estatus: iniciativa.iniciativa.estatus,
+                    confirmaAutorizacion: false
                 })
                 .subscribe(
                     (resp: any) => {

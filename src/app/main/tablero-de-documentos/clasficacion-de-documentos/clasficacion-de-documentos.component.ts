@@ -72,6 +72,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     descriptionTipoDocumento: 'Acta';
     autorizacionPendiente: boolean;
     turnarDocumento: boolean;
+    pasarAAutorizacion: boolean;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     meta: Metacatalogos[] = [];
 
@@ -116,6 +117,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
+        this.pasarAAutorizacion = false;
         this.disableFolioExpediente = false;
         this.pdfSrc = '';
         this.autorizacionPendiente = false;
@@ -166,6 +168,10 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                
                 this.turnarDocumento = false; // Pruebas Hilda
                 this.autorizacionPendiente = true;  // Pruebas Hilda
+            }
+            console.log(this.documento.iniciativa);
+            if (this.documento.iniciativa.confirmaAutorizacion) {
+                this.pasarAAutorizacion = true;
             }
 
             if (this.documento.iniciativa) {
@@ -1220,5 +1226,45 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 );
             }
         });
+    }
+
+    async pasarAutorizacion(): Promise<void> {
+     
+        let iniciativa = this.documento.iniciativa;
+
+        iniciativa.estatus = this.estatusIniciativa;
+        this.iniciativaService
+            .actualizarIniciativa({
+                id: iniciativa.id,
+                confirmaAutorizacion: true
+            })
+            .subscribe(
+                (resp: any) => {
+                    if (resp) {
+                        this.version = resp.version;
+                        Swal.fire(
+                            "Éxito",
+                            "Iniciativa pasada a autorización correctamente.",
+                            "success"
+                        );
+                        this.cerrarIniciativa("0");
+                    } else {
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al guardar. " + resp.error.data,
+                            "error"
+                        );
+                    }
+                },
+                (err) => {
+                    console.log(err);
+                    this.cerrarIniciativa("1");
+                    Swal.fire(
+                        "Error",
+                        "Ocurrió un error al guardar." + err.error.data,
+                        "error"
+                    );
+                }
+            );
     }
 }

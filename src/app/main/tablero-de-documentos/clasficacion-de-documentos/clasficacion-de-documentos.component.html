@@ -50,16 +50,22 @@
 
             <mat-menu #menu="matMenu">
                
-                <button *ngIf="this.autorizacionPendiente" [disabled]="!this.autorizacionPendiente" mat-menu-item
-                    (click)="autorizar()">
+                
+                <button *ngIf="!this.pasarAAutorizacion " mat-menu-item (click)="pasarAutorizacion()">
+                    <mat-icon>arrow_right_alt</mat-icon>
+                    <span>Autorización</span>
+                </button>
+                <button *ngIf="this.autorizacionPendiente && this.pasarAAutorizacion"
+                    [disabled]="!this.autorizacionPendiente" mat-menu-item (click)="autorizar()">
                     <mat-icon>verified_user</mat-icon>
                     <span>Autorizar</span>
                 </button>
                 <button mat-menu-item (click)="descargar()">
-                  <mat-icon>cloud_download</mat-icon>
-                  <span>Descargar</span>
+                    <mat-icon>cloud_download</mat-icon>
+                    <span>Descargar</span>
                 </button>
-                <button *ngIf="this.turnarDocumento" [disabled]="!this.turnarDocumento" mat-menu-item (click)="turnarIniciativa()">
+                <button *ngIf="this.turnarDocumento" [disabled]="!this.turnarDocumento" mat-menu-item
+                    (click)="turnarIniciativa()">
                     <mat-icon>keyboard_tab</mat-icon>
                     <span>Turnar</span>
                 </button>

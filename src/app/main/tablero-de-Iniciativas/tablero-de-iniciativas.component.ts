@@ -11,6 +11,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { element } from 'protractor';
+import { UsuarioLoginService } from 'services/usuario-login.service';
 
 @Component({
     selector: 'app-tablero-de-iniciativas',
@@ -34,6 +35,7 @@ export class TableroDeIniciativasComponent implements OnInit {
     fileBase64: any;
     valueBuscador = '';
     constructor(
+        private usuarioLoginService: UsuarioLoginService,
         private spinner: NgxSpinnerService,
         private datePipe: DatePipe,
         private router: Router,
@@ -71,11 +73,12 @@ export class TableroDeIniciativasComponent implements OnInit {
     }
 
 
-    obtenerIniciativas(): void {
+    async obtenerIniciativas(): Promise<void> {
         this.spinner.show();
         this.filterName = '';
         this.loadingIndicator = true;
         const iniciativasTemp: any[] = [];
+        const usuarioLogin = await this.usuarioLoginService.obtenerUsuario();
         let autores: string;
         let temas: string;
         let clasificaciones: any;
@@ -157,39 +160,79 @@ export class TableroDeIniciativasComponent implements OnInit {
                             etiquetas = [];
                         }
 
-                        iniciativasTemp.push({
-                            id: ini.id,
-                            autores: ini.autores,
-                            autoresText: autores,
-                            tema: ini.tema,
-                            temaText: temas,
-                            clasificaciones: ini.clasificaciones,
-                            clasificacionesText: clasificaciones,
-                            adicion: ini.adicion,
-                            adicionText: adiciones,
-                            etiquetas: ini.etiquetas,
-                            etiquetasText: etiquetas,
-                            estatus: ini.estatus,
-                            tipo_de_iniciativa: ini.tipo_de_iniciativa,
-                            documentos: ini.documentos,
-                            formatosTipoIniciativa: ini.formatosTipoIniciativa,
-                            fechaIniciativa: this.datePipe.transform(ini.fechaIniciativa, 'yyyy-MM-dd'),
-                            fechaCreacion: this.datePipe.transform(ini.fechaCreacion, 'yyyy-MM-dd'),
-                            fechaIniciativaText: this.datePipe.transform(ini.fechaIniciativa, 'dd-MM-yyyy'),
-                            fechaCreacionText: this.datePipe.transform(ini.fechaCreacion, 'dd-MM-yyyy'),
-                            actasSesion: ini.actasSesion,
-                            comisiones: ini.comisiones,
-                            anexosTipoCuentaPublica: ini.anexosTipoCuentaPublica,
-                            anexosTipoIniciativa: ini.anexosTipoIniciativa,
-                            oficioEnvioDeInforme: ini.oficioEnvioDeInforme,
-                            informeDeResultadosRevision: ini.informeDeResultadosRevision,
-                            dictamenDeIniciativa: ini.dictamenDeIniciativa,
-                            sustentoDeModificacion: ini.sustentoDeModificacion,
-                            motivoDeSuspension: ini.motivoDeSuspension,
-                            fechaPublicacion: ini.fechaPublicacion,
-                            periodicoOficial: ini.periodicoOficial,
-                            folioExpediente: ini.folioExpediente
-                        });
+                        if (usuarioLogin[0].data.empleado) {
+                            iniciativasTemp.push({
+                                id: ini.id,
+                                autores: ini.autores,
+                                autoresText: autores,
+                                tema: ini.tema,
+                                temaText: temas,
+                                clasificaciones: ini.clasificaciones,
+                                clasificacionesText: clasificaciones,
+                                adicion: ini.adicion,
+                                adicionText: adiciones,
+                                etiquetas: ini.etiquetas,
+                                etiquetasText: etiquetas,
+                                estatus: ini.estatus,
+                                tipo_de_iniciativa: ini.tipo_de_iniciativa,
+                                documentos: ini.documentos,
+                                formatosTipoIniciativa: ini.formatosTipoIniciativa,
+                                fechaIniciativa: this.datePipe.transform(ini.fechaIniciativa, 'yyyy-MM-dd'),
+                                fechaCreacion: this.datePipe.transform(ini.fechaCreacion, 'yyyy-MM-dd'),
+                                fechaIniciativaText: this.datePipe.transform(ini.fechaIniciativa, 'dd-MM-yyyy'),
+                                fechaCreacionText: this.datePipe.transform(ini.fechaCreacion, 'dd-MM-yyyy'),
+                                actasSesion: ini.actasSesion,
+                                comisiones: ini.comisiones,
+                                anexosTipoCuentaPublica: ini.anexosTipoCuentaPublica,
+                                anexosTipoIniciativa: ini.anexosTipoIniciativa,
+                                oficioEnvioDeInforme: ini.oficioEnvioDeInforme,
+                                informeDeResultadosRevision: ini.informeDeResultadosRevision,
+                                dictamenDeIniciativa: ini.dictamenDeIniciativa,
+                                sustentoDeModificacion: ini.sustentoDeModificacion,
+                                motivoDeSuspension: ini.motivoDeSuspension,
+                                fechaPublicacion: ini.fechaPublicacion,
+                                periodicoOficial: ini.periodicoOficial,
+                                folioExpediente: ini.folioExpediente,
+                                confirmaAutorizacion: ini.confirmaAutorizacion
+                            });
+                        } else {
+                            if (!ini.confirmaAutorizacion) {
+                                iniciativasTemp.push({
+                                    id: ini.id,
+                                    autores: ini.autores,
+                                    autoresText: autores,
+                                    tema: ini.tema,
+                                    temaText: temas,
+                                    clasificaciones: ini.clasificaciones,
+                                    clasificacionesText: clasificaciones,
+                                    adicion: ini.adicion,
+                                    adicionText: adiciones,
+                                    etiquetas: ini.etiquetas,
+                                    etiquetasText: etiquetas,
+                                    estatus: ini.estatus,
+                                    tipo_de_iniciativa: ini.tipo_de_iniciativa,
+                                    documentos: ini.documentos,
+                                    formatosTipoIniciativa: ini.formatosTipoIniciativa,
+                                    fechaIniciativa: this.datePipe.transform(ini.fechaIniciativa, 'yyyy-MM-dd'),
+                                    fechaCreacion: this.datePipe.transform(ini.fechaCreacion, 'yyyy-MM-dd'),
+                                    fechaIniciativaText: this.datePipe.transform(ini.fechaIniciativa, 'dd-MM-yyyy'),
+                                    fechaCreacionText: this.datePipe.transform(ini.fechaCreacion, 'dd-MM-yyyy'),
+                                    actasSesion: ini.actasSesion,
+                                    comisiones: ini.comisiones,
+                                    anexosTipoCuentaPublica: ini.anexosTipoCuentaPublica,
+                                    anexosTipoIniciativa: ini.anexosTipoIniciativa,
+                                    oficioEnvioDeInforme: ini.oficioEnvioDeInforme,
+                                    informeDeResultadosRevision: ini.informeDeResultadosRevision,
+                                    dictamenDeIniciativa: ini.dictamenDeIniciativa,
+                                    sustentoDeModificacion: ini.sustentoDeModificacion,
+                                    motivoDeSuspension: ini.motivoDeSuspension,
+                                    fechaPublicacion: ini.fechaPublicacion,
+                                    periodicoOficial: ini.periodicoOficial,
+                                    folioExpediente: ini.folioExpediente,
+                                    confirmaAutorizacion: ini.confirmaAutorizacion
+                                });
+                            }
+                        }
                     }
                 }
                 
