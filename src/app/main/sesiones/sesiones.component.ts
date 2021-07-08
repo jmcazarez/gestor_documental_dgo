@@ -79,7 +79,8 @@ export class SesionesComponent implements OnInit {
                         iniciativas: sesion.iniciativas,
                         ordenDelDia: sesion.ordenDelDia,
                         listaDeAsistencia: sesion.listaDeAsistencia,
-                        actasSesion: sesion.actasSesion
+                        actasSesion: sesion.actasSesion,
+                        recepcion_de_actas_de_sesion: sesion.recepcion_de_actas_de_sesion,
                     });
                     ;
                 }

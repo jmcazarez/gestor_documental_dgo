@@ -315,56 +315,64 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
     }
 
     async guardar(): Promise<void> {
+        try {
+            this.spinner.show();
 
-        this.spinner.show();
+            if (this.iniciativa.dictamenDeIniciativa == 'Modificación') {
+                this.iniciativa.sustentoDeModificacion = this.form.get('sustentoDeModificacion').value;
+                this.iniciativa.motivoDeSuspension = '';
+                this.iniciativa.estatus = 'Turnada a comisión para modificación';
+            } else {
+                this.iniciativa.sustentoDeModificacion = '';
+                this.iniciativa.motivoDeSuspension = this.form.get('motivoDeSuspension').value;
+                this.iniciativa.estatus = 'Suspendida';
+            }
 
-        if (this.iniciativa.dictamenDeIniciativa == 'Modificación') {
-            this.iniciativa.sustentoDeModificacion = this.form.get('sustentoDeModificacion').value;
-            this.iniciativa.motivoDeSuspension = '';
-            this.iniciativa.estatus = 'Turnada a comisión para modificación';
-        } else {
-            this.iniciativa.sustentoDeModificacion = '';
-            this.iniciativa.motivoDeSuspension = this.form.get('motivoDeSuspension').value;
-            this.iniciativa.estatus = 'Suspendida';
-        }
-
-        this.iniciativaService
-            .actualizarIniciativa({
-                id: this.iniciativa.id,
-                motivoDeSuspension: this.iniciativa.motivoDeSuspension,
-                sustentoDeModificacion: this.iniciativa.sustentoDeModificacion,
-                estatus: this.iniciativa.estatus
-            })
-            .subscribe(
-                (resp: any) => {
-                    if (resp.data) {
-                        Swal.fire(
-                            "Éxito",
-                            "Iniciativa actualizada correctamente.",
-                            "success"
-                        );
-                        this.iniciativa = resp.data;
-                        this.spinner.hide();
-                        this.cerrar('0');
-                    } else {
+            this.iniciativaService
+                .actualizarIniciativa({
+                    id: this.iniciativa.id,
+                    motivoDeSuspension: this.iniciativa.motivoDeSuspension,
+                    sustentoDeModificacion: this.iniciativa.sustentoDeModificacion,
+                    estatus: this.iniciativa.estatus
+                })
+                .subscribe(
+                    (resp: any) => {
+                        if (resp.data) {
+                            Swal.fire(
+                                "Éxito",
+                                "Iniciativa actualizada correctamente.",
+                                "success"
+                            );
+                            this.iniciativa = resp.data;
+                            this.spinner.hide();
+                            this.cerrar('0');
+                        } else {
+                            this.spinner.hide();
+                            Swal.fire(
+                                "Error",
+                                "Ocurrió un error al guardar. " +
+                                resp.error.data,
+                                "error"
+                            );
+                        }
+                    },
+                    (err) => {
                         this.spinner.hide();
                         Swal.fire(
                             "Error",
-                            "Ocurrió un error al guardar. " +
-                            resp.error.data,
+                            "Ocurrió un error al guardar." + err.error.data,
                             "error"
                         );
                     }
-                },
-                (err) => {
-                    this.spinner.hide();
-                    Swal.fire(
-                        "Error",
-                        "Ocurrió un error al guardar." + err.error.data,
-                        "error"
-                    );
-                }
+                );
+        } catch (err) {
+            this.spinner.hide();
+            Swal.fire(
+                "Error",
+                "Ocurrió un error al clasificar." + err,
+                "error"
             );
+        }
     }
 
     filterDatatable(value): void {
@@ -443,342 +451,368 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
     }
 
     async cargaClasificacionDocumento(tipo: string): Promise<void> {
+        try {
+            this.spinner.show();
+            //Creamos nuevo modelo de documentos y asignamos parametros
+            this.documentos = new DocumentosModel();
+            let legislaturaFolio: any;
+            this.documentos.bActivo = true;
+            let parametrosSSP001 = await this.obtenerParametros("SSP-001");
+            let tipoDocumento = parametrosSSP001.filter(
+                (d) =>
+                    d["cParametroAdministrado"] === "SSP-001-Tipo-de-Documento"
+            );
+            let tipoExpediente = parametrosSSP001.filter(
+                (d) =>
+                    d["cParametroAdministrado"] === "SSP-001-Tipo-de-Expediente"
+            );
+            let tipoInformacion = parametrosSSP001.filter(
+                (d) =>
+                    d["cParametroAdministrado"] ===
+                    "SSP-001-Tipo-de-Informacion"
+            );
+            //parametro tipo documento
+            this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
+            this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
 
-        this.spinner.show();
-        //Creamos nuevo modelo de documentos y asignamos parametros
-        this.documentos = new DocumentosModel();
-        let legislaturaFolio: any;
-        this.documentos.bActivo = true;
-        let parametrosSSP001 = await this.obtenerParametros("SSP-001");
-        let tipoDocumento = parametrosSSP001.filter(
-            (d) =>
-                d["cParametroAdministrado"] === "SSP-001-Tipo-de-Documento"
-        );
-        let tipoExpediente = parametrosSSP001.filter(
-            (d) =>
-                d["cParametroAdministrado"] === "SSP-001-Tipo-de-Expediente"
-        );
-        let tipoInformacion = parametrosSSP001.filter(
-            (d) =>
-                d["cParametroAdministrado"] ===
-                "SSP-001-Tipo-de-Informacion"
-        );
-        //parametro tipo documento
-        this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
-        this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
-
-        this.documentos.visibilidade = tipoInformacion[0]["cValor"];
-        this.documentos.iniciativa = this.iniciativa.id;
-        if (this.iniciativa.dictamenDeIniciativa == 'Modificación') {
-            this.documentos.formulario = 'Turnada a comisión para modificación';
-        } else {
-            this.documentos.formulario = 'Suspendida';
-        }
-
-        legislaturaFolio = this.legislatura.filter(d => d.id === this.selectedLegislatura);
-     
-        this.documentos.legislatura = legislaturaFolio[0].id;
-        this.documentos.folioExpediente = this.iniciativa.folioExpediente;
-
-        this.spinner.hide();
-
-        const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
-            width: '60%',
-            height: '80%',
-            disableClose: true,
-            data: this.documentos,
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                if (result.documento) {
-                    this.clasificarDocAnex(result, tipo);
-                }
+            this.documentos.visibilidade = tipoInformacion[0]["cValor"];
+            this.documentos.iniciativa = this.iniciativa.id;
+            if (this.iniciativa.dictamenDeIniciativa == 'Modificación') {
+                this.documentos.formulario = 'Turnada a comisión para modificación';
+            } else {
+                this.documentos.formulario = 'Suspendida';
             }
-        });
+
+            legislaturaFolio = this.legislatura.filter(d => d.id === this.selectedLegislatura);
+
+            this.documentos.legislatura = legislaturaFolio[0].id;
+            this.documentos.folioExpediente = this.iniciativa.folioExpediente;
+
+            this.spinner.hide();
+
+            const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
+                width: '60%',
+                height: '80%',
+                disableClose: true,
+                data: this.documentos,
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                if (result) {
+                    if (result.documento) {
+                        this.clasificarDocAnex(result, tipo);
+                    }
+                }
+            });
+        } catch (err) {
+            this.spinner.hide();
+            Swal.fire(
+                "Error",
+                "Ocurrió un error al clasificar." + err,
+                "error"
+            );
+        }
     }
 
     async clasificarDocAnex(result: any, tipo: string): Promise<void> {
-        this.spinner.show();
-        console.log('cla');
-        const fecha = new Date(); // Fecha actual
-        let mes: any = fecha.getMonth() + 1; // obteniendo mes
-        let dia: any = fecha.getDate(); // obteniendo dia
+        try {
+            this.spinner.show();
+            console.log('cla');
+            const fecha = new Date(); // Fecha actual
+            let mes: any = fecha.getMonth() + 1; // obteniendo mes
+            let dia: any = fecha.getDate(); // obteniendo dia
 
-        const anio = fecha.getFullYear(); // obteniendo año
+            const anio = fecha.getFullYear(); // obteniendo año
 
-        if (dia < 10) {
-            dia = "0" + dia; // agrega cero si el menor de 10
-        }
-        if (mes < 10) {
-            mes = "0" + mes; // agrega cero si el menor de 10
-        }
-        const fechaActual = dia + "/" + mes + "/" + anio;
-        this.documentos.bActivo = true;
-
-        if (this.iniciativa.estatus === 'Turnar dictamen a Secretaría General') {
-            this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
-            this.documentos.fechaCarga = this.documentos.fechaCreacion + 'T16:00:00.000Z';
-        }
-
-        this.documentos = result;
-        let cAutores = "";
-        let cTema = "";
-        this.autores.forEach((element) => {
-            if (cAutores === "") {
-                cAutores = element.name;
-            } else {
-                cAutores = cAutores + ", " + element.name;
+            if (dia < 10) {
+                dia = "0" + dia; // agrega cero si el menor de 10
             }
-        });
-        this.temas.forEach((element) => {
-            if (cTema === "") {
-                cTema = element.name;
-            } else {
-                cTema = cTema + ", " + element.name;
+            if (mes < 10) {
+                mes = "0" + mes; // agrega cero si el menor de 10
             }
-        });
-        this.documentos.metacatalogos = [
-            {
-                cDescripcionMetacatalogo: "Fecha",
-                bOligatorio: true,
-                cTipoMetacatalogo: "Fecha",
-                text: this.documentos.fechaCarga,
-            },
-            {
-                cDescripcionMetacatalogo: "Autores",
-                bOligatorio: true,
-                cTipoMetacatalogo: "Texto",
-                text: cAutores,
-            },
+            const fechaActual = dia + "/" + mes + "/" + anio;
+            this.documentos.bActivo = true;
 
-            {
-                cDescripcionMetacatalogo: "Temas",
-                bOligatorio: true,
-                cTipoMetacatalogo: "Texto",
-                text: cTema,
-            },
-        ];
+            if (this.iniciativa.estatus === 'Turnar dictamen a Secretaría General') {
+                this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
+                this.documentos.fechaCarga = this.documentos.fechaCreacion + 'T16:00:00.000Z';
+            }
 
-        if (tipo === '2') {
-            this.documentos.iniciativaOficioEnvioDeInforme = this.iniciativa.id;
-        } else if (tipo === '3') {
-            this.documentos.iniciativaInformeDeResultadosRevision = this.iniciativa.id;
-        } else if (tipo === '1') {
+            this.documentos = result;
+            let cAutores = "";
+            let cTema = "";
+            this.autores.forEach((element) => {
+                if (cAutores === "") {
+                    cAutores = element.name;
+                } else {
+                    cAutores = cAutores + ", " + element.name;
+                }
+            });
+            this.temas.forEach((element) => {
+                if (cTema === "") {
+                    cTema = element.name;
+                } else {
+                    cTema = cTema + ", " + element.name;
+                }
+            });
+            this.documentos.metacatalogos = [
+                {
+                    cDescripcionMetacatalogo: "Fecha",
+                    bOligatorio: true,
+                    cTipoMetacatalogo: "Fecha",
+                    text: this.documentos.fechaCarga,
+                },
+                {
+                    cDescripcionMetacatalogo: "Autores",
+                    bOligatorio: true,
+                    cTipoMetacatalogo: "Texto",
+                    text: cAutores,
+                },
 
-        }
+                {
+                    cDescripcionMetacatalogo: "Temas",
+                    bOligatorio: true,
+                    cTipoMetacatalogo: "Texto",
+                    text: cTema,
+                },
+            ];
 
-        this.documentos.folioExpediente = this.iniciativa.folioExpediente;
-        
-        this.documentoService
-            .actualizarDocumentosSinVersion(this.documentos)
-            .subscribe(
-                (resp: any) => {
-                    if (resp.data) {
-                        console.log(resp.data);
-                        this.documentos = resp.data;
+            if (tipo === '2') {
+                this.documentos.iniciativaOficioEnvioDeInforme = this.iniciativa.id;
+            } else if (tipo === '3') {
+                this.documentos.iniciativaInformeDeResultadosRevision = this.iniciativa.id;
+            } else if (tipo === '1') {
 
-                        let documentoId: string = this.documentos.id;
+            }
 
-                        this.documentos.iniciativas = true;
-                        this.documentos.iniciativa = this.iniciativa;
+            this.documentos.folioExpediente = this.iniciativa.folioExpediente;
 
-                        if (
-                            this.iniciativa.tipo_de_iniciativa.descripcion ==
-                            "Iniciativa"
-                        ) {
-                            this.documentos.estatus =
-                                "Turnar iniciativa a comisión";
+            this.documentoService
+                .actualizarDocumentosSinVersion(this.documentos)
+                .subscribe(
+                    (resp: any) => {
+                        if (resp.data) {
+                            console.log(resp.data);
+                            this.documentos = resp.data;
+
+                            let documentoId: string = this.documentos.id;
+
+                            this.documentos.iniciativas = true;
+                            this.documentos.iniciativa = this.iniciativa;
+
+                            if (
+                                this.iniciativa.tipo_de_iniciativa.descripcion ==
+                                "Iniciativa"
+                            ) {
+                                this.documentos.estatus =
+                                    "Turnar iniciativa a comisión";
+                            } else {
+                                this.documentos.estatus =
+                                    "Turnar cuenta pública a EASE";
+                            }
+
+                            this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+                            this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+
+                            //this.documentosTemp.fechaCreacion = fechaActual;
+                            //this.documentosTemp.fechaCarga = fechaActual;
+
+                            this.spinner.hide();
+
+                            const dialogRef = this.dialog.open(
+                                ClasficacionDeDocumentosComponent,
+                                {
+                                    width: "100%",
+                                    height: "90%",
+                                    disableClose: true,
+                                    data: this.documentos,
+                                }
+                            );
+
+                            // tslint:disable-next-line: no-shadowed-variable
+                            dialogRef.afterClosed().subscribe((result) => {
+
+                                if (tipo === '2') {
+                                    this.iniciativa.oficioEnvioDeInforme = this.documentos;
+                                    this.fileOficioName = this.iniciativa.oficioEnvioDeInforme.cNombreDocumento;
+                                } else if (tipo === '3') {
+                                    this.iniciativa.informeDeResultadosRevision = this.documentos;
+                                    this.fileInformeName = this.iniciativa.informeDeResultadosRevision.cNombreDocumento;
+                                }
+                                /*asignamos valores a iniciativa.documentos debido a que al
+                                iniciar el componente inicia como [] y al guardar asi se desasignan
+                                los documentos*/
+
+                                //this.iniciativa.documentos.push(this.documentos);
+                                this.iniciativa.documentos = [this.documentos.id];
+                                console.log(this.iniciativa.documentos);
+                                this.obtenerDocumento();
+                                if (result == "0") {
+                                    this.cerrar("");
+                                }
+                            });
                         } else {
-                            this.documentos.estatus =
-                                "Turnar cuenta pública a EASE";
+                            this.spinner.hide();
+                            Swal.fire(
+                                "Error",
+                                "Ocurrió un error al guardar. " + resp.error.data,
+                                "error"
+                            );
                         }
-
-                        this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
-                        this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
-
-                        //this.documentosTemp.fechaCreacion = fechaActual;
-                        //this.documentosTemp.fechaCarga = fechaActual;
-
+                    },
+                    (err) => {
                         this.spinner.hide();
-
-                        const dialogRef = this.dialog.open(
-                            ClasficacionDeDocumentosComponent,
-                            {
-                                width: "100%",
-                                height: "90%",
-                                disableClose: true,
-                                data: this.documentos,
-                            }
-                        );
-
-                        // tslint:disable-next-line: no-shadowed-variable
-                        dialogRef.afterClosed().subscribe((result) => {
-
-                            if (tipo === '2') {
-                                this.iniciativa.oficioEnvioDeInforme = this.documentos;
-                                this.fileOficioName = this.iniciativa.oficioEnvioDeInforme.cNombreDocumento;
-                            } else if (tipo === '3') {
-                                this.iniciativa.informeDeResultadosRevision = this.documentos;
-                                this.fileInformeName = this.iniciativa.informeDeResultadosRevision.cNombreDocumento;
-                            }
-                            /*asignamos valores a iniciativa.documentos debido a que al
-                            iniciar el componente inicia como [] y al guardar asi se desasignan
-                            los documentos*/
-
-                            //this.iniciativa.documentos.push(this.documentos);
-                            this.iniciativa.documentos = [this.documentos.id];
-                            console.log(this.iniciativa.documentos);
-                            this.obtenerDocumento();
-                            if (result == "0") {
-                                this.cerrar("");
-                            }
-                        });
-                    } else {
-                        this.spinner.hide();
+                        console.log(err);
                         Swal.fire(
                             "Error",
-                            "Ocurrió un error al guardar. " + resp.error.data,
+                            "Ocurrió un error al guardar." + err.error.data,
                             "error"
                         );
                     }
-                },
-                (err) => {
-                    this.spinner.hide();
-                    console.log(err);
-                    Swal.fire(
-                        "Error",
-                        "Ocurrió un error al guardar." + err.error.data,
-                        "error"
-                    );
-                }
+                );
+        } catch (err) {
+            this.spinner.hide();
+            Swal.fire(
+                "Error",
+                "Ocurrió un error al clasificar." + err,
+                "error"
             );
+        }
     }
 
     async obtenerDocumento() {
-        this.spinner.show();
-        const documentosTemp: any[] = [];
-        let idDocumento: any;
-        this.loadingIndicator = true;
-        let meta = '';
-        let visibilidad = '';
-        let info: any;
-        // Obtenemos los documentos
-        this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
+        try {
+            this.spinner.show();
+            const documentosTemp: any[] = [];
+            let idDocumento: any;
+            this.loadingIndicator = true;
+            let meta = '';
+            let visibilidad = '';
+            let info: any;
+            // Obtenemos los documentos
+            this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
 
-            // Buscamos permisos
-
-
-            for (const documento of resp.data) {
-                //                console.log(documento.tipo_de_documento.bActivo);
-                idDocumento = '';
-                // Validamos permisos
-
-                if (documento.tipo_de_documento) {
-                    const encontro = this.menu.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento.id);
-
-                    if (documento.visibilidade) {
-                        info = this.menu.tipoInformacion.find((tipo: { id: string; }) => tipo.id === documento.visibilidade.id);
-                    }
-                    if (encontro) {
-                        if (documento.tipo_de_documento.bActivo && encontro.Consultar && info) {
-
-                            if (documento.documento) {
-
-                                idDocumento = documento.documento.hash + documento.documento.ext;
+                // Buscamos permisos
 
 
-                                if (documento.metacatalogos) {
-                                    meta = '';
+                for (const documento of resp.data) {
+                    //                console.log(documento.tipo_de_documento.bActivo);
+                    idDocumento = '';
+                    // Validamos permisos
+
+                    if (documento.tipo_de_documento) {
+                        const encontro = this.menu.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento.id);
+
+                        if (documento.visibilidade) {
+                            info = this.menu.tipoInformacion.find((tipo: { id: string; }) => tipo.id === documento.visibilidade.id);
+                        }
+                        if (encontro) {
+                            if (documento.tipo_de_documento.bActivo && encontro.Consultar && info) {
+
+                                if (documento.documento) {
+
+                                    idDocumento = documento.documento.hash + documento.documento.ext;
+
+
                                     if (documento.metacatalogos) {
-                                        for (const x of documento.metacatalogos) {
+                                        meta = '';
+                                        if (documento.metacatalogos) {
+                                            for (const x of documento.metacatalogos) {
 
-                                            if (meta === '') {
+                                                if (meta === '') {
 
-                                                if (x.cTipoMetacatalogo === 'Fecha') {
-                                                    if (x.text) {
-                                                        meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                                    if (x.cTipoMetacatalogo === 'Fecha') {
+                                                        if (x.text) {
+                                                            meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                                        }
+                                                    } else {
+                                                        if (x.text) {
+                                                            meta = meta + x.cDescripcionMetacatalogo + ': ' + x.text;
+                                                        }
                                                     }
                                                 } else {
-                                                    if (x.text) {
-                                                        meta = meta + x.cDescripcionMetacatalogo + ': ' + x.text;
+                                                    if (x.cTipoMetacatalogo === 'Fecha') {
+                                                        if (x.text) {
+                                                            meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                                        }
+                                                    } else {
+                                                        if (x.text) {
+                                                            meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + x.text;
+                                                        }
                                                     }
-                                                }
-                                            } else {
-                                                if (x.cTipoMetacatalogo === 'Fecha') {
-                                                    if (x.text) {
-                                                        meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
-                                                    }
-                                                } else {
-                                                    if (x.text) {
-                                                        meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + x.text;
-                                                    }
-                                                }
 
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                visibilidad = '';
-                                if (documento.visibilidade) {
-                                    visibilidad = documento.visibilidade.cDescripcionVisibilidad;
-                                }
+                                    visibilidad = '';
+                                    if (documento.visibilidade) {
+                                        visibilidad = documento.visibilidade.cDescripcionVisibilidad;
+                                    }
 
-                                if (documento.iniciativa === undefined || documento.iniciativa === null) {
-                                    documento.iniciativa = '';
-                                } else {
-                                    if (documento.iniciativa.id == this.iniciativa.id) {
-                                        // tslint:disable-next-line: no-unused-expression
-                                        // Seteamos valores y permisos
-                                        if (documento.formulario == this.iniciativa.estatus) {
-                                            documentosTemp.push({
-                                                id: documento.id,
-                                                cNombreDocumento: documento.cNombreDocumento,
-                                                tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
-                                                tipo_de_documento: documento.tipo_de_documento.id,
-                                                fechaCarga: moment(documento.fechaCarga).format('YYYY-MM-DD'),
-                                                fechaCreacion: moment(documento.fechaCreacion).format('YYYY-MM-DD'),
-                                                paginas: documento.paginas,
-                                                bActivo: documento.bActivo,
-                                                fechaModificacion: this.datePipe.transform(documento.updatedAt, 'yyyy-MM-dd'),
-                                                Agregar: encontro.Agregar,
-                                                Eliminar: encontro.Eliminar,
-                                                Editar: encontro.Editar,
-                                                Consultar: encontro.Consultar,
-                                                idDocumento: idDocumento,
-                                                version: parseFloat(documento.version).toFixed(1),
-                                                documento: documento.documento,
-                                                iniciativa: documento.iniciativa,
-                                                //ente: documento.ente,
-                                                // secretaria: documento.secretaria,
-                                                // direccione: documento.direccione,
-                                                // departamento: documento.departamento,
-                                                folioExpediente: documento.folioExpediente,
-                                                clasificacion: meta,
-                                                metacatalogos: documento.metacatalogos,
-                                                informacion: visibilidad,
-                                                visibilidade: documento.visibilidade,
-                                                tipo_de_expediente: documento.tipo_de_expediente,
-                                                usuario: this.menu.usuario
-                                            });
+                                    if (documento.iniciativa === undefined || documento.iniciativa === null) {
+                                        documento.iniciativa = '';
+                                    } else {
+                                        if (documento.iniciativa.id == this.iniciativa.id) {
+                                            // tslint:disable-next-line: no-unused-expression
+                                            // Seteamos valores y permisos
+                                            if (documento.formulario == this.iniciativa.estatus) {
+                                                documentosTemp.push({
+                                                    id: documento.id,
+                                                    cNombreDocumento: documento.cNombreDocumento,
+                                                    tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
+                                                    tipo_de_documento: documento.tipo_de_documento.id,
+                                                    fechaCarga: moment(documento.fechaCarga).format('YYYY-MM-DD'),
+                                                    fechaCreacion: moment(documento.fechaCreacion).format('YYYY-MM-DD'),
+                                                    paginas: documento.paginas,
+                                                    bActivo: documento.bActivo,
+                                                    fechaModificacion: this.datePipe.transform(documento.updatedAt, 'yyyy-MM-dd'),
+                                                    Agregar: encontro.Agregar,
+                                                    Eliminar: encontro.Eliminar,
+                                                    Editar: encontro.Editar,
+                                                    Consultar: encontro.Consultar,
+                                                    idDocumento: idDocumento,
+                                                    version: parseFloat(documento.version).toFixed(1),
+                                                    documento: documento.documento,
+                                                    iniciativa: documento.iniciativa,
+                                                    //ente: documento.ente,
+                                                    // secretaria: documento.secretaria,
+                                                    // direccione: documento.direccione,
+                                                    // departamento: documento.departamento,
+                                                    folioExpediente: documento.folioExpediente,
+                                                    clasificacion: meta,
+                                                    metacatalogos: documento.metacatalogos,
+                                                    informacion: visibilidad,
+                                                    visibilidade: documento.visibilidade,
+                                                    tipo_de_expediente: documento.tipo_de_expediente,
+                                                    usuario: this.menu.usuario
+                                                });
+                                            }
                                         }
                                     }
+                                    meta = '';
                                 }
-                                meta = '';
                             }
                         }
                     }
                 }
-            }
-            this.files = documentosTemp;
-            this.filesTemp = this.files;
+                this.files = documentosTemp;
+                this.filesTemp = this.files;
 
-            this.loadingIndicator = false;
+                this.loadingIndicator = false;
+                this.spinner.hide();
+            }, err => {
+                this.spinner.hide();
+                this.loadingIndicator = false;
+            });
+        } catch (err) {
             this.spinner.hide();
-        }, err => {
-            this.spinner.hide();
-            this.loadingIndicator = false;
-        });
+            Swal.fire(
+                "Error",
+                "Ocurrió un error al clasificar." + err,
+                "error"
+            );
+        }
     }
 
 

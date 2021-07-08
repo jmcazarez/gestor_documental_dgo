@@ -7,4 +7,6 @@ export class SesionesModel {
     ordenDelDia: any;
     listaDeAsistencia: any;
     actasSesion: any;
+    iniciativas: any;
+    recepcion_de_actas_de_sesion: any;
 }

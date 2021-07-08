@@ -180,32 +180,50 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
 
                                                                     this.autorizarService.autorizarDocumentoPaso4(Number(element.idProcesoApi)).subscribe(
                                                                         async (resp: any) => {
-                                                                            let idDocumento = await this.upload(resp.body.multiSignedMessage_FinalResponse[0].data, element.documento.cNombreDocumento + '.pdf');
-                                                                            if (idDocumento) {
-                                                                                this.autorizarService.actualizaPfdDocumento({ id: element.documento.id, documento: idDocumento }).subscribe(async (resp: any) => {
-                                                                                    await this.turnarIniciativa(element);
-                                                                                    await this.obtenerAutorizacionPorLegislatura();
-                                                                                    this.spinner.hide();
-                                                                                    Swal.fire(
-                                                                                        "Éxito",
-                                                                                        "Documento firmado correctamente.",
-                                                                                        "success"
-                                                                                    );
-                                                                                },
-                                                                                    (err) => {
+                                                                            if (resp.body) {
+                                                                                if (resp.body.multiSignedMessage_FinalResponse) {
+                                                                                    let idDocumento = await this.upload(resp.body.multiSignedMessage_FinalResponse[0].data, element.documento.cNombreDocumento + '.pdf');
+                                                                                    if (idDocumento) {
+                                                                                        this.autorizarService.actualizaPfdDocumento({ id: element.documento.id, documento: idDocumento }).subscribe(async (resp: any) => {
+                                                                                            await this.turnarIniciativa(element);
+                                                                                            await this.obtenerAutorizacionPorLegislatura();
+                                                                                            this.spinner.hide();
+                                                                                            Swal.fire(
+                                                                                                "Éxito",
+                                                                                                "Documento firmado correctamente.",
+                                                                                                "success"
+                                                                                            );
+                                                                                        },
+                                                                                            (err) => {
+                                                                                                this.spinner.hide();
+                                                                                                Swal.fire(
+                                                                                                    "Error",
+                                                                                                    "Ocurrió un error al finalizar actualizar el documento. Paso 4.2 " + err,
+                                                                                                    "error"
+                                                                                                );
+                                                                                            });
+
+                                                                                    } else {
                                                                                         this.spinner.hide();
                                                                                         Swal.fire(
                                                                                             "Error",
-                                                                                            "Ocurrió un error al finalizar actualizar el documento. Paso 4.2 " + err,
+                                                                                            "Ocurrió un error subir el documento. Paso 4.1 ",
                                                                                             "error"
                                                                                         );
-                                                                                    });
-
+                                                                                    }
+                                                                                } else {
+                                                                                    this.spinner.hide();
+                                                                                    Swal.fire(
+                                                                                        "Error",
+                                                                                        "Ocurrió un error subir el documento. Paso 4.0 ",
+                                                                                        "error"
+                                                                                    );
+                                                                                }
                                                                             } else {
                                                                                 this.spinner.hide();
                                                                                 Swal.fire(
                                                                                     "Error",
-                                                                                    "Ocurrió un error subir el documento. Paso 4.1 ",
+                                                                                    "Ocurrió un error subir el documento. Paso 4.0 ",
                                                                                     "error"
                                                                                 );
                                                                             }
@@ -222,7 +240,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
 
                                                                 } else {
                                                                     await this.obtenerAutorizacionPorLegislatura();
-                                                                
+
                                                                     Swal.fire(
                                                                         "Éxito",
                                                                         "Documento firmado correctamente, faltan por firmar " + firmasPendientes + " integrantes.",
@@ -364,10 +382,10 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                 mes = "0" + mes; // agrega cero si el menor de 10
             }
             const fechaActual = ano + "-" + mes + "-" + dia;
-           
+
             if (iniciativa.iniciativa.estatus === "Registrada") {
                 let tipoIniciativa: any;
-        
+
                 tipoIniciativa = this.arrTipo.filter(value => {
                     return (value.id === iniciativa.iniciativa.tipo_de_iniciativa)
                 });
@@ -408,11 +426,15 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                         break;
                     }
                     case "Turnar iniciativa a comisión": {
-                        estatus = 'Turnado a CIEL'
+                        estatus = 'Turnar iniciativa a CIEL'
                         break;
                     }
                     case "Turnar dictamen a Secretaría General": {
                         estatus = 'Turnar dictamen a secretaría de servicios parlamentarios'
+                        break;
+                    }
+                    case "Turnada a comisión para modificación": {
+                        estatus = 'Turnar iniciativa a CIEL'
                         break;
                     }
                     default: {

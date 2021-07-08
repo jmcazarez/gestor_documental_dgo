@@ -29,7 +29,7 @@ export interface Estado {
 })
 export class GuardarSesionesComponent implements OnInit {
     @ViewChild('imagenEditar', { static: false }) imagenEditar;
-    
+
     form: FormGroup;
     arrTipo: any[] = [];
     tipoSesion: Estado[] = [];
@@ -113,7 +113,7 @@ export class GuardarSesionesComponent implements OnInit {
             }
             console.log(this.sesion.tipoSesion);
             this.selectedSesion = this.sesion.tipoSesion;
-        }else{
+        } else {
             //this.sesion.fechaSesion = moment().format('YYYY-MM-DD');
             //this.sesion.horaSesion = moment('24/12/2019 00:10:00', "DD MM YYYY hh:mm:ss").format('HH:mm');
         }
@@ -168,11 +168,38 @@ export class GuardarSesionesComponent implements OnInit {
             this.actasSesionsService.actualizarActasSesions(this.sesion).subscribe((resp: any) => {
                 if (resp) {
                     this.sesion = resp.data
-                    Swal.fire('Éxito', 'Sesión actualizada correctamente.', 'success');
 
-                    
 
-                    this.cerrar(this.sesion);
+                    if (this.sesion.recepcion_de_actas_de_sesion) {
+                        Swal.fire('Éxito', 'Sesión actualizada correctamente.', 'success');
+                        this.cerrar(this.sesion);
+
+                    } else {
+
+                        this.recepcion.legislatura = this.selectedLegislatura;
+                        this.recepcion.acta_sesion = this.sesion.id;
+                        this.recepcion.emisor = [];
+                        this.recepcion.receptor = [];
+                        this.recepcion.fechaRecepcion = moment().format('YYYY-MM-DD');
+                        this.recepcion.estatus = 'Pendiente';
+                        this.recepcion.notas = '';
+                        this.recepcionDeActasService.guardarRecepcionDeActa(this.recepcion).subscribe((resp: any) => {
+
+                            if (resp) {
+                                this.spinner.hide();
+                                Swal.fire('Éxito', 'Recepción de acta guardada correctamente.', 'success');
+                                this.cerrar(this.recepcion);
+                            } else {
+                                this.spinner.hide();
+                                Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                            }
+                        }, err => {
+                            this.spinner.hide();
+                            Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                        });
+                    }
+
+
                 } else {
                     this.spinner.hide();
                     Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
@@ -189,9 +216,10 @@ export class GuardarSesionesComponent implements OnInit {
                     this.sesion = resp.data
                     Swal.fire('Éxito', 'Sesión guardada correctamente.', 'success');
 
-                    if(this.sesion.actasSesion && this.sesion.listaDeAsistencia && this.sesion.ordenDelDia){
+                    if (this.sesion.actasSesion && this.sesion.listaDeAsistencia && this.sesion.ordenDelDia) {
 
                         this.recepcion.legislatura = this.selectedLegislatura;
+                        this.recepcion.acta_sesion = this.sesion.id;
                         this.recepcion.emisor = [];
                         this.recepcion.receptor = [];
                         this.recepcion.fechaRecepcion = moment().format('YYYY-MM-DD');
@@ -225,7 +253,7 @@ export class GuardarSesionesComponent implements OnInit {
             });
         }
     }
-    
+
     async obtenerTiposIniciativas(): Promise<void> {
         return new Promise(async (resolve) => {
             {
@@ -278,7 +306,7 @@ export class GuardarSesionesComponent implements OnInit {
             }
         });
     }
-    
+
     cerrar(ent): void {
         if (ent) {
             this.dialogRef.close(ent);
@@ -320,10 +348,14 @@ export class GuardarSesionesComponent implements OnInit {
         this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
         this.documentos.visibilidade = tipoInformacion[0]["cValor"];
         this.documentos.formulario = 'Tablero de sesiones';
-
-        legislaturaFolio = this.legislatura.filter(d => d.id === this.selectedLegislatura);
         this.documentos.legislatura = this.selectedLegislatura;
-        this.documentos.folioExpediente = legislaturaFolio[0].cLegislatura + '-' + Number(legislaturaFolio[0].documentos + 1);
+        if (this.sesion.iniciativas) {
+            this.documentos.folioExpediente = this.sesion.iniciativas[0].folioExpediente
+        } else {
+            this.documentos.folioExpediente = 0;
+
+        }
+
 
         console.log(this.documentos)
 
@@ -530,7 +562,7 @@ export class GuardarSesionesComponent implements OnInit {
             }
         });
     }
-    
+
     async obtenerParametros(parametro: string): Promise<[]> {
         return new Promise((resolve) => {
             {

@@ -51,7 +51,7 @@
             <mat-menu #menu="matMenu">
                
                 
-                <button *ngIf="!this.pasarAAutorizacion " mat-menu-item (click)="pasarAutorizacion()">
+                <button *ngIf="!this.pasarAAutorizacion && this.documento.iniciativa && !this.autorizacionPendiente" mat-menu-item (click)="pasarAutorizacion()">
                     <mat-icon>arrow_right_alt</mat-icon>
                     <span>Autorización</span>
                 </button>

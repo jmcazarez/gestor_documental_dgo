@@ -232,7 +232,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         }
         this.imageBase64 = environment.imageBase64;
 
-        console.log(this.iniciativa);
+
         if (this.iniciativa.actasSesion === undefined) {
             this.iniciativa.actasSesion = [];
         }
@@ -260,7 +260,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
         }
         if (this.iniciativa.informeDeResultadosRevision !== undefined) {
-            console.log(this.iniciativa.informeDeResultadosRevision)
+
             this.fileInformeName = this.iniciativa.informeDeResultadosRevision.cNombreDocumento;
         } else {
             this.fileInformeName = "";
@@ -446,6 +446,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 fechaPublicacion: [{ value: this.iniciativa.fechaPublicacion, disabled: false }],
             });
         }
+        console.log(this.iniciativa);
         if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios'
             && this.iniciativa.formatosTipoIniciativa.length < 4
             && this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa'
@@ -501,31 +502,32 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         }
 
         if (this.iniciativa.oficioEnvioDeInforme !== undefined) {
-            console.log(this.iniciativa.oficioEnvioDeInforme)
+
             this.iniciativa.oficioEnvioDeInforme = this.iniciativa.oficioEnvioDeInforme.id;
         }
-
+        console.log(this.iniciativa);
         legislatura = this.selectedLegislatura;
         tipoSesion = this.form.get('tipoSesion').value;;
         fechaSesion = moment(this.form.get('fechaSesion').value).format('YYYY-MM-DD');
         hora = this.form.get('horaSesion').value;
         horaSesion = hora + ':00.000';
-        console.log(this.iniciativa);
+
         if (this.iniciativa.id) {
             if (this.iniciativa.estatus == 'Turnada a comisión para modificación') {
-                console.log('Turnada a comisión para modificación Crea report');
-                await this.generaReport();
+                if (this.iniciativa.formatosTipoIniciativa.length < 4) {
+                    await this.generaReport();
+                }
             } else if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.selectedDictamenDeIniciativa == 'No aprobada') {
                 //this.iniciativa.estatus = 'Suspendida';
                 this.iniciativa.motivoDeSuspension = this.form.get('motivoDeSuspension').value;
                 this.iniciativa.dictamenDeIniciativa = this.selectedDictamenDeIniciativa;
             } else if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.selectedDictamenDeIniciativa == 'Modificación') {
-                console.log('Turnada a comisión para modificación cValor');
+
                 //this.iniciativa.estatus = 'Turnada a comisión para modificación';
                 this.iniciativa.sustentoDeModificacion = this.form.get('sustentoDeModificacion').value;
                 this.iniciativa.dictamenDeIniciativa = this.selectedDictamenDeIniciativa;
             } else if (this.iniciativa.estatus == 'Turnada a publicación') {
-                console.log('publicacion');
+
                 this.iniciativa.periodicoOficial = this.form.get('periodicoOficial').value;
                 this.iniciativa.fechaPublicacion = moment(this.form.get('fechaPublicacion').value).format('YYYY-MM-DD');
                 this.iniciativa.fechaCreacion = moment().format('YYYY-MM-DD');
@@ -538,11 +540,11 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 await this.generaReport();
             } else if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública' &&
                 this.selectedDictamenDeIniciativa == 'Aprobada') {
-                console.log('aprobada');
+
                 this.iniciativa.dictamenDeIniciativa = this.selectedDictamenDeIniciativa;
                 await this.generaReport();
             } else {
-                console.log('Else');
+
                 await this.generaReport();
             }
             if (this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios') {
@@ -552,9 +554,15 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 hora = this.form.get('horaSesion').value;
                 horaSesion = hora + ':00.000';
             }
-            console.log(this.iniciativa);
+
             if (this.iniciativa.actasSesion.length > 0) {
                 // Actualizamos la comision 
+                let idSesion = '';
+                if (this.iniciativa.actasSesion[0].id) {
+                    idSesion = this.iniciativa.actasSesion[0].id;
+                } else {
+                    idSesion = this.iniciativa.actasSesion[0]
+                }
                 this.actasSesionsService.actualizarActasSesions({
                     id: this.iniciativa.actasSesion[0].id,
                     legislatura: legislatura,
@@ -565,7 +573,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 }).subscribe((resp: any) => {
                     if (resp) {
                         this.iniciativa.actasSesion = [resp.data.id];
-
+                        console.log(this.iniciativa);
                         this.iniciativaService.actualizarIniciativa(this.iniciativa).subscribe((resp: any) => {
                             if (resp) {
                                 this.spinner.hide();
@@ -1142,7 +1150,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             let parametrosSSP001 = await this.obtenerParametros('SSP-001');
             let parametrosSSP004 = await this.obtenerParametros('SSP-004');
-            console.log(parametrosSSP004)
+
             let parametrosCIEL008 = await this.obtenerParametros('CIEL-008');
             let parametrosSSP005 = await this.obtenerParametros('SSP-005');
             let parametrosSSP008 = await this.obtenerParametros('SSP-008');
@@ -1169,16 +1177,14 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 idPuesto = parametrosSSP008.filter((d) => d['cParametroAdministrado'] === 'SSP-008-Mesa-Directiva-Puesto');
             }
 
-            console.log('idPuesto');
-            console.log(idPuesto);
+
 
             let firmasPorEtapas = await this.obtenerFirma(idFirmasPorEtapas[0]['cValor']);
 
-            console.log('firmas por etapas');
-            console.log(firmasPorEtapas);
+
 
             let puesto = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === idPuesto[0]['cValor']);
-            console.log(puesto);
+
             if (puesto.length === 0) {
                 Swal.fire('Error', 'Configuración de participantes incorrecta.', 'error');
                 this.spinner.hide();
@@ -1191,12 +1197,11 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 this.spinner.hide();
                 return
             }
-            console.log('puesto secretario');
-            console.log(puestoSecretario);
+
             let tipoIniciativa = this.arrTipo.filter((d) => d['id'] === this.selectTipo);
             let comision: any = this.comisiones.filter(d => d.id === this.selectedComision);
 
-            console.log(this.arrMesas);
+
             let mesa_directiva: any = this.arrMesas.filter(meta => meta.legislatura.id === this.selectedLegislatura);
             let legislaturaDoc: any = this.legislatura.filter(meta => meta.id === this.selectedLegislatura);
 
@@ -1207,8 +1212,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             }
 
             let detalle_mesa: any = this.arrDetalleMesas.filter(meta => meta.mesas_directiva === mesa_directiva[0].id);
-            console.log('detalleMesa');
-            console.log(detalle_mesa);
+
             let tipoSesion = this.selectedSesion;
             let fechaSesion = moment(this.form.get('fechaSesion').value).format('LL');
             let diaSesion = moment(this.form.get('fechaSesion').value).format('DD');
@@ -1878,1122 +1882,1158 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
     async guardarDocumento(tema: string, tipoDocumento: string, tipoExpediente: string, tipoInformacion: string, legislatura: any): Promise<string> {
         return new Promise(async (resolve) => {
-            const fecha = new Date(); // Fecha actual
-            let mes: any = fecha.getMonth() + 1; // obteniendo mes
-            let dia: any = fecha.getDate(); // obteniendo dia
 
-            const ano = fecha.getFullYear(); // obteniendo año
+            try {
+                const fecha = new Date(); // Fecha actual
+                let mes: any = fecha.getMonth() + 1; // obteniendo mes
+                let dia: any = fecha.getDate(); // obteniendo dia
 
-            if (dia < 10) {
-                dia = '0' + dia; // agrega cero si el menor de 10
-            }
-            if (mes < 10) {
-                mes = '0' + mes; // agrega cero si el menor de 10
-            }
+                const ano = fecha.getFullYear(); // obteniendo año
 
-            const fechaActual = ano + '-' + mes + '-' + dia;
-            this.documentosGuardar.bActivo = true;
-            this.documentosGuardar.cNombreDocumento = 'Formato SSP 04 de ' + tema;
-            this.documentosGuardar.fechaCreacion = fechaActual + 'T16:00:00.000Z';
-            this.documentosGuardar.fechaCarga = fechaActual + 'T16:00:00.000Z';
-            this.documentosGuardar.version = 1;
-            this.documentosGuardar.paginas = 1;
-            this.documentosGuardar.usuario = this.menu.usuario;
-            this.documentosGuardar.tipo_de_documento = tipoDocumento;
-            this.documentosGuardar.tipo_de_expediente = tipoExpediente;
-            this.documentosGuardar.visibilidade = tipoInformacion;
-            console.log(this.iniciativa);
-            if (this.documentosGuardar.iniciativaOficioEnvioDeInforme !== undefined) {
-                this.documentosGuardar.iniciativaOficioEnvioDeInforme = this.documentosGuardar.iniciativaOficioEnvioDeInforme.id
-            }
-            this.documentosGuardar.folioExpediente = this.iniciativa.folioExpediente;
-            if (this.documentosGuardar.iniciativa !== undefined) {
-              
-                this.documentosGuardar.iniciativa = this.documentosGuardar.iniciativa.id;
+                if (dia < 10) {
+                    dia = '0' + dia; // agrega cero si el menor de 10
+                }
+                if (mes < 10) {
+                    mes = '0' + mes; // agrega cero si el menor de 10
+                }
 
-            }
-            if (this.documentosGuardar.legislatura != legislatura.id) {
-                this.documentosGuardar.legislatura = legislatura.id;
-                //Cambiado legislatura.documentosGuardar por legislatura.documentos para que muestre el numero del folio.
+                const fechaActual = ano + '-' + mes + '-' + dia;
+                this.documentosGuardar.bActivo = true;
+                this.documentosGuardar.cNombreDocumento = 'Formato SSP 04 de ' + tema;
+                this.documentosGuardar.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+                this.documentosGuardar.fechaCarga = fechaActual + 'T16:00:00.000Z';
+                this.documentosGuardar.version = 1;
+                this.documentosGuardar.paginas = 1;
+                this.documentosGuardar.usuario = this.menu.usuario;
+                this.documentosGuardar.tipo_de_documento = tipoDocumento;
+                this.documentosGuardar.tipo_de_expediente = tipoExpediente;
+                this.documentosGuardar.visibilidade = tipoInformacion;
 
-            }
-          
-            console.log('guardando documento');
-            console.log(this.documentosGuardar);
-            if (this.iniciativa.formatosTipoIniciativa.length > 1) {
+                if (this.documentosGuardar.iniciativaOficioEnvioDeInforme !== undefined) {
+                    this.documentosGuardar.iniciativaOficioEnvioDeInforme = this.documentosGuardar.iniciativaOficioEnvioDeInforme.id
+                }
+                this.documentosGuardar.folioExpediente = this.iniciativa.folioExpediente;
+                if (this.documentosGuardar.iniciativa !== undefined) {
 
-                this.documentosGuardar.id = this.iniciativa.formatosTipoIniciativa[1].id
-                if (this.idDocumento.length > 5) {
-
-                    this.documentosGuardar.id = this.idDocumento;
+                    this.documentosGuardar.iniciativa = this.documentosGuardar.iniciativa.id;
 
                 }
-                this.documentoService.actualizarDocumentos(this.documentosGuardar).subscribe((resp: any) => {
+                if (this.documentosGuardar.legislatura != legislatura.id) {
+                    this.documentosGuardar.legislatura = legislatura.id;
+                    //Cambiado legislatura.documentosGuardar por legislatura.documentos para que muestre el numero del folio.
 
-                    if (resp) {
-                        this.documentosGuardar = resp.data;
-                        this.idDocumento = resp.data._id;
-                        this.documentosGuardar.fechaCarga = this.datePipe.transform(this.documentosGuardar.fechaCarga, 'yyyy-MM-dd');
-                        this.documentosGuardar.fechaCreacion = this.datePipe.transform(this.documentosGuardar.fechaCreacion, 'yyyy-MM-dd');
+                }
 
-                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.documentosGuardar.id];
-                        resolve(this.documentosGuardar.id);
-                    } else {
-                        this.spinner.hide();
-                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                console.log('guardando documento');
+                console.log(this.documentosGuardar);
+                if (this.iniciativa.formatosTipoIniciativa.length > 1) {
+
+                    this.documentosGuardar.id = this.iniciativa.formatosTipoIniciativa[1].id
+                    if (this.idDocumento.length > 5) {
+
+                        this.documentosGuardar.id = this.idDocumento;
+
                     }
-                }, (err: any) => {
-                    this.spinner.hide();
-                    console.log(err);
-                    Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
-                });
-            } else {
+                    this.documentoService.actualizarDocumentos(this.documentosGuardar).subscribe((resp: any) => {
 
-                this.documentoService.guardarDocumentos(this.documentosGuardar).subscribe((resp: any) => {
-                    if (resp) {
+                        if (resp) {
+                            this.documentosGuardar = resp.data;
+                            this.idDocumento = resp.data._id;
+                            this.documentosGuardar.fechaCarga = this.datePipe.transform(this.documentosGuardar.fechaCarga, 'yyyy-MM-dd');
+                            this.documentosGuardar.fechaCreacion = this.datePipe.transform(this.documentosGuardar.fechaCreacion, 'yyyy-MM-dd');
 
-                        this.documentosGuardar = resp.data;
-
-                        this.idDocumento = resp.data._id;
-                        this.documentosGuardar.fechaCarga = this.datePipe.transform(this.documentosGuardar.fechaCarga, 'yyyy-MM-dd');
-                        this.documentosGuardar.fechaCreacion = this.datePipe.transform(this.documentosGuardar.fechaCreacion, 'yyyy-MM-dd');
-
-
-                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.documentosGuardar.id];
-                        // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
-
-                        resolve(this.documentosGuardar.id);
-                        // this.clasificarDocumento(this.documentos)
-                    } else {
+                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.documentosGuardar.id];
+                            resolve(this.documentosGuardar.id);
+                        } else {
+                            this.spinner.hide();
+                            Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                        }
+                    }, (err: any) => {
                         this.spinner.hide();
-                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
-                    }
-                }, (err: any) => {
-                    this.spinner.hide();
-                    console.log(err);
-                    Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
-                });
+                        console.log(err);
+                        Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
+                    });
+                } else {
+
+                    this.documentoService.guardarDocumentos(this.documentosGuardar).subscribe((resp: any) => {
+                        if (resp) {
+
+                            this.documentosGuardar = resp.data;
+
+                            this.idDocumento = resp.data._id;
+                            this.documentosGuardar.fechaCarga = this.datePipe.transform(this.documentosGuardar.fechaCarga, 'yyyy-MM-dd');
+                            this.documentosGuardar.fechaCreacion = this.datePipe.transform(this.documentosGuardar.fechaCreacion, 'yyyy-MM-dd');
+
+
+                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.documentosGuardar.id];
+                            // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
+
+                            resolve(this.documentosGuardar.id);
+                            // this.clasificarDocumento(this.documentos)
+                        } else {
+                            this.spinner.hide();
+                            Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                        }
+                    }, (err: any) => {
+                        this.spinner.hide();
+                        console.log(err);
+                        Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
+                    });
+
+                }
+            } catch (err) {
+                this.spinner.hide();
+                Swal.fire('Error', 'Ocurrió un error al guardar. ' + err, 'error');
+                resolve(err);
             }
         });
     }
 
     async guardarDocumentoCiel(tema: string, tipoDocumento: string, tipoExpediente: string, tipoInformacion: string, legislatura: any): Promise<string> {
         return new Promise(async (resolve) => {
-            const fecha = new Date(); // Fecha actual
-            let mes: any = fecha.getMonth() + 1; // obteniendo mes
-            let dia: any = fecha.getDate(); // obteniendo dia
+            try {
+                const fecha = new Date(); // Fecha actual
+                let mes: any = fecha.getMonth() + 1; // obteniendo mes
+                let dia: any = fecha.getDate(); // obteniendo dia
 
-            const ano = fecha.getFullYear(); // obteniendo año
+                const ano = fecha.getFullYear(); // obteniendo año
 
-            if (dia < 10) {
-                dia = '0' + dia; // agrega cero si el menor de 10
-            }
-            if (mes < 10) {
-                mes = '0' + mes; // agrega cero si el menor de 10
-            }
-
-            const fechaActual = ano + '-' + mes + '-' + dia;
-            this.documentos.bActivo = true;
-            this.documentos.cNombreDocumento = 'Formato CIEL 08 de ' + tema;
-            this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
-            this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
-            this.documentos.version = 1;
-            this.documentos.paginas = 1;
-            this.documentos.usuario = this.menu.usuario;
-            this.documentos.tipo_de_documento = tipoDocumento;
-            this.documentos.tipo_de_expediente = tipoExpediente;
-            this.documentos.visibilidade = tipoInformacion;
-
-            if (this.documentos.legislatura != legislatura.id) {
-                this.documentos.legislatura = legislatura.id;
-                this.documentos.folioExpediente = this.iniciativa.folioExpediente;
-            }
-
-            if (this.iniciativa.formatosTipoIniciativa.length > 2) {
-
-                this.documentos.id = this.iniciativa.formatosTipoIniciativa[2].id
-
-                if (this.idDocumento.length > 5) {
-
-                    this.documentos.id = this.idDocumento;
-
+                if (dia < 10) {
+                    dia = '0' + dia; // agrega cero si el menor de 10
                 }
-                this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
+                if (mes < 10) {
+                    mes = '0' + mes; // agrega cero si el menor de 10
+                }
 
-                    if (resp) {
-                        this.documentos = resp.data;
-                        this.idDocumento = resp.data._id;
-                        this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
-                        this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+                const fechaActual = ano + '-' + mes + '-' + dia;
+                this.documentos.bActivo = true;
+                this.documentos.cNombreDocumento = 'Formato CIEL 08 de ' + tema;
+                this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+                this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
+                this.documentos.version = 1;
+                this.documentos.paginas = 1;
+                this.documentos.usuario = this.menu.usuario;
+                this.documentos.tipo_de_documento = tipoDocumento;
+                this.documentos.tipo_de_expediente = tipoExpediente;
+                this.documentos.visibilidade = tipoInformacion;
 
-                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.documentos.id];
-                        resolve(this.documentos.id);
-                    } else {
-                        this.spinner.hide();
-                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                if (this.documentos.legislatura != legislatura.id) {
+                    this.documentos.legislatura = legislatura.id;
+                    this.documentos.folioExpediente = this.iniciativa.folioExpediente;
+                }
+
+                if (this.iniciativa.formatosTipoIniciativa.length > 2) {
+
+                    this.documentos.id = this.iniciativa.formatosTipoIniciativa[2].id
+
+                    if (this.idDocumento.length > 5) {
+
+                        this.documentos.id = this.idDocumento;
+
                     }
-                }, (err: any) => {
-                    this.spinner.hide();
-                    console.log(err);
-                    Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
-                });
-            } else {
-                this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
+                    this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
 
-                    if (resp) {
-
-                        this.documentos = resp.data;
-
-                        this.idDocumento = resp.data._id;
-                        this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
-                        this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
-
-                        this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.documentos.id];
-                        // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
-
-                        resolve(this.documentos.id);
-                        // this.clasificarDocumento(this.documentos)
-                    } else {
+                        if (resp) {
+                            this.documentos = resp.data;
+                            this.idDocumento = resp.data._id;
+                            this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                            this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+                            console.log('entro');
+                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.documentos.id];
+                            resolve(this.documentos.id);
+                        } else {
+                            this.spinner.hide();
+                            Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                        }
+                    }, (err: any) => {
                         this.spinner.hide();
-                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
-                    }
-                }, (err: any) => {
-                    this.spinner.hide();
-                    console.log(err);
-                    Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
-                });
+                        console.log(err);
+                        Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
+                    });
+                } else {
+                    this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
+
+                        if (resp) {
+
+                            this.documentos = resp.data;
+
+                            this.idDocumento = resp.data._id;
+                            this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                            this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+                            console.log('entro 2')
+                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.documentos.id];
+                            // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
+
+                            resolve(this.documentos.id);
+                            // this.clasificarDocumento(this.documentos)
+                        } else {
+                            this.spinner.hide();
+                            Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                        }
+                    }, (err: any) => {
+                        this.spinner.hide();
+                        console.log(err);
+                        Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
+                    });
+                }
+            } catch (err) {
+                this.spinner.hide();
+                Swal.fire('Error', 'Ocurrió un error guardar documento CIEL. ' + err, 'error');
+                resolve(err);
             }
         });
     }
 
     async guardarSSP05(tema: string, tipoDocumento: string, tipoExpediente: string, tipoInformacion: string, legislatura: any): Promise<string> {
         return new Promise(async (resolve) => {
-            const fecha = new Date(); // Fecha actual
-            let mes: any = fecha.getMonth() + 1; // obteniendo mes
-            let dia: any = fecha.getDate(); // obteniendo dia
+            try {
+                const fecha = new Date(); // Fecha actual
+                let mes: any = fecha.getMonth() + 1; // obteniendo mes
+                let dia: any = fecha.getDate(); // obteniendo dia
 
-            const ano = fecha.getFullYear(); // obteniendo año
+                const ano = fecha.getFullYear(); // obteniendo año
 
-            if (dia < 10) {
-                dia = '0' + dia; // agrega cero si el menor de 10
-            }
-            if (mes < 10) {
-                mes = '0' + mes; // agrega cero si el menor de 10
-            }
-
-            const fechaActual = ano + '-' + mes + '-' + dia;
-            this.documentos.bActivo = true;
-            this.documentos.cNombreDocumento = 'Formato SSP 05 de ' + tema;
-            this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
-            this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
-            this.documentos.version = 1;
-            this.documentos.paginas = 1;
-            this.documentos.usuario = this.menu.usuario;
-            this.documentos.tipo_de_documento = tipoDocumento;
-            this.documentos.tipo_de_expediente = tipoExpediente;
-            this.documentos.visibilidade = tipoInformacion;
-
-            if (this.documentos.legislatura != legislatura.id) {
-                this.documentos.legislatura = legislatura.id;
-                this.documentos.folioExpediente = this.iniciativa.folioExpediente;
-            }
-
-            if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
-                if (this.iniciativa.formatosTipoIniciativa.length > 3) {
-
-                    this.documentos.id = this.iniciativa.formatosTipoIniciativa[3].id
-
-
-                    if (this.idDocumento.length > 5) {
-
-                        this.documentos.id = this.idDocumento;
-
-                    }
-                    this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
-
-                        if (resp) {
-                            this.documentos = resp.data;
-
-                            this.idDocumento = resp.data._id;
-
-                            this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
-                            this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
-
-                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.iniciativa.formatosTipoIniciativa[2], this.documentos.id];
-                            resolve(this.documentos.id);
-                        } else {
-                            this.spinner.hide();
-                            Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
-                        }
-                    }, (err: any) => {
-                        this.spinner.hide();
-                        console.log(err);
-                        Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
-                    });
-                } else {
-                    this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
-
-                        if (resp) {
-
-                            this.documentos = resp.data;
-
-                            this.idDocumento = resp.data._id;
-                            this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
-                            this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
-
-
-                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.iniciativa.formatosTipoIniciativa[2], this.documentos.id];
-                            // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
-
-                            resolve(this.documentos.id);
-                            // this.clasificarDocumento(this.documentos)
-                        } else {
-                            this.spinner.hide();
-                            Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
-                        }
-                    }, (err: any) => {
-                        this.spinner.hide();
-                        console.log(err);
-                        Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
-                    });
+                if (dia < 10) {
+                    dia = '0' + dia; // agrega cero si el menor de 10
                 }
-            } else {
-                if (this.iniciativa.formatosTipoIniciativa.length > 2) {
-
-                    this.documentos.id = this.iniciativa.formatosTipoIniciativa[2].id
-
-
-                    if (this.idDocumento.length > 5) {
-
-                        this.documentos.id = this.idDocumento;
-
-                    }
-                    this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
-
-                        if (resp) {
-                            this.documentos = resp.data;
-
-                            this.idDocumento = resp.data._id;
-
-                            this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
-                            this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
-
-                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.documentos.id];
-                            resolve(this.documentos.id);
-                        } else {
-                            this.spinner.hide();
-                            Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
-                        }
-                    }, (err: any) => {
-                        this.spinner.hide();
-                        console.log(err);
-                        Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
-                    });
-                } else {
-                    this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
-
-                        if (resp) {
-
-                            this.documentos = resp.data;
-
-                            this.idDocumento = resp.data._id;
-                            this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
-                            this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
-
-
-                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.documentos.id];
-                            // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
-
-                            resolve(this.documentos.id);
-                            // this.clasificarDocumento(this.documentos)
-                        } else {
-                            this.spinner.hide();
-                            Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
-                        }
-                    }, (err: any) => {
-                        this.spinner.hide();
-                        console.log(err);
-                        Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
-                    });
+                if (mes < 10) {
+                    mes = '0' + mes; // agrega cero si el menor de 10
                 }
+
+                const fechaActual = ano + '-' + mes + '-' + dia;
+                this.documentos.bActivo = true;
+                this.documentos.cNombreDocumento = 'Formato SSP 05 de ' + tema;
+                this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+                this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
+                this.documentos.version = 1;
+                this.documentos.paginas = 1;
+                this.documentos.usuario = this.menu.usuario;
+                this.documentos.tipo_de_documento = tipoDocumento;
+                this.documentos.tipo_de_expediente = tipoExpediente;
+                this.documentos.visibilidade = tipoInformacion;
+
+                if (this.documentos.legislatura != legislatura.id) {
+                    this.documentos.legislatura = legislatura.id;
+                    this.documentos.folioExpediente = this.iniciativa.folioExpediente;
+                }
+
+                if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
+                    if (this.iniciativa.formatosTipoIniciativa.length > 3) {
+                        console.log('3')
+                        this.documentos.id = this.iniciativa.formatosTipoIniciativa[3].id
+
+
+                        if (this.idDocumento.length > 5) {
+
+                            this.documentos.id = this.idDocumento;
+
+                        }
+                        this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
+
+                            if (resp) {
+                                this.documentos = resp.data;
+
+                                this.idDocumento = resp.data._id;
+
+                                this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+                                console.log('4')
+                                this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.iniciativa.formatosTipoIniciativa[2], this.documentos.id];
+                                resolve(this.documentos.id);
+                            } else {
+                                this.spinner.hide();
+                                Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                            }
+                        }, (err: any) => {
+                            this.spinner.hide();
+                            console.log(err);
+                            Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
+                        });
+                    } else {
+                        this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
+
+                            if (resp) {
+
+                                this.documentos = resp.data;
+                                console.log('5')
+                                this.idDocumento = resp.data._id;
+                                this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+
+
+                                this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.iniciativa.formatosTipoIniciativa[2], this.documentos.id];
+                                // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
+
+                                resolve(this.documentos.id);
+                                // this.clasificarDocumento(this.documentos)
+                            } else {
+                                this.spinner.hide();
+                                Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                            }
+                        }, (err: any) => {
+                            this.spinner.hide();
+                            console.log(err);
+                            Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
+                        });
+                    }
+                } else {
+                    if (this.iniciativa.formatosTipoIniciativa.length > 2) {
+
+                        this.documentos.id = this.iniciativa.formatosTipoIniciativa[2].id
+
+
+                        if (this.idDocumento.length > 5) {
+
+                            this.documentos.id = this.idDocumento;
+
+                        }
+                        this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
+
+                            if (resp) {
+                                this.documentos = resp.data;
+                                console.log('6')
+                                this.idDocumento = resp.data._id;
+
+                                this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+
+                                this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.documentos.id];
+                                resolve(this.documentos.id);
+                            } else {
+                                this.spinner.hide();
+                                Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                            }
+                        }, (err: any) => {
+                            this.spinner.hide();
+                            console.log(err);
+                            Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
+                        });
+                    } else {
+                        this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
+
+                            if (resp) {
+                                7
+                                console.log('4')
+                                this.documentos = resp.data;
+
+                                this.idDocumento = resp.data._id;
+                                this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+
+
+                                this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.documentos.id];
+                                // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
+
+                                resolve(this.documentos.id);
+                                // this.clasificarDocumento(this.documentos)
+                            } else {
+                                this.spinner.hide();
+                                Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                            }
+                        }, (err: any) => {
+                            this.spinner.hide();
+                            console.log(err);
+                            Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
+                        });
+                    }
+                }
+            } catch (err) {
+                this.spinner.hide();
+                Swal.fire('Error', 'Ocurrió un error  guardarSSP05. ' + err, 'error');
+                resolve(err);
             }
         });
     }
 
     async guardarSSP08(tema: string, tipoDocumento: string, tipoExpediente: string, tipoInformacion: string, legislatura: any): Promise<string> {
         return new Promise(async (resolve) => {
-            const fecha = new Date(); // Fecha actual
-            let mes: any = fecha.getMonth() + 1; // obteniendo mes
-            let dia: any = fecha.getDate(); // obteniendo dia
+            try {
+                const fecha = new Date(); // Fecha actual
+                let mes: any = fecha.getMonth() + 1; // obteniendo mes
+                let dia: any = fecha.getDate(); // obteniendo dia
 
-            const ano = fecha.getFullYear(); // obteniendo año
+                const ano = fecha.getFullYear(); // obteniendo año
 
-            if (dia < 10) {
-                dia = '0' + dia; // agrega cero si el menor de 10
-            }
-            if (mes < 10) {
-                mes = '0' + mes; // agrega cero si el menor de 10
-            }
-
-            const fechaActual = ano + '-' + mes + '-' + dia;
-            this.documentos.bActivo = true;
-            this.documentos.cNombreDocumento = 'Formato SSP 08 de ' + tema;
-            this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
-            this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
-            this.documentos.version = 1;
-            this.documentos.paginas = 1;
-            this.documentos.usuario = this.menu.usuario;
-            this.documentos.tipo_de_documento = tipoDocumento;
-            this.documentos.tipo_de_expediente = tipoExpediente;
-            this.documentos.visibilidade = tipoInformacion;
-
-            if (this.documentos.legislatura != legislatura.id) {
-                this.documentos.legislatura = legislatura.id;
-                this.documentos.folioExpediente = this.iniciativa.folioExpediente;
-            }
-
-            if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
-                if (this.iniciativa.formatosTipoIniciativa.length > 4) {
-
-                    this.documentos.id = this.iniciativa.formatosTipoIniciativa[4].id
-
-
-                    if (this.idDocumento.length > 5) {
-
-                        this.documentos.id = this.idDocumento;
-
-                    }
-                    this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
-
-                        if (resp) {
-                            this.documentos = resp.data;
-
-                            this.idDocumento = resp.data._id;
-
-                            this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
-                            this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
-
-                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0],
-                            this.iniciativa.formatosTipoIniciativa[1], this.iniciativa.formatosTipoIniciativa[2],
-                            this.iniciativa.formatosTipoIniciativa[3], this.documentos.id];
-                            resolve(this.documentos.id);
-                        } else {
-                            this.spinner.hide();
-                            Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
-                        }
-                    }, (err: any) => {
-                        this.spinner.hide();
-                        console.log(err);
-                        Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
-                    });
-                } else {
-                    this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
-
-                        if (resp) {
-
-                            this.documentos = resp.data;
-
-                            this.idDocumento = resp.data._id;
-                            this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
-                            this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
-
-
-                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0],
-                            this.iniciativa.formatosTipoIniciativa[1], this.iniciativa.formatosTipoIniciativa[2],
-                            this.iniciativa.formatosTipoIniciativa[3], this.documentos.id];
-                            // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
-
-                            resolve(this.documentos.id);
-                            // this.clasificarDocumento(this.documentos)
-                        } else {
-                            this.spinner.hide();
-                            Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
-                        }
-                    }, (err: any) => {
-                        this.spinner.hide();
-                        console.log(err);
-                        Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
-                    });
+                if (dia < 10) {
+                    dia = '0' + dia; // agrega cero si el menor de 10
                 }
-            } else {
-                if (this.iniciativa.formatosTipoIniciativa.length > 3) {
-
-                    this.documentos.id = this.iniciativa.formatosTipoIniciativa[3].id
-
-
-                    if (this.idDocumento.length > 5) {
-
-                        this.documentos.id = this.idDocumento;
-
-                    }
-                    this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
-
-                        if (resp) {
-                            this.documentos = resp.data;
-
-                            this.idDocumento = resp.data._id;
-
-                            this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
-                            this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
-
-                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1],
-                            this.iniciativa.formatosTipoIniciativa[2], this.documentos.id];
-                            resolve(this.documentos.id);
-                        } else {
-                            this.spinner.hide();
-                            Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
-                        }
-                    }, (err: any) => {
-                        this.spinner.hide();
-                        console.log(err);
-                        Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
-                    });
-                } else {
-                    this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
-
-                        if (resp) {
-
-                            this.documentos = resp.data;
-
-                            this.idDocumento = resp.data._id;
-                            this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
-                            this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
-
-
-                            this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1],
-                            this.iniciativa.formatosTipoIniciativa[2], this.documentos.id];
-                            // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
-
-                            resolve(this.documentos.id);
-                            // this.clasificarDocumento(this.documentos)
-                        } else {
-                            this.spinner.hide();
-                            Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
-                        }
-                    }, (err: any) => {
-                        this.spinner.hide();
-                        console.log(err);
-                        Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
-                    });
+                if (mes < 10) {
+                    mes = '0' + mes; // agrega cero si el menor de 10
                 }
+
+                const fechaActual = ano + '-' + mes + '-' + dia;
+                this.documentos.bActivo = true;
+                this.documentos.cNombreDocumento = 'Formato SSP 08 de ' + tema;
+                this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+                this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
+                this.documentos.version = 1;
+                this.documentos.paginas = 1;
+                this.documentos.usuario = this.menu.usuario;
+                this.documentos.tipo_de_documento = tipoDocumento;
+                this.documentos.tipo_de_expediente = tipoExpediente;
+                this.documentos.visibilidade = tipoInformacion;
+
+                if (this.documentos.legislatura != legislatura.id) {
+                    this.documentos.legislatura = legislatura.id;
+                    this.documentos.folioExpediente = this.iniciativa.folioExpediente;
+                }
+
+                if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
+                    if (this.iniciativa.formatosTipoIniciativa.length > 4) {
+                        console.log('9')
+                        this.documentos.id = this.iniciativa.formatosTipoIniciativa[4].id
+
+
+                        if (this.idDocumento.length > 5) {
+
+                            this.documentos.id = this.idDocumento;
+
+                        }
+                        this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
+
+                            if (resp) {
+                                this.documentos = resp.data;
+
+                                this.idDocumento = resp.data._id;
+
+                                this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+                                console.log('10')
+                                console.log(this.iniciativa.formatosTipoIniciativa);
+                                this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0],
+                                this.iniciativa.formatosTipoIniciativa[1], this.iniciativa.formatosTipoIniciativa[2],
+                                this.iniciativa.formatosTipoIniciativa[3], this.documentos.id];
+                                resolve(this.documentos.id);
+                            } else {
+                                this.spinner.hide();
+                                Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                            }
+                        }, (err: any) => {
+                            this.spinner.hide();
+                            console.log(err);
+                            Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
+                        });
+                    } else {
+                        this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
+
+                            if (resp) {
+
+                                this.documentos = resp.data;
+
+                                this.idDocumento = resp.data._id;
+                                this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+
+                                console.log('12')
+                                this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0],
+                                this.iniciativa.formatosTipoIniciativa[1], this.iniciativa.formatosTipoIniciativa[2],
+                                this.iniciativa.formatosTipoIniciativa[3], this.documentos.id];
+                                // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
+
+                                resolve(this.documentos.id);
+                                // this.clasificarDocumento(this.documentos)
+                            } else {
+                                this.spinner.hide();
+                                Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                            }
+                        }, (err: any) => {
+                            this.spinner.hide();
+                            console.log(err);
+                            Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
+                        });
+                    }
+                } else {
+                    if (this.iniciativa.formatosTipoIniciativa.length > 3) {
+
+                        this.documentos.id = this.iniciativa.formatosTipoIniciativa[3].id
+
+
+                        if (this.idDocumento.length > 5) {
+
+                            this.documentos.id = this.idDocumento;
+
+                        }
+                        this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
+
+                            if (resp) {
+                                this.documentos = resp.data;
+                                console.log('13')
+                                this.idDocumento = resp.data._id;
+
+                                this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+
+                                this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1],
+                                this.iniciativa.formatosTipoIniciativa[2], this.documentos.id];
+                                resolve(this.documentos.id);
+                            } else {
+                                this.spinner.hide();
+                                Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                            }
+                        }, (err: any) => {
+                            this.spinner.hide();
+                            console.log(err);
+                            Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
+                        });
+                    } else {
+                        this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
+
+                            if (resp) {
+
+                                this.documentos = resp.data;
+                                console.log('14')
+                                this.idDocumento = resp.data._id;
+                                this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+
+
+                                this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1],
+                                this.iniciativa.formatosTipoIniciativa[2], this.documentos.id];
+                                // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
+
+                                resolve(this.documentos.id);
+                                // this.clasificarDocumento(this.documentos)
+                            } else {
+                                this.spinner.hide();
+                                Swal.fire('Error', 'Ocurrió un error al guardar. ' + JSON.stringify(resp.error.data), 'error');
+                            }
+                        }, (err: any) => {
+                            this.spinner.hide();
+                            console.log(err);
+                            Swal.fire('Error', 'Ocurrió un error al guardar.' + JSON.stringify(err.error.data), 'error');
+                        });
+                    }
+                }
+            } catch (err) {
+                this.spinner.hide();
+                Swal.fire('Error', 'Ocurrió un error  guardarSSP08. ' + err, 'error');
+                resolve(err);
             }
         });
     }
 
     clasificarDocumento(): void {
-        if (this.iniciativa.estatus == 'Turnar cuenta pública a EASE' || this.iniciativa.estatus == 'Turnar iniciativa a comisión' ||
-            this.iniciativa.estatus == 'Turnada a comisión para modificación') {
-            this.spinner.show();
-            const fecha = new Date(); // Fecha actual
-            let mes: any = fecha.getMonth() + 1; // obteniendo mes
-            let dia: any = fecha.getDate(); // obteniendo dia
 
-            const ano = fecha.getFullYear(); // obteniendo año
+        try {
+            if (this.iniciativa.estatus == 'Turnar cuenta pública a EASE' || this.iniciativa.estatus == 'Turnar iniciativa a comisión' ||
+                this.iniciativa.estatus == 'Turnada a comisión para modificación') {
+                this.spinner.show();
+                const fecha = new Date(); // Fecha actual
+                let mes: any = fecha.getMonth() + 1; // obteniendo mes
+                let dia: any = fecha.getDate(); // obteniendo dia
 
-            if (dia < 10) {
-                dia = '0' + dia; // agrega cero si el menor de 10
-            }
-            if (mes < 10) {
-                mes = '0' + mes; // agrega cero si el menor de 10
-            }
-            const fechaActual = ano + '-' + mes + '-' + dia;
-            this.documentos.bActivo = true;
+                const ano = fecha.getFullYear(); // obteniendo año
 
-            this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
-            this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
-            let cAutores = '';
-            let cTema = '';
-            this.autores.forEach(element => {
-                if (cAutores === '') {
-                    cAutores = element.name;
-                } else {
-                    cAutores = cAutores + ', ' + element.name;
+                if (dia < 10) {
+                    dia = '0' + dia; // agrega cero si el menor de 10
                 }
-
-            });
-
-            this.temas.forEach((element) => {
-                if (cTema === "") {
-                    cTema = element.name;
-                } else {
-                    cTema = cTema + ", " + element.name;
+                if (mes < 10) {
+                    mes = '0' + mes; // agrega cero si el menor de 10
                 }
-            });
-            this.documentos = this.iniciativa.formatosTipoIniciativa[1];
-            console.log(this.documentos);
-            this.documentos.metacatalogos = [
+                const fechaActual = ano + '-' + mes + '-' + dia;
+                this.documentos.bActivo = true;
 
-                {
-                    "cDescripcionMetacatalogo": "Fecha",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Fecha",
-                    "text": this.documentos.fechaCarga
-                },
-                {
-                    "cDescripcionMetacatalogo": "Autores",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Texto",
-                    "text": cAutores
-                },
-                {
-                    "cDescripcionMetacatalogo": "Temas",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Texto",
-                    "text": cTema
-                }
-            ]
-            this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
-                if (resp) {
-
-                    this.documentos = resp.data;
-                    this.documentos.iniciativas = true;
-                    this.documentos.iniciativa = this.iniciativa;
-                    if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
-                        this.documentos.estatus = 'Turnar iniciativa a CIEL';
+                this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+                this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
+                let cAutores = '';
+                let cTema = '';
+                this.autores.forEach(element => {
+                    if (cAutores === '') {
+                        cAutores = element.name;
                     } else {
-                        this.documentos.estatus = 'Turnar dictamen a secretaría de servicios parlamentarios';
+                        cAutores = cAutores + ', ' + element.name;
                     }
 
-                    this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
-                    this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+                });
 
-                    this.spinner.hide();
+                this.temas.forEach((element) => {
+                    if (cTema === "") {
+                        cTema = element.name;
+                    } else {
+                        cTema = cTema + ", " + element.name;
+                    }
+                });
+                this.documentos = this.iniciativa.formatosTipoIniciativa[1];
+                console.log(this.documentos);
+                this.documentos.metacatalogos = [
 
-                    const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
-                        width: '100%',
-                        height: '90%',
-                        disableClose: true,
-                        data: this.documentos,
-                    });
+                    {
+                        "cDescripcionMetacatalogo": "Fecha",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Fecha",
+                        "text": this.documentos.fechaCarga
+                    },
+                    {
+                        "cDescripcionMetacatalogo": "Autores",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Texto",
+                        "text": cAutores
+                    },
+                    {
+                        "cDescripcionMetacatalogo": "Temas",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Texto",
+                        "text": cTema
+                    }
+                ]
+                this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
+                    if (resp) {
 
-                    // tslint:disable-next-line: no-shadowed-variable
-                    dialogRef.afterClosed().subscribe(result => {
-                        console.log(result);
-                        if (result == '0') {
-                            this.cerrar('');
-                            // this.obtenerDocumentos();
+                        this.documentos = resp.data;
+                        this.documentos.iniciativas = true;
+                        this.documentos.iniciativa = this.iniciativa;
+                        if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
+                            this.documentos.estatus = 'Turnar iniciativa a CIEL';
+                        } else {
+                            this.documentos.estatus = 'Turnar dictamen a secretaría de servicios parlamentarios';
                         }
-                    });
-                } else {
+
+                        this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+                        this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+
+                        this.spinner.hide();
+
+                        const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
+                            width: '100%',
+                            height: '90%',
+                            disableClose: true,
+                            data: this.documentos,
+                        });
+
+                        // tslint:disable-next-line: no-shadowed-variable
+                        dialogRef.afterClosed().subscribe(result => {
+                            console.log(result);
+                            if (result == '0') {
+                                this.cerrar('');
+                                // this.obtenerDocumentos();
+                            }
+                        });
+                    } else {
+                        this.spinner.hide();
+                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                    }
+                }, err => {
                     this.spinner.hide();
-                    Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                    console.log(err);
+                    Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                });
+            } if (this.iniciativa.estatus == 'Turnar dictamen a Secretaría General') {
+                this.spinner.show();
+                const fecha = new Date(); // Fecha actual
+                let mes: any = fecha.getMonth() + 1; // obteniendo mes
+                let dia: any = fecha.getDate(); // obteniendo dia
+
+                const ano = fecha.getFullYear(); // obteniendo año
+
+                if (dia < 10) {
+                    dia = '0' + dia; // agrega cero si el menor de 10
                 }
-            }, err => {
-                this.spinner.hide();
-                console.log(err);
-                Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
-            });
-        } if (this.iniciativa.estatus == 'Turnar dictamen a Secretaría General') {
-            this.spinner.show();
-            const fecha = new Date(); // Fecha actual
-            let mes: any = fecha.getMonth() + 1; // obteniendo mes
-            let dia: any = fecha.getDate(); // obteniendo dia
-
-            const ano = fecha.getFullYear(); // obteniendo año
-
-            if (dia < 10) {
-                dia = '0' + dia; // agrega cero si el menor de 10
-            }
-            if (mes < 10) {
-                mes = '0' + mes; // agrega cero si el menor de 10
-            }
-            const fechaActual = ano + '-' + mes + '-' + dia;
-            this.documentos.bActivo = true;
-
-            this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
-            this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
-            let cAutores = '';
-            let cTema = '';
-            this.autores.forEach(element => {
-                if (cAutores === '') {
-                    cAutores = element.name;
-                } else {
-                    cAutores = cAutores + ', ' + element.name;
+                if (mes < 10) {
+                    mes = '0' + mes; // agrega cero si el menor de 10
                 }
+                const fechaActual = ano + '-' + mes + '-' + dia;
+                this.documentos.bActivo = true;
 
-            });
-            this.temas.forEach((element) => {
-                if (cTema === "") {
-                    cTema = element.name;
-                } else {
-                    cTema = cTema + ", " + element.name;
-                }
-            });
-            this.documentos = this.iniciativa.formatosTipoIniciativa[2];
-            console.log('turnada a secretaria general');
-            console.log(this.documentos);
-            this.documentos.metacatalogos = [
-
-                {
-                    "cDescripcionMetacatalogo": "Fecha",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Fecha",
-                    "text": this.documentos.fechaCarga
-                },
-                {
-                    "cDescripcionMetacatalogo": "Autores",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Texto",
-                    "text": cAutores
-                },
-                {
-                    "cDescripcionMetacatalogo": "Temas",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Texto",
-                    "text": cTema
-                }
-            ]
-            this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
-                if (resp) {
-
-                    this.documentos = resp.data;
-                    this.documentos.iniciativas = true;
-                    this.documentos.iniciativa = this.iniciativa;
-                    if (this.iniciativa.estatus == 'Turnar dictamen a Secretaría General') {
-                        this.documentos.estatus = 'Turnar dictamen a secretaría de servicios parlamentarios';
+                this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+                this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
+                let cAutores = '';
+                let cTema = '';
+                this.autores.forEach(element => {
+                    if (cAutores === '') {
+                        cAutores = element.name;
+                    } else {
+                        cAutores = cAutores + ', ' + element.name;
                     }
 
-                    this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
-                    this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
-
-                    this.spinner.hide();
-
-                    const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
-                        width: '100%',
-                        height: '90%',
-                        disableClose: true,
-                        data: this.documentos,
-
-                    });
-
-                    // tslint:disable-next-line: no-shadowed-variable
-                    dialogRef.afterClosed().subscribe(result => {
-                        console.log(result);
-                        if (result == '0') {
-                            this.cerrar('');
-                            // this.obtenerDocumentos();
-                        }
-                    });
-                } else {
-                    this.spinner.hide();
-                    Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
-                }
-            }, err => {
-                this.spinner.hide();
-                console.log(err);
-                Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
-            });
-        } if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
-            this.spinner.show();
-            const fecha = new Date(); // Fecha actual
-            let mes: any = fecha.getMonth() + 1; // obteniendo mes
-            let dia: any = fecha.getDate(); // obteniendo dia
-
-            const ano = fecha.getFullYear(); // obteniendo año
-
-            if (dia < 10) {
-                dia = '0' + dia; // agrega cero si el menor de 10
-            }
-            if (mes < 10) {
-                mes = '0' + mes; // agrega cero si el menor de 10
-            }
-            const fechaActual = ano + '-' + mes + '-' + dia;
-            this.documentos.bActivo = true;
-
-            this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
-            this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
-            let cAutores = '';
-            let cTema = '';
-            this.autores.forEach(element => {
-                if (cAutores === '') {
-                    cAutores = element.name;
-                } else {
-                    cAutores = cAutores + ', ' + element.name;
-                }
-
-            });
-            this.temas.forEach((element) => {
-                if (cTema === "") {
-                    cTema = element.name;
-                } else {
-                    cTema = cTema + ", " + element.name;
-                }
-            });
-            this.documentos = this.iniciativa.formatosTipoIniciativa[3];
-            console.log('Turnar dictamen a secretaría de servicios parlamentarios');
-            console.log(this.documentos);
-            this.documentos.metacatalogos = [
-
-                {
-                    "cDescripcionMetacatalogo": "Fecha",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Fecha",
-                    "text": this.documentos.fechaCarga
-                },
-                {
-                    "cDescripcionMetacatalogo": "Autores",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Texto",
-                    "text": cAutores
-                },
-                {
-                    "cDescripcionMetacatalogo": "Temas",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Texto",
-                    "text": cTema
-                }
-            ]
-            this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
-                if (resp) {
-
-                    this.documentos = resp.data;
-                    this.documentos.iniciativas = true;
-                    this.documentos.iniciativa = this.iniciativa;
-                    if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios') {
-                        this.documentos.estatus = 'Turnar dictamen a Mesa Directiva';
+                });
+                this.temas.forEach((element) => {
+                    if (cTema === "") {
+                        cTema = element.name;
+                    } else {
+                        cTema = cTema + ", " + element.name;
                     }
-                    this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
-                    this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+                });
+                this.documentos = this.iniciativa.formatosTipoIniciativa[2];
+                console.log('turnada a secretaria general');
+                console.log(this.documentos);
+                this.documentos.metacatalogos = [
 
-                    this.spinner.hide();
+                    {
+                        "cDescripcionMetacatalogo": "Fecha",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Fecha",
+                        "text": this.documentos.fechaCarga
+                    },
+                    {
+                        "cDescripcionMetacatalogo": "Autores",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Texto",
+                        "text": cAutores
+                    },
+                    {
+                        "cDescripcionMetacatalogo": "Temas",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Texto",
+                        "text": cTema
+                    }
+                ]
+                this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
+                    if (resp) {
 
-                    const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
-                        width: '100%',
-                        height: '90%',
-                        disableClose: true,
-                        data: this.documentos,
-
-                    });
-
-                    // tslint:disable-next-line: no-shadowed-variable
-                    dialogRef.afterClosed().subscribe(result => {
-                        console.log(result);
-
-                        if (result == '0') {
-                            this.cerrar('');
-                            // this.obtenerDocumentos();
+                        this.documentos = resp.data;
+                        this.documentos.iniciativas = true;
+                        this.documentos.iniciativa = this.iniciativa;
+                        if (this.iniciativa.estatus == 'Turnar dictamen a Secretaría General') {
+                            this.documentos.estatus = 'Turnar dictamen a secretaría de servicios parlamentarios';
                         }
-                    });
-                } else {
+
+                        this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+                        this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+
+                        this.spinner.hide();
+
+                        const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
+                            width: '100%',
+                            height: '90%',
+                            disableClose: true,
+                            data: this.documentos,
+
+                        });
+
+                        // tslint:disable-next-line: no-shadowed-variable
+                        dialogRef.afterClosed().subscribe(result => {
+                            console.log(result);
+                            if (result == '0') {
+                                this.cerrar('');
+                                // this.obtenerDocumentos();
+                            }
+                        });
+                    } else {
+                        this.spinner.hide();
+                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                    }
+                }, err => {
                     this.spinner.hide();
-                    Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                    console.log(err);
+                    Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                });
+            } if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
+                this.spinner.show();
+                const fecha = new Date(); // Fecha actual
+                let mes: any = fecha.getMonth() + 1; // obteniendo mes
+                let dia: any = fecha.getDate(); // obteniendo dia
+
+                const ano = fecha.getFullYear(); // obteniendo año
+
+                if (dia < 10) {
+                    dia = '0' + dia; // agrega cero si el menor de 10
                 }
-            }, err => {
-                this.spinner.hide();
-                console.log(err);
-                Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
-            });
-        } if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública') {
-            this.spinner.show();
-            console.log('cuenta publica');
-            const fecha = new Date(); // Fecha actual
-            let mes: any = fecha.getMonth() + 1; // obteniendo mes
-            let dia: any = fecha.getDate(); // obteniendo dia
-
-            const ano = fecha.getFullYear(); // obteniendo año
-
-            if (dia < 10) {
-                dia = '0' + dia; // agrega cero si el menor de 10
-            }
-            if (mes < 10) {
-                mes = '0' + mes; // agrega cero si el menor de 10
-            }
-            const fechaActual = ano + '-' + mes + '-' + dia;
-            this.documentos.bActivo = true;
-
-            this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
-            this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
-            let cAutores = '';
-            let cTema = '';
-            this.autores.forEach(element => {
-                if (cAutores === '') {
-                    cAutores = element.name;
-                } else {
-                    cAutores = cAutores + ', ' + element.name;
+                if (mes < 10) {
+                    mes = '0' + mes; // agrega cero si el menor de 10
                 }
+                const fechaActual = ano + '-' + mes + '-' + dia;
+                this.documentos.bActivo = true;
 
-            });
-
-            this.temas.forEach((element) => {
-                if (cTema === "") {
-                    cTema = element.name;
-                } else {
-                    cTema = cTema + ", " + element.name;
-                }
-            });
-
-            this.documentos = this.iniciativa.formatosTipoIniciativa[2];
-            console.log('Turnar dictamen a secretaría de servicios parlamentarios');
-            console.log(this.documentos);
-            this.documentos.metacatalogos = [
-
-                {
-                    "cDescripcionMetacatalogo": "Fecha",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Fecha",
-                    "text": this.documentos.fechaCarga
-                },
-                {
-                    "cDescripcionMetacatalogo": "Autores",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Texto",
-                    "text": cAutores
-                },
-                {
-                    "cDescripcionMetacatalogo": "Temas",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Texto",
-                    "text": cTema
-                }
-            ]
-            this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
-                if (resp) {
-
-                    this.documentos = resp.data;
-                    this.documentos.iniciativas = true;
-                    this.documentos.iniciativa = this.iniciativa;
-                    if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios') {
-                        this.documentos.estatus = 'Turnar dictamen a Mesa Directiva';
+                this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+                this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
+                let cAutores = '';
+                let cTema = '';
+                this.autores.forEach(element => {
+                    if (cAutores === '') {
+                        cAutores = element.name;
+                    } else {
+                        cAutores = cAutores + ', ' + element.name;
                     }
 
-                    this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
-                    this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+                });
+                this.temas.forEach((element) => {
+                    if (cTema === "") {
+                        cTema = element.name;
+                    } else {
+                        cTema = cTema + ", " + element.name;
+                    }
+                });
+                this.documentos = this.iniciativa.formatosTipoIniciativa[3];
+                console.log('Turnar dictamen a secretaría de servicios parlamentarios');
+                console.log(this.documentos);
+                this.documentos.metacatalogos = [
 
-                    this.spinner.hide();
+                    {
+                        "cDescripcionMetacatalogo": "Fecha",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Fecha",
+                        "text": this.documentos.fechaCarga
+                    },
+                    {
+                        "cDescripcionMetacatalogo": "Autores",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Texto",
+                        "text": cAutores
+                    },
+                    {
+                        "cDescripcionMetacatalogo": "Temas",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Texto",
+                        "text": cTema
+                    }
+                ]
+                this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
+                    if (resp) {
 
-                    const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
-                        width: '100%',
-                        height: '90%',
-                        disableClose: true,
-                        data: this.documentos,
-
-                    });
-
-                    // tslint:disable-next-line: no-shadowed-variable
-                    dialogRef.afterClosed().subscribe(result => {
-                        console.log(result);
-
-                        if (result == '0') {
-                            this.cerrar('');
-                            // this.obtenerDocumentos();
+                        this.documentos = resp.data;
+                        this.documentos.iniciativas = true;
+                        this.documentos.iniciativa = this.iniciativa;
+                        if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios') {
+                            this.documentos.estatus = 'Turnar dictamen a Mesa Directiva';
                         }
-                    });
-                } else {
+                        this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+                        this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+
+                        this.spinner.hide();
+
+                        const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
+                            width: '100%',
+                            height: '90%',
+                            disableClose: true,
+                            data: this.documentos,
+
+                        });
+
+                        // tslint:disable-next-line: no-shadowed-variable
+                        dialogRef.afterClosed().subscribe(result => {
+                            console.log(result);
+
+                            if (result == '0') {
+                                this.cerrar('');
+                                // this.obtenerDocumentos();
+                            }
+                        });
+                    } else {
+                        this.spinner.hide();
+                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                    }
+                }, err => {
                     this.spinner.hide();
-                    Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                    console.log(err);
+                    Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                });
+            } if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública') {
+                this.spinner.show();
+                console.log('cuenta publica');
+                const fecha = new Date(); // Fecha actual
+                let mes: any = fecha.getMonth() + 1; // obteniendo mes
+                let dia: any = fecha.getDate(); // obteniendo dia
+
+                const ano = fecha.getFullYear(); // obteniendo año
+
+                if (dia < 10) {
+                    dia = '0' + dia; // agrega cero si el menor de 10
                 }
-            }, err => {
-                this.spinner.hide();
-                console.log(err);
-                Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
-            });
-        } if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
-            this.spinner.show();
-            const fecha = new Date(); // Fecha actual
-            let mes: any = fecha.getMonth() + 1; // obteniendo mes
-            let dia: any = fecha.getDate(); // obteniendo dia
-
-            const ano = fecha.getFullYear(); // obteniendo año
-
-            if (dia < 10) {
-                dia = '0' + dia; // agrega cero si el menor de 10
-            }
-            if (mes < 10) {
-                mes = '0' + mes; // agrega cero si el menor de 10
-            }
-            const fechaActual = ano + '-' + mes + '-' + dia;
-            this.documentos.bActivo = true;
-
-            this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
-            this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
-            let cAutores = '';
-            let cTema = '';
-            this.autores.forEach(element => {
-                if (cAutores === '') {
-                    cAutores = element.name;
-                } else {
-                    cAutores = cAutores + ', ' + element.name;
+                if (mes < 10) {
+                    mes = '0' + mes; // agrega cero si el menor de 10
                 }
+                const fechaActual = ano + '-' + mes + '-' + dia;
+                this.documentos.bActivo = true;
 
-            });
-
-            this.temas.forEach((element) => {
-                if (cTema === "") {
-                    cTema = element.name;
-                } else {
-                    cTema = cTema + ", " + element.name;
-                }
-            });
-
-            this.documentos = this.iniciativa.formatosTipoIniciativa[4];
-            console.log('Turnar dictamen a Mesa Directiva');
-            console.log(this.documentos);
-            this.documentos.metacatalogos = [
-
-                {
-                    "cDescripcionMetacatalogo": "Fecha",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Fecha",
-                    "text": this.documentos.fechaCarga
-                },
-                {
-                    "cDescripcionMetacatalogo": "Autores",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Texto",
-                    "text": cAutores
-                },
-                {
-                    "cDescripcionMetacatalogo": "Temas",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Texto",
-                    "text": cTema
-                }
-            ]
-            this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
-                if (resp) {
-
-                    this.documentos = resp.data;
-                    this.documentos.iniciativas = true;
-                    this.documentos.iniciativa = this.iniciativa;
-                    if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
-                        this.documentos.estatus = 'Turnada a publicación';
+                this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+                this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
+                let cAutores = '';
+                let cTema = '';
+                this.autores.forEach(element => {
+                    if (cAutores === '') {
+                        cAutores = element.name;
+                    } else {
+                        cAutores = cAutores + ', ' + element.name;
                     }
 
-                    this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
-                    this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+                });
 
-                    this.spinner.hide();
+                this.temas.forEach((element) => {
+                    if (cTema === "") {
+                        cTema = element.name;
+                    } else {
+                        cTema = cTema + ", " + element.name;
+                    }
+                });
 
-                    const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
-                        width: '100%',
-                        height: '90%',
-                        disableClose: true,
-                        data: this.documentos,
+                this.documentos = this.iniciativa.formatosTipoIniciativa[2];
+                console.log('Turnar dictamen a secretaría de servicios parlamentarios');
+                console.log(this.documentos);
+                this.documentos.metacatalogos = [
 
-                    });
+                    {
+                        "cDescripcionMetacatalogo": "Fecha",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Fecha",
+                        "text": this.documentos.fechaCarga
+                    },
+                    {
+                        "cDescripcionMetacatalogo": "Autores",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Texto",
+                        "text": cAutores
+                    },
+                    {
+                        "cDescripcionMetacatalogo": "Temas",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Texto",
+                        "text": cTema
+                    }
+                ]
+                this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
+                    if (resp) {
 
-                    // tslint:disable-next-line: no-shadowed-variable
-                    dialogRef.afterClosed().subscribe(result => {
-                        console.log(result);
-
-                        if (result == '0') {
-                            this.cerrar('');
-                            // this.obtenerDocumentos();
+                        this.documentos = resp.data;
+                        this.documentos.iniciativas = true;
+                        this.documentos.iniciativa = this.iniciativa;
+                        if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios') {
+                            this.documentos.estatus = 'Turnar dictamen a Mesa Directiva';
                         }
-                    });
-                } else {
+
+                        this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+                        this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+
+                        this.spinner.hide();
+
+                        const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
+                            width: '100%',
+                            height: '90%',
+                            disableClose: true,
+                            data: this.documentos,
+
+                        });
+
+                        // tslint:disable-next-line: no-shadowed-variable
+                        dialogRef.afterClosed().subscribe(result => {
+                            console.log(result);
+
+                            if (result == '0') {
+                                this.cerrar('');
+                                // this.obtenerDocumentos();
+                            }
+                        });
+                    } else {
+                        this.spinner.hide();
+                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                    }
+                }, err => {
                     this.spinner.hide();
-                    Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                    console.log(err);
+                    Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                });
+            } if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
+                this.spinner.show();
+                const fecha = new Date(); // Fecha actual
+                let mes: any = fecha.getMonth() + 1; // obteniendo mes
+                let dia: any = fecha.getDate(); // obteniendo dia
+
+                const ano = fecha.getFullYear(); // obteniendo año
+
+                if (dia < 10) {
+                    dia = '0' + dia; // agrega cero si el menor de 10
                 }
-            }, err => {
-                this.spinner.hide();
-                console.log(err);
-                Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
-            });
-        } if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública') {
-            this.spinner.show();
-            console.log('cuenta publica');
-            const fecha = new Date(); // Fecha actual
-            let mes: any = fecha.getMonth() + 1; // obteniendo mes
-            let dia: any = fecha.getDate(); // obteniendo dia
-
-            const ano = fecha.getFullYear(); // obteniendo año
-
-            if (dia < 10) {
-                dia = '0' + dia; // agrega cero si el menor de 10
-            }
-            if (mes < 10) {
-                mes = '0' + mes; // agrega cero si el menor de 10
-            }
-            const fechaActual = ano + '-' + mes + '-' + dia;
-            this.documentos.bActivo = true;
-
-            this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
-            this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
-            let cAutores = '';
-            let cTema = '';
-            this.autores.forEach(element => {
-                if (cAutores === '') {
-                    cAutores = element.name;
-                } else {
-                    cAutores = cAutores + ', ' + element.name;
+                if (mes < 10) {
+                    mes = '0' + mes; // agrega cero si el menor de 10
                 }
+                const fechaActual = ano + '-' + mes + '-' + dia;
+                this.documentos.bActivo = true;
 
-            });
-
-            this.temas.forEach((element) => {
-                if (cTema === "") {
-                    cTema = element.name;
-                } else {
-                    cTema = cTema + ", " + element.name;
-                }
-            });
-
-            this.documentos = this.iniciativa.formatosTipoIniciativa[3];
-            console.log('Turnar dictamen a secretaría de servicios parlamentarios');
-            console.log(this.documentos);
-            this.documentos.metacatalogos = [
-
-                {
-                    "cDescripcionMetacatalogo": "Fecha",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Fecha",
-                    "text": this.documentos.fechaCarga
-                },
-                {
-                    "cDescripcionMetacatalogo": "Autores",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Texto",
-                    "text": cAutores
-                },
-                {
-                    "cDescripcionMetacatalogo": "Temas",
-                    "bOligatorio": true,
-                    "cTipoMetacatalogo": "Texto",
-                    "text": cTema
-                }
-            ]
-            this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
-                if (resp) {
-
-                    this.documentos = resp.data;
-                    this.documentos.iniciativas = true;
-                    this.documentos.iniciativa = this.iniciativa;
-                    if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
-                        this.documentos.estatus = 'Turnada a publicación';
+                this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+                this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
+                let cAutores = '';
+                let cTema = '';
+                this.autores.forEach(element => {
+                    if (cAutores === '') {
+                        cAutores = element.name;
+                    } else {
+                        cAutores = cAutores + ', ' + element.name;
                     }
 
-                    this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
-                    this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+                });
 
-                    this.spinner.hide();
+                this.temas.forEach((element) => {
+                    if (cTema === "") {
+                        cTema = element.name;
+                    } else {
+                        cTema = cTema + ", " + element.name;
+                    }
+                });
 
-                    const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
-                        width: '100%',
-                        height: '90%',
-                        disableClose: true,
-                        data: this.documentos,
+                this.documentos = this.iniciativa.formatosTipoIniciativa[4];
+                console.log('Turnar dictamen a Mesa Directiva');
+                console.log(this.documentos);
+                this.documentos.metacatalogos = [
 
-                    });
+                    {
+                        "cDescripcionMetacatalogo": "Fecha",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Fecha",
+                        "text": this.documentos.fechaCarga
+                    },
+                    {
+                        "cDescripcionMetacatalogo": "Autores",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Texto",
+                        "text": cAutores
+                    },
+                    {
+                        "cDescripcionMetacatalogo": "Temas",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Texto",
+                        "text": cTema
+                    }
+                ]
+                this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
+                    if (resp) {
 
-                    // tslint:disable-next-line: no-shadowed-variable
-                    dialogRef.afterClosed().subscribe(result => {
-                        console.log(result);
-
-                        if (result == '0') {
-                            this.cerrar('');
-                            // this.obtenerDocumentos();
+                        this.documentos = resp.data;
+                        this.documentos.iniciativas = true;
+                        this.documentos.iniciativa = this.iniciativa;
+                        if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
+                            this.documentos.estatus = 'Turnada a publicación';
                         }
-                    });
-                } else {
+
+                        this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+                        this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+
+                        this.spinner.hide();
+
+                        const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
+                            width: '100%',
+                            height: '90%',
+                            disableClose: true,
+                            data: this.documentos,
+
+                        });
+
+                        // tslint:disable-next-line: no-shadowed-variable
+                        dialogRef.afterClosed().subscribe(result => {
+                            console.log(result);
+
+                            if (result == '0') {
+                                this.cerrar('');
+                                // this.obtenerDocumentos();
+                            }
+                        });
+                    } else {
+                        this.spinner.hide();
+                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                    }
+                }, err => {
                     this.spinner.hide();
-                    Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                    console.log(err);
+                    Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                });
+            } if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública') {
+                this.spinner.show();
+                console.log('cuenta publica');
+                const fecha = new Date(); // Fecha actual
+                let mes: any = fecha.getMonth() + 1; // obteniendo mes
+                let dia: any = fecha.getDate(); // obteniendo dia
+
+                const ano = fecha.getFullYear(); // obteniendo año
+
+                if (dia < 10) {
+                    dia = '0' + dia; // agrega cero si el menor de 10
                 }
-            }, err => {
-                this.spinner.hide();
-                console.log(err);
-                Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
-            });
+                if (mes < 10) {
+                    mes = '0' + mes; // agrega cero si el menor de 10
+                }
+                const fechaActual = ano + '-' + mes + '-' + dia;
+                this.documentos.bActivo = true;
+
+                this.documentos.fechaCreacion = fechaActual + 'T16:00:00.000Z';
+                this.documentos.fechaCarga = fechaActual + 'T16:00:00.000Z';
+                let cAutores = '';
+                let cTema = '';
+                this.autores.forEach(element => {
+                    if (cAutores === '') {
+                        cAutores = element.name;
+                    } else {
+                        cAutores = cAutores + ', ' + element.name;
+                    }
+
+                });
+
+                this.temas.forEach((element) => {
+                    if (cTema === "") {
+                        cTema = element.name;
+                    } else {
+                        cTema = cTema + ", " + element.name;
+                    }
+                });
+                console.log('15')
+                this.documentos = this.iniciativa.formatosTipoIniciativa[3];
+                console.log('Turnar dictamen a secretaría de servicios parlamentarios');
+                console.log(this.documentos);
+                this.documentos.metacatalogos = [
+
+                    {
+                        "cDescripcionMetacatalogo": "Fecha",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Fecha",
+                        "text": this.documentos.fechaCarga
+                    },
+                    {
+                        "cDescripcionMetacatalogo": "Autores",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Texto",
+                        "text": cAutores
+                    },
+                    {
+                        "cDescripcionMetacatalogo": "Temas",
+                        "bOligatorio": true,
+                        "cTipoMetacatalogo": "Texto",
+                        "text": cTema
+                    }
+                ]
+                this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
+                    if (resp) {
+
+                        this.documentos = resp.data;
+                        this.documentos.iniciativas = true;
+                        this.documentos.iniciativa = this.iniciativa;
+                        if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
+                            this.documentos.estatus = 'Turnada a publicación';
+                        }
+
+                        this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+                        this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+
+                        this.spinner.hide();
+
+                        const dialogRef = this.dialog.open(ClasficacionDeDocumentosComponent, {
+                            width: '100%',
+                            height: '90%',
+                            disableClose: true,
+                            data: this.documentos,
+
+                        });
+
+                        // tslint:disable-next-line: no-shadowed-variable
+                        dialogRef.afterClosed().subscribe(result => {
+                            console.log(result);
+
+                            if (result == '0') {
+                                this.cerrar('');
+                                // this.obtenerDocumentos();
+                            }
+                        });
+                    } else {
+                        this.spinner.hide();
+                        Swal.fire('Error', 'Ocurrió un error al guardar. ' + resp.error.data, 'error');
+                    }
+                }, err => {
+                    this.spinner.hide();
+                    console.log(err);
+                    Swal.fire('Error', 'Ocurrió un error al guardar.' + err.error.data, 'error');
+                });
+
+            }
+        } catch (err) {
+            this.spinner.hide();
+            Swal.fire('Error', 'Ocurrió un error al clasificar. ' + err, 'error');
+
         }
     }
 
@@ -3017,364 +3057,382 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     async cargaClasificacionDocumento(tipo: string): Promise<void> {
 
         this.spinner.show();
-        //Creamos nuevo modelo de documentos y asignamos parametros
-        this.documentos = new DocumentosModel();
-        let legislaturaFolio: any;
-        this.documentos.bActivo = true;
-        let parametrosSSP001 = await this.obtenerParametros("SSP-001");
-        let tipoDocumento = parametrosSSP001.filter(
-            (d) =>
-                d["cParametroAdministrado"] === "SSP-001-Tipo-de-Documento"
-        );
-        let tipoExpediente = parametrosSSP001.filter(
-            (d) =>
-                d["cParametroAdministrado"] === "SSP-001-Tipo-de-Expediente"
-        );
-        let tipoInformacion = parametrosSSP001.filter(
-            (d) =>
-                d["cParametroAdministrado"] ===
-                "SSP-001-Tipo-de-Informacion"
-        );
+        try {
+            //Creamos nuevo modelo de documentos y asignamos parametros
+            this.documentos = new DocumentosModel();
+            let legislaturaFolio: any;
+            this.documentos.bActivo = true;
+            let parametrosSSP001 = await this.obtenerParametros("SSP-001");
+            let tipoDocumento = parametrosSSP001.filter(
+                (d) =>
+                    d["cParametroAdministrado"] === "SSP-001-Tipo-de-Documento"
+            );
+            let tipoExpediente = parametrosSSP001.filter(
+                (d) =>
+                    d["cParametroAdministrado"] === "SSP-001-Tipo-de-Expediente"
+            );
+            let tipoInformacion = parametrosSSP001.filter(
+                (d) =>
+                    d["cParametroAdministrado"] ===
+                    "SSP-001-Tipo-de-Informacion"
+            );
 
-        this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
+            this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
 
-        this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
+            this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
 
-        this.documentos.visibilidade = tipoInformacion[0]["cValor"];
-        this.documentos.iniciativa = this.iniciativa.id;
-        if (this.iniciativa.estatus == 'Turnar cuenta pública a EASE') {
-            this.documentos.formulario = 'Turnar cuenta pública a EASE';
-        } else if (this.iniciativa.estatus == 'Turnar dictamen a Secretaría General') {
-            this.documentos.formulario = 'Turnar dictamen a Secretaría General';
-        } else if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
-            this.documentos.formulario = 'Turnar dictamen a Mesa Directiva';
-        } else if (this.iniciativa.estatus == 'Turnada a comisión para modificación') {
-            this.documentos.formulario = 'Turnada a comisión para modificación';
-        }
-
-        legislaturaFolio = this.legislatura.filter(d => d.id === this.selectedLegislatura);
-        console.log(this.documentos);
-        this.documentos.legislatura = legislaturaFolio[0].id;
-        this.documentos.folioExpediente = this.iniciativa.folioExpediente;
-
-        this.spinner.hide();
-
-        const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
-            width: '60%',
-            height: '80%',
-            disableClose: true,
-            data: this.documentos,
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                if (result.documento) {
-                    this.clasificarDocAnex(result, tipo);
-                }
+            this.documentos.visibilidade = tipoInformacion[0]["cValor"];
+            this.documentos.iniciativa = this.iniciativa.id;
+            if (this.iniciativa.estatus == 'Turnar cuenta pública a EASE') {
+                this.documentos.formulario = 'Turnar cuenta pública a EASE';
+            } else if (this.iniciativa.estatus == 'Turnar dictamen a Secretaría General') {
+                this.documentos.formulario = 'Turnar dictamen a Secretaría General';
+            } else if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
+                this.documentos.formulario = 'Turnar dictamen a Mesa Directiva';
+            } else if (this.iniciativa.estatus == 'Turnada a comisión para modificación') {
+                this.documentos.formulario = 'Turnada a comisión para modificación';
             }
-        });
+
+            legislaturaFolio = this.legislatura.filter(d => d.id === this.selectedLegislatura);
+            this.documentos.legislatura = legislaturaFolio[0].id;
+            this.documentos.folioExpediente = this.iniciativa.folioExpediente;
+
+            this.spinner.hide();
+
+            const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
+                width: '60%',
+                height: '80%',
+                disableClose: true,
+                data: this.documentos,
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                if (result) {
+                    if (result.documento) {
+                        this.clasificarDocAnex(result, tipo);
+                    }
+                }
+            });
+        } catch (err) {
+            this.spinner.hide();
+            Swal.fire('Error', 'Ocurrió un error al clasificar. ' + err, 'error');
+
+        }
     }
 
     async clasificarDocAnex(result: any, tipo: string): Promise<void> {
-        this.spinner.show();
-        console.log('cla');
-        const fecha = new Date(); // Fecha actual
-        let mes: any = fecha.getMonth() + 1; // obteniendo mes
-        let dia: any = fecha.getDate(); // obteniendo dia
 
-        const anio = fecha.getFullYear(); // obteniendo año
+        try {
+            this.spinner.show();
+            console.log('cla');
+            const fecha = new Date(); // Fecha actual
+            let mes: any = fecha.getMonth() + 1; // obteniendo mes
+            let dia: any = fecha.getDate(); // obteniendo dia
 
-        if (dia < 10) {
-            dia = "0" + dia; // agrega cero si el menor de 10
-        }
-        if (mes < 10) {
-            mes = "0" + mes; // agrega cero si el menor de 10
-        }
-        const fechaActual = dia + "/" + mes + "/" + anio;
-        this.documentos.bActivo = true;
+            const anio = fecha.getFullYear(); // obteniendo año
 
-        if (this.iniciativa.estatus === 'Turnar dictamen a Secretaría General') {
-            this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
-            this.documentos.fechaCarga = this.documentos.fechaCreacion + 'T16:00:00.000Z';
-        }
-
-        this.documentos = result;
-        let cAutores = "";
-        let cTema = "";
-        this.autores.forEach((element) => {
-            if (cAutores === "") {
-                cAutores = element.name;
-            } else {
-                cAutores = cAutores + ", " + element.name;
+            if (dia < 10) {
+                dia = "0" + dia; // agrega cero si el menor de 10
             }
-        });
-
-        this.temas.forEach((element) => {
-            if (cTema === "") {
-                cTema = element.name;
-            } else {
-                cTema = cTema + ", " + element.name;
+            if (mes < 10) {
+                mes = "0" + mes; // agrega cero si el menor de 10
             }
-        });
-        this.documentos.metacatalogos = [
-            {
-                cDescripcionMetacatalogo: "Fecha",
-                bOligatorio: true,
-                cTipoMetacatalogo: "Fecha",
-                text: this.documentos.fechaCarga,
-            },
-            {
-                cDescripcionMetacatalogo: "Autores",
-                bOligatorio: true,
-                cTipoMetacatalogo: "Texto",
-                text: cAutores,
-            },
+            const fechaActual = dia + "/" + mes + "/" + anio;
+            this.documentos.bActivo = true;
 
-            {
-                cDescripcionMetacatalogo: "Temas",
-                bOligatorio: true,
-                cTipoMetacatalogo: "Texto",
-                text: cTema,
-            },
-        ];
-
-        if (tipo === '2') {
-            this.documentos.iniciativaOficioEnvioDeInforme = this.iniciativa.id;
-        } else if (tipo === '3') {
-            this.documentos.iniciativaInformeDeResultadosRevision = this.iniciativa.id;
-        } else if (tipo === '1') {
-
-        } else if (tipo === '4') {
-            if (this.iniciativa.actasSesion.id) {
-                this.documentos.actasSesion = this.iniciativa.actasSesion.id;
-                this.fileActaDeSesion = this.documentos.cNombreDocumento;
+            if (this.iniciativa.estatus === 'Turnar dictamen a Secretaría General') {
+                this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
+                this.documentos.fechaCarga = this.documentos.fechaCreacion + 'T16:00:00.000Z';
             }
-        }
 
-        this.documentoService
-            .actualizarDocumentosSinVersion(this.documentos)
-            .subscribe(
-                (resp: any) => {
-                    if (resp.data) {
-                        console.log(resp.data);
-                        this.documentos = resp.data;
+            this.documentos = result;
+            let cAutores = "";
+            let cTema = "";
+            this.autores.forEach((element) => {
+                if (cAutores === "") {
+                    cAutores = element.name;
+                } else {
+                    cAutores = cAutores + ", " + element.name;
+                }
+            });
 
-                        let documentoId: string = this.documentos.id;
+            this.temas.forEach((element) => {
+                if (cTema === "") {
+                    cTema = element.name;
+                } else {
+                    cTema = cTema + ", " + element.name;
+                }
+            });
+            this.documentos.metacatalogos = [
+                {
+                    cDescripcionMetacatalogo: "Fecha",
+                    bOligatorio: true,
+                    cTipoMetacatalogo: "Fecha",
+                    text: this.documentos.fechaCarga,
+                },
+                {
+                    cDescripcionMetacatalogo: "Autores",
+                    bOligatorio: true,
+                    cTipoMetacatalogo: "Texto",
+                    text: cAutores,
+                },
 
-                        this.documentos.iniciativas = true;
-                        this.documentos.iniciativa = this.iniciativa;
+                {
+                    cDescripcionMetacatalogo: "Temas",
+                    bOligatorio: true,
+                    cTipoMetacatalogo: "Texto",
+                    text: cTema,
+                },
+            ];
 
-                        if (
-                            this.iniciativa.tipo_de_iniciativa.descripcion ==
-                            "Iniciativa"
-                        ) {
-                            this.documentos.estatus =
-                                "Turnar iniciativa a comisión";
+            if (tipo === '2') {
+                this.documentos.iniciativaOficioEnvioDeInforme = this.iniciativa.id;
+            } else if (tipo === '3') {
+                this.documentos.iniciativaInformeDeResultadosRevision = this.iniciativa.id;
+            } else if (tipo === '1') {
+
+            } else if (tipo === '4') {
+                if (this.iniciativa.actasSesion.id) {
+                    this.documentos.actasSesion = this.iniciativa.actasSesion.id;
+                    this.fileActaDeSesion = this.documentos.cNombreDocumento;
+                }
+            }
+
+            this.documentoService
+                .actualizarDocumentosSinVersion(this.documentos)
+                .subscribe(
+                    (resp: any) => {
+                        if (resp.data) {
+                            console.log(resp.data);
+                            this.documentos = resp.data;
+
+                            let documentoId: string = this.documentos.id;
+
+                            this.documentos.iniciativas = true;
+                            this.documentos.iniciativa = this.iniciativa;
+
+                            if (
+                                this.iniciativa.tipo_de_iniciativa.descripcion ==
+                                "Iniciativa"
+                            ) {
+                                this.documentos.estatus =
+                                    "Turnar iniciativa a comisión";
+                            } else {
+                                this.documentos.estatus =
+                                    "Turnar cuenta pública a EASE";
+                            }
+
+                            this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+                            this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
+
+                            //this.documentosTemp.fechaCreacion = fechaActual;
+                            //this.documentosTemp.fechaCarga = fechaActual;
+
+                            this.spinner.hide();
+
+                            const dialogRef = this.dialog.open(
+                                ClasficacionDeDocumentosComponent,
+                                {
+                                    width: "100%",
+                                    height: "90%",
+                                    disableClose: true,
+                                    data: this.documentos,
+                                }
+                            );
+
+                            // tslint:disable-next-line: no-shadowed-variable
+                            dialogRef.afterClosed().subscribe((result) => {
+
+                                if (tipo === '2') {
+                                    this.iniciativa.oficioEnvioDeInforme = this.documentos;
+                                    this.fileOficioName = this.iniciativa.oficioEnvioDeInforme.cNombreDocumento;
+                                } else if (tipo === '3') {
+                                    this.iniciativa.informeDeResultadosRevision = this.documentos;
+                                    this.fileInformeName = this.iniciativa.informeDeResultadosRevision.cNombreDocumento;
+                                } else if (tipo === '4') {
+                                    this.fileActaDeSesionSend = this.documentos;
+                                    console.log(this.fileActaDeSesionSend);
+                                    this.fileActaDeSesion = this.documentos.cNombreDocumento;
+                                    this.sinActa = false;
+                                }
+                                if (this.iniciativa.estatus == 'Turnar dictamen a Secretaría General' ||
+                                    this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' ||
+                                    this.iniciativa.estatus == 'Turnada a comisión para modificación') {
+
+                                    /*asignamos valores a iniciativa.documentos debido a que al
+                                    iniciar el componente inicia como [] y al guardar asi se desasignan
+                                    los documentos*/
+
+                                    //this.iniciativa.documentos.push(this.documentos);
+                                    this.iniciativa.documentos = [this.documentos.id];
+                                    console.log(this.iniciativa.documentos);
+                                    this.obtenerDocumento();
+                                }
+                                if (result == "0") {
+                                    this.cerrar("");
+                                }
+                            });
                         } else {
-                            this.documentos.estatus =
-                                "Turnar cuenta pública a EASE";
+                            this.spinner.hide();
+                            Swal.fire(
+                                "Error",
+                                "Ocurrió un error al guardar. " + resp.error.data,
+                                "error"
+                            );
                         }
-
-                        this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
-                        this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
-
-                        //this.documentosTemp.fechaCreacion = fechaActual;
-                        //this.documentosTemp.fechaCarga = fechaActual;
-
+                    },
+                    (err) => {
                         this.spinner.hide();
-
-                        const dialogRef = this.dialog.open(
-                            ClasficacionDeDocumentosComponent,
-                            {
-                                width: "100%",
-                                height: "90%",
-                                disableClose: true,
-                                data: this.documentos,
-                            }
-                        );
-
-                        // tslint:disable-next-line: no-shadowed-variable
-                        dialogRef.afterClosed().subscribe((result) => {
-
-                            if (tipo === '2') {
-                                this.iniciativa.oficioEnvioDeInforme = this.documentos;
-                                this.fileOficioName = this.iniciativa.oficioEnvioDeInforme.cNombreDocumento;
-                            } else if (tipo === '3') {
-                                this.iniciativa.informeDeResultadosRevision = this.documentos;
-                                this.fileInformeName = this.iniciativa.informeDeResultadosRevision.cNombreDocumento;
-                            } else if (tipo === '4') {
-                                this.fileActaDeSesionSend = this.documentos;
-                                console.log(this.fileActaDeSesionSend);
-                                this.fileActaDeSesion = this.documentos.cNombreDocumento;
-                                this.sinActa = false;
-                            }
-                            if (this.iniciativa.estatus == 'Turnar dictamen a Secretaría General' ||
-                                this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' ||
-                                this.iniciativa.estatus == 'Turnada a comisión para modificación') {
-
-                                /*asignamos valores a iniciativa.documentos debido a que al
-                                iniciar el componente inicia como [] y al guardar asi se desasignan
-                                los documentos*/
-
-                                //this.iniciativa.documentos.push(this.documentos);
-                                this.iniciativa.documentos = [this.documentos.id];
-                                console.log(this.iniciativa.documentos);
-                                this.obtenerDocumento();
-                            }
-                            if (result == "0") {
-                                this.cerrar("");
-                            }
-                        });
-                    } else {
-                        this.spinner.hide();
+                        console.log(err);
                         Swal.fire(
                             "Error",
-                            "Ocurrió un error al guardar. " + resp.error.data,
+                            "Ocurrió un error al guardar." + err.error.data,
                             "error"
                         );
                     }
-                },
-                (err) => {
-                    this.spinner.hide();
-                    console.log(err);
-                    Swal.fire(
-                        "Error",
-                        "Ocurrió un error al guardar." + err.error.data,
-                        "error"
-                    );
-                }
-            );
+                );
+        } catch (err) {
+            this.spinner.hide();
+            Swal.fire('Error', 'Ocurrió un error al clasificar. ' + err, 'error');
+
+        }
     }
 
 
     obtenerDocumento() {
-        this.spinner.show();
-        const documentosTemp: any[] = [];
-        let idDocumento: any;
-        this.loadingIndicator = true;
-        let meta = '';
-        let visibilidad = '';
-        let info: any;
-        // Obtenemos los documentos
-        this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
+        try {
+            this.spinner.show();
+            const documentosTemp: any[] = [];
+            let idDocumento: any;
+            this.loadingIndicator = true;
+            let meta = '';
+            let visibilidad = '';
+            let info: any;
+            // Obtenemos los documentos
+            this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
 
-            // Buscamos permisos
-
-
-            for (const documento of resp.data) {
-                //                console.log(documento.tipo_de_documento.bActivo);
-                idDocumento = '';
-                // Validamos permisos
-
-                if (documento.tipo_de_documento) {
-                    const encontro = this.menu.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento.id);
-
-                    if (documento.visibilidade) {
-                        info = this.menu.tipoInformacion.find((tipo: { id: string; }) => tipo.id === documento.visibilidade.id);
-                    }
-                    if (encontro) {
-                        if (documento.tipo_de_documento.bActivo && encontro.Consultar && info) {
-
-                            if (documento.documento) {
-
-                                idDocumento = documento.documento.hash + documento.documento.ext;
+                // Buscamos permisos
 
 
-                                if (documento.metacatalogos) {
-                                    meta = '';
+                for (const documento of resp.data) {
+                    //                console.log(documento.tipo_de_documento.bActivo);
+                    idDocumento = '';
+                    // Validamos permisos
+
+                    if (documento.tipo_de_documento) {
+                        const encontro = this.menu.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento.id);
+
+                        if (documento.visibilidade) {
+                            info = this.menu.tipoInformacion.find((tipo: { id: string; }) => tipo.id === documento.visibilidade.id);
+                        }
+                        if (encontro) {
+                            if (documento.tipo_de_documento.bActivo && encontro.Consultar && info) {
+
+                                if (documento.documento) {
+
+                                    idDocumento = documento.documento.hash + documento.documento.ext;
+
+
                                     if (documento.metacatalogos) {
-                                        for (const x of documento.metacatalogos) {
+                                        meta = '';
+                                        if (documento.metacatalogos) {
+                                            for (const x of documento.metacatalogos) {
 
-                                            if (meta === '') {
+                                                if (meta === '') {
 
-                                                if (x.cTipoMetacatalogo === 'Fecha') {
-                                                    if (x.text) {
-                                                        meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                                    if (x.cTipoMetacatalogo === 'Fecha') {
+                                                        if (x.text) {
+                                                            meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                                        }
+                                                    } else {
+                                                        if (x.text) {
+                                                            meta = meta + x.cDescripcionMetacatalogo + ': ' + x.text;
+                                                        }
                                                     }
                                                 } else {
-                                                    if (x.text) {
-                                                        meta = meta + x.cDescripcionMetacatalogo + ': ' + x.text;
+                                                    if (x.cTipoMetacatalogo === 'Fecha') {
+                                                        if (x.text) {
+                                                            meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                                        }
+                                                    } else {
+                                                        if (x.text) {
+                                                            meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + x.text;
+                                                        }
                                                     }
-                                                }
-                                            } else {
-                                                if (x.cTipoMetacatalogo === 'Fecha') {
-                                                    if (x.text) {
-                                                        meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
-                                                    }
-                                                } else {
-                                                    if (x.text) {
-                                                        meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + x.text;
-                                                    }
-                                                }
 
+                                                }
                                             }
                                         }
                                     }
-                                }
-                                visibilidad = '';
-                                if (documento.visibilidade) {
-                                    visibilidad = documento.visibilidade.cDescripcionVisibilidad;
-                                }
+                                    visibilidad = '';
+                                    if (documento.visibilidade) {
+                                        visibilidad = documento.visibilidade.cDescripcionVisibilidad;
+                                    }
 
-                                if (documento.iniciativa === undefined || documento.iniciativa === null) {
-                                    documento.iniciativa = '';
-                                } else {
-                                    if (documento.iniciativa.id == this.iniciativa.id) {
-                                        // tslint:disable-next-line: no-unused-expression
-                                        // Seteamos valores y permisos
-                                        if (documento.formulario == this.iniciativa.estatus) {
-                                            documentosTemp.push({
-                                                id: documento.id,
-                                                cNombreDocumento: documento.cNombreDocumento,
-                                                tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
-                                                tipo_de_documento: documento.tipo_de_documento.id,
-                                                fechaCarga: moment(documento.fechaCarga).format('YYYY-MM-DD'),
-                                                fechaCreacion: moment(documento.fechaCreacion).format('YYYY-MM-DD'),
-                                                paginas: documento.paginas,
-                                                bActivo: documento.bActivo,
-                                                fechaModificacion: this.datePipe.transform(documento.updatedAt, 'yyyy-MM-dd'),
-                                                Agregar: encontro.Agregar,
-                                                Eliminar: encontro.Eliminar,
-                                                Editar: encontro.Editar,
-                                                Consultar: encontro.Consultar,
-                                                idDocumento: idDocumento,
-                                                version: parseFloat(documento.version).toFixed(1),
-                                                documento: documento.documento,
-                                                iniciativa: documento.iniciativa,
-                                                //ente: documento.ente,
-                                                // secretaria: documento.secretaria,
-                                                // direccione: documento.direccione,
-                                                // departamento: documento.departamento,
-                                                folioExpediente: documento.folioExpediente,
-                                                clasificacion: meta,
-                                                metacatalogos: documento.metacatalogos,
-                                                informacion: visibilidad,
-                                                visibilidade: documento.visibilidade,
-                                                tipo_de_expediente: documento.tipo_de_expediente,
-                                                usuario: this.menu.usuario
-                                            });
+                                    if (documento.iniciativa === undefined || documento.iniciativa === null) {
+                                        documento.iniciativa = '';
+                                    } else {
+                                        if (documento.iniciativa.id == this.iniciativa.id) {
+                                            // tslint:disable-next-line: no-unused-expression
+                                            // Seteamos valores y permisos
+                                            if (documento.formulario == this.iniciativa.estatus) {
+                                                documentosTemp.push({
+                                                    id: documento.id,
+                                                    cNombreDocumento: documento.cNombreDocumento,
+                                                    tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
+                                                    tipo_de_documento: documento.tipo_de_documento.id,
+                                                    fechaCarga: moment(documento.fechaCarga).format('YYYY-MM-DD'),
+                                                    fechaCreacion: moment(documento.fechaCreacion).format('YYYY-MM-DD'),
+                                                    paginas: documento.paginas,
+                                                    bActivo: documento.bActivo,
+                                                    fechaModificacion: this.datePipe.transform(documento.updatedAt, 'yyyy-MM-dd'),
+                                                    Agregar: encontro.Agregar,
+                                                    Eliminar: encontro.Eliminar,
+                                                    Editar: encontro.Editar,
+                                                    Consultar: encontro.Consultar,
+                                                    idDocumento: idDocumento,
+                                                    version: parseFloat(documento.version).toFixed(1),
+                                                    documento: documento.documento,
+                                                    iniciativa: documento.iniciativa,
+                                                    //ente: documento.ente,
+                                                    // secretaria: documento.secretaria,
+                                                    // direccione: documento.direccione,
+                                                    // departamento: documento.departamento,
+                                                    folioExpediente: documento.folioExpediente,
+                                                    clasificacion: meta,
+                                                    metacatalogos: documento.metacatalogos,
+                                                    informacion: visibilidad,
+                                                    visibilidade: documento.visibilidade,
+                                                    tipo_de_expediente: documento.tipo_de_expediente,
+                                                    usuario: this.menu.usuario
+                                                });
+                                            }
                                         }
                                     }
+                                    meta = '';
                                 }
-                                meta = '';
                             }
                         }
                     }
                 }
-            }
-            this.files = documentosTemp;
-            this.filesTemp = this.files;
+                this.files = documentosTemp;
+                this.filesTemp = this.files;
 
-            this.loadingIndicator = false;
+                this.loadingIndicator = false;
+                this.spinner.hide();
+            }, err => {
+                this.spinner.hide();
+                this.loadingIndicator = false;
+            });
+        } catch (err) {
             this.spinner.hide();
-        }, err => {
-            this.spinner.hide();
-            this.loadingIndicator = false;
-        });
+            Swal.fire('Error', 'Ocurrió un error al cargar los documentos. ' + err, 'error');
+
+        }
     }
 
     async editarDocumento(documento: DocumentosModel, tipo: string): Promise<void> {
-        console.log(documento);
+
         const fechaCreacion = new Date(documento.fechaCreacion);
         let mesCreacion: any = fechaCreacion.getMonth() + 1; // obteniendo mes
         let diaCreacion: any = fechaCreacion.getDate(); // obteniendo dia      

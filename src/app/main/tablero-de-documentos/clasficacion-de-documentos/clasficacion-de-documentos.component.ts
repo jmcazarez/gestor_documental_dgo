@@ -75,6 +75,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     pasarAAutorizacion: boolean;
     readonly separatorKeysCodes: number[] = [ENTER, COMMA];
     meta: Metacatalogos[] = [];
+    arrTipo: any[] = [];
 
     // ---------- Tabla de Prueba - Trazabilidad
     hoy = [];
@@ -117,295 +118,316 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
-        this.pasarAAutorizacion = false;
-        this.disableFolioExpediente = false;
-        this.pdfSrc = '';
-        this.autorizacionPendiente = false;
-        this.turnarDocumento = false;
-        this.spinner.show();
-        let autorizaciones: any;
-        this.documento.usuario = this.menuService.usuario;
-        this.version = this.documento.version;
-        let cFolioExpediente = "";
-        let cLegislatura = "";
-        this.arrMetacatalogos = [];
-        let folioExpedienteRequerido = [];
-        await this.obtenerLegislaturas();
-        await this.obtenerTiposExpedientes();
-        if (!this.documento.iniciativas) {
-            if (this.documento.tipo_de_documento.id) {
-                this.trazabilidad = false;
-                this.arrMetacatalogos = this.menuService.tipoDocumentos.find(
-                    (tipoDocumento) =>
-                        tipoDocumento.id === this.documento.tipo_de_documento.id
-                ).metacatalogos;
-
-                if (this.documento.ente !== undefined) {
-                    this.obtenerDocumento(
-                        this.documento.id,
-                        this.documento.usuario
-                    );
-                } else {
-                }
-            } else {
-                this.trazabilidad = true;
-                this.arrMetacatalogos = this.menuService.tipoDocumentos.find(
-                    (tipoDocumento) =>
-                        tipoDocumento.id === this.documento.tipo_de_documento
-                ).metacatalogos;
-
-                if (!this.documento.tipo_de_documento.id) {
-                    this.documento.tipo_de_documento = this.menuService.tipoDocumentos.find(
+        try {
+            this.pasarAAutorizacion = true;
+            this.disableFolioExpediente = false;
+            this.pdfSrc = '';
+            this.autorizacionPendiente = false;
+            this.turnarDocumento = false;
+            this.spinner.show();
+            let autorizaciones: any;
+            this.documento.usuario = this.menuService.usuario;
+            this.version = this.documento.version;
+            let cFolioExpediente = "";
+            let cLegislatura = "";
+            this.arrMetacatalogos = [];
+            let folioExpedienteRequerido = [];
+            await this.obtenerLegislaturas();
+            await this.obtenerTiposExpedientes();
+            if (!this.documento.iniciativas) {
+                if (this.documento.tipo_de_documento.id) {
+                    this.trazabilidad = false;
+                    this.arrMetacatalogos = this.menuService.tipoDocumentos.find(
                         (tipoDocumento) =>
-                            tipoDocumento.id ===
-                            this.documento.tipo_de_documento
-                    );
-                }
-            }
-        } else {
-         
-            if (!this.documento.formulario) {
-               
-                this.turnarDocumento = false; // Pruebas Hilda
-                this.autorizacionPendiente = true;  // Pruebas Hilda
-            }
-            console.log(this.documento.iniciativa);
-            if (this.documento.iniciativa.confirmaAutorizacion) {
-                this.pasarAAutorizacion = true;
-            }
+                            tipoDocumento.id === this.documento.tipo_de_documento.id
+                    ).metacatalogos;
 
-            if (this.documento.iniciativa) {
-                this.disableFolioExpediente = true;
-            }
-            autorizaciones = await this.obtenerAutorizacionPorDocumento();
+                    if (this.documento.ente !== undefined) {
+                        this.obtenerDocumento(
+                            this.documento.id,
+                            this.documento.usuario
+                        );
+                    } else {
+                    }
+                } else {
+                    this.trazabilidad = true;
+                    this.arrMetacatalogos = this.menuService.tipoDocumentos.find(
+                        (tipoDocumento) =>
+                            tipoDocumento.id === this.documento.tipo_de_documento
+                    ).metacatalogos;
 
-            // Bloqueamos el boton de autorizar si tiene autorizaciones pendientes por realizar.
-            autorizaciones.forEach(element => {
-
-                if (element.estatusAutorizacion === 1 || element.estatusAutorizacion === 2) {
-                    this.autorizacionPendiente = true;
-                  //  this.turnarDocumento = true;
-                } else if (element.estatusAutorizacion === 3) {
-                    this.autorizacionPendiente = true;
-                  //  this.turnarDocumento = false;
-                }
-
-            });
-            this.estatusIniciativa = this.documento.estatus;
-            this.arrMetacatalogos = this.documento.metacatalogos;
-            this.documento.disabled = true;
-        }
-        // words2 = [{ value: 'word1' }, { value: 'word2' }, { value: 'word3' }, { value: '' }];
-
-        this.arrSecretarias = [];
-        this.selectedEntes = "";
-        this.selectedSecretaria = "";
-        this.selectedDireccion = "";
-        this.selectedDepartamento = "";
-        this.selectedInformacion = "";
-        this.selectedLegislaturas = "";
-
-        this.arrInformacion = this.menuService.tipoInformacion;
-
-        this.documento.version = parseFloat(this.documento.version).toFixed(1);
-
-        if (
-            !this.documento.legislatura &&
-            !this.documento.expediente &&
-            !this.documento.folioExpediente
-        ) {
-            for (const i in this.arrMetacatalogos) {
-                this.arrMetacatalogos[i].text = "";
-                // this.documentoSinClasificar = true;
-            }
-        }
-        if (!this.documento.iniciativas) {
-            if (this.documento.metacatalogos) {
-                // this.arrMetacatalogos = this.documento.metacatalogos;
-                // tslint:disable-next-line: forin
-                if (this.documento.iniciativa) {
-                    this.disableFolioExpediente = true;
-                }
-                for (const i in this.arrMetacatalogos) {
-                    this.arrMetacatalogos[i].text = "";
-                    const filtro = this.documento.metacatalogos.find(
-                        (meta) =>
-                            meta.cDescripcionMetacatalogo ===
-                            this.arrMetacatalogos[i].cDescripcionMetacatalogo
-                    );
-                    if (filtro) {
-                        this.arrMetacatalogos[i].text = filtro.text;
+                    if (!this.documento.tipo_de_documento.id) {
+                        this.documento.tipo_de_documento = this.menuService.tipoDocumentos.find(
+                            (tipoDocumento) =>
+                                tipoDocumento.id ===
+                                this.documento.tipo_de_documento
+                        );
                     }
                 }
             } else {
-                // tslint:disable-next-line: forin
-            }
-        }
 
-        // Seteamos valores
-        if (this.documento.ente) {
-            this.selectedEntes = this.documento.ente.id;
-        }
-        // Seteamos valores
-        if (this.documento.secretaria) {
-            this.selectedSecretaria = this.documento.secretaria.id;
-        }
-        // Seteamos valores
-        if (this.documento.departamento) {
-            this.selectedDepartamento = this.documento.departamento.id;
-        }
-        // Seteamos valores
-        if (this.documento.tipo_de_expediente) {
-            this.selectedExpediente = this.documento.tipo_de_expediente.id;
-        }
+                if (!this.documento.formulario) {
 
-        // Seteamos valores
-        if (this.documento.direccione) {
-            this.selectedDireccion = this.documento.direccione.id;
-        }
-        // Seteamos valores
-        if (this.documento.visibilidade) {
-            this.selectedInformacion = this.documento.visibilidade.id;
-        }
-
-        // Seteamos valores
-        if (this.documento.legislatura) {
-            this.selectedLegislaturas = this.documento.legislatura.id;
-            cLegislatura = this.documento.legislatura.id;
-        }
-
-
-        this.selectedFolioExpediente = this.documento.folioExpediente;
-
-        if (this.documento.tipo_de_documento) {
-            this.descriptionTipoDocumento = this.documento.tipo_de_documento.cDescripcionTipoDocumento;
-            if (this.documento.tipo_de_documento.cDescripcionTipoDocumento !== 'Acta') {
-                folioExpedienteRequerido = [Validators.required];
-            }
-
-        }
-
-        this.form = this.formBuilder.group({
-            // entes: [{ value: this.documento.ente, disabled: this.documento.disabled }],
-            // secretarias: [{ value: this.documento.secretaria, disabled: this.documento.disabled }, [Validators.required]],
-            legislatura: [
-                {
-                    value: this.documento.legislatura,
-                    disabled: this.documento.disabled,
-                },
-                [Validators.required],
-            ],
-            expediente: [
-                {
-                    value: this.documento.tipo_de_expediente,
-                    disabled: this.documento.disabled,
-                },
-                [Validators.required],
-            ],
-            // direcciones: [{ value: this.documento.direccione, disabled: this.documento.disabled }, [Validators.required]],
-            // departamentos: [{ value: this.documento.departamento, disabled: this.documento.disabled }, [Validators.required]],
-            folioExpediente: [
-                {
-                    value: this.documento.folioExpediente,
-                    disabled: this.disableFolioExpediente,
-                },
-                folioExpedienteRequerido,
-            ],
-            folioExpediente2: [
-                {
-                    value: 'hola'
+                    this.turnarDocumento = false; // Pruebas Hilda
+                    this.autorizacionPendiente = true;  // Pruebas Hilda
                 }
-            ],
-            informacion: [{ value: this.documento.visibilidade.cDescripcionVisibilidad, disabled: this.documento.disabled }, [Validators.required]]
-            //   imagen        : [this.usuario.cPassword,[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-        });
+
+                if (this.documento.iniciativa) {
+                    console.log(this.documento.iniciativa);
+                    if (this.documento.cNombreDocumento.includes('SSP 01') || this.documento.cNombreDocumento.includes('SSP 04')
+                        || this.documento.cNombreDocumento.includes('SSP 05') || this.documento.cNombreDocumento.includes('CIEL 08') ||
+                        this.documento.cNombreDocumento.includes('SSP 08')) {
+                            if(!this.documento.iniciativa.confirmaAutorizacion)
+                            {
+                                this.pasarAAutorizacion = false;
+                                this.autorizacionPendiente = false;
+                            }
+                        
+                        console.log('entro');
+                    }
+
+                    this.disableFolioExpediente = true;
+                }
+                autorizaciones = await this.obtenerAutorizacionPorDocumento();
+
+                // Bloqueamos el boton de autorizar si tiene autorizaciones pendientes por realizar.
+                autorizaciones.forEach(element => {
+
+                    if (element.estatusAutorizacion === 1 || element.estatusAutorizacion === 2) {
+                        this.autorizacionPendiente = false;
+                        //  this.turnarDocumento = true;
+                    } else if (element.estatusAutorizacion === 3 &&  this.pasarAAutorizacion) {
+                        this.autorizacionPendiente = true;
+                        //  this.turnarDocumento = false;
+                    }
+
+                });
+                this.estatusIniciativa = this.documento.estatus;
+                this.arrMetacatalogos = this.documento.metacatalogos;
+                this.documento.disabled = true;
+                console.log( this.pasarAAutorizacion);
+                console.log( this.autorizacionPendiente);
+            }
+            // words2 = [{ value: 'word1' }, { value: 'word2' }, { value: 'word3' }, { value: '' }];
+
+            this.arrSecretarias = [];
+            this.selectedEntes = "";
+            this.selectedSecretaria = "";
+            this.selectedDireccion = "";
+            this.selectedDepartamento = "";
+            this.selectedInformacion = "";
+            this.selectedLegislaturas = "";
+
+            this.arrInformacion = this.menuService.tipoInformacion;
+
+            this.documento.version = parseFloat(this.documento.version).toFixed(1);
+
+            if (
+                !this.documento.legislatura &&
+                !this.documento.expediente &&
+                !this.documento.folioExpediente
+            ) {
+                for (const i in this.arrMetacatalogos) {
+                    this.arrMetacatalogos[i].text = "";
+                    // this.documentoSinClasificar = true;
+                }
+            }
+            if (!this.documento.iniciativas) {
+                if (this.documento.metacatalogos) {
+                    // this.arrMetacatalogos = this.documento.metacatalogos;
+                    // tslint:disable-next-line: forin
+                    if (this.documento.iniciativa) {
+                        this.disableFolioExpediente = true;
+                    }
+                    for (const i in this.arrMetacatalogos) {
+                        this.arrMetacatalogos[i].text = "";
+                        const filtro = this.documento.metacatalogos.find(
+                            (meta) =>
+                                meta.cDescripcionMetacatalogo ===
+                                this.arrMetacatalogos[i].cDescripcionMetacatalogo
+                        );
+                        if (filtro) {
+                            this.arrMetacatalogos[i].text = filtro.text;
+                        }
+                    }
+                } else {
+                    // tslint:disable-next-line: forin
+                }
+            }
+
+            // Seteamos valores
+            if (this.documento.ente) {
+                this.selectedEntes = this.documento.ente.id;
+            }
+            // Seteamos valores
+            if (this.documento.secretaria) {
+                this.selectedSecretaria = this.documento.secretaria.id;
+            }
+            // Seteamos valores
+            if (this.documento.departamento) {
+                this.selectedDepartamento = this.documento.departamento.id;
+            }
+            // Seteamos valores
+            if (this.documento.tipo_de_expediente) {
+                this.selectedExpediente = this.documento.tipo_de_expediente.id;
+            }
+
+            // Seteamos valores
+            if (this.documento.direccione) {
+                this.selectedDireccion = this.documento.direccione.id;
+            }
+            // Seteamos valores
+            if (this.documento.visibilidade) {
+                this.selectedInformacion = this.documento.visibilidade.id;
+            }
+
+            // Seteamos valores
+            if (this.documento.legislatura) {
+                this.selectedLegislaturas = this.documento.legislatura.id;
+                cLegislatura = this.documento.legislatura.id;
+            }
 
 
-        // Obtenemos las entes
-        // await this.obtenerEntes();
-        this.documento.fechaCarga = this.documento.fechaCarga.replace(
-            "T16:00:00.000Z",
-            ""
-        );
-        this.documento.fechaCreacion = this.documento.fechaCreacion.replace(
-            "T16:00:00.000Z",
-            ""
-        );
+            this.selectedFolioExpediente = this.documento.folioExpediente;
 
-        this.fechaCreacionView = this.datePipe.transform(
-            this.documento.fechaCreacion,
-            "dd/MM/yyyy"
-        );
-        this.fechaCargaView = this.datePipe.transform(
-            this.documento.fechaCarga,
-            "dd/MM/yyyy"
-        );
+            if (this.documento.tipo_de_documento) {
+                this.descriptionTipoDocumento = this.documento.tipo_de_documento.cDescripcionTipoDocumento;
+                if (this.documento.tipo_de_documento.cDescripcionTipoDocumento !== 'Acta') {
+                    folioExpedienteRequerido = [Validators.required];
+                }
 
-        /*  // Si el valor cambia filtramos el resultado
-          this.form.get('secretarias').valueChanges.subscribe(val => {
-  
-              if (val.length > 0) {
-                  if (this.documento.disabled !== true) {
+            }
+
+            this.form = this.formBuilder.group({
+                // entes: [{ value: this.documento.ente, disabled: this.documento.disabled }],
+                // secretarias: [{ value: this.documento.secretaria, disabled: this.documento.disabled }, [Validators.required]],
+                legislatura: [
+                    {
+                        value: this.documento.legislatura,
+                        disabled: this.documento.disabled,
+                    },
+                    [Validators.required],
+                ],
+                expediente: [
+                    {
+                        value: this.documento.tipo_de_expediente,
+                        disabled: this.documento.disabled,
+                    },
+                    [Validators.required],
+                ],
+                // direcciones: [{ value: this.documento.direccione, disabled: this.documento.disabled }, [Validators.required]],
+                // departamentos: [{ value: this.documento.departamento, disabled: this.documento.disabled }, [Validators.required]],
+                folioExpediente: [
+                    {
+                        value: this.documento.folioExpediente,
+                        disabled: this.disableFolioExpediente,
+                    },
+                    folioExpedienteRequerido,
+                ],
+                folioExpediente2: [
+                    {
+                        value: 'hola'
+                    }
+                ],
+                informacion: [{ value: this.documento.visibilidade.cDescripcionVisibilidad, disabled: this.documento.disabled }, [Validators.required]]
+                //   imagen        : [this.usuario.cPassword,[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+            });
+
+
+            // Obtenemos las entes
+            // await this.obtenerEntes();
+            this.documento.fechaCarga = this.documento.fechaCarga.replace(
+                "T16:00:00.000Z",
+                ""
+            );
+            this.documento.fechaCreacion = this.documento.fechaCreacion.replace(
+                "T16:00:00.000Z",
+                ""
+            );
+
+            this.fechaCreacionView = this.datePipe.transform(
+                this.documento.fechaCreacion,
+                "dd/MM/yyyy"
+            );
+            this.fechaCargaView = this.datePipe.transform(
+                this.documento.fechaCarga,
+                "dd/MM/yyyy"
+            );
+
+            /*  // Si el valor cambia filtramos el resultado
+              this.form.get('secretarias').valueChanges.subscribe(val => {
+      
+                  if (val.length > 0) {
+                      if (this.documento.disabled !== true) {
+                          this.form.controls['direcciones'].enable();
+                      }
+                      if (this.arrDireccionesFilter) {
+                          this.arrDirecciones = this.arrDireccionesFilter.filter(item => item['secretariaId'] === val);
+                      }
+                      this.selectedDepartamento = '';
+                  }
+              });
+      
+              // Si el valor cambia filtramos el resultado
+              this.form.get('direcciones').valueChanges.subscribe(val => {
+      
+                  if (val.length > 0) {
+                      if (this.documento.disabled !== true) {
+                          this.form.controls['departamentos'].enable();
+                      }
+      
+                      if (this.arrDepartamentosFilter) {
+                          this.arrDepartamentos = this.arrDepartamentosFilter.filter(item => item['direccionId'] === val);
+                      }
+                  }
+              });
+       */
+            // Si el valor cambia filtramos el resultado
+            this.form.get("legislatura").valueChanges.subscribe((val) => {
+                if (val) {
+                    if (val.length > 0) {
+
+                    }
+                }
+            });
+
+            // Si el usuario trae id entonces vamos a editar por lo que ponemos enabled los select
+            /*  if (this.documento.id && this.documento.id.length > 0) {
+      
+                  if (this.selectedSecretaria.length > 0 && this.documento.disabled !== true) {
+      
                       this.form.controls['direcciones'].enable();
                   }
-                  if (this.arrDireccionesFilter) {
-                      this.arrDirecciones = this.arrDireccionesFilter.filter(item => item['secretariaId'] === val);
-                  }
-                  this.selectedDepartamento = '';
-              }
-          });
-  
-          // Si el valor cambia filtramos el resultado
-          this.form.get('direcciones').valueChanges.subscribe(val => {
-  
-              if (val.length > 0) {
-                  if (this.documento.disabled !== true) {
+      
+                  if (this.selectedDepartamento.length > 0 && this.documento.disabled !== true) {
                       this.form.controls['departamentos'].enable();
                   }
-  
-                  if (this.arrDepartamentosFilter) {
-                      this.arrDepartamentos = this.arrDepartamentosFilter.filter(item => item['direccionId'] === val);
-                  }
               }
-          });
-   */
-        // Si el valor cambia filtramos el resultado
-        this.form.get("legislatura").valueChanges.subscribe((val) => {
-            if (val) {
-                if (val.length > 0) {
-
-                }
+              */
+            if (this.documento.disabled === true) {
+                await this.descargarDocumentoClasificacion();
+            } else {
+                await this.descargarDocumento();
             }
-        });
 
-        // Si el usuario trae id entonces vamos a editar por lo que ponemos enabled los select
-        /*  if (this.documento.id && this.documento.id.length > 0) {
-  
-              if (this.selectedSecretaria.length > 0 && this.documento.disabled !== true) {
-  
-                  this.form.controls['direcciones'].enable();
-              }
-  
-              if (this.selectedDepartamento.length > 0 && this.documento.disabled !== true) {
-                  this.form.controls['departamentos'].enable();
-              }
-          }
-          */
-        if (this.documento.disabled === true) {
-            await this.descargarDocumentoClasificacion();
-        } else {
-            await this.descargarDocumento();
+            this.form.controls["folioExpediente2"].setValue(
+                'hola'
+            );
+
+            this.spinner.hide();
+        } catch (err) {
+            this.spinner.hide();
+            Swal.fire(
+                "Error",
+                "Ocurrió un error en la clasificación." + err,
+                "error"
+            );
         }
-
-        this.form.controls["folioExpediente2"].setValue(
-            'hola'
-        );
-
-        this.spinner.hide();
     }
 
     obtenerTiposExpedientes(): void {
         // Obtenemos los documentos
+        console.log('tipo exp');
         this.tipoExpedientesService.obtenerTipoExpedientes().subscribe(
             (resp: any) => {
                 this.arrExpediente = resp;
@@ -493,37 +515,50 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     async descargarDocumentoClasificacion(): Promise<string> {
         return new Promise(async (resolve) => {
             {
-                // Descargamos el documento
-                await this.documentoService
-                    .dowloadDocumentClasificacion(
-                        this.documento.documento.hash +
-                        this.documento.documento.ext,
-                        this.documento.id,
-                        this.menuService.usuario,
-                        this.documento.cNombreDocumento
-                    )
-                    .subscribe(
-                        (resp: any) => {
-                            const source =
-                                "data:application/pdf;base64," +
-                                resp.data;
-                            this.pdfSrc = source;
-                            resolve("1");
-                        },
-                        (err) => {
-                            if (err.error.data) {
-                                Swal.fire(
-                                    "Error",
-                                    "Ocurrió un error al descargar el documento." +
-                                    err.error.data,
-                                    "error"
-                                );
-                                resolve("0");
+                try {
+                    // Descargamos el documento
+                    await this.documentoService
+                        .dowloadDocumentClasificacion(
+                            this.documento.documento.hash +
+                            this.documento.documento.ext,
+                            this.documento.id,
+                            this.menuService.usuario,
+                            this.documento.cNombreDocumento
+                        )
+                        .subscribe(
+                            (resp: any) => {
+                                const source =
+                                    "data:application/pdf;base64," +
+                                    resp.data;
+                                this.pdfSrc = source;
+                                resolve("1");
+                            },
+                            (err) => {
+                                if (err.error.data) {
+                                    Swal.fire(
+                                        "Error",
+                                        "Ocurrió un error al descargar el documento." +
+                                        err.error.data,
+                                        "error"
+                                    );
+                                    resolve("0");
+                                    this.spinner.hide;
+                                }
                             }
-                        }
+                        );
+                } catch (err) {
+                    Swal.fire(
+                        "Error",
+                        "Ocurrió un error al descargar el documento." +
+                        err.error.data,
+                        "error"
                     );
+                    this.spinner.hide;
+                    resolve("0");
+                }
             }
         });
+
     }
     convertFile(buf: any): string {
         // Convertimos el resultado en binstring
@@ -551,7 +586,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
     async obtenerLegislaturas(): Promise<void> {
         // Obtenemos secretarias
-
+        console.log('legis');
         await this.legislaturaService.obtenerLegislatura().subscribe(
             (resp: any) => {
 
@@ -995,6 +1030,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                     }
                 }
             }
+
         });
     }
 
@@ -1023,7 +1059,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         const fechaActual = ano + "-" + mes + "-" + dia;
 
         let iniciativa = this.documento.iniciativa;
-
         iniciativa.estatus = this.estatusIniciativa;
         iniciativa.fechaCreacion = fechaActual + "T16:00:00.000Z";
         this.iniciativaService
@@ -1031,6 +1066,8 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 id: iniciativa.id,
                 fechaCreacion: iniciativa.fechaCreacion,
                 estatus: iniciativa.estatus,
+                confirmaAutorizacion: false,
+                DictamenDeIniciativa: ''
             })
             .subscribe(
                 (resp: any) => {
@@ -1062,104 +1099,127 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             );
     }
     async autorizar(): Promise<void> {
-        this.spinner.show()
-        let fileBase64 = this.pdfSrc;
-        let parametros = [];
-        let firmantes = [];
-        let autorizacion = {};
-        let detalleAutorizacion = [];
-        let firmasPorEtapas: any[];
-        if (this.documento.cNombreDocumento.includes('SSP 01')) {
-            parametros = await this.obtenerParametros("SSP-001-Firmas");
-            firmasPorEtapas = await this.obtenerFirma(
-                parametros[0]["cValor"]
-            );
-            firmantes = firmasPorEtapas[0].participantes;
-        } else if (this.documento.cNombreDocumento.includes('SSP 04')) {
-            parametros = await this.obtenerParametros("SSP-004-Firmas");
-            firmasPorEtapas = await this.obtenerFirma(
-                parametros[0]["cValor"]
-            );
-            firmantes = firmasPorEtapas[0].participantes;
-        } else if (this.documento.cNombreDocumento.includes('CIEL 08')) {
-            parametros = await this.obtenerParametros("CIEL-008-Firmas");
-            firmasPorEtapas = await this.obtenerFirma(
-                parametros[0]["cValor"]
-            );
-            firmantes = firmasPorEtapas[0].participantes;
-        } else if (this.documento.cNombreDocumento.includes('SSP 05')) {
-            parametros = await this.obtenerParametros("SSP-005-Firmas");
-            firmasPorEtapas = await this.obtenerFirma(
-                parametros[0]["cValor"]
-            );
-            firmantes = firmasPorEtapas[0].participantes;
-        } else if (this.documento.cNombreDocumento.includes('SSP 08')) {
-            parametros = await this.obtenerParametros("SSP-008-Firmas");
-            firmasPorEtapas = await this.obtenerFirma(
-                parametros[0]["cValor"]
-            );
-            firmantes = firmasPorEtapas[0].participantes;
-        }
-        console.log(firmantes);
-        firmantes.forEach(element => {
-            detalleAutorizacion.push({ empleado: element.id })
+        try {
+            this.spinner.show()
+            let fileBase64 = this.pdfSrc;
+            let parametros = [];
+            let firmantes = [];
+            let autorizacion = {};
+            let detalleAutorizacion = [];
+            let firmasPorEtapas: any[];
+            if (this.documento.cNombreDocumento.includes('SSP 01')) {
+                parametros = await this.obtenerParametros("SSP-001-Firmas");
+                firmasPorEtapas = await this.obtenerFirma(
+                    parametros[0]["cValor"]
+                );
+                firmantes = firmasPorEtapas[0].participantes;
+            } else if (this.documento.cNombreDocumento.includes('SSP 04')) {
+                parametros = await this.obtenerParametros("SSP-004-Firmas");
+                firmasPorEtapas = await this.obtenerFirma(
+                    parametros[0]["cValor"]
+                );
+                firmantes = firmasPorEtapas[0].participantes;
+            } else if (this.documento.cNombreDocumento.includes('CIEL 08')) {
+                parametros = await this.obtenerParametros("CIEL-008-Firmas");
+                firmasPorEtapas = await this.obtenerFirma(
+                    parametros[0]["cValor"]
+                );
+                firmantes = firmasPorEtapas[0].participantes;
+            } else if (this.documento.cNombreDocumento.includes('SSP 05')) {
+                parametros = await this.obtenerParametros("SSP-005-Firmas");
+                firmasPorEtapas = await this.obtenerFirma(
+                    parametros[0]["cValor"]
+                );
+                firmantes = firmasPorEtapas[0].participantes;
+            } else if (this.documento.cNombreDocumento.includes('SSP 08')) {
+                parametros = await this.obtenerParametros("SSP-008-Firmas");
+                firmasPorEtapas = await this.obtenerFirma(
+                    parametros[0]["cValor"]
+                );
+                firmantes = firmasPorEtapas[0].participantes;
+            }
 
-        });
+            firmantes.forEach(element => {
+                detalleAutorizacion.push({ empleado: element.id })
 
-        if (firmantes.length === 0) {
-            this.spinner.hide()
+            });
 
-            Swal.fire(
-                "Error",
-                "Ocurrió un error no existen firmantes configrados para esta etapa..  ",
-                "error"
-            );
+            if (firmantes.length === 0) {
+                this.spinner.hide()
 
-        } else {
-            let fileName = this.documento.cNombreDocumento + '.pdf';
-            this.autorizarService.autorizarDocumentoPaso1(fileName, firmantes.length, fileBase64.replace('data:application/pdf;base64,', '')).subscribe(
-                async (resp: any) => {
-                    let processID = resp.body.multiSignedMessage_InitResponse.processID;
-                    console.log(this.documento.iniciativa.id);
-                    autorizacion = {
-                        documento: this.documento.id,
-                        estatusIniciativa: this.documento.iniciativa.estatus,
-                        estatusAutorizacion: 1,
-                        idProcesoApi: processID,
-                        detalle_autorizacion_iniciativas: detalleAutorizacion,
-                        iniciativa: this.documento.iniciativa.id
-                    }
-                    this.autorizarService.autorizarRegistro(autorizacion).subscribe(
-                        async (resp: any) => {
-                            this.autorizacionPendiente = true;
-                            this.turnarDocumento = true;
-                            Swal.fire(
-                                "Éxito",
-                                "Documento en proceso de firma.",
-                                "success"
-                            );
-                            this.spinner.hide()
-                            this.cerrar(true);
-                        },
-                        (err) => {
+                Swal.fire(
+                    "Error",
+                    "Ocurrió un error no existen firmantes configrados para esta etapa..  ",
+                    "error"
+                );
+
+            } else {
+                let fileName = this.documento.cNombreDocumento + '.pdf';
+                this.autorizarService.autorizarDocumentoPaso1(fileName, firmantes.length, fileBase64.replace('data:application/pdf;base64,', '')).subscribe(
+                    async (resp: any) => {
+                        console.log(resp.body);
+                        if (resp.body.multiSignedMessage_InitResponse) {
+                            let processID = resp.body.multiSignedMessage_InitResponse.processID;
+                            if (processID === 0) {
+                                await this.turnarIniciativa();
+                            } else {
+                                autorizacion = {
+                                    documento: this.documento.id,
+                                    estatusIniciativa: this.documento.iniciativa.estatus,
+                                    estatusAutorizacion: 1,
+                                    idProcesoApi: processID,
+                                    detalle_autorizacion_iniciativas: detalleAutorizacion,
+                                    iniciativa: this.documento.iniciativa.id
+                                }
+                                this.autorizarService.autorizarRegistro(autorizacion).subscribe(
+                                    async (resp: any) => {
+                                        this.autorizacionPendiente = true;
+                                        this.turnarDocumento = true;
+                                        Swal.fire(
+                                            "Éxito",
+                                            "Documento en proceso de firma.",
+                                            "success"
+                                        );
+                                        this.spinner.hide()
+                                        this.cerrar(true);
+                                    },
+                                    (err) => {
+                                        this.spinner.hide()
+                                        Swal.fire(
+                                            "Error",
+                                            "Ocurrió un error al firmar el documento. Paso 1. " + err,
+                                            "error"
+                                        );
+                                    }
+                                );
+                            }
+                        } else {
                             this.spinner.hide()
                             Swal.fire(
                                 "Error",
-                                "Ocurrió un error al firmar el documento. Paso 1. " + err,
+                                "Ocurrió un error al firmar el documento. Paso 0.1 ",
                                 "error"
                             );
                         }
-                    );
 
-                },
-                (err) => {
-                    this.spinner.hide()
-                    Swal.fire(
-                        "Error",
-                        "Ocurrió un error al firmar el documento. Paso 1. " + err,
-                        "error"
-                    );
-                }
+                    },
+                    (err) => {
+                        this.spinner.hide()
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al firmar el documento. Paso 1. " + err,
+                            "error"
+                        );
+                    }
+                );
+            }
+
+        } catch (err) {
+            this.spinner.hide()
+            Swal.fire(
+                "Error",
+                "Ocurrió un error al firmar el documento. Paso 0.0 " + err,
+                "error"
             );
         }
 
@@ -1229,7 +1289,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
 
     async pasarAutorizacion(): Promise<void> {
-     
+
         let iniciativa = this.documento.iniciativa;
 
         iniciativa.estatus = this.estatusIniciativa;
@@ -1267,4 +1327,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 }
             );
     }
+
+
 }

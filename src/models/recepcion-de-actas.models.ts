@@ -8,5 +8,6 @@ export class RecepcionDeActasModel {
     estatus: string;
     hora: string;
     notas: string;
+    acta_sesion: any;
 }
 

@@ -74,129 +74,94 @@ export class TableroDeIniciativasComponent implements OnInit {
 
 
     async obtenerIniciativas(): Promise<void> {
-        this.spinner.show();
-        this.filterName = '';
-        this.loadingIndicator = true;
-        const iniciativasTemp: any[] = [];
-        const usuarioLogin = await this.usuarioLoginService.obtenerUsuario();
-        let autores: string;
-        let temas: string;
-        let clasificaciones: any;
-        let adiciones: any;
-        let etiquetas: any;
-        // Obtenemos los iniciativas
-        this.iniciativasService.obtenerIniciativas().subscribe((resp: any) => {
+        try {
+            this.spinner.show();
+            this.filterName = '';
+            this.loadingIndicator = true;
+            const iniciativasTemp: any[] = [];
+            const usuarioLogin = await this.usuarioLoginService.obtenerUsuario();
+            let autores: string;
+            let temas: string;
+            let clasificaciones: any;
+            let adiciones: any;
+            let etiquetas: any;
+            // Obtenemos los iniciativas
+            this.iniciativasService.obtenerIniciativas().subscribe((resp: any) => {
 
-            // Buscamos permisos
-            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === 'tablero-de-iniciativas');
+                // Buscamos permisos
+                const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === 'tablero-de-iniciativas');
 
-            this.optAgregar = opciones.Agregar;
-            this.optEditar = opciones.Editar;
-            this.optConsultar = opciones.Consultar;
-            this.optEliminar = opciones.Eliminar;
-            // Si tiene permisos para consultar
-            if (this.optConsultar) {
-                if (resp) {
-                    
-                    for (const ini of resp) {
-                        autores = '';
-                        temas = '';
-                        clasificaciones = '';
+                this.optAgregar = opciones.Agregar;
+                this.optEditar = opciones.Editar;
+                this.optConsultar = opciones.Consultar;
+                this.optEliminar = opciones.Eliminar;
+                // Si tiene permisos para consultar
+                if (this.optConsultar) {
+                    if (resp) {
 
-                        for (const aut of ini.autores) {
+                        for (const ini of resp) {
+                            autores = '';
+                            temas = '';
+                            clasificaciones = '';
 
-                            if (autores === '') {
-                                autores = aut.name;
+                            for (const aut of ini.autores) {
+
+                                if (autores === '') {
+                                    autores = aut.name;
+                                } else {
+                                    autores = autores + ' , ' + aut.name;
+                                }
+                            }
+
+                            for (const tem of ini.tema) {
+
+                                if (temas === '') {
+                                    temas = tem.name;
+                                } else {
+                                    temas = temas + ' , ' + tem.name;
+                                }
+                            }
+
+                            if (ini.clasificaciones) {
+                                for (const clasf of ini.clasificaciones) {
+
+                                    if (clasificaciones === '') {
+                                        clasificaciones = clasf.name;
+                                    } else {
+                                        clasificaciones = clasificaciones + ' , ' + clasf.name;
+                                    }
+                                }
                             } else {
-                                autores = autores + ' , ' + aut.name;
+                                clasificaciones = [];
                             }
-                        }
 
-                        for (const tem of ini.tema) {
+                            if (ini.adicion) {
+                                for (const adi of ini.adicion) {
 
-                            if (temas === '') {
-                                temas = tem.name;
+                                    if (adiciones === '') {
+                                        adiciones = adi.name;
+                                    } else {
+                                        adiciones = adiciones + ' , ' + adi.name;
+                                    }
+                                }
                             } else {
-                                temas = temas + ' , ' + tem.name;
+                                adiciones = [];
                             }
-                        }
 
-                        if(ini.clasificaciones){
-                            for (const clasf of ini.clasificaciones) {
+                            if (ini.etiquetas) {
+                                for (const eti of ini.etiquetas) {
 
-                                if (clasificaciones === '') {
-                                    clasificaciones = clasf.name;
-                                } else {
-                                    clasificaciones = clasificaciones + ' , ' + clasf.name;
+                                    if (etiquetas === '') {
+                                        etiquetas = eti.name;
+                                    } else {
+                                        etiquetas = etiquetas + ' , ' + eti.name;
+                                    }
                                 }
+                            } else {
+                                etiquetas = [];
                             }
-                        }else{
-                            clasificaciones = [];
-                        }
 
-                        if(ini.adicion){
-                            for (const adi of ini.adicion) {
-
-                                if (adiciones === '') {
-                                    adiciones = adi.name;
-                                } else {
-                                    adiciones = adiciones + ' , ' + adi.name;
-                                }
-                            }
-                        }else{
-                            adiciones = [];
-                        }
-
-                        if(ini.etiquetas){
-                            for (const eti of ini.etiquetas) {
-
-                                if (etiquetas === '') {
-                                    etiquetas = eti.name;
-                                } else {
-                                    etiquetas = etiquetas + ' , ' + eti.name;
-                                }
-                            }
-                        }else{
-                            etiquetas = [];
-                        }
-
-                        if (usuarioLogin[0].data.empleado) {
-                            iniciativasTemp.push({
-                                id: ini.id,
-                                autores: ini.autores,
-                                autoresText: autores,
-                                tema: ini.tema,
-                                temaText: temas,
-                                clasificaciones: ini.clasificaciones,
-                                clasificacionesText: clasificaciones,
-                                adicion: ini.adicion,
-                                adicionText: adiciones,
-                                etiquetas: ini.etiquetas,
-                                etiquetasText: etiquetas,
-                                estatus: ini.estatus,
-                                tipo_de_iniciativa: ini.tipo_de_iniciativa,
-                                documentos: ini.documentos,
-                                formatosTipoIniciativa: ini.formatosTipoIniciativa,
-                                fechaIniciativa: this.datePipe.transform(ini.fechaIniciativa, 'yyyy-MM-dd'),
-                                fechaCreacion: this.datePipe.transform(ini.fechaCreacion, 'yyyy-MM-dd'),
-                                fechaIniciativaText: this.datePipe.transform(ini.fechaIniciativa, 'dd-MM-yyyy'),
-                                fechaCreacionText: this.datePipe.transform(ini.fechaCreacion, 'dd-MM-yyyy'),
-                                actasSesion: ini.actasSesion,
-                                comisiones: ini.comisiones,
-                                anexosTipoCuentaPublica: ini.anexosTipoCuentaPublica,
-                                anexosTipoIniciativa: ini.anexosTipoIniciativa,
-                                oficioEnvioDeInforme: ini.oficioEnvioDeInforme,
-                                informeDeResultadosRevision: ini.informeDeResultadosRevision,
-                                dictamenDeIniciativa: ini.dictamenDeIniciativa,
-                                sustentoDeModificacion: ini.sustentoDeModificacion,
-                                motivoDeSuspension: ini.motivoDeSuspension,
-                                fechaPublicacion: ini.fechaPublicacion,
-                                periodicoOficial: ini.periodicoOficial,
-                                folioExpediente: ini.folioExpediente,
-                                confirmaAutorizacion: ini.confirmaAutorizacion
-                            });
-                        } else {
-                            if (!ini.confirmaAutorizacion) {
+                            if (usuarioLogin[0].data.empleado) {
                                 iniciativasTemp.push({
                                     id: ini.id,
                                     autores: ini.autores,
@@ -231,20 +196,71 @@ export class TableroDeIniciativasComponent implements OnInit {
                                     folioExpediente: ini.folioExpediente,
                                     confirmaAutorizacion: ini.confirmaAutorizacion
                                 });
+                            } else {
+                                if (!ini.confirmaAutorizacion) {
+                                    iniciativasTemp.push({
+                                        id: ini.id,
+                                        autores: ini.autores,
+                                        autoresText: autores,
+                                        tema: ini.tema,
+                                        temaText: temas,
+                                        clasificaciones: ini.clasificaciones,
+                                        clasificacionesText: clasificaciones,
+                                        adicion: ini.adicion,
+                                        adicionText: adiciones,
+                                        etiquetas: ini.etiquetas,
+                                        etiquetasText: etiquetas,
+                                        estatus: ini.estatus,
+                                        tipo_de_iniciativa: ini.tipo_de_iniciativa,
+                                        documentos: ini.documentos,
+                                        formatosTipoIniciativa: ini.formatosTipoIniciativa,
+                                        fechaIniciativa: this.datePipe.transform(ini.fechaIniciativa, 'yyyy-MM-dd'),
+                                        fechaCreacion: this.datePipe.transform(ini.fechaCreacion, 'yyyy-MM-dd'),
+                                        fechaIniciativaText: this.datePipe.transform(ini.fechaIniciativa, 'dd-MM-yyyy'),
+                                        fechaCreacionText: this.datePipe.transform(ini.fechaCreacion, 'dd-MM-yyyy'),
+                                        actasSesion: ini.actasSesion,
+                                        comisiones: ini.comisiones,
+                                        anexosTipoCuentaPublica: ini.anexosTipoCuentaPublica,
+                                        anexosTipoIniciativa: ini.anexosTipoIniciativa,
+                                        oficioEnvioDeInforme: ini.oficioEnvioDeInforme,
+                                        informeDeResultadosRevision: ini.informeDeResultadosRevision,
+                                        dictamenDeIniciativa: ini.dictamenDeIniciativa,
+                                        sustentoDeModificacion: ini.sustentoDeModificacion,
+                                        motivoDeSuspension: ini.motivoDeSuspension,
+                                        fechaPublicacion: ini.fechaPublicacion,
+                                        periodicoOficial: ini.periodicoOficial,
+                                        folioExpediente: ini.folioExpediente,
+                                        confirmaAutorizacion: ini.confirmaAutorizacion
+                                    });
+                                }
                             }
                         }
                     }
+
+                    this.iniciativas = iniciativasTemp;
+                    this.iniciativasTemporal = this.iniciativas;
                 }
-                
-                this.iniciativas = iniciativasTemp;
-                this.iniciativasTemporal = this.iniciativas;
-            }
-            this.loadingIndicator = false;
+                this.loadingIndicator = false;
+                this.spinner.hide();
+            }, err => {
+                this.loadingIndicator = false;
+                this.spinner.hide();
+                console.log(err);
+                Swal.fire(
+                    'Error',
+                    'Ocurrió un error al obtener las iniciativas.' + + JSON.stringify(err),
+                    'error'
+                );
+            });
+        } catch (err) {
             this.spinner.hide();
-        }, err => {
-            this.loadingIndicator = false;
-            this.spinner.hide();
-        });
+            console.log(err);
+            Swal.fire(
+                'Error',
+                'Ocurrió un error al obtener las iniciativas.' + + JSON.stringify(err),
+                'error'
+            );
+        }
     }
 
     editarIniciativa(iniciativa: IniciativasModel): void {
@@ -267,17 +283,17 @@ export class TableroDeIniciativasComponent implements OnInit {
     iniciativaTurnada(iniciativa: IniciativasModel): void {
         // Abrimos modal de guardar perfil
         console.log(iniciativa);
-       // if (iniciativa.estatus == 'Turnado de iniciativa a comisión') {
-            const dialogRef = this.dialog.open(IniciativaTurnadaAComisionComponent, {
-                width: '60%',
-                height: '80%',
-                disableClose: true,
-                data: iniciativa,
-            });
+        // if (iniciativa.estatus == 'Turnado de iniciativa a comisión') {
+        const dialogRef = this.dialog.open(IniciativaTurnadaAComisionComponent, {
+            width: '60%',
+            height: '80%',
+            disableClose: true,
+            data: iniciativa,
+        });
 
-            dialogRef.afterClosed().subscribe(result => {
-                this.obtenerIniciativas();
-            });
+        dialogRef.afterClosed().subscribe(result => {
+            this.obtenerIniciativas();
+        });
         //}
     }
 

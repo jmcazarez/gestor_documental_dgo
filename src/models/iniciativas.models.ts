@@ -28,4 +28,5 @@ export class IniciativasModel {
     fechaPublicacion: any;
     disabled: any;
     folioExpediente: number;
+    
 }
