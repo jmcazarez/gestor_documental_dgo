@@ -189,7 +189,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                     this.disableFolioExpediente = true;
                 }
                 autorizaciones = await this.obtenerAutorizacionPorDocumento();
-
+              
                 // Bloqueamos el boton de autorizar si tiene autorizaciones pendientes por realizar.
                 autorizaciones.forEach(element => {
 

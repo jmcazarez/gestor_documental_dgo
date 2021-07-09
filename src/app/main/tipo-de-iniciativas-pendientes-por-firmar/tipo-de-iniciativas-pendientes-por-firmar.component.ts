@@ -133,81 +133,90 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                     this.autorizarService.autorizarDocumentoPaso2(Number(element.idProcesoApi), this.certificadoB64).subscribe(
                         async (resp: any) => {
                             if (resp.hashBase64) {
-                                (<HTMLInputElement>document.getElementById("hashToSign")).value = resp.hashBase64;
-                                let btnSing: HTMLElement = document.getElementById("btnSing");
-                                btnSing.click();
-                                setTimeout(() => {
-                                    filePKCSBase64 = (<HTMLInputElement>document.getElementById("signature")).value;
-                                    this.autorizarService.autorizarDocumentoPaso3(filePKCSBase64, element.documento.cNombreDocumento, Number(element.idProcesoApi), '111111111111111111111').subscribe(
-                                        async (resp: any) => {
-                                            if (resp.body.multiSignedMessage_UpdateResponse) {
+                                if (resp.hashBase64 != "0") {
+                                    (<HTMLInputElement>document.getElementById("hashToSign")).value = resp.hashBase64;
+                                    let btnSing: HTMLElement = document.getElementById("btnSing");
+                                    btnSing.click();
+                                    setTimeout(() => {
+                                        filePKCSBase64 = (<HTMLInputElement>document.getElementById("signature")).value;
+                                        this.autorizarService.autorizarDocumentoPaso3(filePKCSBase64, element.documento.cNombreDocumento, Number(element.idProcesoApi), '111111111111111111111').subscribe(
+                                            async (resp: any) => {
+                                                if (resp.body.multiSignedMessage_UpdateResponse) {
 
-                                                if (element.estatusAutorizacion === 1) {
-                                                    this.autorizarService.atualizarAutorizacionEncabezado({ id: element.id, estatusAutorizacion: 2 }).subscribe(
-                                                        async (resp: any) => {
-                                                            console.log('actualizo estatus 2');
-                                                        },
-                                                        (err) => {
-                                                            this.spinner.hide();
-                                                            Swal.fire(
-                                                                "Error",
-                                                                "Ocurrió un error al actualizar el encabezado de la autirizacion. Paso 3.2 " + err,
-                                                                "error"
-                                                            );
-                                                        }
-                                                    );
-                                                }
-                                                this.autorizarService.atualizarAutorizacionDetalle({ id: element.idDetalleAutorizacion, firmado: true }).subscribe(
-                                                    async (resp: any) => {
-                                                        this.autorizarService.obtenerDetalleAutorizacionPorId(element.id).subscribe(
+                                                    if (element.estatusAutorizacion === 1) {
+                                                        this.autorizarService.atualizarAutorizacionEncabezado({ id: element.id, estatusAutorizacion: 2 }).subscribe(
                                                             async (resp: any) => {
-                                                                let firmasPendientes = resp.data.filter(item => item['firmado'] === false).length;
-                                                                if (firmasPendientes === 0) {
-                                                                    this.autorizarService.atualizarAutorizacionEncabezado({ id: element.id, estatusAutorizacion: 3 }).subscribe(
-                                                                        async (resp: any) => {
-                                                                            console.log('actualizo estatus 3');
-                                                                        }
-                                                                        ,
-                                                                        (err) => {
-                                                                            this.spinner.hide();
-                                                                            Swal.fire(
-                                                                                "Error",
-                                                                                "Ocurrió un error al actualizar el encabezado de la autirizacion. Paso 3.2 " + err,
-                                                                                "error"
-                                                                            );
-                                                                        }
-                                                                    );
+                                                                console.log('actualizo estatus 2');
+                                                            },
+                                                            (err) => {
+                                                                this.spinner.hide();
+                                                                Swal.fire(
+                                                                    "Error",
+                                                                    "Ocurrió un error al actualizar el encabezado de la autirizacion. Paso 3.2 " + err,
+                                                                    "error"
+                                                                );
+                                                            }
+                                                        );
+                                                    }
+                                                    this.autorizarService.atualizarAutorizacionDetalle({ id: element.idDetalleAutorizacion, firmado: true }).subscribe(
+                                                        async (resp: any) => {
+                                                            this.autorizarService.obtenerDetalleAutorizacionPorId(element.id).subscribe(
+                                                                async (resp: any) => {
+                                                                    let firmasPendientes = resp.data.filter(item => item['firmado'] === false).length;
+                                                                    if (firmasPendientes === 0) {
+                                                                        this.autorizarService.atualizarAutorizacionEncabezado({ id: element.id, estatusAutorizacion: 3 }).subscribe(
+                                                                            async (resp: any) => {
+                                                                                console.log('actualizo estatus 3');
+                                                                            }
+                                                                            ,
+                                                                            (err) => {
+                                                                                this.spinner.hide();
+                                                                                Swal.fire(
+                                                                                    "Error",
+                                                                                    "Ocurrió un error al actualizar el encabezado de la autirizacion. Paso 3.2 " + err,
+                                                                                    "error"
+                                                                                );
+                                                                            }
+                                                                        );
 
-                                                                    this.autorizarService.autorizarDocumentoPaso4(Number(element.idProcesoApi)).subscribe(
-                                                                        async (resp: any) => {
-                                                                            if (resp.body) {
-                                                                                if (resp.body.multiSignedMessage_FinalResponse) {
-                                                                                    let idDocumento = await this.upload(resp.body.multiSignedMessage_FinalResponse[0].data, element.documento.cNombreDocumento + '.pdf');
-                                                                                    if (idDocumento) {
-                                                                                        this.autorizarService.actualizaPfdDocumento({ id: element.documento.id, documento: idDocumento }).subscribe(async (resp: any) => {
-                                                                                            await this.turnarIniciativa(element);
-                                                                                            await this.obtenerAutorizacionPorLegislatura();
-                                                                                            this.spinner.hide();
-                                                                                            Swal.fire(
-                                                                                                "Éxito",
-                                                                                                "Documento firmado correctamente.",
-                                                                                                "success"
-                                                                                            );
-                                                                                        },
-                                                                                            (err) => {
+                                                                        this.autorizarService.autorizarDocumentoPaso4(Number(element.idProcesoApi)).subscribe(
+                                                                            async (resp: any) => {
+                                                                                if (resp.body) {
+                                                                                    if (resp.body.multiSignedMessage_FinalResponse) {
+                                                                                        let idDocumento = await this.upload(resp.body.multiSignedMessage_FinalResponse[0].data, element.documento.cNombreDocumento + '.pdf');
+                                                                                        if (idDocumento) {
+                                                                                            this.autorizarService.actualizaPfdDocumento({ id: element.documento.id, documento: idDocumento }).subscribe(async (resp: any) => {
+                                                                                                await this.turnarIniciativa(element);
+                                                                                                await this.obtenerAutorizacionPorLegislatura();
                                                                                                 this.spinner.hide();
                                                                                                 Swal.fire(
-                                                                                                    "Error",
-                                                                                                    "Ocurrió un error al finalizar actualizar el documento. Paso 4.2 " + err,
-                                                                                                    "error"
+                                                                                                    "Éxito",
+                                                                                                    "Documento firmado correctamente.",
+                                                                                                    "success"
                                                                                                 );
-                                                                                            });
+                                                                                            },
+                                                                                                (err) => {
+                                                                                                    this.spinner.hide();
+                                                                                                    Swal.fire(
+                                                                                                        "Error",
+                                                                                                        "Ocurrió un error al finalizar actualizar el documento. Paso 4.2 " + err,
+                                                                                                        "error"
+                                                                                                    );
+                                                                                                });
 
+                                                                                        } else {
+                                                                                            this.spinner.hide();
+                                                                                            Swal.fire(
+                                                                                                "Error",
+                                                                                                "Ocurrió un error subir el documento. Paso 4.1 ",
+                                                                                                "error"
+                                                                                            );
+                                                                                        }
                                                                                     } else {
                                                                                         this.spinner.hide();
                                                                                         Swal.fire(
                                                                                             "Error",
-                                                                                            "Ocurrió un error subir el documento. Paso 4.1 ",
+                                                                                            "Ocurrió un error subir el documento. Paso 4.0 ",
                                                                                             "error"
                                                                                         );
                                                                                     }
@@ -219,68 +228,178 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                                                                                         "error"
                                                                                     );
                                                                                 }
-                                                                            } else {
+
+                                                                            },
+                                                                            (err) => {
                                                                                 this.spinner.hide();
                                                                                 Swal.fire(
                                                                                     "Error",
-                                                                                    "Ocurrió un error subir el documento. Paso 4.0 ",
+                                                                                    "Ocurrió un error al finalizar el firmado del documento. Paso 4.0 " + err,
                                                                                     "error"
                                                                                 );
-                                                                            }
+                                                                            });
 
-                                                                        },
-                                                                        (err) => {
-                                                                            this.spinner.hide();
-                                                                            Swal.fire(
-                                                                                "Error",
-                                                                                "Ocurrió un error al finalizar el firmado del documento. Paso 4.0 " + err,
-                                                                                "error"
-                                                                            );
-                                                                        });
+                                                                    } else {
+                                                                        await this.obtenerAutorizacionPorLegislatura();
 
-                                                                } else {
-                                                                    await this.obtenerAutorizacionPorLegislatura();
-
-                                                                    Swal.fire(
-                                                                        "Éxito",
-                                                                        "Documento firmado correctamente, faltan por firmar " + firmasPendientes + " integrantes.",
-                                                                        "success"
-                                                                    );
-                                                                    this.spinner.hide();
-                                                                }
-                                                            });
-                                                    },
-                                                    (err) => {
-                                                        this.spinner.hide();
-                                                        Swal.fire(
-                                                            "Error",
-                                                            "Ocurrió un error al actualizar el detalle de la autirizacion. Paso 3.3 " + err,
-                                                            "error"
-                                                        );
-                                                    }
-                                                );
-                                            } else {
+                                                                        Swal.fire(
+                                                                            "Éxito",
+                                                                            "Documento firmado correctamente, faltan por firmar " + firmasPendientes + " integrantes.",
+                                                                            "success"
+                                                                        );
+                                                                        this.spinner.hide();
+                                                                    }
+                                                                });
+                                                        },
+                                                        (err) => {
+                                                            this.spinner.hide();
+                                                            Swal.fire(
+                                                                "Error",
+                                                                "Ocurrió un error al actualizar el detalle de la autirizacion. Paso 3.3 " + err,
+                                                                "error"
+                                                            );
+                                                        }
+                                                    );
+                                                } else {
+                                                    this.spinner.hide();
+                                                    Swal.fire(
+                                                        "Error",
+                                                        "Ocurrió un al actualizar la respuesta. Paso 3.1 ",
+                                                        "error"
+                                                    );
+                                                }
+                                            },
+                                            (err) => {
                                                 this.spinner.hide();
                                                 Swal.fire(
                                                     "Error",
-                                                    "Ocurrió un al actualizar la respuesta. Paso 3.1 ",
+                                                    "Ocurrió un error al firmar el documento. Paso 3.0 " + err,
                                                     "error"
                                                 );
                                             }
+                                        );
+
+                                    }, 1000);
+
+                                } else {
+                                    if (element.estatusAutorizacion === 1) {
+                                        this.autorizarService.atualizarAutorizacionEncabezado({ id: element.id, estatusAutorizacion: 2 }).subscribe(
+                                            async (resp: any) => {
+                                                console.log('actualizo estatus 2');
+                                            },
+                                            (err) => {
+                                                this.spinner.hide();
+                                                Swal.fire(
+                                                    "Error",
+                                                    "Ocurrió un error al actualizar el encabezado de la autirizacion. Paso 3.2 " + err,
+                                                    "error"
+                                                );
+                                            }
+                                        );
+                                    }
+                                    this.autorizarService.atualizarAutorizacionDetalle({ id: element.idDetalleAutorizacion, firmado: true }).subscribe(
+                                        async (resp: any) => {
+                                            this.autorizarService.obtenerDetalleAutorizacionPorId(element.id).subscribe(
+                                                async (resp: any) => {
+                                                    let firmasPendientes = resp.data.filter(item => item['firmado'] === false).length;
+                                                    if (firmasPendientes === 0) {
+                                                        this.autorizarService.atualizarAutorizacionEncabezado({ id: element.id, estatusAutorizacion: 3 }).subscribe(
+                                                            async (resp: any) => {
+                                                                console.log('actualizo estatus 3');
+                                                            }
+                                                            ,
+                                                            (err) => {
+                                                                this.spinner.hide();
+                                                                Swal.fire(
+                                                                    "Error",
+                                                                    "Ocurrió un error al actualizar el encabezado de la autirizacion. Paso 3.2 " + err,
+                                                                    "error"
+                                                                );
+                                                            }
+                                                        );
+
+                                                        this.autorizarService.autorizarDocumentoPaso4(Number(element.idProcesoApi)).subscribe(
+                                                            async (resp: any) => {
+                                                                if (resp.body) {
+                                                                    if (resp.body.multiSignedMessage_FinalResponse) {
+                                                                        let idDocumento = await this.upload(resp.body.multiSignedMessage_FinalResponse[0].data, element.documento.cNombreDocumento + '.pdf');
+                                                                        if (idDocumento) {
+                                                                            this.autorizarService.actualizaPfdDocumento({ id: element.documento.id, documento: idDocumento }).subscribe(async (resp: any) => {
+                                                                                await this.turnarIniciativa(element);
+                                                                                await this.obtenerAutorizacionPorLegislatura();
+                                                                                this.spinner.hide();
+                                                                                Swal.fire(
+                                                                                    "Éxito",
+                                                                                    "Documento firmado correctamente.",
+                                                                                    "success"
+                                                                                );
+                                                                            },
+                                                                                (err) => {
+                                                                                    this.spinner.hide();
+                                                                                    Swal.fire(
+                                                                                        "Error",
+                                                                                        "Ocurrió un error al finalizar actualizar el documento. Paso 4.2 " + err,
+                                                                                        "error"
+                                                                                    );
+                                                                                });
+
+                                                                        } else {
+                                                                            this.spinner.hide();
+                                                                            Swal.fire(
+                                                                                "Error",
+                                                                                "Ocurrió un error subir el documento. Paso 4.1 ",
+                                                                                "error"
+                                                                            );
+                                                                        }
+                                                                    } else {
+                                                                        this.spinner.hide();
+                                                                        Swal.fire(
+                                                                            "Error",
+                                                                            "Ocurrió un error subir el documento. Paso 4.0 ",
+                                                                            "error"
+                                                                        );
+                                                                    }
+                                                                } else {
+                                                                    this.spinner.hide();
+                                                                    Swal.fire(
+                                                                        "Error",
+                                                                        "Ocurrió un error subir el documento. Paso 4.0 ",
+                                                                        "error"
+                                                                    );
+                                                                }
+
+                                                            },
+                                                            (err) => {
+                                                                this.spinner.hide();
+                                                                Swal.fire(
+                                                                    "Error",
+                                                                    "Ocurrió un error al finalizar el firmado del documento. Paso 4.0 " + err,
+                                                                    "error"
+                                                                );
+                                                            });
+
+                                                    } else {
+                                                        await this.obtenerAutorizacionPorLegislatura();
+
+                                                        Swal.fire(
+                                                            "Éxito",
+                                                            "Documento firmado correctamente, faltan por firmar " + firmasPendientes + " integrantes.",
+                                                            "success"
+                                                        );
+                                                        this.spinner.hide();
+                                                    }
+                                                });
                                         },
                                         (err) => {
                                             this.spinner.hide();
                                             Swal.fire(
                                                 "Error",
-                                                "Ocurrió un error al firmar el documento. Paso 3.0 " + err,
+                                                "Ocurrió un error al actualizar el detalle de la autirizacion. Paso 3.3 " + err,
                                                 "error"
                                             );
                                         }
                                     );
-
-                                }, 1000);
-
-
+                                }
                             } else {
                                 this.spinner.hide();
                                 Swal.fire(
@@ -290,6 +409,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                                 );
 
                             }
+
                         },
                         (err) => {
                             this.spinner.hide();
