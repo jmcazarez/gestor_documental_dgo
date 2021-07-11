@@ -544,8 +544,9 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 this.iniciativa.dictamenDeIniciativa = this.selectedDictamenDeIniciativa;
                 await this.generaReport();
             } else {
-
-                await this.generaReport();
+                if (this.iniciativa.dictamenDeIniciativa !== 'Modificación') {
+                    await this.generaReport();
+                }
             }
             if (this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios') {
                 legislatura = this.selectedLegislatura;
@@ -3458,6 +3459,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 d["cParametroAdministrado"] ===
                 "SSP-001-Tipo-de-Informacion"
         );
+        console.log(documento);
 
         documento.tipo_de_documento = tipoDocumento[0]["cValor"];
         documento.tipo_de_expediente = tipoExpediente[0]["cValor"];
