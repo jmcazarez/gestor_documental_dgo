@@ -173,7 +173,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 }
 
                 if (this.documento.iniciativa) {
-                    console.log(this.documento.iniciativa);
                     if (this.documento.cNombreDocumento.includes('SSP 01') || this.documento.cNombreDocumento.includes('SSP 04')
                         || this.documento.cNombreDocumento.includes('SSP 05') || this.documento.cNombreDocumento.includes('CIEL 08') ||
                         this.documento.cNombreDocumento.includes('SSP 08')) {
@@ -183,7 +182,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                                 this.autorizacionPendiente = false;
                             }
                         
-                        console.log('entro');
                     }
 
                     this.disableFolioExpediente = true;
@@ -205,8 +203,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 this.estatusIniciativa = this.documento.estatus;
                 this.arrMetacatalogos = this.documento.metacatalogos;
                 this.documento.disabled = true;
-                console.log( this.pasarAAutorizacion);
-                console.log( this.autorizacionPendiente);
             }
             // words2 = [{ value: 'word1' }, { value: 'word2' }, { value: 'word3' }, { value: '' }];
 

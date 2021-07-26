@@ -168,6 +168,7 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
 
         @Inject(MAT_DIALOG_DATA) public iniciativa: IniciativasModel,
     ) {
+       
         this.tipoSesion = [];
 
         this.tipoSesion.push({
@@ -213,7 +214,7 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
-
+        console.log('2');
         if (this.iniciativa.dictamenDeIniciativa == 'Modificación') {
             this.iniciativa.estatus = 'Turnada a comisión para modificación';
         } else {
@@ -458,10 +459,10 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
             let legislaturaFolio: any;
             this.documentos.bActivo = true;
             let parametrosSSP001 = await this.obtenerParametros("SSP-001");
-            let tipoDocumento = parametrosSSP001.filter(
-                (d) =>
-                    d["cParametroAdministrado"] === "SSP-001-Tipo-de-Documento"
-            );
+            let parametrosTipoDocumentos = await this.obtenerParametros("Tipo-de-documento-complementario");
+         
+            let tipoDocumento: any = parametrosTipoDocumentos;
+
             let tipoExpediente = parametrosSSP001.filter(
                 (d) =>
                     d["cParametroAdministrado"] === "SSP-001-Tipo-de-Expediente"

@@ -162,40 +162,42 @@ export class TableroDeIniciativasComponent implements OnInit {
                             }
 
                             if (usuarioLogin[0].data.empleado) {
-                                iniciativasTemp.push({
-                                    id: ini.id,
-                                    autores: ini.autores,
-                                    autoresText: autores,
-                                    tema: ini.tema,
-                                    temaText: temas,
-                                    clasificaciones: ini.clasificaciones,
-                                    clasificacionesText: clasificaciones,
-                                    adicion: ini.adicion,
-                                    adicionText: adiciones,
-                                    etiquetas: ini.etiquetas,
-                                    etiquetasText: etiquetas,
-                                    estatus: ini.estatus,
-                                    tipo_de_iniciativa: ini.tipo_de_iniciativa,
-                                    documentos: ini.documentos,
-                                    formatosTipoIniciativa: ini.formatosTipoIniciativa,
-                                    fechaIniciativa: this.datePipe.transform(ini.fechaIniciativa, 'yyyy-MM-dd'),
-                                    fechaCreacion: this.datePipe.transform(ini.fechaCreacion, 'yyyy-MM-dd'),
-                                    fechaIniciativaText: this.datePipe.transform(ini.fechaIniciativa, 'dd-MM-yyyy'),
-                                    fechaCreacionText: this.datePipe.transform(ini.fechaCreacion, 'dd-MM-yyyy'),
-                                    actasSesion: ini.actasSesion,
-                                    comisiones: ini.comisiones,
-                                    anexosTipoCuentaPublica: ini.anexosTipoCuentaPublica,
-                                    anexosTipoIniciativa: ini.anexosTipoIniciativa,
-                                    oficioEnvioDeInforme: ini.oficioEnvioDeInforme,
-                                    informeDeResultadosRevision: ini.informeDeResultadosRevision,
-                                    dictamenDeIniciativa: ini.dictamenDeIniciativa,
-                                    sustentoDeModificacion: ini.sustentoDeModificacion,
-                                    motivoDeSuspension: ini.motivoDeSuspension,
-                                    fechaPublicacion: ini.fechaPublicacion,
-                                    periodicoOficial: ini.periodicoOficial,
-                                    folioExpediente: ini.folioExpediente,
-                                    confirmaAutorizacion: ini.confirmaAutorizacion
-                                });
+                                if (ini.confirmaAutorizacion) {
+                                    iniciativasTemp.push({
+                                        id: ini.id,
+                                        autores: ini.autores,
+                                        autoresText: autores,
+                                        tema: ini.tema,
+                                        temaText: temas,
+                                        clasificaciones: ini.clasificaciones,
+                                        clasificacionesText: clasificaciones,
+                                        adicion: ini.adicion,
+                                        adicionText: adiciones,
+                                        etiquetas: ini.etiquetas,
+                                        etiquetasText: etiquetas,
+                                        estatus: ini.estatus,
+                                        tipo_de_iniciativa: ini.tipo_de_iniciativa,
+                                        documentos: ini.documentos,
+                                        formatosTipoIniciativa: ini.formatosTipoIniciativa,
+                                        fechaIniciativa: this.datePipe.transform(ini.fechaIniciativa, 'yyyy-MM-dd'),
+                                        fechaCreacion: this.datePipe.transform(ini.fechaCreacion, 'yyyy-MM-dd'),
+                                        fechaIniciativaText: this.datePipe.transform(ini.fechaIniciativa, 'dd-MM-yyyy'),
+                                        fechaCreacionText: this.datePipe.transform(ini.fechaCreacion, 'dd-MM-yyyy'),
+                                        actasSesion: ini.actasSesion,
+                                        comisiones: ini.comisiones,
+                                        anexosTipoCuentaPublica: ini.anexosTipoCuentaPublica,
+                                        anexosTipoIniciativa: ini.anexosTipoIniciativa,
+                                        oficioEnvioDeInforme: ini.oficioEnvioDeInforme,
+                                        informeDeResultadosRevision: ini.informeDeResultadosRevision,
+                                        dictamenDeIniciativa: ini.dictamenDeIniciativa,
+                                        sustentoDeModificacion: ini.sustentoDeModificacion,
+                                        motivoDeSuspension: ini.motivoDeSuspension,
+                                        fechaPublicacion: ini.fechaPublicacion,
+                                        periodicoOficial: ini.periodicoOficial,
+                                        folioExpediente: ini.folioExpediente,
+                                        confirmaAutorizacion: ini.confirmaAutorizacion
+                                    });
+                                }
                             } else {
                                 if (!ini.confirmaAutorizacion) {
                                     iniciativasTemp.push({

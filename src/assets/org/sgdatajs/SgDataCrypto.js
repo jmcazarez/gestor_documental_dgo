@@ -183,7 +183,7 @@
 																	reject(Error("Error during importing pkcs8: " + error.message));
 																});
 										}, function(error) {
-											reject(Error("Error during getting pkcs8: " + error.message));
+											reject(Error("Error de firmado pkcs8: " + error.message));
 										});
 		});
 	} // End of signContent
@@ -231,7 +231,7 @@
 											
 											resolve(signature);
 										}, function(error) {
-											reject(Error("Error during getting pkcs8: " + error.message));
+											reject(Error("Error de firmado pkcs8: " + error.message));
 										});
 		});
 	} // End of signHash
@@ -281,7 +281,7 @@
 											
 											resolve(signature+"|"+mrn);
 										}, function(error) {
-											reject(Error("Error during getting pkcs8: " + error.message));
+											reject(Error("Error de firmado pkcs8: " + error.message));
 										});
 		});
 	} // End of multiSignHash
@@ -325,7 +325,7 @@
 												  [pkcs8B64, pkcs8B64.length, hashToSign, hashToSign.length, hashAlgorithm]);
 
 											if(!pkcs1)
-												reject(Error("Error during getting pkcs1"));
+												reject(Error("Error de firmado pkcs1"));
 											
 											if(pkcs1.substring(0, 7) == "[Error]") {
 												reject(Error(pkcs1));
@@ -354,11 +354,11 @@
 											then(function(pkcs7) {
 												resolve(pkcs7);
 											} , function(error) {
-												reject(Error("Error during getting pkcs7: " + error.message));
+												reject(Error("Error de firmado pkcs7: " + error.message));
 											});
 											
 										}, function(error) {
-											reject(Error("Error during getting pkcs8: " + error.message));
+											reject(Error("Error de firmado pkcs8: " + error.message));
 										});
 		});
 	} // End of pkcs7FromHash
@@ -428,7 +428,7 @@
 																	reject(Error("Error during importing pkcs8: " + error.message));
 																});
 										}, function(error) {
-											reject(Error("Error during getting pkcs8: " + error.message));
+											reject(Error("Error de firmado pkcs8: " + error.message));
 										});
 		});
 	} // End of pkcs7FromContent
@@ -476,7 +476,7 @@
 											
 											resolve(plainText);
 										}, function(error) {
-											reject(Error("Error during getting pkcs8: " + error.message));
+											reject(Error("Error de firmado pkcs8: " + error.message));
 										});
 		});
 	} // End of signHash

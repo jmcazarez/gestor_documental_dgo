@@ -37,7 +37,7 @@
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
                 <mat-error *ngIf="form.get('nombreDocumento').hasError('required')">El nombre la comsión es requerido</mat-error>
                 <mat-error *ngIf="form.get('nombreDocumento').hasError('minlength') || form.get('nombreDocumento').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
-                    y el máximo son 100 </mat-error>
+                    y el máximo son 200 </mat-error>
 
             </mat-form-field>
 
@@ -49,10 +49,10 @@
 
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
                 <mat-label>Fecha de creación *</mat-label>
-                <input matInput [matDatepicker]="picker1" formControlName="fechaCreacion" (change)="change()" [max]="maxDate">
+                <input matInput [matDatepicker]="picker1"  formControlName="fechaCreacion" datePickerFormat="DD/MM/YYYY" (change)="change()">
                 <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                 <mat-datepicker #picker1></mat-datepicker>
-                <mat-error>La fecha de creación no es valida ej. 11/28/2020</mat-error>
+                <mat-error>La fecha de creación no es valida ej. 28/11/2020</mat-error>
 
             </mat-form-field>
 

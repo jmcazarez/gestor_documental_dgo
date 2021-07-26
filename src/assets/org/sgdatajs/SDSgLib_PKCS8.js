@@ -21,7 +21,7 @@
  
   var SDSGL_ERR_01 = "Error while decoding pkcs#8 encrypted private key stream";
   var SDSGL_ERR_02 = "Invalid or unsupported algorithm: ";
-  var SDSGL_ERR_03 = "Error while decrypting private key";
+  var SDSGL_ERR_03 = "La contraseña proporcionada es incorrecta.";
   var SDSGL_ERR_04 = "Error while deriving symmetric key";
   
   var ADJUSTED_3DES_KEY_LENGTH = 24 * 2;

@@ -129,22 +129,22 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                 this.spinner.hide();
             } else {
                 documentos = this.documentosPendientes.filter(element => element.Agregar);
-                documentos.forEach(element => {
-                    this.autorizarService.autorizarDocumentoPaso2(Number(element.idProcesoApi), this.certificadoB64).subscribe(
+                documentos.forEach(async element => {
+                    await this.autorizarService.autorizarDocumentoPaso2(Number(element.idProcesoApi), this.certificadoB64).subscribe(
                         async (resp: any) => {
                             if (resp.hashBase64) {
                                 if (resp.hashBase64 != "0") {
                                     (<HTMLInputElement>document.getElementById("hashToSign")).value = resp.hashBase64;
                                     let btnSing: HTMLElement = document.getElementById("btnSing");
                                     btnSing.click();
-                                    setTimeout(() => {
+                                    await setTimeout(async () => {
                                         filePKCSBase64 = (<HTMLInputElement>document.getElementById("signature")).value;
-                                        this.autorizarService.autorizarDocumentoPaso3(filePKCSBase64, element.documento.cNombreDocumento, Number(element.idProcesoApi), '111111111111111111111').subscribe(
+                                        await this.autorizarService.autorizarDocumentoPaso3(filePKCSBase64, element.documento.cNombreDocumento, Number(element.idProcesoApi), '111111111111111111111').subscribe(
                                             async (resp: any) => {
                                                 if (resp.body.multiSignedMessage_UpdateResponse) {
 
                                                     if (element.estatusAutorizacion === 1) {
-                                                        this.autorizarService.atualizarAutorizacionEncabezado({ id: element.id, estatusAutorizacion: 2 }).subscribe(
+                                                        await this.autorizarService.atualizarAutorizacionEncabezado({ id: element.id, estatusAutorizacion: 2 }).subscribe(
                                                             async (resp: any) => {
                                                                 console.log('actualizo estatus 2');
                                                             },
@@ -158,13 +158,13 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                                                             }
                                                         );
                                                     }
-                                                    this.autorizarService.atualizarAutorizacionDetalle({ id: element.idDetalleAutorizacion, firmado: true }).subscribe(
+                                                    await this.autorizarService.atualizarAutorizacionDetalle({ id: element.idDetalleAutorizacion, firmado: true }).subscribe(
                                                         async (resp: any) => {
-                                                            this.autorizarService.obtenerDetalleAutorizacionPorId(element.id).subscribe(
+                                                            await this.autorizarService.obtenerDetalleAutorizacionPorId(element.id).subscribe(
                                                                 async (resp: any) => {
                                                                     let firmasPendientes = resp.data.filter(item => item['firmado'] === false).length;
                                                                     if (firmasPendientes === 0) {
-                                                                        this.autorizarService.atualizarAutorizacionEncabezado({ id: element.id, estatusAutorizacion: 3 }).subscribe(
+                                                                        await this.autorizarService.atualizarAutorizacionEncabezado({ id: element.id, estatusAutorizacion: 3 }).subscribe(
                                                                             async (resp: any) => {
                                                                                 console.log('actualizo estatus 3');
                                                                             }
@@ -179,15 +179,16 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                                                                             }
                                                                         );
 
-                                                                        this.autorizarService.autorizarDocumentoPaso4(Number(element.idProcesoApi)).subscribe(
+                                                                        await this.autorizarService.autorizarDocumentoPaso4(Number(element.idProcesoApi)).subscribe(
                                                                             async (resp: any) => {
                                                                                 if (resp.body) {
                                                                                     if (resp.body.multiSignedMessage_FinalResponse) {
                                                                                         let idDocumento = await this.upload(resp.body.multiSignedMessage_FinalResponse[0].data, element.documento.cNombreDocumento + '.pdf');
                                                                                         if (idDocumento) {
-                                                                                            this.autorizarService.actualizaPfdDocumento({ id: element.documento.id, documento: idDocumento }).subscribe(async (resp: any) => {
+                                                                                          await  this.autorizarService.actualizaPfdDocumento({ id: element.documento.id, documento: idDocumento }).subscribe(async (resp: any) => {
                                                                                                 await this.turnarIniciativa(element);
                                                                                                 await this.obtenerAutorizacionPorLegislatura();
+                                                                                                this.limpiarCampos();
                                                                                                 this.spinner.hide();
                                                                                                 Swal.fire(
                                                                                                     "Éxito",
@@ -247,6 +248,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                                                                             "Documento firmado correctamente, faltan por firmar " + firmasPendientes + " integrantes.",
                                                                             "success"
                                                                         );
+                                                                        this.limpiarCampos();
                                                                         this.spinner.hide();
                                                                     }
                                                                 });
@@ -279,11 +281,11 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                                             }
                                         );
 
-                                    }, 1000);
+                                    }, 3000);
 
                                 } else {
                                     if (element.estatusAutorizacion === 1) {
-                                        this.autorizarService.atualizarAutorizacionEncabezado({ id: element.id, estatusAutorizacion: 2 }).subscribe(
+                                        await this.autorizarService.atualizarAutorizacionEncabezado({ id: element.id, estatusAutorizacion: 2 }).subscribe(
                                             async (resp: any) => {
                                                 console.log('actualizo estatus 2');
                                             },
@@ -297,13 +299,13 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                                             }
                                         );
                                     }
-                                    this.autorizarService.atualizarAutorizacionDetalle({ id: element.idDetalleAutorizacion, firmado: true }).subscribe(
+                                    await this.autorizarService.atualizarAutorizacionDetalle({ id: element.idDetalleAutorizacion, firmado: true }).subscribe(
                                         async (resp: any) => {
                                             this.autorizarService.obtenerDetalleAutorizacionPorId(element.id).subscribe(
                                                 async (resp: any) => {
                                                     let firmasPendientes = resp.data.filter(item => item['firmado'] === false).length;
                                                     if (firmasPendientes === 0) {
-                                                        this.autorizarService.atualizarAutorizacionEncabezado({ id: element.id, estatusAutorizacion: 3 }).subscribe(
+                                                        await this.autorizarService.atualizarAutorizacionEncabezado({ id: element.id, estatusAutorizacion: 3 }).subscribe(
                                                             async (resp: any) => {
                                                                 console.log('actualizo estatus 3');
                                                             }
@@ -318,7 +320,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                                                             }
                                                         );
 
-                                                        this.autorizarService.autorizarDocumentoPaso4(Number(element.idProcesoApi)).subscribe(
+                                                        await this.autorizarService.autorizarDocumentoPaso4(Number(element.idProcesoApi)).subscribe(
                                                             async (resp: any) => {
                                                                 if (resp.body) {
                                                                     if (resp.body.multiSignedMessage_FinalResponse) {
@@ -327,6 +329,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                                                                             this.autorizarService.actualizaPfdDocumento({ id: element.documento.id, documento: idDocumento }).subscribe(async (resp: any) => {
                                                                                 await this.turnarIniciativa(element);
                                                                                 await this.obtenerAutorizacionPorLegislatura();
+                                                                                this.limpiarCampos();
                                                                                 this.spinner.hide();
                                                                                 Swal.fire(
                                                                                     "Éxito",
@@ -435,7 +438,11 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
     }
 
 
-
+    limpiarCampos(): void {
+        this.form.controls["cSubirCertificado"].setValue('');
+        this.form.controls["cSubirLlave"].setValue('');
+        this.form.controls["cPassword"].setValue('');
+    }
     async cambioCertificado(event): Promise<void> {
         const file = event.target.files[0];
         this.certificadoB64 = await this.convertirFileBase64(file);

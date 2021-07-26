@@ -173,6 +173,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public iniciativa: IniciativasModel,
 
     ) {
+        
         this.tipoSesion = [];
 
         this.tipoSesion.push({
@@ -214,7 +215,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
-
+        console.log('3');
         if (this.iniciativa.estatus !== 'Turnar dictamen a secretaría de servicios parlamentarios') {
             await this.obtenerDocumento();
         }
@@ -446,7 +447,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 fechaPublicacion: [{ value: this.iniciativa.fechaPublicacion, disabled: false }],
             });
         }
-        console.log(this.iniciativa);
         if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios'
             && this.iniciativa.formatosTipoIniciativa.length < 4
             && this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa'
@@ -505,7 +505,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             this.iniciativa.oficioEnvioDeInforme = this.iniciativa.oficioEnvioDeInforme.id;
         }
-        console.log(this.iniciativa);
         legislatura = this.selectedLegislatura;
         tipoSesion = this.form.get('tipoSesion').value;;
         fechaSesion = moment(this.form.get('fechaSesion').value).format('YYYY-MM-DD');
@@ -3063,11 +3062,12 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.documentos = new DocumentosModel();
             let legislaturaFolio: any;
             this.documentos.bActivo = true;
+            this.documentos.formulario = 'Iniciativas';
             let parametrosSSP001 = await this.obtenerParametros("SSP-001");
-            let tipoDocumento = parametrosSSP001.filter(
-                (d) =>
-                    d["cParametroAdministrado"] === "SSP-001-Tipo-de-Documento"
-            );
+            let parametrosTipoDocumentos = await this.obtenerParametros("Tipo-de-documento-complementario");
+         
+            let tipoDocumento: any = parametrosTipoDocumentos;
+
             let tipoExpediente = parametrosSSP001.filter(
                 (d) =>
                     d["cParametroAdministrado"] === "SSP-001-Tipo-de-Expediente"

@@ -107,7 +107,7 @@ export class GuardarIniciativasComponent implements OnInit {
 
         @Inject(MAT_DIALOG_DATA) public iniciativa: IniciativasModel
     ) {
-        console.log(this.iniciativa);
+       
         if (this.iniciativa.documentos == undefined) {
             this.iniciativa.documentos = [];
         }
@@ -118,6 +118,7 @@ export class GuardarIniciativasComponent implements OnInit {
     }
 
     async ngOnInit() {
+        console.log('1');
         await this.obtenerDocumento();
         this.obtenerTiposIniciativas();
 
@@ -251,6 +252,8 @@ export class GuardarIniciativasComponent implements OnInit {
                                     if (documento.iniciativa === undefined || documento.iniciativa === null) {
                                         documento.iniciativa = '';
                                     } else {
+
+
                                         if (documento.iniciativa.id == this.iniciativa.id && documento.formulario == 'Iniciativas') {
                                             // tslint:disable-next-line: no-unused-expression
                                             // Seteamos valores y permisos
@@ -295,7 +298,7 @@ export class GuardarIniciativasComponent implements OnInit {
                 this.files = documentosTemp;
                 this.fileCheck = documentosTemp;
                 this.filesTemp = this.files;
-                console.log(this.files);
+
 
                 this.loadingIndicator = false;
                 this.spinner.hide();
@@ -315,6 +318,7 @@ export class GuardarIniciativasComponent implements OnInit {
 
     async guardar(): Promise<void> {
         try {
+            let reporte: any
             this.spinner.show();
             const fecha = new Date(); // Fecha actual
             let mes: any = fecha.getMonth() + 1; // obteniendo mes
@@ -341,84 +345,105 @@ export class GuardarIniciativasComponent implements OnInit {
             if (this.iniciativa.id) {
                 // Actualizamos la iniciativa
                 if (this.iniciativa.estatus == "Registrada") {
-                    await this.generaReport();
+                    reporte = await this.generaReport();
+                    console.log(reporte);
+                    if (reporte === "err") {
+                        return
+                    }
                 }
-                if (this.iniciativa.formatosTipoIniciativa) {
-                    this.iniciativaService
-                        .actualizarIniciativa(this.iniciativa)
-                        .subscribe(
-                            (resp: any) => {
-                                if (resp.data) {
-                                    Swal.fire(
-                                        "Éxito",
-                                        "Iniciativa actualizada correctamente.",
-                                        "success"
-                                    );
-                                    this.iniciativa = resp.data;
-                                    this.spinner.hide();
-                                    this.cerrar(this.iniciativa);
-                                } else {
+                if (reporte !== "err") {
+
+                    if (this.iniciativa.formatosTipoIniciativa) {
+                        this.iniciativaService
+                            .actualizarIniciativa(this.iniciativa)
+                            .subscribe(
+                                (resp: any) => {
+                                    if (resp.data) {
+                                        Swal.fire(
+                                            "Éxito",
+                                            "Iniciativa actualizada correctamente.",
+                                            "success"
+                                        );
+                                        this.iniciativa = resp.data;
+                                        this.spinner.hide();
+                                        this.cerrar(this.iniciativa);
+                                    } else {
+                                        this.spinner.hide();
+                                        Swal.fire(
+                                            "Error",
+                                            "Ocurrió un error al guardar. " +
+                                            resp.error.data,
+                                            "error"
+                                        );
+                                    }
+                                },
+                                (err) => {
                                     this.spinner.hide();
                                     Swal.fire(
                                         "Error",
-                                        "Ocurrió un error al guardar. " +
-                                        resp.error.data,
+                                        "Ocurrió un error al guardar." + err.error.data,
                                         "error"
                                     );
                                 }
-                            },
-                            (err) => {
-                                this.spinner.hide();
-                                Swal.fire(
-                                    "Error",
-                                    "Ocurrió un error al guardar." + err.error.data,
-                                    "error"
-                                );
-                            }
-                        );
-                } else {
-                    this.spinner.hide();
-                    Swal.fire(
-                        "Error",
-                        "Ocurrió un error al generar el documento SPP 01. ",
-                        "error"
-                    );
-                }
-            } else {
-                // Guardamos la iniciativa
-                if (this.iniciativa.estatus == "Registrada") {
-                    await this.generaReport();
-                    this.iniciativa.formatosTipoIniciativa = [this.documentos.id];
-                }
-                this.iniciativaService.guardarIniciativa(this.iniciativa).subscribe(
-                    async (resp: any) => {
-                        if (resp.data) {
-                            this.iniciativa = resp.data;
-                            Swal.fire(
-                                "Éxito",
-                                "Iniciativa guardada correctamente.",
-                                "success"
                             );
-
-                            this.cerrar(this.iniciativa);
-                        } else {
-                            this.spinner.hide();
-                            Swal.fire(
-                                "Error",
-                                "Ocurrió un error al guardar. " + resp.error.data,
-                                "error"
-                            );
-                        }
-                    },
-                    (err) => {
+                    } else {
                         this.spinner.hide();
                         Swal.fire(
                             "Error",
-                            "Ocurrió un error al guardar." + err.error.data,
+                            "Ocurrió un error al generar el documento SPP 01. ",
                             "error"
                         );
                     }
-                );
+                } else {
+                    this.spinner.hide();
+                }
+            } else {
+                // Guardamos la 
+
+                if (this.iniciativa.estatus == "Registrada") {
+                    reporte = await this.generaReport();
+                    console.log(reporte);
+
+                    this.iniciativa.formatosTipoIniciativa = [this.documentos.id];
+                }
+
+                if (reporte !== "err") {
+
+
+                    this.iniciativaService.guardarIniciativa(this.iniciativa).subscribe(
+
+                        async (resp: any) => {
+                            console.log(resp);
+                            if (resp.data) {
+                                this.iniciativa = resp.data;
+                                Swal.fire(
+                                    "Éxito",
+                                    "Iniciativa guardada correctamente.",
+                                    "success"
+                                );
+
+                                this.cerrar(this.iniciativa);
+                            } else {
+                                this.spinner.hide();
+                                Swal.fire(
+                                    "Error",
+                                    "Ocurrió un error al guardar. " + resp.error.data,
+                                    "error"
+                                );
+                            }
+                        },
+                        (err) => {
+                            this.spinner.hide();
+                            Swal.fire(
+                                "Error",
+                                "Ocurrió un error al guardar." + err.error.data,
+                                "error"
+                            );
+                        }
+                    );
+                } else {
+                    this.spinner.hide();
+                }
             }
         } catch (err) {
             this.spinner.hide();
@@ -869,90 +894,97 @@ export class GuardarIniciativasComponent implements OnInit {
                 let base64 = await this.pdfBase64(pdfDocGenerator);
 
                 await this.upload(base64, "SP001.pdf");
-                await this.guardarDocumento(
+                let documentoRespuesta: any = await this.guardarDocumento(
                     cTemas,
                     tipoDocumento[0]["cValor"],
                     tipoExpediente[0]["cValor"],
                     tipoInformacion[0]["cValor"],
                     legislaturas[0]
                 );
-
-                const dd = {
-                    header: {
-                        columns: [
-                            {
-                                image: "data:image/jpeg;base64," + this.imageBase64,
-                                width: 120,
-                                margin: [20, 20, 5, 5],
-                            },
-                            {
-                                nodeName: "DIV",
-                                stack: [header],
-                            },
-                        ],
-                    },
-                    footer: {
-                        columns: [
-                            '',
-                            {
-                                alignment: 'right',
-                                text: 'Id. Documento: ' + this.idDocumento
-                            }
-                        ],
-                        margin: [10, 0]
-                    },
-                    pageOrientation: "portrait",
-                    pageSize: "A4",
-                    fontSize: 8,
-                    pageMargins: [40, 100, 40, 50],
-                    content: [presente],
-                    styles: {
+                if (documentoRespuesta.error) {
+                    console.log('err');
+                    resolve("err");
+                } else {
+                    console.log('No err');
+                    const dd = {
                         header: {
-                            fontSize: 8,
-                            bold: true,
-                            margin: 0,
+                            columns: [
+                                {
+                                    image: "data:image/jpeg;base64," + this.imageBase64,
+                                    width: 120,
+                                    margin: [20, 20, 5, 5],
+                                },
+                                {
+                                    nodeName: "DIV",
+                                    stack: [header],
+                                },
+                            ],
                         },
-                        subheader: {
-                            fontSize: 8,
-                            margin: 0,
+                        footer: {
+                            columns: [
+                                '',
+                                {
+                                    alignment: 'right',
+                                    text: 'Id. Documento: ' + this.idDocumento
+                                }
+                            ],
+                            margin: [10, 0]
                         },
-                        tableExample: {
-                            margin: 0,
+                        pageOrientation: "portrait",
+                        pageSize: "A4",
+                        fontSize: 8,
+                        pageMargins: [40, 100, 40, 50],
+                        content: [presente],
+                        styles: {
+                            header: {
+                                fontSize: 8,
+                                bold: true,
+                                margin: 0,
+                            },
+                            subheader: {
+                                fontSize: 8,
+                                margin: 0,
+                            },
+                            tableExample: {
+                                margin: 0,
+                            },
+                            tableOpacityExample: {
+                                margin: [0, 5, 0, 15],
+                                fillColor: "blue",
+                                fillOpacity: 0.3,
+                            },
+                            tableHeader: {
+                                bold: true,
+                                fontSize: 9,
+                                color: "black",
+                            },
                         },
-                        tableOpacityExample: {
-                            margin: [0, 5, 0, 15],
-                            fillColor: "blue",
-                            fillOpacity: 0.3,
+                        defaultStyle: {
+                            // alignment: 'justify'
                         },
-                        tableHeader: {
-                            bold: true,
-                            fontSize: 9,
-                            color: "black",
-                        },
-                    },
-                    defaultStyle: {
-                        // alignment: 'justify'
-                    },
-                };
+                    };
 
-                // pdfMake.createPdf(dd).open();
+                    // pdfMake.createPdf(dd).open();
 
-                pdfDocGenerator = pdfMake.createPdf(dd);
-                base64 = await this.pdfBase64(pdfDocGenerator);
+                    pdfDocGenerator = pdfMake.createPdf(dd);
+                    base64 = await this.pdfBase64(pdfDocGenerator);
 
-                await this.upload(base64, "SP001.pdf");
-                await this.guardarDocumento(
-                    cTemas,
-                    tipoDocumento[0]["cValor"],
-                    tipoExpediente[0]["cValor"],
-                    tipoInformacion[0]["cValor"],
-                    legislaturas[0]
-                );
-                resolve("ok");
+                    await this.upload(base64, "SP001.pdf");
+                    await this.guardarDocumento(
+                        cTemas,
+                        tipoDocumento[0]["cValor"],
+                        tipoExpediente[0]["cValor"],
+                        tipoInformacion[0]["cValor"],
+                        legislaturas[0]
+                    );
+                    resolve("ok");
+                }
+
+
             } catch (err) {
                 this.spinner.hide();
                 Swal.fire('Error', 'Ocurrió un error  generaReport. ' + err, 'error');
-                resolve(err);
+                resolve("err");
             }
         });
     }
@@ -1183,7 +1215,6 @@ export class GuardarIniciativasComponent implements OnInit {
             this.documentos.bActivo = true;
             this.documentos.iniciativa = this.iniciativa.id;
             this.documentos.formulario = 'Iniciativas';
-            this.documentos.tipo_de_expediente = '6091a8a900d37e30f07b2071';
             let parametrosSSP001 = await this.obtenerParametros("SSP-001");
             let legislaturas = await this.obtenerLegislatura();
             let tipoDocumento = parametrosSSP001.filter(
@@ -1199,7 +1230,7 @@ export class GuardarIniciativasComponent implements OnInit {
                     d["cParametroAdministrado"] ===
                     "SSP-001-Tipo-de-Informacion"
             );
-
+            console.log(tipoExpediente);
             this.documentos.legislatura = legislaturas[0].id;
             console.log(this.iniciativa.folioExpediente);
             this.documentos.folioExpediente = this.iniciativa.folioExpediente;
@@ -1219,7 +1250,7 @@ export class GuardarIniciativasComponent implements OnInit {
             dialogRef.afterClosed().subscribe(result => {
                 if (result) {
                     if (result.documento) {
-                        this.clasificarDocAnex(result);
+                        this.clasificarDocAnex(result, '');
                     }
                 }
             });
@@ -1232,8 +1263,60 @@ export class GuardarIniciativasComponent implements OnInit {
             );
         }
     }
+    async cargaClasificacionDocumentoComplementario(): Promise<void> {
+        try {
+            //mostramos spinner para evitar abrir el modal varias veces
+            this.spinner.show();
+            //creamos un nuevo modelo de documentos.
+            this.documentos = new DocumentosModel();
+            this.documentos.bActivo = true;
+            this.documentos.iniciativa = this.iniciativa.id;
+            this.documentos.formulario = 'Iniciativas';
+            let parametrosSSP001 = await this.obtenerParametros("SSP-001");
+            let parametrosTipoDocumentos = await this.obtenerParametros("Tipo-de-documento-complementario");
+            let legislaturas = await this.obtenerLegislatura();
+            let tipoDocumento: any = parametrosTipoDocumentos;
+            let tipoExpediente = parametrosSSP001.filter(
+                (d) =>
+                    d["cParametroAdministrado"] === "SSP-001-Tipo-de-Expediente"
+            );
+            let tipoInformacion = parametrosSSP001.filter(
+                (d) =>
+                    d["cParametroAdministrado"] ===
+                    "SSP-001-Tipo-de-Informacion"
+            );
+            this.documentos.legislatura = legislaturas[0].id;
+            this.documentos.folioExpediente = this.iniciativa.folioExpediente;
+            this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
+            this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
+            this.documentos.visibilidade = tipoInformacion[0]["cValor"];
 
-    clasificarDocAnex(result: any): void {
+            this.spinner.hide();
+
+            const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
+                width: '60%',
+                height: '80%',
+                disableClose: true,
+                data: this.documentos,
+            });
+
+            dialogRef.afterClosed().subscribe(result => {
+                if (result) {
+                    if (result.documento) {
+                        this.clasificarDocAnex(result, 'Complementario');
+                    }
+                }
+            });
+        } catch (err) {
+            this.spinner.hide();
+            Swal.fire(
+                "Error",
+                "Ocurrió un error al clasificar." + err,
+                "error"
+            );
+        }
+    }
+    clasificarDocAnex(result: any, tipoDoc: string): void {
         try {
             this.spinner.show();
             const fecha = new Date(); // Fecha actual
@@ -1250,13 +1333,14 @@ export class GuardarIniciativasComponent implements OnInit {
             }
             const fechaActual = dia + "/" + mes + "/" + anio;
             this.documentos.bActivo = true;
-            console.log('clasifi');
+
             this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
             this.documentos.fechaCarga = this.documentos.fechaCarga + 'T16:00:00.000Z';
 
             this.documentos = result;
 
             let cAutores = "";
+
             this.autores.forEach((element) => {
                 if (cAutores === "") {
                     cAutores = element.name;
@@ -1273,28 +1357,45 @@ export class GuardarIniciativasComponent implements OnInit {
                     cTema = cTema + ", " + element.name;
                 }
             });
-            this.documentos.metacatalogos = [
-                {
-                    cDescripcionMetacatalogo: "Fecha",
-                    bOligatorio: true,
-                    cTipoMetacatalogo: "Fecha",
-                    text: this.documentos.fechaCarga,
-                },
-                {
-                    cDescripcionMetacatalogo: "Autores",
-                    bOligatorio: true,
-                    cTipoMetacatalogo: "Texto",
-                    text: cAutores,
-                },
-                {
-                    cDescripcionMetacatalogo: "Temas",
-                    bOligatorio: true,
-                    cTipoMetacatalogo: "Texto",
-                    text: cTema,
-                },
-            ];
+            if (tipoDoc !== 'Complementario') {
+                this.documentos.metacatalogos = [
+                    {
+                        cDescripcionMetacatalogo: "Fecha",
+                        bOligatorio: true,
+                        cTipoMetacatalogo: "Fecha",
+                        text: this.documentos.fechaCarga,
+                    },
+                    {
+                        cDescripcionMetacatalogo: "Autores",
+                        bOligatorio: true,
+                        cTipoMetacatalogo: "Texto",
+                        text: cAutores,
+                    },
+                    {
+                        cDescripcionMetacatalogo: "Temas",
+                        bOligatorio: true,
+                        cTipoMetacatalogo: "Texto",
+                        text: cTema,
+                    },
+                ];
+            } else {
+                this.documentos.metacatalogos = [
+                    {
+                        cDescripcionMetacatalogo: "Fecha",
+                        bOligatorio: true,
+                        cTipoMetacatalogo: "Fecha",
+                        text: this.documentos.fechaCarga,
+                    },
+                    {
+                        cDescripcionMetacatalogo: "Documento",
+                        bOligatorio: true,
+                        cTipoMetacatalogo: "Texto",
+                        text: cAutores,
+                    }
+                ];
+            }
             this.documentos.folioExpediente = Number(this.documentos.folioExpediente);
-            console.log(this.documentos.folioExpediente);
+
             delete this.documentos['tipo_de_documento'];
             this.documentoService
                 .actualizarDocumentosSinVersion(this.documentos)
@@ -1306,17 +1407,18 @@ export class GuardarIniciativasComponent implements OnInit {
                             this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
                             this.documentosTemp.iniciativas = true;
                             this.documentosTemp.iniciativa = this.iniciativa;
-                            if (
-                                this.iniciativa.tipo_de_iniciativa.descripcion ==
-                                "Iniciativa"
-                            ) {
-                                this.documentosTemp.estatus =
-                                    "Turnar iniciativa a comisión";
-                            } else {
-                                this.documentosTemp.estatus =
-                                    "Turnar cuenta pública a EASE";
+                            if (this.iniciativa.tipo_de_iniciativa) {
+                                if (
+                                    this.iniciativa.tipo_de_iniciativa.descripcion ==
+                                    "Iniciativa"
+                                ) {
+                                    this.documentosTemp.estatus =
+                                        "Turnar iniciativa a comisión";
+                                } else {
+                                    this.documentosTemp.estatus =
+                                        "Turnar cuenta pública a EASE";
+                                }
                             }
-
                             //this.documentosTemp.fechaCreacion = fechaActual;
                             //this.documentosTemp.fechaCarga = fechaActual;
 
@@ -1340,6 +1442,7 @@ export class GuardarIniciativasComponent implements OnInit {
                                 los documentos*/
 
                                 this.iniciativa.documentos.push(this.documentos.id);
+                                console.log(this.iniciativa.documentos);
                                 //this.iniciativa.documentos = [this.documentos.id];
                                 this.obtenerDocumento();
                                 if (result == "0") {
@@ -1388,7 +1491,7 @@ export class GuardarIniciativasComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
                 if (result.documento) {
-                    this.clasificarDocAnex(result);
+                    this.clasificarDocAnex(result, 'Complementario');
                 }
             }
         });

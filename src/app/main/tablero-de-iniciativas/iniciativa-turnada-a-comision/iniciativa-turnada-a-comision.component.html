@@ -221,7 +221,7 @@
         <mat-form-field appearance="outline" 
             fxFlex="1 0 auto" class="pl-4">
             <mat-label>Fecha de sesión</mat-label>
-            <input matInput [matDatepicker]="picker" [disabled]="this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'" formControlName="fechaSesion">
+            <input matInput [matDatepicker]="picker" [disabled]="this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'" formControlName="fechaSesion" [max]="maxDate">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
             <mat-error>La fecha de sesión no es valida ej. 28/11/2020</mat-error>
@@ -356,7 +356,7 @@ fxFlex="1 0 auto" class="pl-4" *ngIf="iniciativa.estatus=='Turnada a publicació
 
 <div *ngIf="iniciativa.estatus==='Turnada a comisión para modificación'" align="center">
     <button color="warn" (click)="visualizarSuspencion()" mat-raised-button >
-        Motivo de suspención de la iniciativa<mat-icon>add</mat-icon>
+        Motivo de la modificación de la iniciativa<mat-icon>add</mat-icon>
     </button>
 </div>
 
