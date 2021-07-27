@@ -1146,6 +1146,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             }
             const fechaActual = moment().format('DD/MM/YYYY');
             let puestoSecretarioGeneral: any[];
+            let puestoSecretarioCentroInvestigacion: any[];
             let legislaturas = await this.obtenerLegislatura();
 
             let parametrosSSP001 = await this.obtenerParametros('SSP-001');
@@ -1157,7 +1158,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             //console.log('parametros08')
             //console.log(parametrosSSP008);
             puestoSecretarioGeneral = await this.obtenerParametros('Id-Puesto-Secretario-General');
-
+           
             if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
                 idFirmasPorEtapas = parametrosSSP008.filter((d) => d['cParametroAdministrado'] === 'SSP-008-Firmas');
             } else {
@@ -1177,7 +1178,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 idPuesto = parametrosSSP008.filter((d) => d['cParametroAdministrado'] === 'SSP-008-Mesa-Directiva-Puesto');
             }
 
-
+      
 
             let firmasPorEtapas = await this.obtenerFirma(idFirmasPorEtapas[0]['cValor']);
 
@@ -1244,7 +1245,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             // Creamos el reporte
 
-            header = this.configuraHeaderReport(legislaturas[0]["cLegislatura"] + ' LEGISLATURA');
+            header = this.configuraHeaderReport(legislaturas[0]["cLegislatura"] + ' LEGISLATURA ' + legislaturas[0]["cPeriodoLegislatura"]);
 
             presente.push({
                 text: "Lic. " + puesto[0]['nombre'] + ' ' + puesto[0]['apellidoMaterno'] + ' ' + puesto[0]['apellidoPaterno'],
@@ -1274,7 +1275,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 })
             } if (this.iniciativa.estatus === 'Turnar cuenta pública a EASE') {
                 presente.push({
-                    text: "Auditor Superior del Estado de Durango",
+                    text: "Director del Centro de Investigación y Estudios Legislativos H. Congreso del Estado",
                     fontSize: 14,
                     bold: true,
                     alignment: "left",

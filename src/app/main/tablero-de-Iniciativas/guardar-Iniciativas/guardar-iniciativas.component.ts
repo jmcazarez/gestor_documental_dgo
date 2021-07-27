@@ -33,6 +33,8 @@ import { DocumentosService } from "services/documentos.service";
 import * as moment from 'moment';
 import { GuardarDocumentosComponent } from '../../tablero-de-documentos/guardar-documentos/guardar-documentos.component';
 import { LegislaturaModel } from "models/legislaturas.models";
+import { DateFormat } from "./date-format";
+import { DateAdapter } from "@angular/material/core";
 
 export interface Autores {
     name: string;
@@ -50,7 +52,7 @@ export class Documentos {
     selector: "guardar-iniciativas",
     templateUrl: "./guardar-iniciativas.component.html",
     styleUrls: ["./guardar-iniciativas.component.scss"],
-    providers: [DatePipe],
+    providers: [DatePipe,{ provide: DateAdapter, useClass: DateFormat }],
 })
 export class GuardarIniciativasComponent implements OnInit {
     @ViewChild("fileInput", { static: false }) fileInput: ElementRef;
@@ -104,10 +106,10 @@ export class GuardarIniciativasComponent implements OnInit {
         private documentoService: DocumentosService,
         public dialog: MatDialog,
         private uploadService: UploadFileService,
-
+        private dateAdapter: DateAdapter<Date>,
         @Inject(MAT_DIALOG_DATA) public iniciativa: IniciativasModel
     ) {
-       
+        dateAdapter.setLocale("en-in"); // DD/MM/YYYY
         if (this.iniciativa.documentos == undefined) {
             this.iniciativa.documentos = [];
         }
@@ -733,7 +735,7 @@ export class GuardarIniciativasComponent implements OnInit {
                 // Creamos el reporte
 
                 header = this.configuraHeaderReport(
-                    legislaturas[0]["cLegislatura"] + " LEGISLATURA"
+                    legislaturas[0]["cLegislatura"] + " LEGISLATURA " + legislaturas[0]["cPeriodoLegislatura"]
                 );
 
                 if (puesto[0]) {

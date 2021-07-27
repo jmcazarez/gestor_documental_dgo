@@ -4,4 +4,5 @@ export class LegislaturaModel {
     cLegislatura: string;
     bActual: boolean;
     folioExpediente: any;
+    cPeridoLegislatura: string;
 };
