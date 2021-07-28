@@ -38,6 +38,7 @@ import { AmazingTimePickerService } from 'amazing-time-picker';
 import * as moment from 'moment';
 import { GuardarDocumentosComponent } from '../../tablero-de-documentos/guardar-documentos/guardar-documentos.component';
 import { IniciativaModificadaSuspendidaComponent } from '../iniciativa-modificada-suspendida/iniciativa-modificada-suspendida.component';
+import { EmpleadosDelCongresoService } from "services/empleados-del-congreso.service";
 
 export interface Autores {
     name: string;
@@ -169,11 +170,11 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         public dialog: MatDialog,
         private uploadService: UploadFileService,
         private atp: AmazingTimePickerService,
-
+        private empleadosService: EmpleadosDelCongresoService,
         @Inject(MAT_DIALOG_DATA) public iniciativa: IniciativasModel,
 
     ) {
-        
+
         this.tipoSesion = [];
 
         this.tipoSesion.push({
@@ -306,6 +307,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             } else {
                 this.etiquetas = [];
             }
+            console.log( this.iniciativa.fechaCreacion);
             this.iniciativa.fechaCreacion =
                 this.iniciativa.fechaCreacion + "T16:00:00.000Z";
             this.iniciativa.fechaIniciativa =
@@ -1118,6 +1120,22 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         });
     }
 
+    async obtenerEmpleadosByIdPuesto(idPuesto: string): Promise<void> {
+        // Obtenemos empleados
+        return new Promise(async (resolve) => {
+            {
+                await this.empleadosService.obtenerEmpleadosByPuesto(idPuesto).subscribe((resp: any) => {
+
+                    resolve(resp);
+
+                }, err => {
+                    Swal.fire('Error', 'Ocurrió un error obtener los puestos.' + err, 'error');
+                    resolve(err);
+                });
+            }
+        });
+
+    }
     async generaReport(): Promise<string> {
         console.log('generando reporte');
         this.documentos = new DocumentosModel();
@@ -1148,17 +1166,16 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             let puestoSecretarioGeneral: any[];
             let puestoSecretarioCentroInvestigacion: any[];
             let legislaturas = await this.obtenerLegislatura();
-
+          
             let parametrosSSP001 = await this.obtenerParametros('SSP-001');
             let parametrosSSP004 = await this.obtenerParametros('SSP-004');
-
             let parametrosCIEL008 = await this.obtenerParametros('CIEL-008');
             let parametrosSSP005 = await this.obtenerParametros('SSP-005');
             let parametrosSSP008 = await this.obtenerParametros('SSP-008');
             //console.log('parametros08')
             //console.log(parametrosSSP008);
             puestoSecretarioGeneral = await this.obtenerParametros('Id-Puesto-Secretario-General');
-           
+
             if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
                 idFirmasPorEtapas = parametrosSSP008.filter((d) => d['cParametroAdministrado'] === 'SSP-008-Firmas');
             } else {
@@ -1177,16 +1194,16 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             } if (this.iniciativa.estatus === 'Turnar dictamen a Mesa Directiva') {
                 idPuesto = parametrosSSP008.filter((d) => d['cParametroAdministrado'] === 'SSP-008-Mesa-Directiva-Puesto');
             }
-
-      
-
+        
+            let empleados: any = await this.obtenerEmpleadosByIdPuesto( idPuesto[0]['cValor']);
+           
+            console.log(empleados, 'iniciativa');
             let firmasPorEtapas = await this.obtenerFirma(idFirmasPorEtapas[0]['cValor']);
-
 
 
             let puesto = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === idPuesto[0]['cValor']);
 
-            if (puesto.length === 0) {
+            if (empleados.length === 0) {
                 Swal.fire('Error', 'Configuración de participantes incorrecta.', 'error');
                 this.spinner.hide();
                 return
@@ -1248,7 +1265,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             header = this.configuraHeaderReport(legislaturas[0]["cLegislatura"] + ' LEGISLATURA ' + legislaturas[0]["cPeriodoLegislatura"]);
 
             presente.push({
-                text: "Lic. " + puesto[0]['nombre'] + ' ' + puesto[0]['apellidoMaterno'] + ' ' + puesto[0]['apellidoPaterno'],
+                text: "Lic. " + empleados[0]['nombre'] + ' ' + empleados[0]['apellidoPaterno'] + ' ' + empleados[0]['apellidoMaterno'],
                 fontSize: 14,
                 bold: true,
                 alignment: "left",
@@ -1275,7 +1292,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 })
             } if (this.iniciativa.estatus === 'Turnar cuenta pública a EASE') {
                 presente.push({
-                    text: "Director del Centro de Investigación y Estudios Legislativos H. Congreso del Estado",
+                    text: "Auditor Superior del Estado de Durango",
                     fontSize: 14,
                     bold: true,
                     alignment: "left",
@@ -1553,7 +1570,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     text:
                         [
                             'Con objetivo de dar cumplimiento a lo dispuesto en los artículos de la Ley Orgánica del Congreso del Estado de Durango, me permito anexar un ejemplar original del decreto No. ',
-                            { text: Number(legislaturas[0].documentos + 1), bold: true },
+                            { text: this.iniciativa.folioExpediente, bold: true },
                             ', que contiene ',
                             { text: cTemas, bold: true },
                             ', lo anterior para solicitarle su publicación en el periódico oficial del Gobierno del Estado de Durango.'
@@ -1588,7 +1605,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             });
 
             presente.push({
-                text: "Lic. " + puestoSecretario[0]['nombre'] + ' ' + puestoSecretario[0]['apellidoMaterno'] + ' ' + puestoSecretario[0]['apellidoPaterno'],
+                text: "Lic. " + puestoSecretario[0]['nombre'] + ' ' + puestoSecretario[0]['apellidoPaterno'] + ' ' + puestoSecretario[0]['apellidoMaterno'], 
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
@@ -1619,7 +1636,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
                 presente.push({
-                    text: "Lic. " + puestoSecretario[0]['nombre'] + ' ' + puestoSecretario[0]['apellidoMaterno'] + ' ' + puestoSecretario[0]['apellidoPaterno'],
+                    text: "Lic. " + puestoSecretario[0]['nombre'] + ' ' + puestoSecretario[0]['apellidoPaterno'] + ' ' + puestoSecretario[0]['apellidoMaterno'], 
                     fontSize: 12,
                     bold: true,
                     alignment: "center",
@@ -3066,7 +3083,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.documentos.formulario = 'Iniciativas';
             let parametrosSSP001 = await this.obtenerParametros("SSP-001");
             let parametrosTipoDocumentos = await this.obtenerParametros("Tipo-de-documento-complementario");
-         
+
             let tipoDocumento: any = parametrosTipoDocumentos;
 
             let tipoExpediente = parametrosSSP001.filter(

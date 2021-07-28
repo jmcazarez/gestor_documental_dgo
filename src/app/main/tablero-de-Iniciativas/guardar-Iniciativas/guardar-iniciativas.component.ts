@@ -35,6 +35,7 @@ import { GuardarDocumentosComponent } from '../../tablero-de-documentos/guardar-
 import { LegislaturaModel } from "models/legislaturas.models";
 import { DateFormat } from "./date-format";
 import { DateAdapter } from "@angular/material/core";
+import { EmpleadosDelCongresoService } from "services/empleados-del-congreso.service";
 
 export interface Autores {
     name: string;
@@ -52,7 +53,7 @@ export class Documentos {
     selector: "guardar-iniciativas",
     templateUrl: "./guardar-iniciativas.component.html",
     styleUrls: ["./guardar-iniciativas.component.scss"],
-    providers: [DatePipe,{ provide: DateAdapter, useClass: DateFormat }],
+    providers: [DatePipe, { provide: DateAdapter, useClass: DateFormat }],
 })
 export class GuardarIniciativasComponent implements OnInit {
     @ViewChild("fileInput", { static: false }) fileInput: ElementRef;
@@ -107,6 +108,7 @@ export class GuardarIniciativasComponent implements OnInit {
         public dialog: MatDialog,
         private uploadService: UploadFileService,
         private dateAdapter: DateAdapter<Date>,
+        private empleadosService: EmpleadosDelCongresoService,
         @Inject(MAT_DIALOG_DATA) public iniciativa: IniciativasModel
     ) {
         dateAdapter.setLocale("en-in"); // DD/MM/YYYY
@@ -120,6 +122,8 @@ export class GuardarIniciativasComponent implements OnInit {
     }
 
     async ngOnInit() {
+        var isoDateString = new Date().toISOString();
+        console.log(isoDateString);
         console.log('1');
         await this.obtenerDocumento();
         this.obtenerTiposIniciativas();
@@ -138,20 +142,22 @@ export class GuardarIniciativasComponent implements OnInit {
         if (mes < 10) {
             mes = "0" + mes; // agrega cero si el menor de 10
         }
-
+        console.log(ano + "-" + mes + "-" + dia);
         // Validamos si es un documento nuevo
         if (this.iniciativa.id) {
             this.selectTipo = this.iniciativa.tipo_de_iniciativa.id;
             this.autores = this.iniciativa.autores;
             this.temas = this.iniciativa.tema;
+            console.log(this.iniciativa.fechaCreacion);
             this.iniciativa.fechaCreacion =
                 this.iniciativa.fechaCreacion + "T16:00:00.000Z";
             this.iniciativa.fechaIniciativa =
                 this.iniciativa.fechaIniciativa + "T16:00:00.000Z";
+                
         } else {
             // Seteamos la fecha de carga con la fecha actual
             this.iniciativa.estatus = "Registrada";
-            this.iniciativa.fechaCreacion = ano + "-" + mes + "-" + dia;
+            this.iniciativa.fechaCreacion = isoDateString;
         }
 
         // Form reativo
@@ -657,6 +663,23 @@ export class GuardarIniciativasComponent implements OnInit {
         });
     }
 
+    async obtenerEmpleadosByIdPuesto(idPuesto: string): Promise<void> {
+        // Obtenemos empleados
+        return new Promise(async (resolve) => {
+            {
+                await this.empleadosService.obtenerEmpleadosByPuesto(idPuesto).subscribe((resp: any) => {
+
+                    resolve(resp);
+
+                }, err => {
+                    Swal.fire('Error', 'Ocurrió un error obtener los puestos.' + err, 'error');
+                    resolve(err);
+                });
+            }
+        });
+
+    }
+
     async generaReport(): Promise<string> {
         return new Promise(async (resolve) => {
             try {
@@ -679,6 +702,8 @@ export class GuardarIniciativasComponent implements OnInit {
                 let puestoSecretarioGeneral: any[];
                 let legislaturas = await this.obtenerLegislatura();
                 let parametrosSSP001 = await this.obtenerParametros("SSP-001");
+
+
                 puestoSecretarioGeneral = await this.obtenerParametros(
                     "Id-Puesto-Secretario-General"
                 );
@@ -693,9 +718,9 @@ export class GuardarIniciativasComponent implements OnInit {
                     idFirmasPorEtapas[0]["cValor"]
                 );
 
-                let puesto = firmasPorEtapas[0].participantes.filter(
-                    (d) => d["puesto"] === idPuesto[0]["cValor"]
-                );
+                /* let puesto = firmasPorEtapas[0].participantes.filter(
+                     (d) => d["puesto"] === idPuesto[0]["cValor"]
+                 );*/
                 let puestoSecretario = firmasPorEtapas[0].participantes.filter(
                     (d) => d["puesto"] === puestoSecretarioGeneral[0].cValor
                 );
@@ -716,6 +741,9 @@ export class GuardarIniciativasComponent implements OnInit {
                         "SSP-001-Tipo-de-Informacion"
                 );
 
+                let puesto: any = await this.obtenerEmpleadosByIdPuesto(idPuesto[0]['cValor']);
+
+                console.log(puesto, 'iniciativa');
                 this.temas.forEach((element) => {
                     if (cTemas === "") {
                         cTemas = element.name;

@@ -232,6 +232,7 @@ export class RecepcionDeIniciativasComponent implements OnInit {
               this.iniciativa.fechaCreacion + "T16:00:00.000Z";
           this.iniciativa.fechaIniciativa =
               this.iniciativa.fechaIniciativa + "T16:00:00.000Z";
+              console.log(this.iniciativa.fechaCreacion);
       } else {
           // Seteamos la fecha de carga con la fecha actual
           this.iniciativa.estatus = "Registrada";

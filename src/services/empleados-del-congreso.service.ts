@@ -37,6 +37,15 @@ export class EmpleadosDelCongresoService {
         return this.http.get(this.baseUrl + this.urlEmpleados, httpOptions);
     }
 
+    obtenerEmpleadosByPuesto(idPuesto: string): any {
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlEmpleados + '/' + idPuesto, httpOptions);
+    }
     actualizarEmpleado(empleados: EmpleadosModel): any {
         this.TOKEN = localStorage.getItem('token');
         let httpOptions = {

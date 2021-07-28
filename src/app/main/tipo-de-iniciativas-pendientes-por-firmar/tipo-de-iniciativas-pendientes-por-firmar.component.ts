@@ -501,7 +501,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
             let dia: any = fecha.getDate(); // obteniendo dia
             let estatus = '';
             const ano = fecha.getFullYear(); // obteniendo año
-
+            var isoDateString = new Date().toISOString();
             if (dia < 10) {
                 dia = "0" + dia; // agrega cero si el menor de 10
             }
@@ -571,7 +571,8 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
                 }
             }
             iniciativa.iniciativa.estatus = estatus;
-            iniciativa.iniciativa.fechaCreacion = fechaActual + "T16:00:00.000Z";
+            iniciativa.iniciativa.fechaCreacion = isoDateString;
+            console.log(iniciativa.iniciativa.fechaCreacion);
             this.iniciativaService
                 .actualizarIniciativa({
                     id: iniciativa.iniciativa.id,
