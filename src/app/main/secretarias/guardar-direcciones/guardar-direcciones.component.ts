@@ -110,7 +110,6 @@ export class GuardarDireccionesComponent implements OnInit {
     nuevaDireccion(): void {
         // Abrimos modal de guardar direccion
         this.usuariosService.idSecretaria = this.secretaria.id;
-        console.log(this.usuariosService.idSecretaria);
         const dialogRef = this.dialog.open(ModaldireccionesComponent, {
             width: '50%',
             height: '80%',
@@ -187,7 +186,6 @@ export class GuardarDireccionesComponent implements OnInit {
 
     limpiar(): void{
         this.valueBuscador = '';
-        console.log('buscador' + this.valueBuscador);
     }
 
     cerrar(ent): void {

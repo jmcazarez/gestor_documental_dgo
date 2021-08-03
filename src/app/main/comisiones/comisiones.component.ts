@@ -72,7 +72,6 @@ export class ComisionesComponent implements OnInit {
                 });
                 this.comisiones = [...this.comisiones];
                 this.comisionesTemp = this.comisiones;
-                console.log(this.comisiones);
             }
             this.loadingIndicator = false;
             this.spinner.hide();

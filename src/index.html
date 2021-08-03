@@ -43,7 +43,7 @@
         function signData() {
 
             //Validating form variables
-
+            document.getElementById("signature").innerHTML = "";
 
             if (document.getElementById("hashToSign").value == '') {
                 alert("El hash es necesario.");
@@ -72,6 +72,7 @@
                 var keyBase64 = document.getElementById("llave").value;
                 var password = document.getElementById("password").value;
                 var hashToSign = document.getElementById("hashToSign").value;
+              
                 var pKey = keyBase64.replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
                 var cipheredKey = window.atob(pKey);
 
@@ -83,6 +84,7 @@
 
                     signPromise.then(function (Signature) {
                         document.getElementById("signature").innerHTML = btoa(arrayBufferToString(Signature), false, true);
+                       
                     }, function (error) {
                         document.getElementById("signature").innerHTML = "";
                         alert("[SgDataCrypto][pkcs7FromHash] " + error.message);

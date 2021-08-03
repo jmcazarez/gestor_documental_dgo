@@ -110,7 +110,6 @@ export class CompartirLinkComponent implements OnInit {
     }
 
     documentoYaDescargado() {
-        console.log(this.documento.id);
         //preparamos datos para hacer peticion a node
         const data = {
             "id": this.documento.id,

@@ -103,8 +103,6 @@ export class TableroDeDocumentosComponent implements OnInit {
 
                     for (const documento of resp.data) {
                         
-                       
-                        //                console.log(documento.tipo_de_documento.bActivo);
                         idDocumento = '';
                         // Validamos permisos
 
@@ -122,7 +120,6 @@ export class TableroDeDocumentosComponent implements OnInit {
 
                                         idDocumento = documento.documento.hash + documento.documento.ext;
 
-                                        // console.log(documento.cNombreDocumento);
                                         if (documento.metacatalogos) {
                                             meta = '';
                                             if (documento.metacatalogos) {

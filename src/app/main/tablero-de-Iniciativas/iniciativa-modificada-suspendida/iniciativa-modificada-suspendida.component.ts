@@ -37,6 +37,8 @@ import { ActasSesionsService } from 'services/actas-sesions.service';
 import { AmazingTimePickerService } from 'amazing-time-picker';
 import * as moment from 'moment';
 import { GuardarDocumentosComponent } from '../../tablero-de-documentos/guardar-documentos/guardar-documentos.component';
+import { DateFormat } from "app/main/tablero-de-documentos/guardar-documentos/date-format";
+import { DateAdapter } from "@angular/material/core";
 
 
 export interface Autores {
@@ -77,7 +79,7 @@ export class Documentos {
     selector: 'app-iniciativa-modificada-suspendida',
     templateUrl: './iniciativa-modificada-suspendida.component.html',
     styleUrls: ['./iniciativa-modificada-suspendida.component.scss'],
-    providers: [DatePipe]
+    providers: [DatePipe, { provide: DateAdapter, useClass: DateFormat }],
 })
 export class IniciativaModificadaSuspendidaComponent implements OnInit {
 
@@ -214,7 +216,6 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
-        console.log('2');
         if (this.iniciativa.dictamenDeIniciativa == 'Modificación') {
             this.iniciativa.estatus = 'Turnada a comisión para modificación';
         } else {
@@ -311,8 +312,6 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
             sustentoDeModificacion: [this.iniciativa.sustentoDeModificacion, validatos],
             motivoDeSuspension: [this.iniciativa.motivoDeSuspension, validatosSuspension],
         });
-
-        console.log(this.iniciativa);
     }
 
     async guardar(): Promise<void> {
@@ -518,7 +517,6 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
     async clasificarDocAnex(result: any, tipo: string): Promise<void> {
         try {
             this.spinner.show();
-            console.log('cla');
             const fecha = new Date(); // Fecha actual
             let mes: any = fecha.getMonth() + 1; // obteniendo mes
             let dia: any = fecha.getDate(); // obteniendo dia
@@ -593,7 +591,6 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
                 .subscribe(
                     (resp: any) => {
                         if (resp.data) {
-                            console.log(resp.data);
                             this.documentos = resp.data;
 
                             let documentoId: string = this.documentos.id;
@@ -646,7 +643,6 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
 
                                 //this.iniciativa.documentos.push(this.documentos);
                                 this.iniciativa.documentos = [this.documentos.id];
-                                console.log(this.iniciativa.documentos);
                                 this.obtenerDocumento();
                                 if (result == "0") {
                                     this.cerrar("");
@@ -697,7 +693,6 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
 
 
                 for (const documento of resp.data) {
-                    //                console.log(documento.tipo_de_documento.bActivo);
                     idDocumento = '';
                     // Validamos permisos
 

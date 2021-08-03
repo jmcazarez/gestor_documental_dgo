@@ -110,7 +110,6 @@ export class GuardarComisionesComponent implements OnInit {
                 for (const detalleComision of resp) {
 
                     if (detalleComision.comisione === this.comision.id) {
-                        console.log(detalleComision)
                         this.participantesExist = true;
                         const partido = this.arrPartidos.find(meta => meta.id == detalleComision.presidente[0].partidos_politico);
                         const partidoVice = this.arrPartidos.find(meta => meta.id == detalleComision.vicepresidente[0].partidos_politico);
@@ -168,8 +167,6 @@ export class GuardarComisionesComponent implements OnInit {
                 }
 
                 this.detalles = detallesComisionTemp;
-
-                console.log(this.detalles);
                 this.detallesTemp = this.detalles;
                 this.spinner.hide();
             }
@@ -204,7 +201,7 @@ export class GuardarComisionesComponent implements OnInit {
 
                 if (this.comision.detalle_participantes_comisions) {
                     if (this.comision.detalle_participantes_comisions.length > 0) {
-                        console.log('0');
+                     
                         // Actualizamos la comision 
                         this.detalleComisionsService.actualizarDetalleComisions({
                             id: this.comision.detalle_participantes_comisions[0].id,
@@ -253,7 +250,6 @@ export class GuardarComisionesComponent implements OnInit {
                             activo: true
                         }).subscribe((resp: any) => {
                             if (resp) {
-                                console.log('1');
                                 this.comision.detalle_participantes_comisions = [resp.data.id];
                                 // Actualizamos la comisión
                                 this.comsionesService.actualizarComision(this.comision).subscribe((resp: any) => {
@@ -293,7 +289,6 @@ export class GuardarComisionesComponent implements OnInit {
                         activo: true
                     }).subscribe((resp: any) => {
                         if (resp) {
-                            console.log('2');
                             this.comision.detalle_participantes_comisions = [resp.data.id];
                             // Actualizamos la comisión
                             this.comsionesService.actualizarComision(this.comision).subscribe((resp: any) => {
@@ -335,7 +330,7 @@ export class GuardarComisionesComponent implements OnInit {
                     activo: true
                 }).subscribe((resp: any) => {
                     if (resp) {
-                        console.log('3');
+                       
                         this.comision.detalle_participantes_comisions = [resp.data.id];
                         this.comsionesService.guardarComision(this.comision).subscribe((resp: any) => {
                             if (resp) {

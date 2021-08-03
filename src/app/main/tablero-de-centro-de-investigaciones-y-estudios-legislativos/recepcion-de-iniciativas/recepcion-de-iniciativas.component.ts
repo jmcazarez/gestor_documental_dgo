@@ -38,7 +38,8 @@ import * as moment from 'moment';
 import { TableroDeCentroDeInvestigacionesYEstudiosLegislativosModule } from "../tablero-de-centro-de-investigaciones-y-estudios-legislativos.module";
 import { EmpleadosDelCongresoService } from 'services/empleados-del-congreso.service';
 import { GuardarDocumentosComponent } from '../../tablero-de-documentos/guardar-documentos/guardar-documentos.component';
-
+import { DateAdapter } from "@angular/material/core";
+import { DateFormat } from "./date-format";
 export interface Autores {
   name: string;
 }
@@ -60,7 +61,8 @@ export interface Estado {
   selector: 'app-recepcion-de-iniciativas',
   templateUrl: './recepcion-de-iniciativas.component.html',
   styleUrls: ['./recepcion-de-iniciativas.component.scss'],
-  providers: [DatePipe],
+  
+  providers: [DatePipe, { provide: DateAdapter, useClass: DateFormat }],
 })
 
 export class RecepcionDeIniciativasComponent implements OnInit {
@@ -145,7 +147,6 @@ export class RecepcionDeIniciativasComponent implements OnInit {
       this.obtenerComisiones();
       this.obtenerEmpleados();
       this.obtenerLegislatura();
-      console.log(this.iniciativa);
       this.tipoSesion.push({
           id: '001',
           descripcion: 'Ordinaria'
@@ -176,7 +177,6 @@ export class RecepcionDeIniciativasComponent implements OnInit {
   }
 
   ngOnInit(): void {
-      console.log(this.iniciativa);
       if (this.iniciativa.actasSesion === undefined) {
           this.iniciativa.actasSesion = [];
       }
@@ -232,7 +232,7 @@ export class RecepcionDeIniciativasComponent implements OnInit {
               this.iniciativa.fechaCreacion + "T16:00:00.000Z";
           this.iniciativa.fechaIniciativa =
               this.iniciativa.fechaIniciativa + "T16:00:00.000Z";
-              console.log(this.iniciativa.fechaCreacion);
+            
       } else {
           // Seteamos la fecha de carga con la fecha actual
           this.iniciativa.estatus = "Registrada";
@@ -240,7 +240,6 @@ export class RecepcionDeIniciativasComponent implements OnInit {
       }
    
       if (this.iniciativa.actasSesion[0] !== undefined) {
-          console.log('haycomision');
           this.iniciativa.actasSesion[0].fechaSesion =
               moment(this.iniciativa.actasSesion[0].fechaSesion).format('YYYY-MM-DD') + "T16:00:00.000Z";
           this.iniciativa.actasSesion[0].horaSesion =
@@ -357,7 +356,7 @@ export class RecepcionDeIniciativasComponent implements OnInit {
       this.iniciativa.estatus = 'Turnar dictamen a Secretaría General';
       horaSesion = hora + ':00.000';
 
-      console.log(this.iniciativa);
+  
 
         // Actualizamos la iniciativa
         this.iniciativaService.actualizarIniciativa(this.iniciativa).subscribe((resp: any) => {
@@ -402,7 +401,6 @@ export class RecepcionDeIniciativasComponent implements OnInit {
                           "success"
                       );
                       this.iniciativa = resp.data;
-                      console.log(this.iniciativa);
                       this.spinner.hide();
                       this.cerrar(this.iniciativa);
                   } else {
@@ -604,7 +602,6 @@ export class RecepcionDeIniciativasComponent implements OnInit {
                           }
                       }
                       resolve(resp);
-                      console.log(this.legislatura);
                       //seleccionamos legislatura por default
                       this.selectedLegislatura = this.legislatura[0].id;
                   },
@@ -677,13 +674,11 @@ export class RecepcionDeIniciativasComponent implements OnInit {
   open() {
       const amazingTimePicker = this.atp.open();
       amazingTimePicker.afterClose().subscribe(time => {
-          console.log('hola');
-          console.log(time);
+       
       })
   }
 
   changeDocumento(): void {
-      console.log('change');
       this.cambioDocumento = true;
   }
 
@@ -763,7 +758,6 @@ export class RecepcionDeIniciativasComponent implements OnInit {
                                     // tslint:disable-next-line: no-unused-expression
                                     // Seteamos valores y permisos
                                     if (documento.formulario == this.iniciativa.estatus) {
-                                        console.log('estatus correcto');
                                         documentosTemp.push({
                                             id: documento.id,
                                             cNombreDocumento: documento.cNombreDocumento,
@@ -849,12 +843,10 @@ async clasificarDocAnex(result: any): Promise<void> {
     }
     const fechaActual = dia + "/" + mes + "/" + anio;
     this.documentos.bActivo = true;
-    console.log( this.documentos);
     this.documentos.fechaCreacion =  this.documentos.fechaCreacion + 'T16:00:00.000Z';
     this.documentos.fechaCarga =  this.documentos.fechaCreacion + 'T16:00:00.000Z';
 
     this.documentos = result;
-    console.log(this.documentos);
     let cAutores = "";
     this.autores.forEach((element) => {
         if (cAutores === "") {
@@ -877,17 +869,15 @@ async clasificarDocAnex(result: any): Promise<void> {
             text: cAutores,
         },
     ];
-    console.log(this.documentos);
     this.documentoService
         .actualizarDocumentosSinVersion(this.documentos)
         .subscribe(
             (resp: any) => {
                 if (resp.data) {
-                    console.log(resp.data);
                     this.documentos = resp.data;
                     this.documentos.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
                     this.documentos.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
-                    console.log(this.documentos);
+                   
                     this.documentos.iniciativas = true;
                     this.documentos.iniciativa = this.iniciativa;
                     if (
@@ -921,7 +911,6 @@ async clasificarDocAnex(result: any): Promise<void> {
                         los documentos*/
                         //this.iniciativa.documentos.push(this.documentos);
                         this.iniciativa.documentos = [this.documentos.id];
-                        console.log(this.iniciativa.documentos);
                         this.obtenerDocumento();
                         if (result == "0") {
                             this.cerrar("");
@@ -978,7 +967,7 @@ async clasificarDocAnex(result: any): Promise<void> {
         this.documentos.visibilidade = tipoInformacion[0]["cValor"];
 
         legislaturaFolio = this.legislatura.filter(d => d.id === this.selectedLegislatura);
-        console.log(this.documentos);
+    
         this.documentos.legislatura = legislaturaFolio[0].id;
         this.documentos.folioExpediente = this.iniciativa.folioExpediente;
 

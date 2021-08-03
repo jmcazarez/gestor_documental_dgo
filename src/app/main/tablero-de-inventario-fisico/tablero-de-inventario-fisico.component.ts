@@ -65,7 +65,6 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
                 // Si tiene permisos para consultar
                 if (this.optConsultar) {
                     if (resp) {
-                        console.log(resp);
                         for (const inventario of resp) {
                             let cLegislatura = "";
                             let cDescripcionTipoExpediente = "";

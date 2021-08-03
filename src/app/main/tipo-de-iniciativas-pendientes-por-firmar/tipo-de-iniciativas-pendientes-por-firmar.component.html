@@ -20,7 +20,7 @@
                         <ngx-mat-file-input #removableCertificado [accept]="'.cer'" formControlName="cSubirCertificado"
                             (change)="cambioCertificado($event)">
                         </ngx-mat-file-input>
-                        <button *ngIf="!removableCertificado.empty" mat-icon-button matSuffix
+                        <button id="btnCertificado" *ngIf="!removableCertificado.empty" mat-icon-button matSuffix
                             (click)="removableCertificado.clear($event)">
                             <mat-icon>clear</mat-icon>
                         </button>
@@ -34,7 +34,7 @@
                         <ngx-mat-file-input #removableLlave [accept]="'.key'" formControlName="cSubirLlave"
                             (change)="cambioLlave($event)">
                         </ngx-mat-file-input>
-                        <button *ngIf="!removableLlave.empty" mat-icon-button matSuffix
+                        <button id="btnLLave" name="btnLLave" *ngIf="!removableLlave.empty" mat-icon-button matSuffix
                             (click)="removableLlave.clear($event)">
                             <mat-icon>clear</mat-icon>
                         </button>
@@ -53,13 +53,20 @@
                         <input type='text' matInput placeholder='' [(ngModel)]="searchText"
                             (keyup)='filterDatatable($event)'>
                     </mat-form-field>
+                        <!--
                     <button [disabled]="form.invalid" mat-raised-button color="warn" (click)="firmarDocumentos()"
                         class="button">
                         <mat-icon color="white" class="material-icons" matTooltip="Clic para firmar documentos">post_add
                         </mat-icon>
                         Firmar documentos
                     </button>
-                    <!--
+                   <button  mat-raised-button color="warn" (click)="limpiarCampos()"
+                        class="button">
+                        <mat-icon color="white" class="material-icons" matTooltip="Clic para firmar documentos">post_add
+                        </mat-icon>
+                        Firmar documentos
+                    </button>
+                   
                     <button  mat-raised-button  (click)="pruebaTurnado()"
                     class="button">
                     <mat-icon color="white" class="material-icons" matTooltip="Clic para firmar documentos">post_add
@@ -112,10 +119,17 @@
                 <ngx-datatable-column name="Autorizaciones pendientes" prop="autorizacionesPendientes">
                 </ngx-datatable-column>
 
-                <ngx-datatable-column name="Firmar" sortable="false" prop="id">
+                <ngx-datatable-column name="Firmar" sortable="false" prop="id" >
                     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                        <mat-checkbox class="example-margin" [(ngModel)]="row.Agregar">
-                        </mat-checkbox>
+                        <a *ngIf="!form.invalid" (click)="firmarDocumento(row)" > 
+                            <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para eliminar">assignment_turned_in
+                            </mat-icon>
+                        </a>
+                        <a *ngIf="form.invalid"  > 
+                            <mat-icon color="warn"  matTooltip="Clic para eliminar">assignment_late
+                            </mat-icon>
+                        </a>
+                      
                     </ng-template>
                 </ngx-datatable-column>
             </ngx-datatable>

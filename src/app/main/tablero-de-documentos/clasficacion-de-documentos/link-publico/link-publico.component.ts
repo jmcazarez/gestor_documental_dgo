@@ -30,7 +30,6 @@ export class LinkPublicoComponent implements OnInit {
     }
 
   ngOnInit(): void {
-      console.log(this.documentos);
     this.documento = this.documentos.id;
   }
 
@@ -44,7 +43,7 @@ export class LinkPublicoComponent implements OnInit {
        
       //console.log(resp + 'hay respuesta');
       this.url = this.location['_platformLocation']['location']['origin']+'/#/compartir-link/' + resp.id;
-      console.log(this.url);
+     
     }, err => {
       console.log(err);
     });

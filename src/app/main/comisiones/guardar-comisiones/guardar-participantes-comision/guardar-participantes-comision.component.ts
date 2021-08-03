@@ -52,14 +52,13 @@ export class GuardarParticipantesComisionComponent implements OnInit {
 
         await this.obtenerLegislatura();
         let i = 0;
-        console.log('participantes');
-        console.log(this.participantes);
+  
 
         if (this.participantes.detalle_participantes_comisions) {
 
             this.resultado = this.participantes.detalle_participantes_comisions[0];
             //Seteamos valor del select presidente
-            console.log(this.resultado);
+         
             if (this.resultado) {
                 if (this.resultado.legislatura) {
                     this.selectedLegislatura = this.resultado.legislatura;
@@ -78,8 +77,6 @@ export class GuardarParticipantesComisionComponent implements OnInit {
                     vicepresidente: "",
                     vocals: "",
                 };
-
-                console.log(this.resultado);
             }
         } else {
             this.participantes.presidente = '';
@@ -101,18 +98,16 @@ export class GuardarParticipantesComisionComponent implements OnInit {
             estatus: this.participantes.activo
         });
         //iniciar con 3 vocals 
-        console.log(this.participantes.detalle_participantes_comisions);
         if (!this.participantes.detalle_participantes_comisions) {
-            console.log('entro');
+           
             this.addVocalsg();
             this.addVocalsg();
             this.addVocalsg();
         }else{
-            console.log(this.participantes.detalle_participantes_comisions);
-            
+         
             
             if(this.participantes.detalle_participantes_comisions.length === 0){
-                console.log('entro');
+                
                 this.addVocalsg();
                 this.addVocalsg();
                 this.addVocalsg(); 
@@ -138,19 +133,16 @@ export class GuardarParticipantesComisionComponent implements OnInit {
         const vocalsFormGroup = this.formBuilder.group({ id: ['', [Validators.required]] });
         this.vocals.push(vocalsFormGroup);
         this.resultado.vocals.push('');
-        console.log(this.vocals);
     }
 
     //Añadir select vocals adicional actualizar
     addVocalsIni() {
         const vocalsFormGroup = this.formBuilder.group({ id: ['', [Validators.required]] });
         this.vocals.push(vocalsFormGroup);
-        console.log(this.vocals);
     }
 
     //Remover select vocals adicional, removemos por indice. actualizar
     removeVocals(i: number) {
-        console.log(this.resultado.vocals);
         this.vocals.removeAt(i);
         this.resultado.vocals.splice(i, 1);
     }
@@ -163,12 +155,10 @@ export class GuardarParticipantesComisionComponent implements OnInit {
     addVocalsg() {
         const vocalsgFormGroup = this.formBuilder.group({ id: ['', [Validators.required]] });
         this.vocalsg.push(vocalsgFormGroup);
-        console.log(this.vocalsg,'entro');
     }
 
     //Remover select vocals adicional, removemos por indice. guardado
     removeVocalsg(i: number) {
-        console.log(i);
         this.vocalsg.removeAt(i);
     }
 
@@ -211,7 +201,6 @@ export class GuardarParticipantesComisionComponent implements OnInit {
         // Obtenemos empleados
         this.spinner.show();
         await this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
-            console.log(this.arrDiputados);
             for (const diputados of resp) {
                 if (diputados.legislatura) {
                     this.arrDiputados.push(diputados);
@@ -347,10 +336,7 @@ export class GuardarParticipantesComisionComponent implements OnInit {
             }
         });
 
-        console.log(this.comision);
-        console.log(idDiputados);
-        console.log(idValue);
-        console.log(idEqual);
+  
 
         if (repetido === false) {
             this.cerrar(this.comision);
@@ -358,7 +344,6 @@ export class GuardarParticipantesComisionComponent implements OnInit {
     }
 
     pruebaFormArray() {
-        console.log(this.form.value);
     }
 
     cerrar(ent): void {

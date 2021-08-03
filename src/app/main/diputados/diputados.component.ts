@@ -129,7 +129,6 @@ export class DiputadosComponent implements OnInit {
     }
 
     eliminarDiputados(row: { id: string; }): void {
-        console.log(row);
         // Eliminamos partido politico
         Swal.fire({
             title: '¿Está seguro que desea eliminar este diputado?',

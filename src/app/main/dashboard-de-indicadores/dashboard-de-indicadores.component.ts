@@ -1040,7 +1040,6 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                 });
 
                 this.docDisponiblesFechas = arrDisponiblesFecha.length;
-                console.log(arrDisponiblesFecha);
                 arrExpedientesFecha = arrDisponiblesFecha;
                 arrExpedientesFecha = arrExpedientesFecha.filter(
                     (d) => d["folioExpediente"] !== "0" && d["folioExpediente"] !== ""
@@ -1881,7 +1880,6 @@ export class DashboardDeIndicadoresComponent implements OnInit {
                                 )
                             ),
                         ].length;
-                        console.log(this.docExpedientesFechas);
                         this.docConsultadosFechas = this.arrDocumentosIngresadosFechas.filter(
                             (d) => d["movimiento"] === "Consulto"
                         ).length;

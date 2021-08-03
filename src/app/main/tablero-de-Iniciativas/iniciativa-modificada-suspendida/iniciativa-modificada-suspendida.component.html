@@ -164,7 +164,7 @@
         <mat-form-field appearance="outline" 
             fxFlex="1 0 auto" class="pl-4">
             <mat-label>Fecha de sesión</mat-label>
-            <input matInput [matDatepicker]="picker" [disabled]="this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'" formControlName="fechaSesion" [max]="maxDate">
+            <input matInput [matDatepicker]="picker" [disabled]="this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'" formControlName="fechaSesion" DatePickerFormat="DD/MM/YYYY" [max]="maxDate">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
             <mat-error>La fecha de sesión no es valida ej. 28/11/2020</mat-error>

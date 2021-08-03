@@ -123,12 +123,10 @@ export class GuardarIniciativasComponent implements OnInit {
 
     async ngOnInit() {
         var isoDateString = new Date().toISOString();
-        console.log(isoDateString);
-        console.log('1');
+      
         await this.obtenerDocumento();
         this.obtenerTiposIniciativas();
 
-        console.log(this.iniciativa);
         this.fileName = "";
         const fecha = new Date(); // Fecha actual
         let mes: any = fecha.getMonth() + 1; // obteniendo mes
@@ -142,13 +140,12 @@ export class GuardarIniciativasComponent implements OnInit {
         if (mes < 10) {
             mes = "0" + mes; // agrega cero si el menor de 10
         }
-        console.log(ano + "-" + mes + "-" + dia);
         // Validamos si es un documento nuevo
         if (this.iniciativa.id) {
             this.selectTipo = this.iniciativa.tipo_de_iniciativa.id;
             this.autores = this.iniciativa.autores;
             this.temas = this.iniciativa.tema;
-            console.log(this.iniciativa.fechaCreacion);
+          
             this.iniciativa.fechaCreacion =
                 this.iniciativa.fechaCreacion + "T16:00:00.000Z";
             this.iniciativa.fechaIniciativa =
@@ -199,10 +196,8 @@ export class GuardarIniciativasComponent implements OnInit {
             this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
 
                 // Buscamos permisos
-
-
                 for (const documento of resp.data) {
-                    //                console.log(documento.tipo_de_documento.bActivo);
+                  
                     idDocumento = '';
                     // Validamos permisos
 
@@ -354,7 +349,7 @@ export class GuardarIniciativasComponent implements OnInit {
                 // Actualizamos la iniciativa
                 if (this.iniciativa.estatus == "Registrada") {
                     reporte = await this.generaReport();
-                    console.log(reporte);
+                    
                     if (reporte === "err") {
                         return
                     }
@@ -410,8 +405,6 @@ export class GuardarIniciativasComponent implements OnInit {
 
                 if (this.iniciativa.estatus == "Registrada") {
                     reporte = await this.generaReport();
-                    console.log(reporte);
-
                     this.iniciativa.formatosTipoIniciativa = [this.documentos.id];
                 }
 
@@ -421,7 +414,6 @@ export class GuardarIniciativasComponent implements OnInit {
                     this.iniciativaService.guardarIniciativa(this.iniciativa).subscribe(
 
                         async (resp: any) => {
-                            console.log(resp);
                             if (resp.data) {
                                 this.iniciativa = resp.data;
                                 Swal.fire(
@@ -743,7 +735,6 @@ export class GuardarIniciativasComponent implements OnInit {
 
                 let puesto: any = await this.obtenerEmpleadosByIdPuesto(idPuesto[0]['cValor']);
 
-                console.log(puesto, 'iniciativa');
                 this.temas.forEach((element) => {
                     if (cTemas === "") {
                         cTemas = element.name;
@@ -931,11 +922,9 @@ export class GuardarIniciativasComponent implements OnInit {
                     tipoInformacion[0]["cValor"],
                     legislaturas[0]
                 );
-                if (documentoRespuesta.error) {
-                    console.log('err');
+                if (documentoRespuesta.error) {                    
                     resolve("err");
                 } else {
-                    console.log('No err');
                     const dd = {
                         header: {
                             columns: [
@@ -1133,9 +1122,7 @@ export class GuardarIniciativasComponent implements OnInit {
                 if (this.iniciativa.formatosTipoIniciativa.length > 0 || this.idDocumento.length > 5) {
 
                     if (this.idDocumento.length > 5) {
-                        console.log('despues');
                         this.documentos.id = this.idDocumento;
-                        console.log(this.documentos.id);
                     } else {
                         this.documentos.id = this.iniciativa.formatosTipoIniciativa[0].id;
                     }
@@ -1144,11 +1131,8 @@ export class GuardarIniciativasComponent implements OnInit {
                     this.documentoService.actualizarDocumentos(this.documentos).subscribe(
                         (resp: any) => {
                             if (resp.data) {
-                                this.documentos = resp.data;
-                                console.log('respuesta');
-                                console.log(resp.data.id);
+                                this.documentos = resp.data;                           
                                 this.idDocumento = resp.data._id;
-
                                 this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0]];
 
                                 resolve(this.documentos.id);
@@ -1184,7 +1168,6 @@ export class GuardarIniciativasComponent implements OnInit {
                         .subscribe(
                             (resp: any) => {
                                 if (resp) {
-                                    console.log("nuevo");
                                     this.documentos = resp.data;
                                     this.idDocumento = resp.data._id;
                                     this.documentos.fechaCarga = this.datePipe.transform(
@@ -1260,9 +1243,7 @@ export class GuardarIniciativasComponent implements OnInit {
                     d["cParametroAdministrado"] ===
                     "SSP-001-Tipo-de-Informacion"
             );
-            console.log(tipoExpediente);
             this.documentos.legislatura = legislaturas[0].id;
-            console.log(this.iniciativa.folioExpediente);
             this.documentos.folioExpediente = this.iniciativa.folioExpediente;
             this.documentos.tipo_de_documento = tipoDocumento[0]["cValor"];
             this.documentos.tipo_de_expediente = tipoExpediente[0]["cValor"];
@@ -1472,7 +1453,6 @@ export class GuardarIniciativasComponent implements OnInit {
                                 los documentos*/
 
                                 this.iniciativa.documentos.push(this.documentos.id);
-                                console.log(this.iniciativa.documentos);
                                 //this.iniciativa.documentos = [this.documentos.id];
                                 this.obtenerDocumento();
                                 if (result == "0") {
@@ -1545,7 +1525,6 @@ export class GuardarIniciativasComponent implements OnInit {
             }
             const fechaActual = dia + "/" + mes + "/" + anio;
             this.documentos.bActivo = true;
-            console.log(this.documentos);
             if (!this.documentos.id) {
                 this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
                 this.documentos.fechaCarga = this.documentos.fechaCreacion + 'T16:00:00.000Z';
@@ -1596,7 +1575,6 @@ export class GuardarIniciativasComponent implements OnInit {
                 .subscribe(
                     (resp: any) => {
                         if (resp.data) {
-                            console.log(resp.data);
                             this.documentosTemp = resp.data;
                             this.documentosTemp.fechaCreacion = moment(this.documentos.fechaCreacion).format('YYYY/MM/DD') + 'T16:00:00.000Z';
                             this.documentosTemp.fechaCarga = moment(this.documentos.fechaCarga).format('YYYY/MM/DD') + 'T16:00:00.000Z';
@@ -1679,8 +1657,6 @@ export class GuardarIniciativasComponent implements OnInit {
                 this.documentoService.borrarDocumentos(row).subscribe((resp: any) => {
                     let index: number = this.iniciativa.documentos.indexOf(row);
                     this.iniciativa.documentos.splice(index, 1);
-                    console.log('eliminado');
-                    console.log(this.iniciativa.documentos);
                     Swal.fire('Eliminado', 'El documento ha sido eliminado.', 'success');
                     this.obtenerDocumento();
                 }, err => {

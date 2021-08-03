@@ -30,7 +30,7 @@ export class IniciativasService {
 
      obtenerIniciativas(): any {
         let usr = JSON.parse(localStorage.getItem('usr'));
-        console.log(usr[0].data.id);
+      
         this.TOKEN = localStorage.getItem('token');
         let httpOptions = {
             headers: new HttpHeaders({

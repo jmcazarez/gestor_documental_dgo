@@ -17,7 +17,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { AmazingTimePickerModule } from 'amazing-time-picker';
-
 const routes: Routes = [
     {
         path: 'recepcion-de-iniciativa',

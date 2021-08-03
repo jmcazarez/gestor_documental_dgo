@@ -267,7 +267,6 @@ export class GuardarPrestamoComponent implements OnInit {
 
 
         } else {
-            console.log(this.selectPrestamo);
             this.prestamo.cSolicitante = this.form.get('cSolicitante').value;
             this.prestamo.cTipoPrestamo = this.form.get('cTipoPrestamo').value;
             const dFechaSolicitud = this.form.get('dFechaSolicitud').value;

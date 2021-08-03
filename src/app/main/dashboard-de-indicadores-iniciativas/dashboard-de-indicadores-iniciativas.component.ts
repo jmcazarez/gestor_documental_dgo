@@ -344,7 +344,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                                 this.arrComisiones.push(comisiones);
                             }
                         }
-                        console.log(this.arrComisiones);
                         resolve(resp);
                     },
                     (err) => {
@@ -367,7 +366,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         await this.iniciativaService.obtenerTiposIniciativas().subscribe(
             (resp: any) => {
                 this.arrTipo = resp;
-                console.log(this.arrTipo);
                 this.spinner.hide();
             },
             (err) => {
@@ -416,7 +414,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
 
         if ((value || "").trim()) {
             this.autores.push({ name: value.trim() });
-            console.log(this.autores);
         }
 
         // Reset the input value
@@ -430,7 +427,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
 
         if (index >= 0) {
             this.autores.splice(index, 1);
-            console.log(this.autores);
         }
     }
 
@@ -615,8 +611,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     //let arrAutoresIniciativas = this.arrCreacionGraficaIniciativaAut;
                 }
 
-                console.log(this.arrCreacionGraficaIniciativaAut);
-
+               
                 //console.log(moment(this.arrCreacionGraficaIniciativaAcumulada[0].fechaFiltro).format('YYYY'));
                 
                 while (i <= this.arrCreacionGraficaIniciativaAcumulada.length - 1) {
@@ -648,19 +643,16 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 let noData = false;
 
                 if(this.selectTipo !== undefined && this.selectTipo !== ''){
-                    console.log(this.selectTipo);
                     reportAcumulado = this.arrCreacionGraficaIniciativaAut.filter(element => element.tipoIniciativa.id === this.selectTipo);
                     if(reportAcumulado.length === 0){
                         noData = true;
                     }
                 }
 
-                console.log(reportAcumulado);
                 if(noData == true){
                     reportAcumulado = [];
                 } else if (reportAcumulado.length === 0){
                     if(this.selectedLegislatura !== undefined && this.selectedLegislatura !== ''){
-                        console.log(this.selectedLegislatura);
                         reportAcumulado = this.arrCreacionGraficaIniciativaAut.filter(element => element.legislatura == this.selectedLegislatura);
                         if(reportAcumulado.length === 0){
                             noData = true;
@@ -675,12 +667,10 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     }
                 }
 
-                console.log(reportAcumulado);
                 if(noData == true){
                     reportAcumulado = [];
                 } else if (reportAcumulado.length === 0){
                     if(this.selectedComision !== undefined && this.selectedComision !== ''){
-                        console.log(this.selectedComision);
                         reportAcumulado = this.arrCreacionGraficaIniciativaAut.filter(element => element.comisionesId == this.selectedComision);
                         if(reportAcumulado.length === 0){
                             noData = true;
@@ -695,7 +685,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     }
                 }
 
-                console.log(reportAcumulado);
                 if (reportAcumulado.length === 0){
                     reportAcumulado = this.arrCreacionGraficaIniciativaAut;
                     if(reportAcumulado.length === 0){
@@ -707,7 +696,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     reportAcumulado = [];
                 }
 
-                console.log(reportAcumulado);
 
                 for (let i = 0, max = reportAcumulado.length; i < max; i += 1) {
                     if(moment(reportAcumulado[i].fechaFiltro).format('YYYY-MM-DD') >= fechaIni && moment(reportAcumulado[i].fechaFiltro).format('YYYY-MM-DD') <= fechaFin){
@@ -796,7 +784,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 let autorsValueReport = [];
                 let autorsEqualReport = [];
 
-                console.log(separatedAutorsReport);
 
                 if(this.autorCompare == "No existen autores registrados de acuerdo al filtro de búsqueda."){
                     normalizedInputArrayReport.forEach(value => {
@@ -809,7 +796,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 }
 
                 autorsValueReport.sort((a, b) => b.valor - a.valor);
-                console.log(autorsValueReport);
 
                 autorsValueReport.forEach(autors => {
                     if (!autorsEqualReport.find(aut => aut.autor == autors.autor && aut.valor == autors.valor)) {
@@ -817,7 +803,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                         autorsEqualReport.push({ autor, valor });
                     }
                 });
-                console.log(autorsEqualReport);
 
                 let autoresFiltrados = [];
                 let autorsObject = [];
@@ -834,7 +819,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                             autorsObject.push({"autor": ele.autor, "valor": ele.valor});
                         });
                     });
-                    console.log(autorsObject);
                 }
                 
                 this.arrReporteAutor = [[ 'Autor', 'Cantidad total de iniciativas propuestas']];
@@ -849,7 +833,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     }
                 }
 
-                console.log(this.arrReporteAutor);
                 //console.log(this.arrcreacionGraficaAutoresValor);
 
                 this.arrCreacionGraficaIniciativaAcumulada.forEach(element => {
@@ -960,7 +943,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                             adicionObject.push({"autor": ele.autor, "valor": ele.valor});
                         });
                     });
-                    console.log(adicionObject);
                 }
 
                 this.arrReporteAdicion = [[ 'Autor', 'Cantidad total de iniciativas propuestas']];
@@ -1092,7 +1074,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
 
                 this.arrReporteEstatusDecreto = [[ 'Folio', 'Fecha de iniciativa', 'Fecha de estatus', 'Estatus', 'Autores', 'Tema']];
 
-                console.log(reportAcumulado);
 
                 for (let i = 0, max = reportAcumulado.length; i < max; i += 1) {
                     if(reportAcumulado[i].estatus === 'Publicada'){
@@ -1380,7 +1361,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                 let noData = false;
 
                 if(this.selectTipo !== undefined && this.selectTipo !== ''){
-                    console.log(this.selectTipo);
                     reportIniciativaAcumulada = this.arrCreacionGraficaIniciativaAutAcum.filter(element => element.tipoIniciativa.id === this.selectTipo);
                     if(reportIniciativaAcumulada.length === 0){
                         noData = true;
@@ -1391,7 +1371,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     reportIniciativaAcumulada = [];
                 } else if (reportIniciativaAcumulada.length === 0){
                     if(this.selectedLegislatura !== undefined && this.selectedLegislatura !== ''){
-                        console.log(this.selectedLegislatura);
                         reportIniciativaAcumulada = this.arrCreacionGraficaIniciativaAutAcum.filter(element => element.legislatura == this.selectedLegislatura);
                         if(reportIniciativaAcumulada.length === 0){
                             noData = true;
@@ -1410,7 +1389,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     reportIniciativaAcumulada = [];
                 } else if (reportIniciativaAcumulada.length === 0){
                     if(this.selectedComision !== undefined && this.selectedComision !== ''){
-                        console.log(this.selectedComision);
                         reportIniciativaAcumulada = this.arrCreacionGraficaIniciativaAutAcum.filter(element => element.comisionesId == this.selectedComision);
                         if(reportIniciativaAcumulada.length === 0){
                             noData = true;
@@ -1436,7 +1414,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                     reportIniciativaAcumulada = [];
                 }
 
-                console.log(reportIniciativaAcumulada);
 
                 for (let i = 0, max = reportIniciativaAcumulada.length; i < max; i += 1) {
 
@@ -1474,9 +1451,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
     valorMesAnio(event: any): void {
 
         moment.locale('es');
-
-        console.log(this.fechaAcumulada);
-        console.log(moment(this.fechaAcumulada).format('MMMM'))
 
         let filtroMes = '';
         filtroMes = moment(this.fechaAcumulada).format('MMMM');
@@ -1531,9 +1505,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
     valorMesAnioArchivada(event: any): void {
 
         moment.locale('es');
-
-        console.log(this.fechaAcumulada);
-        console.log(moment(this.fechaArchivadas).format('MMMM'))
 
         let filtroMes = '';
         filtroMes = moment(this.fechaArchivadas).format('MMMM');
@@ -2524,10 +2495,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
             const fechaActual = dia + "/" + mes + "/" + anio;
 
             let canvas = <HTMLCanvasElement> document.getElementById('chart2');
-            
-            console.log(canvas.width);
-            console.log(canvas.height);
-
+        
             let fullQuality = canvas.toDataURL('image/png', 1);
 
             /*await this.imageService.imageRedimensionada({"image": fullQuality}).subscribe((resp: any) => {
@@ -2708,9 +2676,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
             const fechaActual = dia + "/" + mes + "/" + anio;
 
             let canvas = <HTMLCanvasElement> document.getElementById('chart3');
-            
-            console.log(canvas.width);
-            console.log(canvas.height);
+         
 
             let fullQuality = canvas.toDataURL('image/png', 1);
 
@@ -2930,8 +2896,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
 
             let canvas = <HTMLCanvasElement> document.getElementById('chart4');
             
-            console.log(canvas.width);
-            console.log(canvas.height);
 
             let fullQuality = canvas.toDataURL('image/png', 1);
 
@@ -3149,9 +3113,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
             const fechaActual = dia + "/" + mes + "/" + anio;
 
             let canvas = <HTMLCanvasElement> document.getElementById('chart5');
-            
-            console.log(canvas.width);
-            console.log(canvas.height);
+     
 
             let fullQuality = canvas.toDataURL('image/png', 1);
 
@@ -3334,8 +3296,6 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
 
             let canvas = <HTMLCanvasElement> document.getElementById('chart6');
             
-            console.log(canvas.width);
-            console.log(canvas.height);
 
             let fullQuality = canvas.toDataURL('image/png', 1);
 

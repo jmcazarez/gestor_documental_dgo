@@ -89,10 +89,8 @@ export class ResultadoDeBusquedaComponent implements OnInit {
 
             // Si tiene permisos para consultar
             if (this.optConsultar) {
-                // console.log(resp.data);
                 for (const documento of resp.data) {
-                    //                console.log(documento.tipo_de_documento.bActivo);
-                    idDocumento = '';
+                   idDocumento = '';
                     // Validamos permisos
 
                     if (documento.tipo_de_documento) {

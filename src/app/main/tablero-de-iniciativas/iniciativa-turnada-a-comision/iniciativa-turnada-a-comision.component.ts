@@ -39,6 +39,8 @@ import * as moment from 'moment';
 import { GuardarDocumentosComponent } from '../../tablero-de-documentos/guardar-documentos/guardar-documentos.component';
 import { IniciativaModificadaSuspendidaComponent } from '../iniciativa-modificada-suspendida/iniciativa-modificada-suspendida.component';
 import { EmpleadosDelCongresoService } from "services/empleados-del-congreso.service";
+import { DateAdapter } from "@angular/material/core";
+import { DateFormat } from "app/main/tablero-de-documentos/guardar-documentos/date-format";
 
 export interface Autores {
     name: string;
@@ -78,7 +80,7 @@ export class Documentos {
     selector: 'app-iniciativa-turnada-a-comision',
     templateUrl: './iniciativa-turnada-a-comision.component.html',
     styleUrls: ['./iniciativa-turnada-a-comision.component.scss'],
-    providers: [DatePipe],
+    providers: [DatePipe, { provide: DateAdapter, useClass: DateFormat }],
 })
 
 export class IniciativaTurnadaAComisionComponent implements OnInit {
@@ -216,7 +218,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
-        console.log('3');
+      
         if (this.iniciativa.estatus !== 'Turnar dictamen a secretaría de servicios parlamentarios') {
             await this.obtenerDocumento();
         }
@@ -237,6 +239,13 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
         if (this.iniciativa.actasSesion === undefined) {
             this.iniciativa.actasSesion = [];
+            this.sinActa = true;
+        } else {
+            if (this.iniciativa.actasSesion.length > 0) {
+                if (this.iniciativa.actasSesion[0].actasSesion === undefined) {
+                    this.sinActa = true;
+                }
+            }
         }
         if (this.iniciativa.anexosTipoIniciativa === undefined) {
             this.iniciativa.anexosTipoIniciativa = [];
@@ -307,7 +316,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             } else {
                 this.etiquetas = [];
             }
-            console.log( this.iniciativa.fechaCreacion);
+          
             this.iniciativa.fechaCreacion =
                 this.iniciativa.fechaCreacion + "T16:00:00.000Z";
             this.iniciativa.fechaIniciativa =
@@ -575,7 +584,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 }).subscribe((resp: any) => {
                     if (resp) {
                         this.iniciativa.actasSesion = [resp.data.id];
-                        console.log(this.iniciativa);
                         this.iniciativaService.actualizarIniciativa(this.iniciativa).subscribe((resp: any) => {
                             if (resp) {
                                 this.spinner.hide();
@@ -1137,7 +1145,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
     }
     async generaReport(): Promise<string> {
-        console.log('generando reporte');
         this.documentos = new DocumentosModel();
         //Seteamos la libreria de moment en español.
         moment.locale('es');
@@ -1166,7 +1173,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             let puestoSecretarioGeneral: any[];
             let puestoSecretarioCentroInvestigacion: any[];
             let legislaturas = await this.obtenerLegislatura();
-          
+
             let parametrosSSP001 = await this.obtenerParametros('SSP-001');
             let parametrosSSP004 = await this.obtenerParametros('SSP-004');
             let parametrosCIEL008 = await this.obtenerParametros('CIEL-008');
@@ -1178,7 +1185,11 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
                 idFirmasPorEtapas = parametrosSSP008.filter((d) => d['cParametroAdministrado'] === 'SSP-008-Firmas');
-            } else {
+            } else if (this.iniciativa.estatus === 'Turnar dictamen a Secretaría General') {
+             
+                idFirmasPorEtapas = parametrosCIEL008.filter((d) => d['cParametroAdministrado'] === 'CIEL-008-Firmas');
+            }
+            else {
                 idFirmasPorEtapas = parametrosSSP004.filter((d) => d['cParametroAdministrado'] === 'SSP-004-Firmas');
             }
 
@@ -1194,14 +1205,15 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             } if (this.iniciativa.estatus === 'Turnar dictamen a Mesa Directiva') {
                 idPuesto = parametrosSSP008.filter((d) => d['cParametroAdministrado'] === 'SSP-008-Mesa-Directiva-Puesto');
             }
-        
-            let empleados: any = await this.obtenerEmpleadosByIdPuesto( idPuesto[0]['cValor']);
-           
-            console.log(empleados, 'iniciativa');
             let firmasPorEtapas = await this.obtenerFirma(idFirmasPorEtapas[0]['cValor']);
 
+            let puesto = [] // firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === idPuesto[0]['cValor']); // se comento por tema de dudas con el requerimiento.
 
-            let puesto = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === idPuesto[0]['cValor']);
+            let empleados: any = await this.obtenerEmpleadosByIdPuesto(idPuesto[0]['cValor']);
+
+
+
+
 
             if (empleados.length === 0) {
                 Swal.fire('Error', 'Configuración de participantes incorrecta.', 'error');
@@ -1233,12 +1245,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             let tipoSesion = this.selectedSesion;
             let fechaSesion = moment(this.form.get('fechaSesion').value).format('LL');
-            let diaSesion = moment(this.form.get('fechaSesion').value).format('DD');
-            console.log(diaSesion);
-            let mesSesion = moment(this.form.get('fechaSesion').value).format('MMMM');
-            console.log(mesSesion);
+            let diaSesion = moment(this.form.get('fechaSesion').value).format('DD');          
+            let mesSesion = moment(this.form.get('fechaSesion').value).format('MMMM');          
             let anioSesion = moment(this.form.get('fechaSesion').value).format('YYYY');
-            console.log(anioSesion);
+          
             let tipoDocumento = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Tipo-de-Documento');
             let tipoExpediente = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Tipo-de-Expediente');
             let tipoInformacion = parametrosSSP001.filter((d) => d['cParametroAdministrado'] === 'SSP-001-Tipo-de-Informacion');
@@ -1263,14 +1273,23 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             // Creamos el reporte
 
             header = this.configuraHeaderReport(legislaturas[0]["cLegislatura"] + ' LEGISLATURA ' + legislaturas[0]["cPeriodoLegislatura"]);
-
-            presente.push({
-                text: "Lic. " + empleados[0]['nombre'] + ' ' + empleados[0]['apellidoPaterno'] + ' ' + empleados[0]['apellidoMaterno'],
-                fontSize: 14,
-                bold: true,
-                alignment: "left",
-                margin: [0, 10, 0, 0],
-            });
+            if (puesto.length > 0) {
+                presente.push({
+                    text: "Lic. " + puesto[0]['nombre'] + ' ' + puesto[0]['apellidoPaterno'] + ' ' + puesto[0]['apellidoMaterno'],
+                    fontSize: 14,
+                    bold: true,
+                    alignment: "left",
+                    margin: [0, 10, 0, 0],
+                });
+            } else {
+                presente.push({
+                    text: "Lic. " + empleados[0]['nombre'] + ' ' + empleados[0]['apellidoPaterno'] + ' ' + empleados[0]['apellidoMaterno'],
+                    fontSize: 14,
+                    bold: true,
+                    alignment: "left",
+                    margin: [0, 10, 0, 0],
+                });
+            }
             if (this.iniciativa.estatus === 'Turnar iniciativa a comisión' || this.iniciativa.estatus === 'Turnada a comisión para modificación') {
                 presente.push({
                     text: "Director del Centro de Investigación y",
@@ -1605,7 +1624,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             });
 
             presente.push({
-                text: "Lic. " + puestoSecretario[0]['nombre'] + ' ' + puestoSecretario[0]['apellidoPaterno'] + ' ' + puestoSecretario[0]['apellidoMaterno'], 
+                text: "Lic. " + puestoSecretario[0]['nombre'] + ' ' + puestoSecretario[0]['apellidoPaterno'] + ' ' + puestoSecretario[0]['apellidoMaterno'],
                 fontSize: 12,
                 bold: true,
                 alignment: "center",
@@ -1634,6 +1653,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 });
             }
 
+            /*
             if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
                 presente.push({
                     text: "Lic. " + puestoSecretario[0]['nombre'] + ' ' + puestoSecretario[0]['apellidoPaterno'] + ' ' + puestoSecretario[0]['apellidoMaterno'], 
@@ -1649,7 +1669,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     bold: true,
                     alignment: "center",
                 });
-            }
+            }*/
 
             const aa = {
                 header: {
@@ -1711,7 +1731,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             } if (this.iniciativa.estatus === 'Turnar dictamen a Secretaría General') {
                 await this.upload(base64, 'Formato CIEL 08.pdf');
                 await this.guardarDocumentoCiel(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
-            } if (this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios') {
+            } if (this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios') {               
                 await this.upload(base64, 'SSP 005.pdf');
                 await this.guardarSSP05(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
             } if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
@@ -1789,8 +1809,12 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 await this.upload(base64, 'Formato CIEL 08.pdf');
                 await this.guardarDocumentoCiel(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
             } if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {
-                await this.upload(base64, 'SSP 005.pdf');
+                await this.upload(base64, 'SSP 008.pdf');
                 await this.guardarSSP08(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
+            } if (this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios') {
+                console.log('entro SSP05');
+                await this.upload(base64, 'SSP 005.pdf');
+                await this.guardarSSP05(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
             }
             resolve('ok');
         });
@@ -1942,8 +1966,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                 }
 
-                console.log('guardando documento');
-                console.log(this.documentosGuardar);
                 if (this.iniciativa.formatosTipoIniciativa.length > 1) {
 
                     this.documentosGuardar.id = this.iniciativa.formatosTipoIniciativa[1].id
@@ -2078,7 +2100,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             this.idDocumento = resp.data._id;
                             this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
                             this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
-                            console.log('entro 2')
+                          
                             this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.documentos.id];
                             // Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
 
@@ -2137,7 +2159,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                 if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
                     if (this.iniciativa.formatosTipoIniciativa.length > 3) {
-                        console.log('3')
                         this.documentos.id = this.iniciativa.formatosTipoIniciativa[3].id
 
 
@@ -2155,7 +2176,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                                 this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
                                 this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
-                                console.log('4')
+                              
                                 this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0], this.iniciativa.formatosTipoIniciativa[1], this.iniciativa.formatosTipoIniciativa[2], this.documentos.id];
                                 resolve(this.documentos.id);
                             } else {
@@ -2173,7 +2194,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             if (resp) {
 
                                 this.documentos = resp.data;
-                                console.log('5')
                                 this.idDocumento = resp.data._id;
                                 this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
                                 this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
@@ -2209,7 +2229,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                             if (resp) {
                                 this.documentos = resp.data;
-                                console.log('6')
                                 this.idDocumento = resp.data._id;
 
                                 this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
@@ -2230,8 +2249,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                         this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
 
                             if (resp) {
-                                7
-                                console.log('4')
+                                
                                 this.documentos = resp.data;
 
                                 this.idDocumento = resp.data._id;
@@ -2298,7 +2316,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                 if (this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa') {
                     if (this.iniciativa.formatosTipoIniciativa.length > 4) {
-                        console.log('9')
                         this.documentos.id = this.iniciativa.formatosTipoIniciativa[4].id
 
 
@@ -2315,9 +2332,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                                 this.idDocumento = resp.data._id;
 
                                 this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
-                                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
-                                console.log('10')
-                                console.log(this.iniciativa.formatosTipoIniciativa);
+                                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');                    
                                 this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0],
                                 this.iniciativa.formatosTipoIniciativa[1], this.iniciativa.formatosTipoIniciativa[2],
                                 this.iniciativa.formatosTipoIniciativa[3], this.documentos.id];
@@ -2375,7 +2390,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                             if (resp) {
                                 this.documentos = resp.data;
-                                console.log('13')
                                 this.idDocumento = resp.data._id;
 
                                 this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
@@ -2399,7 +2413,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                             if (resp) {
 
                                 this.documentos = resp.data;
-                                console.log('14')
                                 this.idDocumento = resp.data._id;
                                 this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
                                 this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
@@ -2472,7 +2485,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     }
                 });
                 this.documentos = this.iniciativa.formatosTipoIniciativa[1];
-                console.log(this.documentos);
                 this.documentos.metacatalogos = [
 
                     {
@@ -2520,7 +2532,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                         // tslint:disable-next-line: no-shadowed-variable
                         dialogRef.afterClosed().subscribe(result => {
-                            console.log(result);
+                            
                             if (result == '0') {
                                 this.cerrar('');
                                 // this.obtenerDocumentos();
@@ -2572,8 +2584,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     }
                 });
                 this.documentos = this.iniciativa.formatosTipoIniciativa[2];
-                console.log('turnada a secretaria general');
-                console.log(this.documentos);
+              
                 this.documentos.metacatalogos = [
 
                     {
@@ -2620,7 +2631,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                         // tslint:disable-next-line: no-shadowed-variable
                         dialogRef.afterClosed().subscribe(result => {
-                            console.log(result);
+                          
                             if (result == '0') {
                                 this.cerrar('');
                                 // this.obtenerDocumentos();
@@ -2672,8 +2683,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     }
                 });
                 this.documentos = this.iniciativa.formatosTipoIniciativa[3];
-                console.log('Turnar dictamen a secretaría de servicios parlamentarios');
-                console.log(this.documentos);
+               
                 this.documentos.metacatalogos = [
 
                     {
@@ -2719,7 +2729,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                         // tslint:disable-next-line: no-shadowed-variable
                         dialogRef.afterClosed().subscribe(result => {
-                            console.log(result);
+                            
 
                             if (result == '0') {
                                 this.cerrar('');
@@ -2737,7 +2747,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 });
             } if (this.iniciativa.estatus == 'Turnar dictamen a secretaría de servicios parlamentarios' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública') {
                 this.spinner.show();
-                console.log('cuenta publica');
                 const fecha = new Date(); // Fecha actual
                 let mes: any = fecha.getMonth() + 1; // obteniendo mes
                 let dia: any = fecha.getDate(); // obteniendo dia
@@ -2775,8 +2784,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 });
 
                 this.documentos = this.iniciativa.formatosTipoIniciativa[2];
-                console.log('Turnar dictamen a secretaría de servicios parlamentarios');
-                console.log(this.documentos);
+                
                 this.documentos.metacatalogos = [
 
                     {
@@ -2823,7 +2831,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                         // tslint:disable-next-line: no-shadowed-variable
                         dialogRef.afterClosed().subscribe(result => {
-                            console.log(result);
+                           
 
                             if (result == '0') {
                                 this.cerrar('');
@@ -2878,8 +2886,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 });
 
                 this.documentos = this.iniciativa.formatosTipoIniciativa[4];
-                console.log('Turnar dictamen a Mesa Directiva');
-                console.log(this.documentos);
+                
                 this.documentos.metacatalogos = [
 
                     {
@@ -2926,7 +2933,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                         // tslint:disable-next-line: no-shadowed-variable
                         dialogRef.afterClosed().subscribe(result => {
-                            console.log(result);
+                         
 
                             if (result == '0') {
                                 this.cerrar('');
@@ -2944,7 +2951,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 });
             } if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública') {
                 this.spinner.show();
-                console.log('cuenta publica');
                 const fecha = new Date(); // Fecha actual
                 let mes: any = fecha.getMonth() + 1; // obteniendo mes
                 let dia: any = fecha.getDate(); // obteniendo dia
@@ -2980,10 +2986,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                         cTema = cTema + ", " + element.name;
                     }
                 });
-                console.log('15')
                 this.documentos = this.iniciativa.formatosTipoIniciativa[3];
-                console.log('Turnar dictamen a secretaría de servicios parlamentarios');
-                console.log(this.documentos);
+
                 this.documentos.metacatalogos = [
 
                     {
@@ -3030,7 +3034,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                         // tslint:disable-next-line: no-shadowed-variable
                         dialogRef.afterClosed().subscribe(result => {
-                            console.log(result);
+                            
 
                             if (result == '0') {
                                 this.cerrar('');
@@ -3270,7 +3274,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                                     this.fileInformeName = this.iniciativa.informeDeResultadosRevision.cNombreDocumento;
                                 } else if (tipo === '4') {
                                     this.fileActaDeSesionSend = this.documentos;
-                                    console.log(this.fileActaDeSesionSend);
                                     this.fileActaDeSesion = this.documentos.cNombreDocumento;
                                     this.sinActa = false;
                                 }
@@ -3284,7 +3287,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                                     //this.iniciativa.documentos.push(this.documentos);
                                     this.iniciativa.documentos = [this.documentos.id];
-                                    console.log(this.iniciativa.documentos);
                                     this.obtenerDocumento();
                                 }
                                 if (result == "0") {
@@ -3450,8 +3452,73 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         }
     }
 
-    async editarDocumento(documento: DocumentosModel, tipo: string): Promise<void> {
+    async obtenerDocumentoPorId(tipo: string): Promise<void> {
+        let documento: DocumentosModel;
+        let idDocumento: string = '';
+        if (this.iniciativa.actasSesion[0]) {
+            if (this.iniciativa.actasSesion[0].actasSesion) {
+                idDocumento = this.iniciativa.actasSesion[0].actasSesion;
+            } else {
+                idDocumento = this.fileActaDeSesionSend.id;
+            }
+        } else {
+            idDocumento = this.fileActaDeSesionSend.id;
 
+        }
+
+        this.documentoService.obtenerDocumentoById(idDocumento).subscribe((resp: any) => {
+            if (resp) {
+                documento = resp.data[0]
+                documento.tipo_de_documento = documento.tipo_de_documento.id;
+                documento.tipo_de_expediente = documento.tipo_de_expediente.id;
+                documento.visibilidade = documento.visibilidade.id;
+                documento.legislatura = documento.legislatura.id;
+                if (documento.actasSesion) {
+                    documento.actasSesion = documento.actasSesion.id;
+                }
+                documento.iniciativa = this.iniciativa.id;
+                const fechaCreacion = new Date(documento.fechaCreacion);
+                let mesCreacion: any = fechaCreacion.getMonth() + 1; // obteniendo mes
+                let diaCreacion: any = fechaCreacion.getDate(); // obteniendo dia      
+                const anoCreacion = fechaCreacion.getFullYear(); // obteniendo año
+
+                if (diaCreacion < 10) {
+                    diaCreacion = '0' + diaCreacion; // agrega cero si el menor de 10
+                }
+                if (mesCreacion < 10) {
+                    mesCreacion = '0' + mesCreacion; // agrega cero si el menor de 10
+                }
+
+                documento.fechaCreacion = anoCreacion + '-' + mesCreacion + '-' + diaCreacion;
+
+                const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
+                    width: '60%',
+                    height: '80%',
+                    disableClose: true,
+                    data: documento,
+                });
+
+                dialogRef.afterClosed().subscribe(result => {
+                    if (result) {
+                        delete result.actasSesion;
+                        if (result.documento) {
+                            this.clasificarDocAnex(result, tipo);
+                        }
+                    }
+                });
+            } else {
+                this.spinner.hide();
+                Swal.fire('Error', 'Ocurrió un error al obtener el documento. ' + resp.error.data, 'error');
+            }
+        }, err => {
+            this.spinner.hide();
+            console.log(err);
+            Swal.fire('Error', 'Ocurrió un error al obtener el documento.' + err.error.data, 'error');
+        });
+    }
+
+    async editarDocumento(documento: DocumentosModel, tipo: string): Promise<void> {
+      
         const fechaCreacion = new Date(documento.fechaCreacion);
         let mesCreacion: any = fechaCreacion.getMonth() + 1; // obteniendo mes
         let diaCreacion: any = fechaCreacion.getDate(); // obteniendo dia      
@@ -3477,12 +3544,12 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 d["cParametroAdministrado"] ===
                 "SSP-001-Tipo-de-Informacion"
         );
-        console.log(documento);
 
         documento.tipo_de_documento = tipoDocumento[0]["cValor"];
         documento.tipo_de_expediente = tipoExpediente[0]["cValor"];
         documento.visibilidade = tipoInformacion[0]["cValor"];
         documento.disabled = false;
+
         if (tipo === '2') {
             documento.iniciativa = this.iniciativa.id;
             documento.iniciativaOficioEnvioDeInforme = this.iniciativa.id;
@@ -3492,10 +3559,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         } else if (tipo === '1') {
             documento.iniciativa = this.iniciativa.id;
         }
-        console.log('entro');
         //documento.fechaCreacion = anoCreacion + '-' + mesCreacion + '-' + diaCreacion + 'T16:00:00.000Z';
 
-        console.log(documento);
         // Abrimos modal de guardar perfil
         const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
             width: '60%',

@@ -1539,10 +1539,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                             }
 
                             if (new Date(row["Fecha de creación"])) {
-                                console.log(this.datePipe.transform(
-                                    row["Fecha de creación"],
-                                    "yyyy-MM-dd"
-                                ));
+                            
                                 this.documentos[x].fechaCreacion =
                                     this.datePipe.transform(
                                         row["Fecha de creación"],
@@ -1564,7 +1561,6 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                 row["Tipo de expediente"] &&
                                 row["Tipo de expediente"].length > 0
                             ) {
-                                console.log(this.arrExpediente);
                                 const encontro = this.arrExpediente.find(
                                     (tipo: {
                                         cDescripcionTipoExpediente: string;
@@ -1575,9 +1571,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
 
                                 if (encontro) {
                                     arrExpedienteTemp = this.arrExpediente.filter((d) => d.cDescripcionTipoExpediente.toLowerCase().indexOf(row["Tipo de expediente"].toLowerCase()) !== -1);
-                                    console.log(arrExpedienteTemp);
-                                    console.log(arrExpedienteTemp.filter((d) => d.descripcionTiposDocumentos.toLowerCase().indexOf(row["Tipo de documento"].toLowerCase()) !== -1));
-                                    if (arrExpedienteTemp.filter((d) => d.descripcionTiposDocumentos.toLowerCase().indexOf(row["Tipo de documento"].toLowerCase()) !== -1).length > 0) {
+                                   if (arrExpedienteTemp.filter((d) => d.descripcionTiposDocumentos.toLowerCase().indexOf(row["Tipo de documento"].toLowerCase()) !== -1).length > 0) {
                                         this.documentos[x].tipo_de_expediente =
                                             encontro.id;
                                         this.documentos[x].expediente =
@@ -1618,8 +1612,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                 }
                             }
                             if (row["Folio de expediente"]) {
-                                console.log(row["Folio de expediente"]);
-                                // Se agrego por requerimiento de hilda cuando un documento es acta no lleva folio de expediente
+                               // Se agrego por requerimiento de hilda cuando un documento es acta no lleva folio de expediente
                                 if (row["Tipo de documento"] === 'Acta') {
                                     this.documentos[x].folioExpediente = "";
                                 } else {

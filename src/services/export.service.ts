@@ -14,7 +14,6 @@ export class ExportService {
     public exportAsExcelFile(rows: any[], excelFileName: string): void {
         if (rows.length > 0) {
 
-            // console.log(XLSX.utils.json_to_sheet(rows));
             const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(rows);
             const workbook: XLSX.WorkBook = { Sheets: { Hoja1: worksheet }, SheetNames: ['Hoja1'] };
             const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });

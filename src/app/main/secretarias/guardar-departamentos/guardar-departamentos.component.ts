@@ -42,7 +42,6 @@ export class GuardarDepartamentosComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public direcciones: DireccionesModel,
     ) { }
     ngOnInit(): void {
-        console.log(this.idDireccion)
         this.obtenerDepartamento();
     }
 
@@ -166,7 +165,6 @@ export class GuardarDepartamentosComponent implements OnInit {
 
     limpiar(): void{
         this.valueBuscador = '';
-        console.log('buscador' + this.valueBuscador);
     }
 
     cerrar(ent): void {

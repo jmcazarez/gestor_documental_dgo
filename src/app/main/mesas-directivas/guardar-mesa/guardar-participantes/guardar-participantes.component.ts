@@ -237,11 +237,7 @@ export class GuardarParticipantesComponent implements OnInit {
             }
         });
 
-        console.log(this.mesas);
-        console.log(idDiputados);
-        console.log(idValue);
-        console.log(idEqual);
-
+ 
         if (repetido === false) {
             this.cerrar(this.mesas);
         }

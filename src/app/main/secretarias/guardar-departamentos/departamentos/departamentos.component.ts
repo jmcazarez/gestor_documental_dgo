@@ -30,7 +30,6 @@ export class DepartamentosComponent implements OnInit {
     ngOnInit(): void {
         // Form reactivo
         this.direccionId = this.usuariosService.idDireccion;
-        console.log('Id de direccion '+this.direccionId);
         this.form = this.formBuilder.group({
             descripcionDepartamento: [this.departamentos.cDescripcionDepartamento, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
             estatus: this.departamentos.bActivo,
@@ -40,7 +39,6 @@ export class DepartamentosComponent implements OnInit {
     async guardarDepartamento(): Promise<void> {
         this.spinner.show();
         // Guardamos dependencia
-        // console.log(this.secretaria);
         // Asignamos valores a objeto.
         let idDireccion = this.usuariosService.idDireccion;
         this.departamentos.bActivo = this.form.get('estatus').value;
@@ -54,7 +52,6 @@ export class DepartamentosComponent implements OnInit {
             cDescripcionDepartamento: cDepartamento,
             direcciones: idDireccion
         };
-        console.log(departamentos);
         if (this.departamentos.id) {
 
             // Actualizamos el secretaria

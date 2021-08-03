@@ -69,8 +69,6 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
             descripcion: 'Completo'
         });
 
-        await this.obtenerTiposLegislaturas();
-        await this.obtenerEmpleados();
 
         this.fileName = '';
         const fecha = new Date(); // Fecha actual
@@ -86,13 +84,16 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
         if (mes < 10) {
             mes = '0' + mes; // agrega cero si el menor de 10
         }
-
-
+    
         // Validamos si es un documento nuevo
         if (this.recepcion.id) {
             this.selectLegislatura = this.recepcion.legislatura.id;
-            this.selectEmisor = this.recepcion.emisor[0].id;
-            this.selectReceptor = this.recepcion.receptor[0].id;
+            if (this.recepcion.emisor[0]) {
+                this.selectEmisor = this.recepcion.emisor[0].id;
+            }
+            if (this.recepcion.receptor[0]) {
+                this.selectReceptor = this.recepcion.receptor[0].id;
+            }
             this.recepcion.fechaCreacion = this.datePipe.transform(this.recepcion.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
             this.recepcion.fechaRecepcion = this.recepcion.fechaRecepcion + 'T16:00:00.000Z';
             this.selectEstado = this.recepcion.estatus;
@@ -124,6 +125,9 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
             notas: [{ value: this.recepcion.notas, disabled: false }, [Validators.maxLength(500)]],
 
         });
+
+        await this.obtenerTiposLegislaturas();
+        await this.obtenerEmpleados();
 
 
 
@@ -204,7 +208,7 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
         });
     }
 
-    
+
 
     async obtenerEmpleados(): Promise<void> {
         // Obtenemos empleados

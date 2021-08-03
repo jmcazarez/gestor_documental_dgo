@@ -311,16 +311,12 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
 
                 const date = moment(mesIni).add(meses, 'month').format('YYYY-MM-DD');
                 let mes = moment(date).format('MMMM');
-                console.log('mes ini')
-                console.log(date);
-                console.log(mes);
+        
                 inicial = moment(inicial).add(meses, 'month').format('YYYY-MM-DD');
                 this.arrMeses.push([mes]);
                 meses++;
             }
-
-            console.log('Meses graficados');
-            console.log(this.arrMeses);*/
+*/
             
 
             if (this.selectedLegislatura !== undefined && this.selectedLegislatura !== '') {
@@ -348,13 +344,10 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
             }
             // Obtenemos los entes
 
-            console.log('filtro');
-            console.log(filtroReporte);
             
             await this.actasSesions.obtenerActasSesionsFiltrado(filtroReporte).subscribe((resp: any) => {
                 this.arrCreacionGraficaAcumulada = resp.anioTotal;
 
-                //console.log(moment(this.arrCreacionGraficaAcumulada[0].fechaFiltro).format('YYYY'));
 
                 while (i <= this.arrCreacionGraficaAcumulada.length - 1) {
                     this.arrCreacionGraficaAcumulada[i].cTiempo = moment(this.arrCreacionGraficaAcumulada[i].fechaFiltro).format('MMMM');
@@ -362,7 +355,6 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
                     i++
                 }
 
-                console.log(this.arrCreacionGraficaAcumulada);
 
                 this.sesionesAcumuladasMes = this.arrCreacionGraficaAcumulada.filter((d) => d['cTiempo'] === moment(this.fechaIni).format('MMMM')).length;
 
@@ -395,10 +387,6 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
                     }
                 }
 
-                //console.log(this.arrReporteAcumulado);
-                //console.log(moment(this.arrCreacionGraficaAcumulada[0].fechaFiltro).format('YYYY-MM-DD'));
-                console.log(this.arrReporteAcumulado);
-
                 this.activarDescarga = false;
 
             }, err => {
@@ -426,16 +414,9 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
                 filtroSesionesPendientes = filtroSesionesPendientes + '&createdAt_gte=' + moment(fechaIni).format('YYYY') + '-01-01' + 'T01:00:00.000Z&createdAt_lte=' + moment(fechaFin).format('YYYY') + '-12-31' + 'T24:00:00.000Z&_limit=-1';
             }
 
-            console.log('pendientes');
-            console.log(filtroSesionesPendientes);
 
             await this.recepcionDeActas.obtenerRecepcionDeActasFiltrado(filtroSesionesPendientes).subscribe((resp: any) => {
                 this.arrSesionesProceso = resp.anioTotal;
-
-                console.log('ref');
-                console.log(this.arrSesionesProceso);
-
-                //console.log(moment(this.arrDocumentosIngresadosAyer[0].fechaFiltro).format('MMMM'));
 
                 if(this.arrSesionesProceso !== []){
                     while (p <= this.arrSesionesProceso.length - 1) {
@@ -446,10 +427,8 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
                 }
 
                 this.sesionesProcesoMes = this.arrSesionesProceso.filter((d) => d['cTiempo'] === moment(this.fechaIni).format('MMMM')).length;
-
                 this.sesionesProcesoAnio = this.arrSesionesProceso.filter((d) => d['fecha'] === moment(this.fechaIni).format('YYYY')).length;
 
-                console.log(this.arrSesionesProceso);
 
                 //this.sesionesAcumuladasMes = this.arrSesionesProceso.length;
 
@@ -479,8 +458,6 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
                     }
                 }
 
-                //console.log(this.arrReporteProceso);
-
             }, err => {
                 this.spinner.hide();
             });
@@ -507,12 +484,6 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
 
             await this.recepcionDeActas.obtenerRecepcionDeActasFiltrado(filtroSesionesArchivados).subscribe((resp: any) => {
                 this.arrSesionesArchivadas = resp.anioTotal;
-                console.log('ref');
-                console.log(this.arrSesionesArchivadas);
-
-                //console.log(moment(this.arrSesionesArchivadas[0].fechaFiltro).format('MMMM'));
-
-                //this.sesionesAcumuladasMes = this.arrSesionesArchivadas.length;
 
                 while (a <= this.arrSesionesArchivadas.length - 1) {
                     this.arrSesionesArchivadas[a].cTiempo = moment(this.arrSesionesArchivadas[a].fechaFiltro).format('MMMM');
@@ -521,11 +492,9 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
                 }
 
                 this.sesionesArchivadasMes = this.arrSesionesArchivadas.filter((d) => d['cTiempo'] === moment(this.fechaIni).format('MMMM')).length;
-
                 this.sesionesArchivadasAnio = this.arrSesionesArchivadas.filter((d) => d['fecha'] === moment(this.fechaIni).format('YYYY')).length;
 
 
-                console.log(this.arrSesionesArchivadas);
 
                 this.arrCreacionGraficaAnioArchivada.push(this.arrSesionesArchivadas.filter((d) => d['cTiempo'] === 'enero').length);
                 this.arrCreacionGraficaAnioArchivada.push(this.arrSesionesArchivadas.filter((d) => d['cTiempo'] === 'febrero').length);
@@ -555,10 +524,7 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
                     }
                 }
 
-                console.log(this.arrReporteArchivado);
-
-                console.log(this.arrCreacionGraficaAnioArchivada);
-
+          
                 this.configuragraficas();
 
                 this.spinner.hide();
@@ -582,9 +548,6 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
     valorMesAnio(event: any): void {
 
         moment.locale('es');
-
-        console.log(this.fechaAcumulada);
-        console.log(moment(this.fechaAcumulada).format('MMMM'))
 
         let filtroMes = '';
         filtroMes = moment(this.fechaAcumulada).format('MMMM');
@@ -611,9 +574,6 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
     valorMesAnioArchivada(event: any): void {
 
         moment.locale('es');
-
-        console.log(this.fechaAcumulada);
-        console.log(moment(this.fechaArchivadas).format('MMMM'))
 
         let filtroMes = '';
         filtroMes = moment(this.fechaArchivadas).format('MMMM');
@@ -879,17 +839,11 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
             }
             const fechaActual = dia + "/" + mes + "/" + anio;
 
-            let canvas = <HTMLCanvasElement> document.getElementById('chart1');
-            
-            console.log(canvas.width);
-            console.log(canvas.height);
-
+            let canvas = <HTMLCanvasElement> document.getElementById('chart1');                     
             let fullQuality = canvas.toDataURL('image/png', 1);
 
             /*await this.imageService.imageRedimensionada({"image": fullQuality}).subscribe((resp: any) => {
                 this.imageCanvas1 = resp;
-
-                console.log(resp);
             }, err => {
 
             });*/
@@ -1049,18 +1003,11 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
                 mes = "0" + mes; // agrega cero si el menor de 10
             }
             const fechaActual = dia + "/" + mes + "/" + anio;
-
-            let canvas = <HTMLCanvasElement> document.getElementById('chart2');
-            
-            console.log(canvas.width);
-            console.log(canvas.height);
-
+            let canvas = <HTMLCanvasElement> document.getElementById('chart2');         
             let fullQuality = canvas.toDataURL('image/png', 1);
 
             /*await this.imageService.imageRedimensionada({"image": fullQuality}).subscribe((resp: any) => {
                 this.imageCanvas1 = resp;
-
-                console.log(resp);
             }, err => {
 
             });*/
@@ -1222,16 +1169,11 @@ export class DashboardDeIndicadoresDeSesionesComponent implements OnInit {
             const fechaActual = dia + "/" + mes + "/" + anio;
 
             let canvas = <HTMLCanvasElement> document.getElementById('chart3');
-            
-            console.log(canvas.width);
-            console.log(canvas.height);
 
             let fullQuality = canvas.toDataURL('image/png', 1);
 
             /*await this.imageService.imageRedimensionada({"image": fullQuality}).subscribe((resp: any) => {
                 this.imageCanvas1 = resp;
-
-                console.log(resp);
             }, err => {
 
             });*/

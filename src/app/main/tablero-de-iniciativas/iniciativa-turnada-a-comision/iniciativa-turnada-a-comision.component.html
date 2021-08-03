@@ -20,9 +20,11 @@
                     this.iniciativa.estatus == 'Turnada a comisión para modificación'" mat-raised-button color="warn"
                     (click)="clasificarDocumento()">Vista previa</button>
 
-                    <button *ngIf="this.iniciativa.dictamenDeIniciativa == 'No aprobada' && this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' || 
-                    this.iniciativa.dictamenDeIniciativa == 'Modificación' && this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva'" mat-raised-button color="warn" align="end"  (click)="modificacionSuspension()">Vista
-                previa</button>
+                <button
+                    *ngIf="this.iniciativa.dictamenDeIniciativa == 'No aprobada' && this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' || 
+                    this.iniciativa.dictamenDeIniciativa == 'Modificación' && this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva'"
+                    mat-raised-button color="warn" align="end" (click)="modificacionSuspension()">Vista
+                    previa</button>
             </div>
 
         </div>
@@ -53,8 +55,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
                 <mat-label>Fecha de turno</mat-label>
-                <input matInput [matDatepicker]="picker2" formControlName="fechaRegistro" 
-                    [max]="maxDate">
+                <input matInput [matDatepicker]="picker2" formControlName="fechaRegistro" [max]="maxDate">
                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                 <mat-datepicker #picker2></mat-datepicker>
                 <mat-error>La fecha del registro no es valida ej. 28/11/2020</mat-error>
@@ -67,8 +68,7 @@
 
             <mat-form-field appearance="outline" fxFlex="30" class="pl-4">
                 <mat-label>Fecha de iniciativa</mat-label>
-                <input matInput [matDatepicker]="picker1" formControlName="fechaIniciativa" 
-                    [max]="maxDate">
+                <input matInput [matDatepicker]="picker1" formControlName="fechaIniciativa" [max]="maxDate">
                 <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                 <mat-datepicker #picker1></mat-datepicker>
                 <mat-error>La fecha de la iniciativa no es valida ej. 28/11/2020</mat-error>
@@ -117,23 +117,23 @@
                     {{etiqueta.name}}
                     <mat-icon matChipRemove *ngIf="removable5">cancel</mat-icon>
                 </mat-chip>
-                <input matInput formControlName="etiquetas" placeholder="Nueva etiqueta..." [matChipInputFor]="chipList5"
-                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur5"
-                    (matChipInputTokenEnd)="agregarEtiquetas($event)">
+                <input matInput formControlName="etiquetas" placeholder="Nueva etiqueta..."
+                    [matChipInputFor]="chipList5" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    [matChipInputAddOnBlur]="addOnBlur5" (matChipInputTokenEnd)="agregarEtiquetas($event)">
             </mat-chip-list>
         </mat-form-field>
 
         <mat-form-field class="example-chip-list">
             <mat-label>Tema</mat-label>
             <mat-chip-list [disabled]="true" #chipList2 aria-label="Selección de temas">
-                <mat-chip *ngFor="let tema of temas" [selectable]="selectable2"
-                    [removable]="removable2" (removed)="eliminarTema(tema)">
+                <mat-chip *ngFor="let tema of temas" [selectable]="selectable2" [removable]="removable2"
+                    (removed)="eliminarTema(tema)">
                     {{tema.name}}
                     <mat-icon matChipRemove *ngIf="removable2">cancel</mat-icon>
                 </mat-chip>
-                <input matInput formControlName="tema" placeholder="Nuevo tema..."
-                    [matChipInputFor]="chipList2" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                    [matChipInputAddOnBlur]="addOnBlur2" (matChipInputTokenEnd)="agregarTema($event)" disabled>
+                <input matInput formControlName="tema" placeholder="Nuevo tema..." [matChipInputFor]="chipList2"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="addOnBlur2"
+                    (matChipInputTokenEnd)="agregarTema($event)" disabled>
             </mat-chip-list>
         </mat-form-field>
 
@@ -160,11 +160,11 @@
         iniciativa.estatus === 'Turnado de iniciativa a comisión' ||
         iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios' && iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa' ||
         iniciativa.estatus === 'Turnar dictamen a Mesa Directiva' && iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa' ||
-        iniciativa.estatus === 'Turnada a comisión para modificación'"
-        fxFlex="1 0 auto">
+        iniciativa.estatus === 'Turnada a comisión para modificación'" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="100">
                 <mat-label>Comisión</mat-label>
-                <mat-select formControlName="comision" [(ngModel)]="selectedComision" name="comision" [disabled]="this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'">
+                <mat-select formControlName="comision" [(ngModel)]="selectedComision" name="comision"
+                    [disabled]="this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'">
                     <mat-option *ngFor="let comision of comisiones" [value]="comision.id">
                         {{comision.descripcion}}
                     </mat-option>
@@ -177,7 +177,8 @@
         iniciativa.estatus == 'Turnada a publicación'" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="100">
                 <mat-label>Dictamen de iniciativa</mat-label>
-                <mat-select formControlName="dictamenDeIniciativa" [(ngModel)]="selectedDictamenDeIniciativa" name="dictamenDeIniciativa">
+                <mat-select formControlName="dictamenDeIniciativa" [(ngModel)]="selectedDictamenDeIniciativa"
+                    name="dictamenDeIniciativa">
                     <mat-option *ngFor="let dictamen of dictamenDeSesion" [value]="dictamen.descripcion">
                         {{dictamen.descripcion}}
                     </mat-option>
@@ -186,17 +187,18 @@
             </mat-form-field>
         </div>
 
-        <div layout="row" >
+        <div layout="row">
             <div fxFlex="90">
                 <div class="h2 mb-24">Actas de sesión</div>
             </div>
         </div>
 
-        <div fxLayout="row" fxLayoutAlign="start center" 
-            fxFlex="1 0 auto">
-            <mat-form-field appearance="outline"  fxFlex="100">
+        <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+            <mat-form-field appearance="outline" fxFlex="100">
                 <mat-label>Legislatura</mat-label>
-                <mat-select formControlName="legislatura" [(ngModel)]="selectedLegislatura" [disabled]="this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'" name="comision">
+                <mat-select formControlName="legislatura" [(ngModel)]="selectedLegislatura"
+                    [disabled]="this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'"
+                    name="comision">
                     <mat-option *ngFor="let legis of legislatura" [value]="legis.id">
                         {{legis.cLegislatura}}
                     </mat-option>
@@ -205,11 +207,11 @@
             </mat-form-field>
         </div>
 
-        <div fxLayout="row" fxLayoutAlign="start center"
-            fxFlex="1 0 auto">
-            <mat-form-field appearance="outline"  fxFlex="100">
+        <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+            <mat-form-field appearance="outline" fxFlex="100">
                 <mat-label>Tipo de sesión</mat-label>
-                <mat-select formControlName="tipoSesion" [(ngModel)]="selectedSesion" name="tipoSesion" [disabled]="this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'">
+                <mat-select formControlName="tipoSesion" [(ngModel)]="selectedSesion" name="tipoSesion"
+                    [disabled]="this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'">
                     <mat-option *ngFor="let tipo of tipoSesion" [value]="tipo.descripcion">
                         {{tipo.descripcion}}
                     </mat-option>
@@ -218,23 +220,24 @@
             </mat-form-field>
         </div>
 
-        <mat-form-field appearance="outline" 
-            fxFlex="1 0 auto" class="pl-4">
+        <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
             <mat-label>Fecha de sesión</mat-label>
-            <input matInput [matDatepicker]="picker" [disabled]="this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'" formControlName="fechaSesion" [max]="maxDate">
+            <input matInput [matDatepicker]="picker"
+                [disabled]="this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'"
+                formControlName="fechaSesion" DatePickerFormat="DD/MM/YYYY" [max]="maxDate">
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
             <mat-error>La fecha de sesión no es valida ej. 28/11/2020</mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="outline" 
-            fxFlex="1 0 auto" class="pl-4">
+        <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
             <mat-label>Hora de sesión</mat-label>
-            <input matInput type="time" atp-time-picker  formControlName="horaSesion"/>
+            <input matInput type="time" atp-time-picker formControlName="horaSesion" />
             <mat-error>La hora del registro no es valida ej. 01:00</mat-error>
         </mat-form-field>
 
-        <div fxLayout="row" *ngIf="iniciativa.estatus=='Turnar iniciativa a comisión'" fxLayoutAlign="start center" fxFlex="100">
+        <div fxLayout="row" *ngIf="iniciativa.estatus=='Turnar iniciativa a comisión'" fxLayoutAlign="start center"
+            fxFlex="100">
             <div fxLayout="row" fxLayoutAlign="start center" fxFlex="40"></div>
             <div fxLayout="row" fxLayoutAlign="start center" fxFlex="30">
                 <button *ngIf="sinActa == true" color="warn" mat-raised-button
@@ -242,7 +245,7 @@
                     Anexar acta de sesión <mat-icon>add</mat-icon>
                 </button>
                 <button *ngIf="sinActa == false" color="accent" mat-raised-button
-                    (click)="editarDocumento(this.iniciativa.actasSesion[0].actasSesion,'4')">
+                    (click)="obtenerDocumentoPorId('4')">
                     Editar acta de sesión <mat-icon>add</mat-icon>
                 </button>
             </div>
@@ -271,96 +274,108 @@
             </mat-form-field>
         </div> -->
 
-<div *ngIf="iniciativa.estatus!=='Turnar iniciativa a comisión' &&
+        <div *ngIf="iniciativa.estatus!=='Turnar iniciativa a comisión' &&
 iniciativa.estatus!=='Turnar dictamen a secretaría de servicios parlamentarios' &&
 iniciativa.estatus!=='Turnada a publicación' &&
 iniciativa.estatus!=='Turnada a comisión para modificación'" class="h3 mb-24">Anexar documentos</div>
-<div *ngIf="iniciativa.estatus!=='Turnar iniciativa a comisión' && 
+        <div *ngIf="iniciativa.estatus!=='Turnar iniciativa a comisión' && 
 iniciativa.estatus!=='Turnar cuenta pública a EASE' &&
 iniciativa.estatus!=='Turnar dictamen a secretaría de servicios parlamentarios' && 
 iniciativa.estatus!=='Turnada a publicación' &&
 iniciativa.estatus!=='Turnada a comisión para modificación'" fxLayout="row" fxLayoutAlign="end" fxFlex="1 0 auto">
-    <mat-form-field class="buscar">
-        <mat-label>Buscar un documento</mat-label>
-        <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)'>
-    </mat-form-field>
-    <section fxLayoutAlign="end">
-        <button mat-mini-fab color="warn" [disabled]="!this.iniciativa.id" (click)="cargaClasificacionDocumento('1')" class="button"><mat-icon>add</mat-icon>
-        </button>
-    </section>
-    <input type="file" #fileInput id="fileUpload" name="fileUpload" multiple="multiple" accept="application/pdf"
-        style="display:none;" />
-</div>
-<div *ngIf="iniciativa.estatus==='Turnar cuenta pública a EASE'" layout="row" class="itemsCenter">
-    <mat-label fxFlex="40">Oficio de envío de informe</mat-label>
+            <mat-form-field class="buscar">
+                <mat-label>Buscar un documento</mat-label>
+                <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)'>
+            </mat-form-field>
+            <section fxLayoutAlign="end">
+                <button mat-mini-fab color="warn" [disabled]="!this.iniciativa.id"
+                    (click)="cargaClasificacionDocumento('1')" class="button">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </section>
+            <input type="file" #fileInput id="fileUpload" name="fileUpload" multiple="multiple" accept="application/pdf"
+                style="display:none;" />
+        </div>
+        <div *ngIf="iniciativa.estatus==='Turnar cuenta pública a EASE'" layout="row" class="itemsCenter">
+            <mat-label fxFlex="40">Oficio de envío de informe</mat-label>
 
-    <section fxFlex="30">
-        <button *ngIf="this.iniciativa.oficioEnvioDeInforme === undefined" color="warn" (click)="cargaClasificacionDocumento('2')" mat-raised-button >
-            Anexar documento <mat-icon>add</mat-icon>
-         </button>
-         <button *ngIf="this.iniciativa.oficioEnvioDeInforme" color="accent" (click)="editarDocumento(this.iniciativa.oficioEnvioDeInforme,'2')" mat-raised-button>
-            Editar documento <mat-icon>add</mat-icon>
-         </button>
-    </section>
-    <input type="file" #fileOficio id="fileOficio" name="fileOficio"
-        accept="application/pdf" style="display:none;" />
-    <div *ngIf="iniciativa.estatus==='Turnar cuenta pública a EASE'" fxFlex="30">
-        <mat-label (change)="changeOficio()" >{{fileOficioName}} </mat-label>
-    </div>
-</div>
+            <section fxFlex="30">
+                <button *ngIf="this.iniciativa.oficioEnvioDeInforme === undefined" color="warn"
+                    (click)="cargaClasificacionDocumento('2')" mat-raised-button>
+                    Anexar documento <mat-icon>add</mat-icon>
+                </button>
+                <button *ngIf="this.iniciativa.oficioEnvioDeInforme" color="accent"
+                    (click)="editarDocumento(this.iniciativa.oficioEnvioDeInforme,'2')" mat-raised-button>
+                    Editar documento <mat-icon>add</mat-icon>
+                </button>
+            </section>
+            <input type="file" #fileOficio id="fileOficio" name="fileOficio" accept="application/pdf"
+                style="display:none;" />
+            <div *ngIf="iniciativa.estatus==='Turnar cuenta pública a EASE'" fxFlex="30">
+                <mat-label (change)="changeOficio()">{{fileOficioName}} </mat-label>
+            </div>
+        </div>
 
-<div *ngIf="iniciativa.estatus==='Turnar cuenta pública a EASE'" layout="row" class="marginTop itemsCenter">
-    <div fxFlex="40">
-        <mat-label class="texto">Informe de resultados a revisión <br> de la cuenta pública</mat-label>
-    </div>
-    <section fxFlex="30">
-        <button *ngIf="this.iniciativa.informeDeResultadosRevision === undefined" color="warn" (click)="cargaClasificacionDocumento('3')"  mat-raised-button >
-           Anexar documento <mat-icon>add</mat-icon>
-        </button>
-        <button *ngIf="this.iniciativa.informeDeResultadosRevision" color="accent" (click)="editarDocumento(this.iniciativa.informeDeResultadosRevision,'3')" mat-raised-button>
-            Editar documento <mat-icon>add</mat-icon>
-         </button>
-    </section>
-    <input type="file" #fileInforme id="fileInforme" name="fileInforme" 
-        accept="application/pdf" style="display:none;" />
+        <div *ngIf="iniciativa.estatus==='Turnar cuenta pública a EASE'" layout="row" class="marginTop itemsCenter">
+            <div fxFlex="40">
+                <mat-label class="texto">Informe de resultados a revisión <br> de la cuenta pública</mat-label>
+            </div>
+            <section fxFlex="30">
+                <button *ngIf="this.iniciativa.informeDeResultadosRevision === undefined" color="warn"
+                    (click)="cargaClasificacionDocumento('3')" mat-raised-button>
+                    Anexar documento <mat-icon>add</mat-icon>
+                </button>
+                <button *ngIf="this.iniciativa.informeDeResultadosRevision" color="accent"
+                    (click)="editarDocumento(this.iniciativa.informeDeResultadosRevision,'3')" mat-raised-button>
+                    Editar documento <mat-icon>add</mat-icon>
+                </button>
+            </section>
+            <input type="file" #fileInforme id="fileInforme" name="fileInforme" accept="application/pdf"
+                style="display:none;" />
 
-    <div *ngIf="iniciativa.estatus==='Turnar cuenta pública a EASE'" fxFlex="30">
-        <mat-label class="example-margin" (change)="changeInforme()">{{fileInformeName}} </mat-label>
-    </div>
-</div>
-<div layout="row" *ngIf="iniciativa.estatus==='Turnada a publicación'">
-    <div fxFlex="90">
-        <div class="h2 mb-24">Publicación</div>
-    </div>
-</div>
+            <div *ngIf="iniciativa.estatus==='Turnar cuenta pública a EASE'" fxFlex="30">
+                <mat-label class="example-margin" (change)="changeInforme()">{{fileInformeName}} </mat-label>
+            </div>
+        </div>
+        <div layout="row" *ngIf="iniciativa.estatus==='Turnada a publicación'">
+            <div fxFlex="90">
+                <div class="h2 mb-24">Publicación</div>
+            </div>
+        </div>
 
-<mat-form-field appearance="outline" 
-fxFlex="1 0 auto" class="pl-4" *ngIf="iniciativa.estatus=='Turnada a publicación'">
-<mat-label>Fecha de publicación</mat-label>
-<input matInput [matDatepicker]="picker3" [disabled]="this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'" formControlName="fechaPublicacion">
-<mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
-<mat-datepicker #picker3></mat-datepicker>
-<mat-error>La fecha de publicación no es valida ej. 28/11/2020</mat-error>
-</mat-form-field>
+        <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4"
+            *ngIf="iniciativa.estatus=='Turnada a publicación'">
+            <mat-label>Fecha de publicación</mat-label>
+            <input matInput [matDatepicker]="picker3"
+                [disabled]="this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'"
+                formControlName="fechaPublicacion">
+            <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+            <mat-datepicker #picker3></mat-datepicker>
+            <mat-error>La fecha de publicación no es valida ej. 28/11/2020</mat-error>
+        </mat-form-field>
 
-<div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto" *ngIf="iniciativa.estatus=='Turnada a publicación'">
-    <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-        <mat-label>Periódico oficial</mat-label>
-        <input matInput formControlName="periodicoOficial" >
-        <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
-        <mat-error *ngIf="form.get('periodicoOficial').hasError('required')">El nombre del periodico es requerido</mat-error>
-        <mat-error *ngIf="form.get('periodicoOficial').hasError('minlength') || form.get('periodicoOficial').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
-            y el máximo son 100 </mat-error>
-    </mat-form-field>
-</div>
+        <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto"
+            *ngIf="iniciativa.estatus=='Turnada a publicación'">
+            <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+                <mat-label>Periódico oficial</mat-label>
+                <input matInput formControlName="periodicoOficial">
+                <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
+                <mat-error *ngIf="form.get('periodicoOficial').hasError('required')">El nombre del periodico es
+                    requerido</mat-error>
+                <mat-error
+                    *ngIf="form.get('periodicoOficial').hasError('minlength') || form.get('periodicoOficial').hasError('maxlength')">
+                    Valor invalido, el mínimo de caracteres es 3
+                    y el máximo son 100 </mat-error>
+            </mat-form-field>
+        </div>
 
-<div *ngIf="iniciativa.estatus==='Turnada a comisión para modificación'" align="center">
-    <button color="warn" (click)="visualizarSuspencion()" mat-raised-button >
-        Motivo de la modificación de la iniciativa<mat-icon>add</mat-icon>
-    </button>
-</div>
+        <div *ngIf="iniciativa.estatus==='Turnada a comisión para modificación'" align="center">
+            <button color="warn" (click)="visualizarSuspencion()" mat-raised-button>
+                Motivo de la modificación de la iniciativa<mat-icon>add</mat-icon>
+            </button>
+        </div>
 
-</form>
+    </form>
 </div>
 
 
@@ -370,45 +385,42 @@ iniciativa.estatus!=='Turnar dictamen a secretaría de servicios parlamentarios'
 iniciativa.estatus!=='Turnada a publicación' && 
 iniciativa.estatus!=='Turnada a comisión para modificación'">
 
-<ngx-datatable class="material shadow-none"  [rows]="files" [loadingIndicator]="loadingIndicator"
-[columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable"
-[limit]="10" [scrollbarH]="true">
-<ngx-datatable-column name="Documentos" prop="cNombreDocumento"></ngx-datatable-column>
-<ngx-datatable-column name="Acciones" sortable="false" prop="id">
-    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+    <ngx-datatable class="material shadow-none" [rows]="files" [loadingIndicator]="loadingIndicator"
+        [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable"
+        [limit]="10" [scrollbarH]="true">
+        <ngx-datatable-column name="Documentos" prop="cNombreDocumento"></ngx-datatable-column>
+        <ngx-datatable-column name="Acciones" sortable="false" prop="id">
+            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
 
-        <a (click)="editarDocumento(row , '1')">
-            <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">edit
-            </mat-icon>
-        </a>
+                <a (click)="editarDocumento(row , '1')">
+                    <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">edit
+                    </mat-icon>
+                </a>
 
-        <a (click)="eliminarDocumento(row)">
-            <mat-icon color="warn" class="material-icons pointer" matTooltip="Clic para eliminar">delete
-            </mat-icon>
-        </a>
+                <a (click)="eliminarDocumento(row)">
+                    <mat-icon color="warn" class="material-icons pointer" matTooltip="Clic para eliminar">delete
+                    </mat-icon>
+                </a>
 
-    </ng-template>
-</ngx-datatable-column>
-</ngx-datatable>
+            </ng-template>
+        </ngx-datatable-column>
+    </ngx-datatable>
 
 </div>
 
 <mat-dialog-actions align="end" class="buttons">
-
+   
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
-    <button *ngIf="iniciativa.estatus ==='Turnar iniciativa a comisión'"
-        [disabled]="form.invalid || this.errorLargo"
+    <button *ngIf="iniciativa.estatus ==='Turnar iniciativa a comisión'" [disabled]="form.invalid || this.errorLargo"
         mat-raised-button color="accent" (click)="guardar()">Guardar</button>
-        <button *ngIf="iniciativa.estatus === 'Turnar cuenta pública a EASE'"
-        [disabled]="form.invalid || fileOficioName === ''|| fileInformeName === ''"
-        mat-raised-button color="accent" (click)="guardar()">Guardar</button>
-        <button *ngIf="iniciativa.estatus === 'Turnar dictamen a Secretaría General' ||
-        iniciativa.estatus === 'Turnada a publicación'"
-        [disabled]="form.invalid"
-        mat-raised-button color="accent" (click)="guardar()">Guardar</button>
-        <button *ngIf="iniciativa.estatus === 'Turnar dictamen a Mesa Directiva'
-        || iniciativa.estatus === 'Turnada a comisión para modificación'"
-        [disabled]="form.invalid || files.length < 1"
+    <button *ngIf="iniciativa.estatus === 'Turnar cuenta pública a EASE'"
+        [disabled]="form.invalid || fileOficioName === ''|| fileInformeName === ''" mat-raised-button color="accent"
+        (click)="guardar()">Guardar</button>
+    <button *ngIf="iniciativa.estatus === 'Turnar dictamen a Secretaría General' ||
+        iniciativa.estatus === 'Turnada a publicación' || iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'" [disabled]="form.invalid" mat-raised-button color="accent"
+        (click)="guardar()">Guardar</button>
+    <button *ngIf="iniciativa.estatus === 'Turnar dictamen a Mesa Directiva'
+        || iniciativa.estatus === 'Turnada a comisión para modificación'" [disabled]="form.invalid || files.length < 1"
         mat-raised-button color="accent" (click)="guardar()">Guardar</button>
 
 </mat-dialog-actions>

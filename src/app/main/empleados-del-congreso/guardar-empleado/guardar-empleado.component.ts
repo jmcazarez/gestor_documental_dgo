@@ -100,7 +100,6 @@ export class GuardarEmpleadoComponent implements OnInit {
     async guardar(): Promise<void> {
         
         // Guardamos empleado
-        // console.log(this.secretaria);
         // Asignamos valores a objeto
         this.spinner.show();
         this.empleados.nombre = this.form.get('nombre').value;

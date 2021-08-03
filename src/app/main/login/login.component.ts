@@ -89,7 +89,7 @@ export class LoginComponent implements OnInit {
            
             if (resp[0].data.perfiles_de_usuario.length == 0) {
                 // this.mostrarMensaje('No cuenta con permisos asignados. Favor de verificar con el área de sistemas.');
-                console.log('No tiene permisos');
+               
                 this.error = true;
                 this.cargando = false;
                 Swal.fire('Error', 'Usuario sin perfil configurado', 'error');

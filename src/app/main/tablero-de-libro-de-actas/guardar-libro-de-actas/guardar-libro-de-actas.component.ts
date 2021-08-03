@@ -169,7 +169,6 @@ export class GuardarlibroDeActasComponent implements OnInit {
                         } else {
 
                             if (legislatura.length > 0) {
-                                console.log("filtro legis");
                                 this.recepcionDeActas = this.recepcionDeActas.filter(
                                     (d) => {
                                         return (
@@ -425,10 +424,6 @@ export class GuardarlibroDeActasComponent implements OnInit {
 
                 if (resp) {
                     for (const ini of resp) {
-                        console.log(this.datePipe.transform(
-                            ini.fechaCreacion,
-                            "yyyy-MM-dd"
-                        ));
                         let dFecha = new Date( ini.fechaCreacion);
 
                         dFecha.setHours(0);
@@ -526,7 +521,6 @@ export class GuardarlibroDeActasComponent implements OnInit {
                             }
                         }
                     }
-                    console.log(actasTemp);
                     this.recepcionDeActas = [...actasTemp];
                     this.recepcionDeActasTemporal = [...actasTemp];
 
@@ -552,7 +546,6 @@ export class GuardarlibroDeActasComponent implements OnInit {
             fecIni.setHours(0);
             fecIni.setMinutes(0);
             fecIni.setSeconds(0);
-            console.log(fecIni);
             let fecFin = new Date(this.form.get("fechaDeFin").value);
             fecFin.setHours(23);
             fecFin.setMinutes(59);
@@ -562,9 +555,6 @@ export class GuardarlibroDeActasComponent implements OnInit {
                 fecIni
             ).getTime();
             let dFechaFin = new Date(fecFin).getTime();
-
-            console.log(dFechaIni);
-            console.log(dFechaFin);
             if (fecIni !== null && fecFin !== null) {
                 if (legislatura.length > 0) {
                     this.recepcionDeActas = this.recepcionDeActas.filter((d) => {

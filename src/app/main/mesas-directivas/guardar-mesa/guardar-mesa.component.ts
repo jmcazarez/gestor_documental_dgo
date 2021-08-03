@@ -57,7 +57,6 @@ export class GuardarMesaComponent implements OnInit {
     ) { }
 
     async ngOnInit(): Promise<void> {
-        console.log(this.mesas);
         this.selectedLegislatura = '';
         await this.obtenerPartidos();
         await this.obtenerDiputados();
@@ -106,7 +105,6 @@ export class GuardarMesaComponent implements OnInit {
         this.mesas.activo = this.form.get("estatus").value;
         this.mesas.descripcion = this.form.get("descripcion").value;
         this.mesas.legislatura = this.selectedLegislatura;
-        console.log(this.detalles);
         let presidente = this.detalles.find(
             (meta) => meta.cargo == "Presidente"
         );
@@ -125,7 +123,6 @@ export class GuardarMesaComponent implements OnInit {
         );
 
         if (this.mesas.id) {
-            console.log(this.mesas.detalle_participantes_mesa_directivas);
             if (this.mesas.detalle_participantes_mesa_directivas.length) {
                 // Actualizamos el mesa directiva
                 this.detalleMesaService
@@ -184,8 +181,6 @@ export class GuardarMesaComponent implements OnInit {
                     .subscribe(
                         (resp: any) => {
                             if (resp) {
-                                console.log(resp);
-                              
                               
                             } else {
                                 this.spinner.hide();
@@ -316,11 +311,7 @@ export class GuardarMesaComponent implements OnInit {
         // Obtenemos empleados
         this.spinner.show();
         await this.diputadosService.obtenerDiputados().subscribe((resp: any) => {
- 
-          
-            console.log(resp);
             this.arrDiputados = resp;
-            console.log(this.arrDiputados);
             //this.arrDiputados = this.arrDiputados.filter(meta => meta.legislatura.id === this.participantes.legislatura);
 
             this.spinner.hide();
@@ -334,7 +325,6 @@ export class GuardarMesaComponent implements OnInit {
         this.spinner.show();
         await this.legislaturasService.obtenerLegislatura().subscribe(
             (resp: any) => {
-                console.log(resp);
                 this.arrLegislaturas = resp;
                 this.spinner.hide();
             },
@@ -373,7 +363,6 @@ export class GuardarMesaComponent implements OnInit {
                 // Si tiene permisos para consultar
                 if (this.optConsultar) {
                     for (const detalleMesa of resp) {
-                        console.log(detalleMesa);
                         // secretariaId = '';
                         if (detalleMesa.mesas_directiva === this.mesas.id) {
                             const partido = this.arrPartidos.find(
@@ -469,8 +458,6 @@ export class GuardarMesaComponent implements OnInit {
                         }
                     }
                     this.detalles = detallesMesasTemp;
-
-                    console.log(this.detalles);
                     this.detallesTemp = this.detalles;
                     this.spinner.hide();
                 }

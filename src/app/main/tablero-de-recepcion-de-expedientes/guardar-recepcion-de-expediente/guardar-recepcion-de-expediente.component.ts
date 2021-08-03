@@ -72,7 +72,6 @@ export class GuardarRecepcionDeExpedienteComponent implements OnInit {
 
         // Validamos si es un documento nuevo
         if (this.recepcion.id) {
-            console.log(this.recepcion);
             this.idExpediente = this.recepcion.idExpediente;
             if (this.recepcion.legislatura) {
                 this.selectedLegislatura = this.recepcion.legislatura.id;

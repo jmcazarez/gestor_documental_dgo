@@ -55,6 +55,13 @@ export class DocumentosService {
         );
     }
 
+    obtenerDocumentoById(id: string): any {
+        return this.http.get(
+            this.baseUrl + this.urlDocumentos + "/" + id ,
+            this.httpOptions
+        );
+    }
+
     obtenerDocumentoReporte(filtro: string): any {
         this.TOKEN = localStorage.getItem("token");
 
@@ -93,7 +100,6 @@ export class DocumentosService {
                 Authorization: this.TOKEN,
             }),
         };
-        console.log(filtro);
         let filtroObjt: any;
         filtroObjt = {
             texto: filtro,
@@ -114,7 +120,6 @@ export class DocumentosService {
         };
         documento.fechaCarga = documento.fechaCarga;
         documento.fechaCreacion = documento.fechaCreacion;
-        console.log(this.baseUrl + this.urlDocumentos + "/" + documento.id);
         return this.http.put(
             this.baseUrl + this.urlDocumentos + "/" + documento.id,
             documento,
@@ -227,7 +232,6 @@ export class DocumentosService {
         usuario: string,
         nombreDocumento: string
     ): any {
-        console.log("documentoFileSinVersion");
         let options = {
             headers: new HttpHeaders({
                 Authorization: localStorage.getItem("token"),
@@ -254,8 +258,6 @@ export class DocumentosService {
         usuario: string,
         nombreDocumento: string
     ): any {
-        console.log("urlDescargarDocumentoClasificacion");
-        console.log(idDocumento);
         let options = {
             headers: new HttpHeaders({
                 Authorization: localStorage.getItem("token"),

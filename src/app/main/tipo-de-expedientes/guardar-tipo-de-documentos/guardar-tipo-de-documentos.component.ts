@@ -82,7 +82,6 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        console.log(this.documento);
         // Seteamos valores
         if (this.documento.metacatalogos) {
             this.rows = this.documento.metacatalogos;
@@ -149,7 +148,6 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                 this.selectedFormato = this.documento.tipos_de_formato;
             }
         }
-        console.log(this.documento);
         // Seteamos valores
 
         this.selectedObligatorio = this.documento.bObligatorio;
@@ -180,8 +178,6 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         this.documento.metacatalogos = this.rows;
         const usuario = localStorage.getItem("usr");
         const usr = JSON.parse(usuario);
-
-        console.log(this.documento);
         if (this.documento.id) {
             // Actualizamos la expediente
             this.tipoDocumentosService
@@ -557,8 +553,6 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                             d.cDescripcionMetacatalogo.toLowerCase() ===
                             metacatalogo.toLowerCase()
                     );
-                    console.log(temp.length);
-                    console.log(this.rowEditar);
                     if (temp.length && !this.rowEditar) {
                         Swal.fire(
                             "Error",

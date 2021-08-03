@@ -110,7 +110,7 @@ export class UploadFileService {
                 if (event.type === HttpEventType.UploadProgress) {
                     // calculate the progress percentage
                     const percentDone = Math.round((100 * event.loaded) / event.total);
-                    // console.log(percentDone);
+                 
                     // pass the percentage into the progress-stream
                     progress.next(percentDone);
                 } else if (event instanceof HttpResponse) {

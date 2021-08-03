@@ -55,7 +55,6 @@ export class GuardarConfiguracionFirmasPorEtapaComponent implements OnInit {
 
             if (this.firmasPorEtapa.participantes) {
                 for (const participante of this.firmasPorEtapa.participantes) {
-                    console.log(participante);
                     puesto = this.firmasPorEtapa.arrPuestos.find(puesto => puesto.id === participante.puesto);
                     
                     this.arrParticipantes.push({
@@ -70,7 +69,6 @@ export class GuardarConfiguracionFirmasPorEtapaComponent implements OnInit {
             // Seteamos la fecha de carga con la fecha actual
 
         }
-        console.log(this.firmasPorEtapa);
         // Form reativo
         this.form = this.formBuilder.group({
             id: [{ value: this.firmasPorEtapa.id, disabled: true }],

@@ -156,11 +156,8 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
 
                     // Si tiene permisos para consultar
                     if (this.optConsultar) {
-                        console.log(resp.listado);
                         for (const documento of resp.listado) {
-
-                            console.log(moment.utc(documento.createdAt, 'MM-DD-YYYY'));
-
+                           
                             idDocumento = '';
                             documentosTemp.push({
                                 id: documento.id,
@@ -185,7 +182,6 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
                         this.documentos = documentosTemp;
                         this.documentosTemporal = this.documentos;
 
-                        console.log(this.documentos);
 
                     }
                     this.loadingIndicator = false;

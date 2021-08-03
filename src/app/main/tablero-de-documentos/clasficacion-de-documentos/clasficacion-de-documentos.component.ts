@@ -423,7 +423,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
     obtenerTiposExpedientes(): void {
         // Obtenemos los documentos
-        console.log('tipo exp');
         this.tipoExpedientesService.obtenerTipoExpedientes().subscribe(
             (resp: any) => {
                 this.arrExpediente = resp;
@@ -582,7 +581,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
     async obtenerLegislaturas(): Promise<void> {
         // Obtenemos secretarias
-        console.log('legis');
         await this.legislaturaService.obtenerLegislatura().subscribe(
             (resp: any) => {
 
@@ -1153,7 +1151,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 let fileName = this.documento.cNombreDocumento + '.pdf';
                 this.autorizarService.autorizarDocumentoPaso1(fileName, firmantes.length, fileBase64.replace('data:application/pdf;base64,', '')).subscribe(
                     async (resp: any) => {
-                        console.log(resp.body);
                         if (resp.body.multiSignedMessage_InitResponse) {
                             let processID = resp.body.multiSignedMessage_InitResponse.processID;
                             if (processID === 0) {

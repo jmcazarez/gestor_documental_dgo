@@ -109,7 +109,6 @@ export class MenuService {
                                 for (const visibilidad of perfiles.Visibilidad) {
                                     if (visibilidad.visibilidade) {
                                         if (visibilidad.visibilidade.bActivo && visibilidad.Si) {
-                                            // console.log(visibilidad.visibilidade);
                                             this.tipoInformacion.push({
                                                 id: visibilidad.visibilidade.id,
                                                 cDescripcionVisibilidad: visibilidad.visibilidade.cDescripcionVisibilidad,
@@ -121,7 +120,6 @@ export class MenuService {
                                 // Agregamos permisos a tipos de documentos
                                 for (const documentos of perfiles.Documentos) {
                                     if (documentos.tipo_de_documento) {
-                                        // console.log(documentos.tipo_de_documento);
                                         if (documentos.tipo_de_documento.bActivo) {
                                             const resultado = this.tipoDocumentos.find(tipoDocumento => tipoDocumento.id === documentos.tipo_de_documento.id);
 
@@ -159,8 +157,6 @@ export class MenuService {
                                                     visibilidade = documentos.tipo_de_documento.visibilidade;
                                                 }
 
-
-                                                // console.log(documentos.tipo_de_documento.bObligatorio);
                                                 this.tipoDocumentos.push({
                                                     id: documentos.tipo_de_documento.id,
                                                     cDescripcionTipoDocumento: documentos.tipo_de_documento.cDescripcionTipoDocumento,

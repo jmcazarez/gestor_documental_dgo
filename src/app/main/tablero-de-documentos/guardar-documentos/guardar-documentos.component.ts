@@ -153,12 +153,10 @@ export class GuardarDocumentosComponent implements OnInit {
         this.form.get('fechaCreacion').valueChanges.subscribe(val => {
 
             if (val) {
-                console.log(val);
                 this.cambioFecha = true;
             }
         });
 
-        console.log(this.arrTipoDocumentos);
 
         this.spinner.hide();
 
@@ -213,7 +211,6 @@ export class GuardarDocumentosComponent implements OnInit {
             // Validamos el selecciono un archivo para subirlo
             if (this.cambioFile) {
 
-                //  console.log('cambio');
                 // Subimos archivo
                 await this.upload();
 
@@ -294,7 +291,6 @@ export class GuardarDocumentosComponent implements OnInit {
                     this.documentos.tipo_de_documento = this.selectTipoDocument;
                     this.documentos.version = 1;
                     this.documentos.usuario = this.menu.usuario;
-                    console.log(this.documentos);
                     // Guardamos documento
                     this.documentoService.guardarDocumentos(this.documentos).subscribe((resp: any) => {
 

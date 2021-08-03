@@ -128,8 +128,7 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
                         if(ini.receptor.length == 0 || ini.receptor === undefined){
                           receptor = '';
                         }else{
-                          console.log('hay receptor');
-                          receptorId = ini.receptor[0].id;
+                         receptorId = ini.receptor[0].id;
                           receptor = ini.receptor[0].nombre + ' ' + ini.receptor[0].apellidoPaterno + ' ' + ini.receptor[0].apellidoMaterno;
                         }
 
@@ -182,7 +181,6 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
              
                 this.iniciativas = iniciativasTemp;
                 this.iniciativasTemporal = this.iniciativas;
-                console.log(this.iniciativas);
             }
             this.loadingIndicator = false;
             this.spinner.hide();
@@ -193,7 +191,7 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
     }
 
     turnarIniciativaDictamen(iniciativa: IniciativasModel): void {
-        console.log(iniciativa);
+       
         this.valueBuscador = '';
         // Abrimos modal de guardar perfil
         if (iniciativa.estatus == 'Turnada a dictamen' || iniciativa.estatus == 'Turnar iniciativa a CIEL' || iniciativa.estatus == 'Pendiente') {

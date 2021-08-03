@@ -50,7 +50,6 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
     ngOnInit(): void {
 
         this.arrInformacion = this.menuServices.tipoInformacion;
-        console.log(this.arrInformacion);
         // Formulario reactivo
         this.firstFormGroup = this._formBuilder.group({
             vigente: [''],
