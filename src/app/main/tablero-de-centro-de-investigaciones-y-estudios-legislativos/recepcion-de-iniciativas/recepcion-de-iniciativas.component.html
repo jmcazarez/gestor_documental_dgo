@@ -40,8 +40,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
                 <mat-label>Fecha de turno</mat-label>
-                <input matInput [matDatepicker]="picker2" formControlName="fechaRegistro" 
-                    [max]="maxDate">
+                <input matInput [matDatepicker]="picker2" formControlName="fechaRegistro" [max]="maxDate">
                 <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
                 <mat-datepicker #picker2></mat-datepicker>
                 <mat-error>La fecha del registro no es valida ej. 28/11/2020</mat-error>
@@ -54,8 +53,7 @@
 
             <mat-form-field appearance="outline" fxFlex="30" class="pl-4">
                 <mat-label>Fecha de iniciativa</mat-label>
-                <input matInput [matDatepicker]="picker1" formControlName="fechaIniciativa" 
-                    [max]="maxDate">
+                <input matInput [matDatepicker]="picker1" formControlName="fechaIniciativa" [max]="maxDate">
                 <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                 <mat-datepicker #picker1></mat-datepicker>
                 <mat-error>La fecha de la iniciativa no es valida ej. 28/11/2020</mat-error>
@@ -89,6 +87,7 @@
                     [matChipInputAddOnBlur]="addOnBlur2" (matChipInputTokenEnd)="agregarTema($event)" disabled>
             </mat-chip-list>
         </mat-form-field>
+        <!-- 
         <mat-form-field class="example-chip-list">
             <mat-label>Clasificación de iniciativa</mat-label>
             <mat-chip-list #chipList3 [disabled]="true" aria-label="Selección de clasificaciones">
@@ -105,7 +104,7 @@
             <mat-error *ngIf="form.get('clasificaciones').hasError('minlength') || form.get('clasificaciones').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
                 y el máximo son 100 </mat-error>
         </mat-form-field>
-
+-->
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="100">
                 <mat-label>Comisión</mat-label>
@@ -132,7 +131,8 @@
 
         <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
             <mat-label>Fecha de recepción</mat-label>
-            <input matInput [matDatepicker]="picker3" formControlName="fechaRecepcion" DatePickerFormat="DD/MM/YYYY" [max]="maxDate">
+            <input matInput [matDatepicker]="picker3" formControlName="fechaRecepcion" DatePickerFormat="DD/MM/YYYY"
+                [max]="maxDate">
             <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
             <mat-datepicker #picker3></mat-datepicker>
             <mat-error>Debe introducir una fecha valida. Ejemplo: 13/1/2021</mat-error>
@@ -145,49 +145,50 @@
                 <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)'>
             </mat-form-field>
             <section fxLayoutAlign="end">
-                <button mat-mini-fab color="warn" [disabled]="!this.iniciativa.id" (click)="cargaClasificacionDocumento()" class="button">
+                <button mat-mini-fab color="warn" [disabled]="!this.iniciativa.id"
+                    (click)="cargaClasificacionDocumento()" class="button">
                     <mat-icon>add</mat-icon>
                 </button>
             </section>
             <input type="file" #fileInput id="fileUpload" name="fileUpload" multiple="multiple" accept="application/pdf"
                 style="display:none;" />
         </div>
-        
-        </form>
-        </div>
-        
-        
-        <div class="content">
-        
-        <ngx-datatable class="material shadow-none" [rows]="files" [loadingIndicator]="loadingIndicator"
+
+    </form>
+</div>
+
+
+<div class="content">
+
+    <ngx-datatable class="material shadow-none" [rows]="files" [loadingIndicator]="loadingIndicator"
         [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable"
         [limit]="10" [scrollbarH]="true">
         <ngx-datatable-column name="Documentos" prop="cNombreDocumento"></ngx-datatable-column>
         <ngx-datatable-column name="Acciones" sortable="false" prop="id">
             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-        
+
                 <a (click)="editarDocumento(row)">
                     <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">edit
                     </mat-icon>
                 </a>
-        
+
                 <a (click)="eliminarDocumento(row)">
                     <mat-icon color="warn" class="material-icons pointer" matTooltip="Clic para eliminar">delete
                     </mat-icon>
                 </a>
-        
+
             </ng-template>
         </ngx-datatable-column>
-        </ngx-datatable>
-        
-        </div>
-        
+    </ngx-datatable>
+
+</div>
+
 
 <mat-dialog-actions align="end" class="buttons">
 
     <!--  <button mat-raised-button color="warn" (click)="generaReport()">Documento</button>-->
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
-         <button [disabled]="form.invalid || this.files.length < 1"
-        mat-raised-button color="accent" (click)="guardar()">Guardar</button>
-  <!-- <button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
+    <button [disabled]="form.invalid || this.files.length < 1" mat-raised-button color="accent"
+        (click)="guardar()">Guardar</button>
+    <!-- <button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
 </mat-dialog-actions>

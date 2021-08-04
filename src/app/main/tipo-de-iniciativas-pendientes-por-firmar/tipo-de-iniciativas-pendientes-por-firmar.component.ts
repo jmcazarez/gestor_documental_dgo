@@ -36,6 +36,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
     certificadoB64: any;
     llaveB64: any;
     arrTipo: any[] = [];
+    type = '';
     constructor(
         private spinner: NgxSpinnerService,
         private formBuilder: FormBuilder,
@@ -47,6 +48,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
     ) { }
 
     async ngOnInit(): Promise<void> {
+        this.type = 'password'
         this.documentosPendientes = [];
         this.documentosPendientesTemp = [];
         this.form = this.formBuilder.group({
@@ -62,7 +64,14 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
         await this.obtenerTiposIniciativas();
     }
 
+    viewPassword(): void {
+        if (this.type === 'password') {
+            this.type = 'text';
+        } else {
+            this.type = 'password';
+        }
 
+    }
     async obtenerAutorizacionPorLegislatura(): Promise<[]> {
 
         return new Promise((resolve) => {
@@ -458,6 +467,9 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
 
 
     async limpiarCampos(): Promise<void> {
+        this.form.get('cPassword').setValue('');
+        this.form.get('cPassword').clearValidators();
+        this.form.get('cPassword').updateValueAndValidity();
         if (this.documentosPendientes.length === 0) {
             let btnCertificado: HTMLElement = document.getElementById("btnCertificado");
             let btnLLave: HTMLElement = document.getElementById("btnLLave");
@@ -470,8 +482,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
             this.form.get('cSubirCertificado').updateValueAndValidity();
             this.form.get('cSubirLlave').clearValidators();
             this.form.get('cSubirLlave').updateValueAndValidity();
-            this.form.get('cPassword').clearValidators();
-            this.form.get('cPassword').updateValueAndValidity();
+
         }
     }
     async cambioCertificado(event): Promise<void> {

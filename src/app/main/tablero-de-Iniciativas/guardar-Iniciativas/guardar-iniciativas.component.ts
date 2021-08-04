@@ -122,6 +122,8 @@ export class GuardarIniciativasComponent implements OnInit {
     }
 
     async ngOnInit() {
+        
+      console.log('1');
         var isoDateString = new Date().toISOString();
       
         await this.obtenerDocumento();

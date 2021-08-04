@@ -140,7 +140,9 @@
         }
         
     }      
-
+    .pw {
+        -webkit-text-security: disc;
+    }
     .ocultar {
         display: none;
       }

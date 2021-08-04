@@ -272,7 +272,7 @@ export class GuardarSesionesComponent implements OnInit {
         });
     }
 
-    async obtenerLegislatura(): Promise<void> {
+    async obtenerLegislatura(): Promise<any> {
         return new Promise((resolve) => {
             {
                 this.legislaturaService.obtenerLegislatura().subscribe(
@@ -282,7 +282,7 @@ export class GuardarSesionesComponent implements OnInit {
                                 this.legislatura.push(legislatura);
                             }
                         }
-                        resolve(resp);
+                        resolve(this.legislatura);
 
                         //seleccionamos legislatura por default
                         this.selectedLegislatura = this.legislatura[0].id;

@@ -171,6 +171,7 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public iniciativa: IniciativasModel,
     ) {
        
+      console.log('2');
         this.tipoSesion = [];
 
         this.tipoSesion.push({
@@ -891,7 +892,7 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
         });
     }
 
-    async obtenerLegislatura(): Promise<void> {
+    async obtenerLegislatura(): Promise<any> {
         return new Promise((resolve) => {
             {
                 this.legislaturaService.obtenerLegislatura().subscribe(
@@ -901,7 +902,7 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
                                 this.legislatura.push(legislatura);
                             }
                         }
-                        resolve(resp);
+                        resolve( this.legislatura);
 
                         //seleccionamos legislatura por default
                         this.selectedLegislatura = this.legislatura[0].id;
@@ -927,4 +928,58 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
             this.dialogRef.close();
         }
     }
+
+    async editarDocumento(documento: DocumentosModel): Promise<void> {
+
+        const fechaCreacion = new Date(documento.fechaCreacion);
+        let mesCreacion: any = fechaCreacion.getMonth() + 1; // obteniendo mes
+        let diaCreacion: any = fechaCreacion.getDate(); // obteniendo dia      
+        const anoCreacion = fechaCreacion.getFullYear(); // obteniendo año
+        diaCreacion = diaCreacion + 1;
+        if (diaCreacion < 10) {
+            diaCreacion = '0' + diaCreacion; // agrega cero si el menor de 10
+        }
+        if (mesCreacion < 10) {
+            mesCreacion = '0' + mesCreacion; // agrega cero si el menor de 10
+        }
+        let parametrosSSP001 = await this.obtenerParametros("SSP-001");
+        let tipoDocumento = parametrosSSP001.filter(
+            (d) =>
+                d["cParametroAdministrado"] === "SSP-001-Tipo-de-Documento"
+        );
+        let tipoExpediente = parametrosSSP001.filter(
+            (d) =>
+                d["cParametroAdministrado"] === "SSP-001-Tipo-de-Expediente"
+        );
+        let tipoInformacion = parametrosSSP001.filter(
+            (d) =>
+                d["cParametroAdministrado"] ===
+                "SSP-001-Tipo-de-Informacion"
+        );
+
+        documento.tipo_de_documento = tipoDocumento[0]["cValor"];
+        documento.tipo_de_expediente = tipoExpediente[0]["cValor"];
+        documento.visibilidade = tipoInformacion[0]["cValor"];
+        documento.disabled = false;
+        documento.iniciativa = this.iniciativa.id;
+     
+        //documento.fechaCreacion = anoCreacion + '-' + mesCreacion + '-' + diaCreacion + 'T16:00:00.000Z';
+
+        // Abrimos modal de guardar perfil
+        const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
+            width: '60%',
+            height: '80%',
+            disableClose: true,
+            data: documento,
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                if (result.documento) {
+                    this.clasificarDocAnex(result, '1');
+                }
+            }
+        });
+    }
+
 }

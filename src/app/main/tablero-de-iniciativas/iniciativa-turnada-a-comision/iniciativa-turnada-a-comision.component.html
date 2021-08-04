@@ -136,7 +136,7 @@
                     (matChipInputTokenEnd)="agregarTema($event)" disabled>
             </mat-chip-list>
         </mat-form-field>
-
+<!-- 
         <mat-form-field class="example-chip-list" *ngIf="iniciativa.estatus==='Turnar iniciativa a comisión'
         || iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios' && iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa'
         || iniciativa.estatus === 'Turnada a comisión para modificación'">
@@ -154,7 +154,7 @@
             <p *ngIf="this.errorLargo">Valor invalido, el mínimo de caracteres es 3
                 y el máximo son 100 </p>
         </mat-form-field>
-
+-->
         <div fxLayout="row" fxLayoutAlign="start center" *ngIf="iniciativa.estatus==='Turnar iniciativa a comisión' ||
         iniciativa.estatus === 'Turnar dictamen a Secretaría General' ||
         iniciativa.estatus === 'Turnado de iniciativa a comisión' ||

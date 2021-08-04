@@ -379,7 +379,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
         );
     }
 
-    async obtenerLegislatura(): Promise<void> {
+    async obtenerLegislatura(): Promise<any> {
         return new Promise((resolve) => {
             {
                 this.legislaturaService.obtenerLegislatura().subscribe(
@@ -389,7 +389,7 @@ export class DashboardDeIndicadoresIniciativasComponent implements OnInit {
                                 this.arrLegislaturas.push(legislatura);
                             }
                         }
-                        resolve(resp);
+                        resolve(this.arrLegislaturas);
 
                         //seleccionamos legislatura por default
                         //this.selectedLegislatura = this.legislatura[0].id;

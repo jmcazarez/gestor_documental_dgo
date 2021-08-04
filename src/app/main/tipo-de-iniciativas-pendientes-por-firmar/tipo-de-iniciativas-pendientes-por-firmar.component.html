@@ -43,8 +43,13 @@
                 <div class="form-quest">
                     <!-- Subir archivos -->
                     <mat-form-field>
+                        <input matInput type="text"   [ngClass]="{'pw': this.type === 'password'}" autocomplete="off" formControlName="cPassword">
+                        <mat-icon *ngIf="this.type ==='password'"matSuffix class="secondary-text" (click)="viewPassword()">visibility</mat-icon>
+                        <mat-icon *ngIf="this.type !=='password'" matSuffix class="secondary-text" (click)="viewPassword()">
+                            visibility_off</mat-icon>
+    
                         <mat-label>Contraseña </mat-label>
-                        <input matInput type="password" autocomplete="off" formControlName="cPassword">
+                       
                     </mat-form-field>
                 </div>
                 <div class="buscador">
