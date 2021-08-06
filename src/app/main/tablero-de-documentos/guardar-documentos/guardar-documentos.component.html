@@ -49,7 +49,7 @@
 
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
                 <mat-label>Fecha de creación *</mat-label>
-                <input matInput [matDatepicker]="picker1"  formControlName="fechaCreacion" datePickerFormat="DD/MM/YYYY" (change)="change()">
+                <input matInput [matDatepicker]="picker1"  formControlName="fechaCreacion" datePickerFormat="DD/MM/YYYY" (change)="change()" [max]="maxDate">
                 <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                 <mat-datepicker #picker1></mat-datepicker>
                 <mat-error>La fecha de creación no es valida ej. 28/11/2020</mat-error>

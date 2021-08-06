@@ -651,9 +651,9 @@ export class RecepcionDeIniciativasComponent implements OnInit {
             this.empleadosService.obtenerEmpleados().subscribe(
                 (resp: any) => {
                     for (const empleados of resp) {
-                        if (empleados.activo) {
+                      //  if (empleados.activo) {
                             this.empleados.push(empleados);
-                        }
+                      //  }
                     }
                     resolve(resp);
                 },

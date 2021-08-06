@@ -285,7 +285,7 @@ iniciativa.estatus!=='Turnada a publicación' &&
 iniciativa.estatus!=='Turnada a comisión para modificación'" fxLayout="row" fxLayoutAlign="end" fxFlex="1 0 auto">
             <mat-form-field class="buscar">
                 <mat-label>Buscar un documento</mat-label>
-                <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)'>
+                <input type='text'  matInput placeholder='' (keyup)='filterDatatable($event)'>
             </mat-form-field>
             <section fxLayoutAlign="end">
                 <button mat-mini-fab color="warn" [disabled]="!this.iniciativa.id"

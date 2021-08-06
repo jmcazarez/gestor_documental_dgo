@@ -277,7 +277,10 @@ export class TableroDeIniciativasComponent implements OnInit {
             });
 
             dialogRef.afterClosed().subscribe(result => {
+                console.log('salio');
                 this.obtenerIniciativas();
+               
+          
             });
         }
     }

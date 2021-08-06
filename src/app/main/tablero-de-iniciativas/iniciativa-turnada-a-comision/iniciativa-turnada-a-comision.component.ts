@@ -1312,7 +1312,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     bold: true,
                     alignment: "left",
                 });
-              
+
                 presente.push({
                     text: "PRESENTE",
                     fontSize: 14,
