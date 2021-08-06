@@ -122,10 +122,10 @@ export class GuardarIniciativasComponent implements OnInit {
     }
 
     async ngOnInit() {
-        
-      console.log('1');
+        let validaTags = [];
+        console.log('1');
         var isoDateString = new Date().toISOString();
-      
+
         await this.obtenerDocumento();
         this.obtenerTiposIniciativas();
 
@@ -147,16 +147,17 @@ export class GuardarIniciativasComponent implements OnInit {
             this.selectTipo = this.iniciativa.tipo_de_iniciativa.id;
             this.autores = this.iniciativa.autores;
             this.temas = this.iniciativa.tema;
-          
+
             this.iniciativa.fechaCreacion =
                 this.iniciativa.fechaCreacion + "T16:00:00.000Z";
             this.iniciativa.fechaIniciativa =
                 this.iniciativa.fechaIniciativa + "T16:00:00.000Z";
-                
+            validaTags = [Validators.minLength(3), Validators.maxLength(200)];
         } else {
             // Seteamos la fecha de carga con la fecha actual
             this.iniciativa.estatus = "Registrada";
             this.iniciativa.fechaCreacion = isoDateString;
+            validaTags = [Validators.required, Validators.minLength(3), Validators.maxLength(200)];
         }
 
         // Form reativo
@@ -178,9 +179,9 @@ export class GuardarIniciativasComponent implements OnInit {
                 { value: this.iniciativa.estatus, disabled: true },
                 Validators.required,
             ],
-            autores: ["", [Validators.minLength(3), Validators.maxLength(200)]],
+            autores: ["", validaTags],
             etiquetasAutores: [{ value: "", disabled: false }],
-            tema: ["", [Validators.minLength(3), Validators.maxLength(200)]],
+            tema: ["", validaTags],
             etiquetasTema: [{ value: "", disabled: false }],
         });
     }
@@ -199,7 +200,7 @@ export class GuardarIniciativasComponent implements OnInit {
 
                 // Buscamos permisos
                 for (const documento of resp.data) {
-                  
+
                     idDocumento = '';
                     // Validamos permisos
 
@@ -351,7 +352,7 @@ export class GuardarIniciativasComponent implements OnInit {
                 // Actualizamos la iniciativa
                 if (this.iniciativa.estatus == "Registrada") {
                     reporte = await this.generaReport();
-                    
+                    console.log('salio reporte');
                     if (reporte === "err") {
                         return
                     }
@@ -407,7 +408,11 @@ export class GuardarIniciativasComponent implements OnInit {
 
                 if (this.iniciativa.estatus == "Registrada") {
                     reporte = await this.generaReport();
-                    this.iniciativa.formatosTipoIniciativa = [this.documentos.id];
+                    if (reporte === "err") {
+                        return
+                    } else {
+                        this.iniciativa.formatosTipoIniciativa = [this.documentos.id];
+                    }
                 }
 
                 if (reporte !== "err") {
@@ -427,6 +432,9 @@ export class GuardarIniciativasComponent implements OnInit {
                                 this.cerrar(this.iniciativa);
                             } else {
                                 this.spinner.hide();
+                                console.log('err1')
+                                this.temas = [];
+                                this.autores = [];
                                 Swal.fire(
                                     "Error",
                                     "Ocurrió un error al guardar. " + resp.error.data,
@@ -435,6 +443,9 @@ export class GuardarIniciativasComponent implements OnInit {
                             }
                         },
                         (err) => {
+                            console.log('err2')
+                            this.temas = [];
+                            this.autores = [];
                             this.spinner.hide();
                             Swal.fire(
                                 "Error",
@@ -506,7 +517,13 @@ export class GuardarIniciativasComponent implements OnInit {
         const index = this.autores.indexOf(autor);
 
         if (index >= 0) {
+            if (index === 0) {
+                this.form.get('autores').setValue('');
+                this.iniciativa.autores = '';
+            }
             this.autores.splice(index, 1);
+        } else {
+            console.log('limpio');
         }
     }
 
@@ -528,7 +545,14 @@ export class GuardarIniciativasComponent implements OnInit {
         const index = this.temas.indexOf(tema);
 
         if (index >= 0) {
+            if (index === 0) {
+                console.log('tema limpio');
+                this.form.get('tema').setValue('');
+                this.iniciativa.tema = '';
+            }
             this.temas.splice(index, 1);
+        } else {
+            console.log('limpio');
         }
     }
 
@@ -924,7 +948,9 @@ export class GuardarIniciativasComponent implements OnInit {
                     tipoInformacion[0]["cValor"],
                     legislaturas[0]
                 );
-                if (documentoRespuesta.error) {                    
+                if (documentoRespuesta.error) {
+                    console.log('salio err');
+                    console.log(this.iniciativa.formatosTipoIniciativa.length);
                     resolve("err");
                 } else {
                     const dd = {
@@ -998,6 +1024,7 @@ export class GuardarIniciativasComponent implements OnInit {
                         tipoInformacion[0]["cValor"],
                         legislaturas[0]
                     );
+                    console.log('dps de todo')
                     resolve("ok");
                 }
 
@@ -1133,7 +1160,7 @@ export class GuardarIniciativasComponent implements OnInit {
                     this.documentoService.actualizarDocumentos(this.documentos).subscribe(
                         (resp: any) => {
                             if (resp.data) {
-                                this.documentos = resp.data;                           
+                                this.documentos = resp.data;
                                 this.idDocumento = resp.data._id;
                                 this.iniciativa.formatosTipoIniciativa = [this.iniciativa.formatosTipoIniciativa[0]];
 
@@ -1199,12 +1226,22 @@ export class GuardarIniciativasComponent implements OnInit {
                             (err: any) => {
                                 this.spinner.hide();
                                 console.log(err);
-                                Swal.fire(
-                                    "Error",
-                                    "Ocurrió un error al guardar." +
-                                    JSON.stringify(err.error.data),
-                                    "error"
-                                );
+                                console.log(this.iniciativa.formatosTipoIniciativa);
+                                if (err.error.data === "La descripción del documento ya se encuentra capturada en otro documento.") {
+                                    Swal.fire(
+                                        "Error",
+                                        "Ocurrió un error al guardar." +
+                                        "El tema de esta iniciativa, ya se encuentra capturada en otro documento.",
+                                        "error"
+                                    );
+                                } else {
+                                    Swal.fire(
+                                        "Error",
+                                        "Ocurrió un error al guardar." +
+                                        JSON.stringify(err.error.data),
+                                        "error"
+                                    );
+                                }
                                 resolve(err);
                             }
                         );

@@ -157,9 +157,11 @@
 <mat-dialog-actions align="end" class="buttons">
     <!-- <button mat-raised-button color="warn" (click)="generaReport()">Documento</button>-->
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
+ 
     <button *ngIf="this.iniciativa.formatosTipoIniciativa.length < 1"
-        [disabled]="form.invalid || this.temas.length === 0 || this.autores.length === 0" mat-raised-button
+        [disabled]="form.invalid" mat-raised-button
         color="accent" (click)="guardar()">Guardar</button>
+     
     <button *ngIf="this.iniciativa.formatosTipoIniciativa.length > 0"
         [disabled]="form.invalid || this.temas.length === 0 || this.autores.length === 0 || files.length < 1"
         mat-raised-button color="accent" (click)="guardar()">Guardar</button>

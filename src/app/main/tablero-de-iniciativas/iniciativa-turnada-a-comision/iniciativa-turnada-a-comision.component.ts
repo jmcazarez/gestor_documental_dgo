@@ -1301,11 +1301,18 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                     alignment: "left",
                 });
                 presente.push({
-                    text: "Estudios Legislativos H.Congreso del estado",
+                    text: "Estudios Legislativos",
                     fontSize: 14,
                     bold: true,
                     alignment: "left",
                 });
+                presente.push({
+                    text: "H.Congreso del Estado",
+                    fontSize: 14,
+                    bold: true,
+                    alignment: "left",
+                });
+              
                 presente.push({
                     text: "PRESENTE",
                     fontSize: 14,
