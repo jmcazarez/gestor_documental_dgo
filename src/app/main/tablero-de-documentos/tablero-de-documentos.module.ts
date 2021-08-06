@@ -17,7 +17,7 @@ import { MatSortModule } from "@angular/material/sort";
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { NgxSpinnerModule } from 'ngx-spinner';
-;
+import { ExportAsModule } from 'ngx-export-as';
 const routes = [
     {
        
@@ -43,6 +43,7 @@ const routes = [
                 selectedMessage: 'selected' // Footer selected message
             }
         }),
+        
         MatIconModule,
         MatCheckboxModule,
         MatDialogModule,
@@ -54,7 +55,8 @@ const routes = [
         MatSortModule,
         MatStepperModule,
         MatTableModule,
-        NgxSpinnerModule
+        NgxSpinnerModule,
+        ExportAsModule
     ],
     providers: [
         {

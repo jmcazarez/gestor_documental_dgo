@@ -10,14 +10,17 @@ import { DomSanitizer } from '@angular/platform-browser';
 import Swal from 'sweetalert2';
 import { ClasficacionDeDocumentosComponent } from './clasficacion-de-documentos/clasficacion-de-documentos.component';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { ExportAsService, ExportAsConfig } from 'ngx-export-as';
+
 @Component({
     selector: 'app-tablero-de-documentos',
     templateUrl: './tablero-de-documentos.component.html',
     styleUrls: ['./tablero-de-documentos.component.scss'],
     providers: [DatePipe]
 })
-export class TableroDeDocumentosComponent implements OnInit {
 
+export class TableroDeDocumentosComponent implements OnInit {
+  
     @ViewChild('archivoPDF', { static: false }) archivoPDF;
     public PDFtexto = '';
     archivoBase64: any;
@@ -44,6 +47,7 @@ export class TableroDeDocumentosComponent implements OnInit {
         private sanitizer: DomSanitizer
     ) {
         // Obtenemos documentos
+
 
     }
 
@@ -76,7 +80,7 @@ export class TableroDeDocumentosComponent implements OnInit {
 
 
     obtenerDocumentos(): void {
-        
+
         this.spinner.show();
         const documentosTemp: any[] = [];
         let idDocumento: any;
@@ -102,7 +106,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                 if (this.optConsultar) {
 
                     for (const documento of resp.data) {
-                        
+
                         idDocumento = '';
                         // Validamos permisos
 
@@ -203,7 +207,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                             }
                         }
                     }
-                    
+
                     this.documentos = documentosTemp;
                     this.documentosTemporal = this.documentos;
                 }
@@ -366,8 +370,9 @@ export class TableroDeDocumentosComponent implements OnInit {
         }
     }
 
-    onFooterPage(event): void{
+    onFooterPage(event): void {
         console.log(event);
     }
-   
+
+
 }

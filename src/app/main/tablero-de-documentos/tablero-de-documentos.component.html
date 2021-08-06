@@ -1,5 +1,4 @@
-
-    <ngx-spinner type="timer"></ngx-spinner>
+<ngx-spinner type="timer"></ngx-spinner>
 <script src='https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js'></script>
 <div id="clientes" class="page-layout simple fullwidth docs">
 
@@ -24,17 +23,21 @@
             <div class="buscador">
                 <mat-form-field class="buscar">
                     <mat-label>Buscar un documento</mat-label>
-                    <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)' [(ngModel)]="valueBuscador">
+                    <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)'
+                        [(ngModel)]="valueBuscador">
                 </mat-form-field>
-                <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevoDocumento()" class="button">
+                <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevoDocumento()"
+                    class="button">
                     <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un documento">post_add
                     </mat-icon>
                     Agregar nuevo documento
                 </button>
-
+            
             </div>
 
-            <ngx-datatable class="material shadow-none"  [rows]="documentos" [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
+            <ngx-datatable  class="material shadow-none" [rows]="documentos"
+                [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50"
+                [rowHeight]="'auto'" [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
                 <!-- <ngx-datatable-column name="Id. documento" prop="id"></ngx-datatable-column> -->
                 <ngx-datatable-column name="Documento" prop="cNombreDocumento"></ngx-datatable-column>
                 <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
@@ -65,13 +68,15 @@
 
                         </a>
 
-                        <a *ngIf="row.Consultar === true && (this.optEditar === false || row.Editar === false)" (click)="consultarDcumento(row)">
+                        <a *ngIf="row.Consultar === true && (this.optEditar === false || row.Editar === false)"
+                            (click)="consultarDcumento(row)">
                             <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">
                                 remove_red_eye
                             </mat-icon>
                         </a>
 
-                        <a *ngIf="row.Consultar === true && this.optEditar === true && row.Editar === true" (click)="editarDocumento(row)">
+                        <a *ngIf="row.Consultar === true && this.optEditar === true && row.Editar === true"
+                            (click)="editarDocumento(row)">
                             <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">edit
                             </mat-icon>
                         </a>
@@ -79,7 +84,7 @@
 
                     </ng-template>
                 </ngx-datatable-column>
-            <!--- <ngx-datatable-footer>
+                <!--- <ngx-datatable-footer>
                     <ng-template 
                       ngx-datatable-footer-template
                       let-rowCount="rowCount"
