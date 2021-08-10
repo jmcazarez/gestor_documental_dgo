@@ -17,13 +17,14 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { Console } from 'console';
 import { DateFormat } from "./date-format";
+import { C } from '@angular/cdk/keycodes';
 
 
 @Component({
     selector: 'guardar-documentos',
     templateUrl: './guardar-documentos.component.html',
     styleUrls: ['./guardar-documentos.component.scss'],
-    providers: [DatePipe,{ provide: DateAdapter, useClass: DateFormat }],
+    providers: [DatePipe, { provide: DateAdapter, useClass: DateFormat }],
 })
 
 
@@ -65,7 +66,7 @@ export class GuardarDocumentosComponent implements OnInit {
         public dialog: MatDialog,
         private dateAdapter: DateAdapter<Date>,
         @Inject(MAT_DIALOG_DATA) public documentos: DocumentosModel
-    ) { 
+    ) {
         dateAdapter.setLocale("en-in"); // DD/MM/YYYY
     }
 
@@ -102,6 +103,11 @@ export class GuardarDocumentosComponent implements OnInit {
             this.cNombreDocumento = this.documentos.cNombreDocumento;
             this.tipoDocumento = this.documentos.tipo_de_documento;
             this.fechaCreacion = this.documentos.fechaCreacion;
+            this.documentos.fechaCreacion
+            console.log('entro');
+            if (this.documentos.fechaCreacion instanceof Date) {
+                console.log('valido');
+            }
             this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
             this.documentos.fechaCarga = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
             this.bActivo = this.documentos.bActivo;

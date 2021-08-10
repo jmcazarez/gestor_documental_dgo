@@ -114,7 +114,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
             this.documentosPendientes = this.documentosPendientesTemp;
         } else {
             const val = value.target.value.toLowerCase();
-            const temp = this.documentosPendientes.filter((d) => d.cNombreDocumento.toLowerCase().indexOf(val) !== -1 || !val);
+            const temp = this.documentosPendientes.filter((d) => d.documento.cNombreDocumento.toLowerCase().indexOf(val) !== -1 || d.estatusIniciativa.toLowerCase().indexOf(val) !== -1 || !val);
             this.documentosPendientes = temp;
         }
 
@@ -268,7 +268,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
 
                                                         } else {
                                                             await this.obtenerAutorizacionPorLegislatura();
-
+                                                            this.searchText = '';
                                                             Swal.fire(
                                                                 "Éxito",
                                                                 "Documento firmado correctamente, faltan por firmar " + firmasPendientes + " integrantes.",
@@ -467,6 +467,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
 
 
     async limpiarCampos(): Promise<void> {
+        this.searchText = '';
         this.form.get('cPassword').setValue('');
         this.form.get('cPassword').clearValidators();
         this.form.get('cPassword').updateValueAndValidity();

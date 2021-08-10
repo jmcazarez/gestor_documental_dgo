@@ -1226,7 +1226,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
             let puestoSecretario = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === puestoSecretarioGeneral[0].cValor);
             if (puestoSecretario.length === 0) {
-                Swal.fire('Error', 'Configuración de secretario general incorrecto, verificar parametros administrados.', 'error');
+                Swal.fire('Error', 'La configuración de secretario general incorrecto, verificar parametros administrados y la configuración de firmas.', 'error');
                 this.spinner.hide();
                 return
             }
@@ -3349,6 +3349,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             let meta = '';
             let visibilidad = '';
             let info: any;
+            let countFecha = 0;
             // Obtenemos los documentos
             this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
 
@@ -3376,6 +3377,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                                     if (documento.metacatalogos) {
                                         meta = '';
+                                        countFecha = 0;
                                         if (documento.metacatalogos) {
                                             for (const x of documento.metacatalogos) {
 
@@ -3383,6 +3385,11 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
                                                     if (x.cTipoMetacatalogo === 'Fecha') {
                                                         if (x.text) {
+                                                            countFecha = x.text.split("T16:00:00.000Z").length - 1;
+
+                                                            if (countFecha >= 2) {
+                                                                x.text = x.text.replace('T16:00:00.000ZT16:00:00.000Z', 'T16:00:00.000Z')
+                                                            }
                                                             meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
                                                         }
                                                     } else {

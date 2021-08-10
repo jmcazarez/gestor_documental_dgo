@@ -75,6 +75,7 @@ export class TableroDeIniciativasComponent implements OnInit {
 
     async obtenerIniciativas(): Promise<void> {
         try {
+            this.valueBuscador = '';
             this.spinner.show();
             this.filterName = '';
             this.loadingIndicator = true;

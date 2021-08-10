@@ -129,7 +129,7 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
                           receptor = '';
                         }else{
                          receptorId = ini.receptor[0].id;
-                          receptor = ini.receptor[0].nombre + ' ' + ini.receptor[0].apellidoPaterno + ' ' + ini.receptor[0].apellidoMaterno;
+                          receptor = ini.receptor[0].nombre + ' ' + ini.receptor[0].apellidoPaterno||'' + ' ' + ini.receptor[0].apellidoMaterno||'';
                         }
 
                         if(ini.fechaRecepcion === undefined){

@@ -14,7 +14,7 @@
                 <mat-label>Nombre *</mat-label>
                 <input matInput formControlName="descripcion" >
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
-                <mat-error *ngIf="form.get('descripcion').hasError('required')"> El nombre de la comisión es requerido.</mat-error>
+                <mat-error *ngIf="form.get('descripcion').hasError('required')"> El nombre es requerido.</mat-error>
                 <mat-error *ngIf="form.get('descripcion').hasError('minlength') || form.get('descripcion').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
                     y el máximo son 100 </mat-error>
             </mat-form-field>

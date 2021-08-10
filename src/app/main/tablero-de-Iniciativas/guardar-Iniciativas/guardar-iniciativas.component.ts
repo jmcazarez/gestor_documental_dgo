@@ -194,6 +194,7 @@ export class GuardarIniciativasComponent implements OnInit {
             this.loadingIndicator = true;
             let meta = '';
             let visibilidad = '';
+            let countFecha = 0;
             let info: any;
             // Obtenemos los documentos
             this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
@@ -220,6 +221,7 @@ export class GuardarIniciativasComponent implements OnInit {
 
                                     if (documento.metacatalogos) {
                                         meta = '';
+                                        countFecha = 0;
                                         if (documento.metacatalogos) {
                                             for (const x of documento.metacatalogos) {
                                                 if (x) {
@@ -227,6 +229,11 @@ export class GuardarIniciativasComponent implements OnInit {
 
                                                         if (x.cTipoMetacatalogo === 'Fecha') {
                                                             if (x.text) {
+                                                                countFecha = x.text.split("T16:00:00.000Z").length - 1;
+
+                                                                if (countFecha >= 2) {
+                                                                    x.text = x.text.replace('T16:00:00.000ZT16:00:00.000Z', 'T16:00:00.000Z')
+                                                                }
                                                                 meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
                                                             }
                                                         } else {
@@ -1553,8 +1560,11 @@ export class GuardarIniciativasComponent implements OnInit {
             const fecha = new Date(); // Fecha actual
             let mes: any = fecha.getMonth() + 1; // obteniendo mes
             let dia: any = fecha.getDate(); // obteniendo dia
-
             const anio = fecha.getFullYear(); // obteniendo año
+            let countCreacion = 0;
+            let sFechaCreacion = '';
+            let countModificacion = 0;
+            let sFechaModificacion = '';
 
             if (dia < 10) {
                 dia = "0" + dia; // agrega cero si el menor de 10
@@ -1565,6 +1575,7 @@ export class GuardarIniciativasComponent implements OnInit {
             const fechaActual = dia + "/" + mes + "/" + anio;
             this.documentos.bActivo = true;
             if (!this.documentos.id) {
+                console.log('entro');
                 this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
                 this.documentos.fechaCarga = this.documentos.fechaCreacion + 'T16:00:00.000Z';
             }
@@ -1609,6 +1620,23 @@ export class GuardarIniciativasComponent implements OnInit {
 
 
             this.documentos.folioExpediente = Number(this.documentos.folioExpediente);
+
+            if (this.documentos.fechaCreacion) {
+                sFechaCreacion = this.documentos.fechaCreacion;
+                countCreacion = sFechaCreacion.split("T16:00:00.000Z").length - 1;
+
+                if (countCreacion >= 2) {
+                    this.documentos.fechaCreacion = this.documentos.fechaCreacion.replace('T16:00:00.000ZT16:00:00.000Z', 'T16:00:00.000Z')
+                }
+            }
+            if (this.documentos.fechaCarga) {
+                sFechaModificacion = this.documentos.fechaCarga;
+                countModificacion = sFechaModificacion.split("T16:00:00.000Z").length - 1;
+
+                if (countModificacion >= 2) {
+                    this.documentos.fechaCarga = this.documentos.fechaCarga.replace('T16:00:00.000ZT16:00:00.000Z', 'T16:00:00.000Z')
+                }
+            }
             this.documentoService
                 .actualizarDocumentosSinVersion(this.documentos)
                 .subscribe(

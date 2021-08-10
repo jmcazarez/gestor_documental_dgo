@@ -35,7 +35,7 @@
                 <mat-label>Nombre *</mat-label>
                 <input matInput formControlName="nombreDocumento" (change)="change()">
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
-                <mat-error *ngIf="form.get('nombreDocumento').hasError('required')">El nombre la comsión es requerido</mat-error>
+                <mat-error *ngIf="form.get('nombreDocumento').hasError('required')">El nombre es requerido</mat-error>
                 <mat-error *ngIf="form.get('nombreDocumento').hasError('minlength') || form.get('nombreDocumento').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
                     y el máximo son 200 </mat-error>
 

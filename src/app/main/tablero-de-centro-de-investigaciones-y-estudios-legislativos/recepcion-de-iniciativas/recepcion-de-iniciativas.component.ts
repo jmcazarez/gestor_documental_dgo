@@ -690,6 +690,7 @@ export class RecepcionDeIniciativasComponent implements OnInit {
     let meta = '';
     let visibilidad = '';
     let info: any;
+    let countFecha = 0;
     // Obtenemos los documentos
     this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
 
@@ -717,6 +718,7 @@ export class RecepcionDeIniciativasComponent implements OnInit {
 
                             if (documento.metacatalogos) {
                                 meta = '';
+                                countFecha = 0;
                                 if (documento.metacatalogos) {
                                     for (const x of documento.metacatalogos) {
 
@@ -724,7 +726,13 @@ export class RecepcionDeIniciativasComponent implements OnInit {
 
                                             if (x.cTipoMetacatalogo === 'Fecha') {
                                                 if (x.text) {
+                                                    countFecha = x.text.split("T16:00:00.000Z").length - 1;
+
+                                                    if (countFecha >= 2) {
+                                                        x.text = x.text.replace('T16:00:00.000ZT16:00:00.000Z', 'T16:00:00.000Z')
+                                                    }
                                                     meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                           
                                                 }
                                             } else {
                                                 if (x.text) {

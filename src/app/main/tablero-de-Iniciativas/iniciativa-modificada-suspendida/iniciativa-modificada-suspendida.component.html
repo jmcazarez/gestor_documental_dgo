@@ -200,7 +200,7 @@
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto" 
         *ngIf="selectedDictamenDeIniciativa=='No aprobada'">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Motivo de la suspención</mat-label>
+                <mat-label>Motivo de la suspensión</mat-label>
                 <textarea matInput [disabled]="this.disabled" formControlName="motivoDeSuspension" name="motivoDeSuspension"></textarea>
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
                 <mat-error *ngIf="form.get('motivoDeSuspension').hasError('minlength') || form.get('motivoDeSuspension').hasError('maxlength')">El maximo de caracteres es 500</mat-error>
