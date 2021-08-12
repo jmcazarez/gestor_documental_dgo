@@ -93,11 +93,13 @@
 
         <mat-form-field *ngIf="this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' &&
         selectedDictamenDeIniciativa == 'Aprobada' &&
-        this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa'">
+        this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa' || this.iniciativa.estatus == 'Turnada a publicación' &&
+        selectedDictamenDeIniciativa == 'Aprobada' &&
+        this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa' ">
             <mat-label>Adición</mat-label>
             <mat-chip-list #chipList4 [disabled]="false" aria-label="Selección de adición">
-                <mat-chip *ngFor="let adi of adicion" [selectable]="selectable4" [removable]="removable4"
-                    (removed)="eliminarAdicion(adicion)">
+                <mat-chip *ngFor="let adi of adiciones" [selectable]="selectable4" [removable]="removable4"
+                    (removed)="eliminarAdicion(adi)">
                     {{adi.name}}
                     <mat-icon matChipRemove *ngIf="removable4">cancel</mat-icon>
                 </mat-chip>
@@ -136,7 +138,7 @@
                     (matChipInputTokenEnd)="agregarTema($event)" disabled>
             </mat-chip-list>
         </mat-form-field>
-<!-- 
+        <!-- 
         <mat-form-field class="example-chip-list" *ngIf="iniciativa.estatus==='Turnar iniciativa a comisión'
         || iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios' && iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa'
         || iniciativa.estatus === 'Turnada a comisión para modificación'">
@@ -244,8 +246,7 @@
                     (click)="cargaClasificacionDocumento('4')">
                     Anexar acta de sesión <mat-icon>add</mat-icon>
                 </button>
-                <button *ngIf="sinActa == false" color="accent" mat-raised-button
-                    (click)="obtenerDocumentoPorId('4')">
+                <button *ngIf="sinActa == false" color="accent" mat-raised-button (click)="obtenerDocumentoPorId('4')">
                     Editar acta de sesión <mat-icon>add</mat-icon>
                 </button>
             </div>
@@ -285,7 +286,7 @@ iniciativa.estatus!=='Turnada a publicación' &&
 iniciativa.estatus!=='Turnada a comisión para modificación'" fxLayout="row" fxLayoutAlign="end" fxFlex="1 0 auto">
             <mat-form-field class="buscar">
                 <mat-label>Buscar un documento</mat-label>
-                <input type='text'  matInput placeholder='' (keyup)='filterDatatable($event)'>
+                <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)'>
             </mat-form-field>
             <section fxLayoutAlign="end">
                 <button mat-mini-fab color="warn" [disabled]="!this.iniciativa.id"
@@ -409,16 +410,17 @@ iniciativa.estatus!=='Turnada a comisión para modificación'">
 </div>
 
 <mat-dialog-actions align="end" class="buttons">
-   
+
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
     <button *ngIf="iniciativa.estatus ==='Turnar iniciativa a comisión'" [disabled]="form.invalid || this.errorLargo"
         mat-raised-button color="accent" (click)="guardar()">Guardar</button>
     <button *ngIf="iniciativa.estatus === 'Turnar cuenta pública a EASE'"
         [disabled]="form.invalid || fileOficioName === ''|| fileInformeName === ''" mat-raised-button color="accent"
         (click)="guardar()">Guardar</button>
-    <button *ngIf="iniciativa.estatus === 'Turnar dictamen a Secretaría General' ||
-        iniciativa.estatus === 'Turnada a publicación' || iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'" [disabled]="form.invalid" mat-raised-button color="accent"
-        (click)="guardar()">Guardar</button>
+    <button
+        *ngIf="iniciativa.estatus === 'Turnar dictamen a Secretaría General' ||
+        iniciativa.estatus === 'Turnada a publicación' || iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios'"
+        [disabled]="form.invalid" mat-raised-button color="accent" (click)="guardar()">Guardar</button>
     <button *ngIf="iniciativa.estatus === 'Turnar dictamen a Mesa Directiva'
         || iniciativa.estatus === 'Turnada a comisión para modificación'" [disabled]="form.invalid || files.length < 1"
         mat-raised-button color="accent" (click)="guardar()">Guardar</button>

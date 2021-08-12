@@ -131,7 +131,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     autores: Autores[] = [];
     temas: Temas[] = [];
     clasificaciones: Clasificaciones[] = [];
-    adicion: Adicion[] = [];
+    adiciones: Adicion[] = [];
     etiquetas: Etiquetas[] = [];
     legislatura: any[] = [];
     comisiones: any[] = [];
@@ -219,7 +219,6 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
 
-        console.log('3');
         if (this.iniciativa.estatus !== 'Turnar dictamen a secretaría de servicios parlamentarios') {
             await this.obtenerDocumento();
         }
@@ -307,9 +306,9 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             }
 
             if (this.iniciativa.adicion) {
-                this.adicion = this.iniciativa.adicion;
+                this.adiciones = this.iniciativa.adicion;
             } else {
-                this.adicion = [];
+                this.adiciones = [];
             }
 
             if (this.iniciativa.etiquetas) {
@@ -467,6 +466,15 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             && this.iniciativa.tipo_de_iniciativa.descripcion == 'Cuenta Pública') {
             await this.guardar();
         }
+
+
+        this.form.get('dictamenDeIniciativa').valueChanges.subscribe(val => {
+
+            if (val.length > 0) {
+     
+                this.form.get('adicion').setValue('');   
+                this.form.get('etiquetas').setValue('');         }
+        });
     }
 
     async guardar(): Promise<void> {
@@ -518,7 +526,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             this.iniciativa.oficioEnvioDeInforme = this.iniciativa.oficioEnvioDeInforme.id;
         }
         legislatura = this.selectedLegislatura;
-        tipoSesion = this.form.get('tipoSesion').value;;
+        tipoSesion = this.form.get('tipoSesion').value;
         fechaSesion = moment(this.form.get('fechaSesion').value).format('YYYY-MM-DD');
         hora = this.form.get('horaSesion').value;
         horaSesion = hora + ':00.000';
@@ -545,7 +553,8 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 this.iniciativa.estatus = 'Publicada';
             } else if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa' &&
                 this.selectedDictamenDeIniciativa == 'Aprobada') {
-                this.iniciativa.adicion = this.adicion;
+                console.log(this.adiciones);
+                this.iniciativa.adicion = this.adiciones;
                 this.iniciativa.etiquetas = this.etiquetas;
                 this.iniciativa.dictamenDeIniciativa = this.selectedDictamenDeIniciativa;
                 await this.generaReport();
@@ -844,11 +853,12 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     }
 
     agregarAdicion(event: MatChipInputEvent): void {
+        console.log('entro');
         const input = event.input;
         const value = event.value;
 
         if ((value || "").trim()) {
-            this.adicion.push({ name: value.trim() });
+            this.adiciones.push({ name: value.trim() });
         }
 
         // Reset the input value
@@ -858,10 +868,9 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
     }
 
     eliminarAdicion(adicion: Adicion): void {
-        const index = this.adicion.indexOf(adicion);
-
+        const index = this.adiciones.indexOf(adicion);
         if (index >= 0) {
-            this.adicion.splice(index, 1);
+            this.adiciones.splice(index, 1);
         }
     }
 
@@ -3531,6 +3540,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                         if (result.documento) {
                             this.clasificarDocAnex(result, tipo);
                         }
+
                     }
                 });
             } else {

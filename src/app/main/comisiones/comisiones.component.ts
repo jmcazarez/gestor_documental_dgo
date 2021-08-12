@@ -67,7 +67,8 @@ export class ComisionesComponent implements OnInit {
                         detalle_participantes_comisions: element.detalle_participantes_comisions,
                         tipos_comisione: element.tipos_comisione,
                         descripcionComicion,
-                        iniciativas
+                        iniciativas,
+                        activo: element.activo
                     })
                 });
                 this.comisiones = [...this.comisiones];
