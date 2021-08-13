@@ -5,6 +5,7 @@ import { DatePipe } from "@angular/common";
 import { NgxSpinnerService } from "ngx-spinner";
 import { PrestamosDeDocumentosService } from "services/prestamo-de-documentos.service";
 import * as moment from "moment";
+import { TipoExpedientesService } from "services/tipo-expedientes.service";
 
 @Component({
     selector: "app-tablero-de-dano-de-documentos",
@@ -23,19 +24,23 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
     optConsultar: boolean;
     optEditar: boolean;
     optEliminar: boolean;
-
+    tipoExpedientes: any[] = [];
     constructor(
         private spinner: NgxSpinnerService,
         private datePipe: DatePipe,
         public dialog: MatDialog,
+        private tipoExpedientesService: TipoExpedientesService,
         private prestamosDeDocumentosService: PrestamosDeDocumentosService,
         private menuService: MenuService
     ) {
-        // Obtenemos prestamos de documentos
-        this.obtenerPrestamosDeDocumentos();
+      
     }
 
-    ngOnInit(): void { }
+    async ngOnInit(): Promise<void> {
+          // Obtenemos prestamos de documentos
+          await this.obtenerTiposExpedientes();
+          this.obtenerPrestamosDeDocumentos();
+     }
 
     obtenerPrestamosDeDocumentos(): void {
         this.spinner.show();
@@ -62,18 +67,23 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
                     if (this.optConsultar) {
                         if (resp) {
                             for (const prestamos of resp) {
+                                let tipoExpediente: any;
+                                let cTipoExpediente = "";
                                 if (
                                     prestamos.cTipoDanio ===
                                     "Perdida de documentos" ||
                                     prestamos.cTipoDanio ===
                                     "Deterioro de documentos"
                                 ) {
-                                    let cTipoExpediente = "";
-                                    if (prestamos.tipo_de_expediente) {
-                                        cTipoExpediente = prestamos
-                                            .tipo_de_expediente
-                                            .cDescripcionTipoExpediente;
+
+                                    if (prestamos.cTipoExpediente) {
+                                        tipoExpediente = this.tipoExpedientes.find(tipoOpcion => tipoOpcion.id === prestamos.cTipoExpediente);
+                                        if(tipoExpediente){
+                                            cTipoExpediente = tipoExpediente.cDescripcionTipoExpediente;
+                                        }
                                     }
+
+                                 
                                     prestamosTemp.push({
                                         id: prestamos.id,
                                         dFechaSolicitud:
@@ -161,4 +171,27 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
             this.prestamoDocumentos = temp;
         }
     }
+
+    async obtenerTiposExpedientes(): Promise<any> {
+        // Obtenemos tipos de expedientes
+        this.spinner.show();
+        return new Promise(async (resolve) => {
+            {
+
+                await this.tipoExpedientesService.obtenerTipoExpedientes().subscribe(
+                    (resp: any) => {
+                        this.tipoExpedientes = resp;
+                        resolve(this.tipoExpedientes);
+                        this.spinner.hide();
+                    },
+                    (err) => {
+                   
+                        this.spinner.hide();
+                        resolve(err);
+                    }
+                );
+            }
+        });
+    }
+
 }

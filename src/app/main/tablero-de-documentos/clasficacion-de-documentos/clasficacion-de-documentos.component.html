@@ -1,13 +1,11 @@
 <ngx-spinner type="timer"></ngx-spinner>
 <mat-drawer-container class="example-container">
-
     <mat-drawer *ngIf="this.documento.documento.ext === '.pdf'" mode="side" opened position="start" [style.width]="'55%'">
-
-        <object [data]="this.pdfSrc | safePipe" type="application/pdf" width="100%" height="100%"></object>
-        <!-- <ngx-extended-pdf-viewer [(src)]="pdfSource" useBrowserLocale="true" height="80vh"></ngx-extended-pdf-viewer>
-         <pdf-viewer *ngIf="this.documento.documento.ext === '.pdf' && this.ocultarPreview === false"
+     
+        <object  *ngIf="this.documento.autorizacion_iniciativas.length > 0" [data]="this.pdfSrc | safePipe" type="application/pdf" width="100%" height="100%"></object>
+         <pdf-viewer *ngIf="this.documento.documento.ext === '.pdf' && this.ocultarPreview === false && this.documento.autorizacion_iniciativas.length  === 0 "
             [render-text]="true" [original-size]="false" [autoresize]="true" [src]="pdfSrc"></pdf-viewer>
-            -->
+        
         <div *ngIf="this.ocultarPreview" class="container">
             <div class="lista">
                 <h3 class="encabezado">Hoy</h3>
@@ -101,6 +99,7 @@
         </mat-dialog-actions>
         <div class="contentInfo border-button">
             <form class="mat-card " fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form" [formGroup]="form">
+             
                 <h3>Información general</h3>
                 <div fxLayout="row" fxFlex="100">
                     <div fxLayout="row" fxFlex="20">
@@ -141,6 +140,8 @@
                     <div fxLayout="row" fxFlex="30">
                         <p>{{this.documento.paginas}}</p>
                     </div>
+
+                    
                     <div fxLayout="row" fxFlex="20">
                         <p class="info">Versión:</p>
                     </div>

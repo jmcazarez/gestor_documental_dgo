@@ -119,7 +119,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
         const documentosTemp: any[] = [];
         let idDocumento: any;
         this.loadingIndicator = true;
-
+        let cFolioExpediente = '';
 
         this.spinner.show();
         const dFechaInicial = this.pickerFechaInicial._datepickerInput.value;
@@ -157,7 +157,13 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
                     // Si tiene permisos para consultar
                     if (this.optConsultar) {
                         for (const documento of resp.listado) {
-                           
+                            cFolioExpediente  = '';
+                            console.log(documento.legislatura);
+                            if (documento.legislatura) {
+                                if (documento.legislatura.cLegislatura){
+                                    cFolioExpediente = documento.legislatura.cLegislatura + '-' + documento.folioExpediente
+                                }
+                            }
                             idDocumento = '';
                             documentosTemp.push({
                                 id: documento.id,
@@ -165,7 +171,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
                                 tipoExpediente: documento.tipoExpediente,
                                 tipoInformacion: documento.tipoInformacion,
                                 fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
-                                folioExpediente: documento.folioExpediente,
+                                folioExpediente: cFolioExpediente,
                                 fechaCarga: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
                                 fechaModificacion: this.datePipe.transform(documento.fechaModificacion, 'dd-MM-yyyy'),
                                 fechaMovimiento: moment(documento.createdAt).format('DD-MM-YYYY'),

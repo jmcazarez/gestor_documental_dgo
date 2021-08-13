@@ -108,7 +108,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
         let idExpediente = '';
         let info: any;
         let filtroReporte = '';
-
+        let cFolioExpediente = '';
         if (this.vigenteBusqueda.length > 0) {
             filtroReporte = 'bActivo=' + this.vigenteBusqueda + '&';
         }
@@ -130,6 +130,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
             if (this.optConsultar) {
                 for (const documento of resp.data) {
                     idDocumento = '';
+                    cFolioExpediente = '';
                     // Validamos permisos
                     if (documento.tipo_de_documento) {
                         if (documento.documento) {
@@ -142,6 +143,11 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
                                 if (documento.tipo_de_documento.bActivo && encontro.Consultar && info) {
                                     if (documento.documento) {
                                         idDocumento = documento.documento.hash + documento.documento.ext;
+                                    }
+                                    if (documento.legislatura) {
+                                        if (documento.legislatura.cLegislatura){
+                                            cFolioExpediente = documento.legislatura.cLegislatura + '-' + documento.folioExpediente
+                                        }
                                     }
                                     if (documento.metacatalogos) {
                                         meta = '';
@@ -217,7 +223,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
                                         secretaria: documento.secretaria,
                                         direccione: documento.direccione,
                                         departamento: documento.departamento,
-                                        folioExpediente: documento.folioExpediente,
+                                        folioExpediente: cFolioExpediente,
                                         clasificacion: meta,
                                         metacatalogos: documento.metacatalogos,
                                         informacion: visibilidad,

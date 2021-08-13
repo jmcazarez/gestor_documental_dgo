@@ -78,7 +78,7 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
         const documentosTemp: any[] = [];
         let idDocumento: any;
         this.spinner.show();
-
+        let cFolioExpediente = '';
         const filtroReporte = 'trazabilidads.usuario=' + this.selectedUsuario;
 
         // Obtenemos los documentos
@@ -97,14 +97,18 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
                 if (this.optConsultar) {
                     for (const documento of resp.listado) {
                         idDocumento = '';
-
+                        if (documento.legislatura) {
+                            if (documento.legislatura.cLegislatura){
+                                cFolioExpediente = documento.legislatura.cLegislatura + '-' + documento.folioExpediente
+                            }
+                        }
                         documentosTemp.push({
                             id: documento.id,
                             tipoDocumento: documento.tipoDocumento,
                             tipoExpediente: documento.tipoExpediente,
                             tipoInformacion: documento.tipoInformacion,
                             fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
-                            folioExpediente: documento.folioExpediente,
+                            folioExpediente: cFolioExpediente,
                             fechaCarga: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
                             fechaModificacion: this.datePipe.transform(documento.fechaModificacion, 'dd-MM-yyyy'),
                             cNombreDocumento: documento.cNombreDocumento,

@@ -20,7 +20,7 @@ import { ExportAsService, ExportAsConfig } from 'ngx-export-as';
 })
 
 export class TableroDeDocumentosComponent implements OnInit {
-  
+
     @ViewChild('archivoPDF', { static: false }) archivoPDF;
     public PDFtexto = '';
     archivoBase64: any;
@@ -90,6 +90,7 @@ export class TableroDeDocumentosComponent implements OnInit {
         let info: any;
         this.valueBuscador = '';
         let countFecha = 0;
+        let cFolioExpediente = '';
         // Obtenemos los documentos
         try {
             this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
@@ -128,6 +129,8 @@ export class TableroDeDocumentosComponent implements OnInit {
                                         if (documento.metacatalogos) {
                                             meta = '';
                                             countFecha = 0;
+                                            visibilidad = '';
+                                            cFolioExpediente = '';
                                             if (documento.metacatalogos) {
                                                 for (const x of documento.metacatalogos) {
 
@@ -137,10 +140,10 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                             if (x.text) {
                                                                 countFecha = x.text.split("T16:00:00.000Z").length - 1;
 
-                                                            if (countFecha >= 2) {
-                                                                x.text = x.text.replace('T16:00:00.000ZT16:00:00.000Z', 'T16:00:00.000Z')
-                                                            }
-                                                            meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                                                if (countFecha >= 2) {
+                                                                    x.text = x.text.replace('T16:00:00.000ZT16:00:00.000Z', 'T16:00:00.000Z')
+                                                                }
+                                                                meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
                                                             }
                                                         } else {
                                                             if (x.text) {
@@ -162,7 +165,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                 }
                                             }
                                         }
-                                        visibilidad = '';
+
                                         if (documento.visibilidade) {
                                             visibilidad = documento.visibilidade.cDescripcionVisibilidad;
                                         }
@@ -176,7 +179,11 @@ export class TableroDeDocumentosComponent implements OnInit {
 
 
                                         // tslint:disable-next-line: no-unused-expression
-
+                                        if (documento.legislatura) {
+                                            if (documento.legislatura.cLegislatura){
+                                                cFolioExpediente = documento.legislatura.cLegislatura + '-' + documento.folioExpediente
+                                            }
+                                        }
                                         // Seteamos valores y permisos
                                         documentosTemp.push({
                                             id: documento.id,
@@ -200,6 +207,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                                             // direccione: documento.direccione,
                                             // departamento: documento.departamento,
                                             folioExpediente: documento.folioExpediente,
+                                            cFolioExpediente,
                                             clasificacion: meta,
                                             metacatalogos: documento.metacatalogos,
                                             informacion: visibilidad,
@@ -372,7 +380,8 @@ export class TableroDeDocumentosComponent implements OnInit {
             const val = value.target.value.toLowerCase();
             const temp = this.documentos.filter((d) => d.cNombreDocumento.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.clasificacion.toLowerCase().indexOf(val) !== - 1 || d.tipoDocumento.toLowerCase().indexOf(val) !== - 1 ||
-                d.informacion.toLowerCase().indexOf(val) !== - 1 || d.fechaCarga.toLowerCase().indexOf(val) !== - 1);
+                d.informacion.toLowerCase().indexOf(val) !== - 1 || d.fechaCarga.toLowerCase().indexOf(val)  !== - 1 ||
+                d.folioExpediente.toLowerCase().indexOf(val) !== - 1);
             this.documentos = temp;
         }
     }

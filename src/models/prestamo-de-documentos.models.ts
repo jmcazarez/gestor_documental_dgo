@@ -18,4 +18,5 @@ export class PrestamoDeDocumentosModels {
     cEstatus: string;
     cTipoDanio: string;
     tipo_de_expediente: any;
+    cTipoExpediente: any;
 }

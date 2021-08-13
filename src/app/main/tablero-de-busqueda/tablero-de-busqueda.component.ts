@@ -314,6 +314,7 @@ export class TableroDeBusquedaComponent implements OnInit {
                                         idExpediente,
                                         legislatura: documento.legislatura,
                                         legislaturaid: idIniciativa,
+                                        autorizacion_iniciativas: documento.autorizacion_iniciativas
                                     });
 
                                     meta = '';

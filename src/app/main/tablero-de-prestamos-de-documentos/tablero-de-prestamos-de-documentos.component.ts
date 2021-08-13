@@ -11,12 +11,13 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { PrestamosDeDocumentosService } from 'services/prestamo-de-documentos.service';
 import { PrestamoDeDocumentosModels } from 'models/prestamo-de-documentos.models';
 import * as moment from 'moment';
+import { TipoExpedientesService } from 'services/tipo-expedientes.service';
 
 @Component({
-  selector: 'app-tablero-de-prestamos-de-documentos',
-  templateUrl: './tablero-de-prestamos-de-documentos.component.html',
-  styleUrls: ['./tablero-de-prestamos-de-documentos.component.scss'],
-  providers: [DatePipe]
+    selector: 'app-tablero-de-prestamos-de-documentos',
+    templateUrl: './tablero-de-prestamos-de-documentos.component.html',
+    styleUrls: ['./tablero-de-prestamos-de-documentos.component.scss'],
+    providers: [DatePipe]
 })
 
 export class TableroDePrestamosDeDocumentosComponent implements OnInit {
@@ -31,31 +32,34 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
     optConsultar: boolean;
     optEditar: boolean;
     optEliminar: boolean;
-
+    tipoExpedientes: any[] = [];
     constructor(
         private spinner: NgxSpinnerService,
         private datePipe: DatePipe,
         public dialog: MatDialog,
+        private tipoExpedientesService: TipoExpedientesService,
         private prestamosDeDocumentosService: PrestamosDeDocumentosService,
         private menuService: MenuService,
     ) {
         // Obtenemos recepcion de actas
-        this.obtenerPrestamosDeDocumentos();
+
+
 
     }
 
-    ngOnInit(): void {
-
+    async ngOnInit(): Promise<void> {
+        await this.obtenerTiposExpedientes();
+        await this.obtenerPrestamosDeDocumentos();
     }
 
-    obtenerPrestamosDeDocumentos(): void {
+    async obtenerPrestamosDeDocumentos(): Promise<void> {
         this.spinner.show();
         this.valueBuscador = '';
         this.loadingIndicator = true;
         const prestamosTemp: any[] = [];
 
         // Obtenemos los iniciativas
-        this.prestamosDeDocumentosService.obtenerPrestamosDeDocumentos().subscribe((resp: any) => {
+        await this.prestamosDeDocumentosService.obtenerPrestamosDeDocumentos().subscribe((resp: any) => {
 
             // Buscamos permisos
             const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === 'tablero-de-prestamos-de-documentos');
@@ -69,9 +73,16 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
                 if (resp) {
                     for (const prestamos of resp) {
                         let cDescripcionTipoExpediente = "";
+                        let tipoExpediente: any;
                         if (prestamos.tipo_de_expediente) {
                             cDescripcionTipoExpediente =
-                            prestamos.tipo_de_expediente.cDescripcionTipoExpediente;
+                                prestamos.tipo_de_expediente.cDescripcionTipoExpediente;
+                        }
+                        if (prestamos.cTipoExpediente) {
+                            tipoExpediente = this.tipoExpedientes.find(tipoOpcion => tipoOpcion.id === prestamos.cTipoExpediente);
+                            if(tipoExpediente){
+                                cDescripcionTipoExpediente = tipoExpediente.cDescripcionTipoExpediente;
+                            }
                         }
                         prestamosTemp.push({
                             id: prestamos.id,
@@ -83,7 +94,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
                             dFechaDocEntregadoT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
                             cSolicitante: prestamos.cSolicitante,
                             cTipoPrestamo: prestamos.cTipoPrestamo,
-                           
+
                             cIdExpediente: prestamos.cIdExpediente,
                             tHoraSolicitud: moment(prestamos.tHoraSolicitud, 'h:mm').format('HH:mm'),
                             tHoraDevolucion: moment(prestamos.tHoraDevolucion, 'h:mm').format('HH:mm'),
@@ -92,7 +103,8 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
                             cEstatus: prestamos.cEstatus,
                             cTipoDanio: prestamos.cTipoDanio,
                             tipo_de_expediente: prestamos.tipo_de_expediente,
-                            cDescripcionTipoExpediente: cDescripcionTipoExpediente
+                            cDescripcionTipoExpediente: cDescripcionTipoExpediente,
+                            cTipoExpediente: prestamos.cTipoExpediente
                         });
                     }
                 }
@@ -138,7 +150,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
             this.limpiar();
         });
     }
-    
+
     eliminarPrestamo(row): void {
         // Eliminamos recepcion de actas
         Swal.fire({
@@ -175,25 +187,53 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
             this.prestamoDocumentos = this.prestamoDocumentosTemp;
         } else {
             const val = value.target.value.toLowerCase();
-            const temp = this.prestamoDocumentos.filter((d) => d.dFechaSolicitudT.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.dFechaDevolucionT.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.cSolicitante.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.cTipoPrestamo.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.cDescripcionTipoExpediente.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.tHoraSolicitud.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.tHoraDevolucion.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.cEstatus.toLowerCase().indexOf(val) !== -1 || !val || 
-            d.cIdExpediente.toLowerCase().indexOf(val) !== -1 || 
-            d.id.toLowerCase().indexOf(val) !== -1);
+            const temp = this.prestamoDocumentos.filter((d) => d.dFechaSolicitudT.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.dFechaDevolucionT.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.cSolicitante.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.cTipoPrestamo.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.cDescripcionTipoExpediente.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.tHoraSolicitud.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.tHoraDevolucion.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.cEstatus.toLowerCase().indexOf(val) !== -1 || !val ||
+                d.cIdExpediente.toLowerCase().indexOf(val) !== -1 ||
+                d.id.toLowerCase().indexOf(val) !== -1);
 
             this.prestamoDocumentos = temp;
         }
     }
 
-    limpiar(): void{
+    limpiar(): void {
         //Limpiamos buscador
         this.valueBuscador = '';
         //console.log('buscador' + this.valueBuscador);
     }
+
+    async obtenerTiposExpedientes(): Promise<any> {
+        // Obtenemos tipos de expedientes
+        this.spinner.show();
+        return new Promise(async (resolve) => {
+            {
+
+                await this.tipoExpedientesService.obtenerTipoExpedientes().subscribe(
+                    (resp: any) => {
+                        this.tipoExpedientes = resp;
+                        console.log(this.tipoExpedientes);
+                        resolve(this.tipoExpedientes);
+                        this.spinner.hide();
+                    },
+                    (err) => {
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error obtener los tipos de expedientes." + err,
+                            "error"
+                        );
+                        this.spinner.hide();
+                        resolve(err);
+                    }
+                );
+            }
+        });
+    }
+
 }
 
