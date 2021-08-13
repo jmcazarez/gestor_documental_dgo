@@ -57,6 +57,7 @@ export class TableroDeCentroDeInvestigacionesYEstudiosLegislativosComponent impl
 
 
     obtenerIniciativas(): void {
+        this.valueBuscador = '';
         this.spinner.show();
         this.filterName = '';
         this.loadingIndicator = true;
