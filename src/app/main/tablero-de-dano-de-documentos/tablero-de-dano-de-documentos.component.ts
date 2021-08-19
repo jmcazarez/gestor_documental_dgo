@@ -75,7 +75,11 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
                                     prestamos.cTipoDanio ===
                                     "Deterioro de documentos"
                                 ) {
-
+                                    if (prestamos.tipo_de_expediente) {
+                                        cTipoExpediente =
+                                            prestamos.tipo_de_expediente.cDescripcionTipoExpediente;
+                                            prestamos.cTipoExpediente =   prestamos.tipo_de_expediente.id
+                                    }
                                     if (prestamos.cTipoExpediente) {
                                         tipoExpediente = this.tipoExpedientes.find(tipoOpcion => tipoOpcion.id === prestamos.cTipoExpediente);
                                         if(tipoExpediente){

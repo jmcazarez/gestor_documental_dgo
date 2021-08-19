@@ -163,6 +163,8 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
                                 if (documento.legislatura.cLegislatura){
                                     cFolioExpediente = documento.legislatura.cLegislatura + '-' + documento.folioExpediente
                                 }
+                            }else{
+                                cFolioExpediente = documento.folioExpediente
                             }
                             idDocumento = '';
                             documentosTemp.push({

@@ -72,11 +72,13 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
             if (this.optConsultar) {
                 if (resp) {
                     for (const prestamos of resp) {
+                        console.log(prestamos);
                         let cDescripcionTipoExpediente = "";
                         let tipoExpediente: any;
                         if (prestamos.tipo_de_expediente) {
                             cDescripcionTipoExpediente =
                                 prestamos.tipo_de_expediente.cDescripcionTipoExpediente;
+                                prestamos.cTipoExpediente =   prestamos.tipo_de_expediente.id
                         }
                         if (prestamos.cTipoExpediente) {
                             tipoExpediente = this.tipoExpedientes.find(tipoOpcion => tipoOpcion.id === prestamos.cTipoExpediente);

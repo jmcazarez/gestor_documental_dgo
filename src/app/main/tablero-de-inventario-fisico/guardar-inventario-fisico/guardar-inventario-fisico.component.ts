@@ -101,7 +101,7 @@ export class GuardarInventarioFisicoComponent implements OnInit {
                 { value: this.inventario.cIdExpedienteIni, disabled: false },
                 [
                     Validators.required,
-                    Validators.minLength(3),
+                    Validators.minLength(1),
                     Validators.maxLength(100),
                 ],
             ],
@@ -109,7 +109,7 @@ export class GuardarInventarioFisicoComponent implements OnInit {
                 { value: this.inventario.cIdExpedienteFin, disabled: false },
                 [
                     Validators.required,
-                    Validators.minLength(3),
+                    Validators.minLength(1),
                     Validators.maxLength(100),
                 ],
             ],

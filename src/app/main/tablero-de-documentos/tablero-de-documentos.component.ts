@@ -182,6 +182,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                                         if (documento.legislatura) {
                                             if (documento.legislatura.cLegislatura){
                                                 cFolioExpediente = documento.legislatura.cLegislatura + '-' + documento.folioExpediente
+                                                console.log(cFolioExpediente);
                                             }
                                         }
                                         // Seteamos valores y permisos
@@ -380,8 +381,8 @@ export class TableroDeDocumentosComponent implements OnInit {
             const val = value.target.value.toLowerCase();
             const temp = this.documentos.filter((d) => d.cNombreDocumento.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.clasificacion.toLowerCase().indexOf(val) !== - 1 || d.tipoDocumento.toLowerCase().indexOf(val) !== - 1 ||
-                d.informacion.toLowerCase().indexOf(val) !== - 1 || d.fechaCarga.toLowerCase().indexOf(val)  !== - 1 ||
-                d.folioExpediente.toLowerCase().indexOf(val) !== - 1);
+                d.informacion.toLowerCase().indexOf(val) !== - 1 || d.fechaCarga.toLowerCase().indexOf(val)  !== - 1
+                || d.cFolioExpediente.toLowerCase().indexOf(val)  !== - 1);
             this.documentos = temp;
         }
     }

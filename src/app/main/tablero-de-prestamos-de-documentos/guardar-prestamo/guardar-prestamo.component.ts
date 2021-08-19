@@ -192,7 +192,7 @@ export class GuardarPrestamoComponent implements OnInit {
                 cTipoDanio: [{ value: this.prestamo.cTipoDanio, disabled: false }, validacion],
                 cNotas: [this.prestamo.cNotas, [Validators.maxLength(500)]]
             });
-            console.log(this.prestamo.cTipoExpediente);
+            console.log(this.prestamo);
             this.selectExpediente = this.prestamo.cTipoExpediente;
         } else {
             this.form = this.formBuilder.group({

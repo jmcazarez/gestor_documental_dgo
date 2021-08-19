@@ -101,6 +101,8 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
                             if (documento.legislatura.cLegislatura){
                                 cFolioExpediente = documento.legislatura.cLegislatura + '-' + documento.folioExpediente
                             }
+                        }else{
+                            cFolioExpediente = documento.folioExpediente
                         }
                         documentosTemp.push({
                             id: documento.id,

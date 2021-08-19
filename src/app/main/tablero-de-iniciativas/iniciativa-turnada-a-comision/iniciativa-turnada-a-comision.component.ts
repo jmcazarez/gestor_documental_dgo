@@ -471,9 +471,10 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
         this.form.get('dictamenDeIniciativa').valueChanges.subscribe(val => {
 
             if (val.length > 0) {
-     
-                this.form.get('adicion').setValue('');   
-                this.form.get('etiquetas').setValue('');         }
+
+                this.form.get('adicion').setValue('');
+                this.form.get('etiquetas').setValue('');
+            }
         });
     }
 
@@ -1234,10 +1235,12 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
             console.log(firmasPorEtapas[0].participantes);
 
             let puestoSecretario = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === puestoSecretarioGeneral[0].cValor);
-            if (puestoSecretario.length === 0) {
-                Swal.fire('Error', 'La configuración de secretario general incorrecto, verificar parametros administrados y la configuración de firmas.', 'error');
-                this.spinner.hide();
-                return
+            if (this.iniciativa.estatus !== 'Turnar dictamen a Mesa Directiva') {
+                if (puestoSecretario.length === 0) {
+                    Swal.fire('Error', 'La configuración de secretario general incorrecto, verificar parametros administrados y la configuración de firmas.', 'error');
+                    this.spinner.hide();
+                    return
+                }
             }
 
             let tipoIniciativa = this.arrTipo.filter((d) => d['id'] === this.selectTipo);
@@ -1641,36 +1644,48 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 bold: true,
                 alignment: "center",
             });
-
-            presente.push({
-                text: "Lic. " + puestoSecretario[0]['nombre'] + ' ' + puestoSecretario[0]['apellidoPaterno'] + ' ' + puestoSecretario[0]['apellidoMaterno'],
-                fontSize: 12,
-                bold: true,
-                alignment: "center",
-                margin: [0, 80, 0, 0],
-            });
-
-            if (this.iniciativa.estatus === 'Turnar dictamen a Secretaría General') {
+            if (this.iniciativa.estatus !== 'Turnar dictamen a Mesa Directiva') {
                 presente.push({
-                    text: "DIRECTOR DEL CENTRO DE INVESTIGACIONES Y",
+                    text: "Lic. " + puestoSecretario[0]['nombre'] + ' ' + puestoSecretario[0]['apellidoPaterno'] + ' ' + puestoSecretario[0]['apellidoMaterno'],
                     fontSize: 12,
                     bold: true,
                     alignment: "center",
+                    margin: [0, 80, 0, 0],
                 });
-                presente.push({
-                    text: "ESTUDIOS LEGISLATIVOS H.CONGRESO DEL ESTADO",
-                    fontSize: 12,
-                    bold: true,
-                    alignment: "center",
-                });
+                if (this.iniciativa.estatus === 'Turnar dictamen a Secretaría General') {
+                    presente.push({
+                        text: "DIRECTOR DEL CENTRO DE INVESTIGACIONES Y",
+                        fontSize: 12,
+                        bold: true,
+                        alignment: "center",
+                    });
+                    presente.push({
+                        text: "ESTUDIOS LEGISLATIVOS H.CONGRESO DEL ESTADO",
+                        fontSize: 12,
+                        bold: true,
+                        alignment: "center",
+                    });
+                } else {
+                    presente.push({
+                        text: "SECRETARIO GENERAL DEL H. CONGRESO DEL ESTADO",
+                        fontSize: 12,
+                        bold: true,
+                        alignment: "center",
+                    });
+                }
             } else {
                 presente.push({
-                    text: "SECRETARIO GENERAL DEL H. CONGRESO DEL ESTADO",
+                    text: "Dip. Cinthya Leticia Martell Nevárez                              Dip. Claudia Isela Ortega Castañeda",
                     fontSize: 12,
                     bold: true,
                     alignment: "center",
+                    margin: [0, 100, 0, 0],
                 });
+
+
             }
+
+            
 
             /*
             if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva') {

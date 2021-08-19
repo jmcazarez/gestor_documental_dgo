@@ -193,6 +193,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                         cNombreDocumento:
                                             element.documento.name,
                                         fechaCarga: fechaActual,
+                                        fechaCargaText:  this.datePipe.transform(fechaActual, 'yyyy-mm-dd'),
                                         version: "1",
                                         valido: false,
                                         errorText: "",
