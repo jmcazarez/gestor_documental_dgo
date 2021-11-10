@@ -35,6 +35,7 @@ const routes = [
     imports     : [
         RouterModule.forChild(routes),
         TranslateModule,
+        
         FuseSharedModule,
              NgxDatatableModule.forRoot({
             messages: {

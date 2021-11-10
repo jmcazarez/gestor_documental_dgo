@@ -391,5 +391,15 @@ export class TableroDeDocumentosComponent implements OnInit {
         console.log(event);
     }
 
+    keytab(event, row){
+        console.log( row)
+        console.log('entro');
+        let element = event.srcElement.nextElementSibling; // get the sibling element
+    
+        if(element == null)  // check if its null
+            return;
+        else
+            element.focus();   // focus if not null
+    }
 
 }

@@ -80,6 +80,7 @@
         "ngx-material-file-input": "2.1.1",
         "ngx-material-timepicker": "5.5.3",
         "ngx-print": "1.2.0-beta.5",
+        "ngx-printer": "1.0.0",
         "ngx-spinner": "10.0.1",
         "pdf-to-printer": "1.7.0",
         "pdfmake": "0.1.68",
