@@ -1,0 +1,38 @@
+export class DocumentoFormatoExcelModel {
+    id: string;
+    cNombreDocumento: string;
+    idLegislatura: string;
+    cLegislatura: string;
+    folioExpediente: string;
+    tipo_de_expediente: any;
+    tipo_de_documento: string;
+    tipoDocumento: string;
+    informacion: string;
+    visibilidade: string;
+    paginas: number;
+    fechaCreacion: string;
+    fechaCarga: string;
+    cTema: string;
+    cComision: string;
+    cSolicitante: string;
+    cEntidad: string;
+    cPeriodo: string;
+    nNumeroPeriodico: number;
+    cDocumento: string;
+    nIdActa: number;
+    cActa: string;
+    cTipoSesion: string;
+    cHora: string;
+    metacatalogos: any;
+    clasificacion: any;
+    valido: boolean;
+    errorText: string;
+    textoOcr: string;
+    bActivo: boolean;
+    usuario: any;
+    filePDF: File | null;
+    fileBase: any | null;
+    version: number;
+    idEncabezado: string;
+    idDetalle: string;
+}

@@ -22,63 +22,58 @@ import {MatStepperModule} from '@angular/material/stepper';
 import {MatMenuModule} from '@angular/material/menu';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { MatSortModule } from '@angular/material/sort';
-
-import { TableroDeCargaMasivaComponent } from './tablero-de-carga-masiva.component';
+import { TableroCargaMasivaDescargaComponent } from './tablero-carga-masiva-descarga.component';
 
 const routes = [
-    {
-        path     : 'tablero-de-carga-masiva-old',
-        component: TableroDeCargaMasivaComponent,
-        canActivate: [SeguridadGuard],
-        
-    }
+  {
+      path     : 'tablero-de-carga-masiva-y-descarga',
+      component: TableroCargaMasivaDescargaComponent,
+      canActivate: [SeguridadGuard],
+  }
 ];
 
 @NgModule({
-    declarations: [
-        TableroDeCargaMasivaComponent
-    ],
-    imports     : [
-        RouterModule.forChild(routes),
-        TranslateModule,
-        FuseSharedModule,
-             NgxDatatableModule.forRoot({
-            messages: {
-                emptyMessage: 'No hay datos disponibles', // Message to show when array is presented, but contains no values
-                totalMessage: 'total', // Footer total message
-                selectedMessage: 'selected' // Footer selected message
-            }
-        }),
-        MatIconModule,
-        MatCheckboxModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        MatIconModule,
-        MatDividerModule,
-        MatInputModule ,
-        MatSelectModule,
-        MatDatepickerModule,
-        MatNativeDateModule ,
-        MatStepperModule,
-        MatPaginatorModule,
-        MatSortModule,
-        MatTableModule,
-        MatTabsModule,
-        MatMenuModule,
-        NgxSpinnerModule
-    ],
-    providers: [
-        {
-          provide: MatDialogRef,
-          useValue: {}
-        }
-    ],
-    exports     : [
-        TableroDeCargaMasivaComponent
-    ]
+  declarations: [
+      TableroCargaMasivaDescargaComponent
+  ],
+  imports     : [
+      RouterModule.forChild(routes),
+      TranslateModule,
+      FuseSharedModule,
+           NgxDatatableModule.forRoot({
+          messages: {
+              emptyMessage: 'No hay datos disponibles', // Message to show when array is presented, but contains no values
+              totalMessage: 'total', // Footer total message
+              selectedMessage: 'selected' // Footer selected message
+          }
+      }),
+      MatIconModule,
+      MatCheckboxModule,
+      MatDialogModule,
+      MatButtonModule,
+      MatFormFieldModule,
+      MatIconModule,
+      MatDividerModule,
+      MatInputModule ,
+      MatSelectModule,
+      MatDatepickerModule,
+      MatNativeDateModule ,
+      MatStepperModule,
+      MatPaginatorModule,
+      MatSortModule,
+      MatTableModule,
+      MatTabsModule,
+      MatMenuModule,
+      NgxSpinnerModule
+  ],
+  providers: [
+      {
+        provide: MatDialogRef,
+        useValue: {}
+      }
+  ],
+  exports     : [
+      TableroCargaMasivaDescargaComponent
+  ]
 })
-
-export class TableroDeCargaMasivaModule
-{
-}
+export class TableroCargaMasivaDescargaModule { }

@@ -142,7 +142,8 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                     } else {
                                                         if (x.cTipoMetacatalogo === 'Fecha') {
                                                             if (x.text) {
-                                                                meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                                                const fecha = new Date(x.text);
+                                                                meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(fecha, 'yyyy-MM-dd');
                                                             }
                                                         } else {
                                                             if (x.text) {
