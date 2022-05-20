@@ -85,7 +85,6 @@ import { GuardarSesionesModule } from './main/sesiones/guardar-sesiones/guardar-
 import { IniciativaModificadaSuspendidaModule } from './main/tablero-de-iniciativas/iniciativa-modificada-suspendida/iniciativa-modificada-suspendida.module';
 import { DashboardDeIndicadoresDeSesionesModule } from './main/dashboard-de-indicadores-de-sesiones/dashboard-de-indicadores-de-sesiones.module';
 import { DashboardDeIndicadoresIniciativasModule } from './main/dashboard-de-indicadores-iniciativas/dashboard-de-indicadores-iniciativas.module';
-import { TablerroCargaMultipleComponent } from './main/tablerro-carga-multiple/tablerro-carga-multiple.component';
 import { TableroCargaMasivaDescargaModule } from './main/tablero-carga-masiva-descarga/tablero-carga-masiva-descarga.module';
 
 const appRoutes: Routes = [
@@ -99,7 +98,6 @@ const appRoutes: Routes = [
 @NgModule({
     declarations: [
         AppComponent,
-        TablerroCargaMultipleComponent,
     ],
     imports     : [
         BrowserModule,

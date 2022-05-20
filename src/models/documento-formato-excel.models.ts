@@ -1,17 +1,20 @@
 export class DocumentoFormatoExcelModel {
     id: string;
     cNombreDocumento: string;
-    idLegislatura: string;
-    cLegislatura: string;
-    folioExpediente: string;
-    tipo_de_expediente: any;
-    tipo_de_documento: string;
-    tipoDocumento: string;
-    informacion: string;
-    visibilidade: string;
-    paginas: number;
     fechaCreacion: string;
     fechaCarga: string;
+    paginas: number;
+    tipo_de_documento: string;
+    version: number;
+    folioExpediente: string;
+    tipo_de_expediente: any;
+    expediente: any;
+    idExpediente: any;
+    tipoDocumento: string;
+    idLegislatura: string;
+    cLegislatura: string;
+    informacion: string;
+    visibilidade: string;
     cTema: string;
     cComision: string;
     cSolicitante: string;
@@ -32,7 +35,6 @@ export class DocumentoFormatoExcelModel {
     usuario: any;
     filePDF: File | null;
     fileBase: any | null;
-    version: number;
     idEncabezado: string;
     idDetalle: string;
 }

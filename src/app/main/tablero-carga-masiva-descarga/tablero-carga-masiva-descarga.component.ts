@@ -180,7 +180,6 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                 tempHistorial = this.arrHistorialCarga.filter(
                     (d) => d.id.toLowerCase().indexOf(val.toLowerCase()) !== -1 || !val
                 );
-                console.log(tempHistorial);
                 if (tempHistorial[0]) {
                     if (tempHistorial[0].historial_carga_detalles) {
                         tempHistorial[0].historial_carga_detalles.forEach((element) => {
@@ -368,6 +367,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             let matchDocFile = 0;
             let index = 0;
             let encontrado: boolean = false;
+
             if (fileInput.files.length > 0) {
                 this.cargarArchivos = false;
                 for (const documento of this.documentos) {
@@ -398,9 +398,10 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                     encontrado = false;
                     index = index + 1;
                 }
+                this.loadingIndicator = false;
+                this.spinner.hide();
+                this.validarGuardado = (matchDocFile > 0) ? true : false;
                 if (matchDocFile < this.documentos.length) {
-                    this.loadingIndicator = false;
-                    this.spinner.hide();
                     Swal.fire(
                         "Estimado usuario:",
                         "El total de archivos subidos (" + matchDocFile + ") es menor al total de registros del excel" +
@@ -409,8 +410,20 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                         "guardaron los verificados.",
                         "warning"
                     );
+                } else if (matchDocFile > this.documentos.length) {
+                    Swal.fire(
+                        "Estimado usuario:",
+                        "El total de archivos seleccionados (" + matchDocFile + ") es mayor al total de registros del excel" +
+                        "(" + this.documentos.length + "), por lo que los archivos restantes no se tomaron en cuenta en la subida.",
+                        "warning"
+                    );
+                } else {
+                    Swal.fire(
+                        "Exito",
+                        "Los archivos subidos fueron validados exitosamente con los documentos.",
+                        "success"
+                    );
                 }
-                this.validarGuardado = (matchDocFile > 0) ? true : false;
             } else {
                 this.validarGuardado = false;
                 this.loadingIndicator = false;
@@ -425,151 +438,6 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             }
         };
     }
-
-    /* guardarDocumentos(): void {
-        this.loadingIndicator = true;
-        this.spinner.show();
-
-        const fecha = new Date(); // Fecha actual
-        const mes: any = fecha.getMonth() + 1; // obteniendo mes
-        const dia: any = fecha.getDate(); // obteniendo dia
-        // dia = dia + 1;
-        const ano = fecha.getFullYear(); // obteniendo año
-        const fechaActual = mes + "-" + dia + "-" + ano;
-
-        // Agregamos elemento file
-        let base64Result: string;
-        this.files = [];
-        const fileInput = this.fileInput.nativeElement;
-
-        // const paginasInput = this.paginasInput.nativeElement;
-        fileInput.onchange = async () => {
-            if (fileInput.files.length == 0) {
-                this.validarGuardado = false;
-                this.loadingIndicator = false;
-                this.spinner.hide();
-                Swal.fire(
-                    "Estimado usuario:",
-                    "No seleccionó los archivos de los documentos para subir",
-                    "warning"
-                );
-                fileInput.value = "";
-                return;
-            } else {
-                if (this.selectedHistorial === "") {
-                    this.historialCarga.guardarHistorial({ cUsuario: this.menuService.usuario })
-                    .subscribe((resp: any) => {
-                        this.selectedHistorial = resp.data.id;
-                        this.obtenerHistorialCarga();
-                        this.selectedHistorial = resp.data.id;
-                    },
-                    (err) => {
-                        this.spinner.hide();
-                        Swal.fire(
-                            "Error",
-                            "Ocurrió un error al guardar el historial de cargas." +
-                            err.error.error,
-                            "error"
-                        );
-                    });
-                }
-                // tslint:disable-next-line: prefer-for-of
-                for (let index = 0; index < fileInput.files.length; index++) {
-                    const file = fileInput.files[index];
-                    this.base64 = await this.readAsDataURL(file);
-                    if (this.base64.data) {
-                        const resultado = await this.uploadService.subirArchivo(
-                            file,
-                            this.base64.data
-                        );
-
-                        if (resultado.error) {
-                            this.spinner.hide();
-                            Swal.fire(
-                                "Error",
-                                resultado.error.error + " archivo: " + file.name,
-                                "error"
-                            );
-                        } else {
-                            // Obtenemos el historial de carga
-
-                            const hCarga = await this.historialCarga.guardarHistorialDetalle(
-                                {
-                                    documento: resultado.data[0].id,
-                                    historial_carga_encabezados: [
-                                        this.selectedHistorial,
-                                    ],
-                                }
-                            );
-                            if (hCarga.error) {
-                                this.spinner.hide();
-                                Swal.fire("Error", hCarga.error.error, "error");
-                            } else {
-                                this.documentos.push({
-                                    documento: resultado.data[0].id,
-                                    cNombreDocumento: file.name,
-                                    fechaCarga: fechaActual,
-                                    version: "1",
-                                    valido: false,
-                                    errorText: "",
-                                    idEncabezado: this.selectedHistorial,
-                                    idDetalle: hCarga.data.id,
-                                });
-                            }
-
-                            this.documentosTemporal.push({
-                                Documento: resultado.data[0].id,
-                                "Nombre del documento": file.name,
-                                Legislatura: "",
-                                "Tipo de documento": "",
-                                Páginas: "",
-                                "Fecha de creación": "",
-                                "Tipo de expediente": "",
-                                "Folio de expediente": "",
-                                Estatus: "",
-                                Meta_1: "",
-                                Meta_2: "",
-                                Meta_3: "",
-                                Meta_4: "",
-                                Meta_5: "",
-                                Meta_6: "",
-                            });
-                            this.obtenerHistorialCarga();
-                            this.documentos = [...this.documentos];
-                            this.documentosTemporal = [...this.documentosTemporal];
-                        }
-                        this.fileName = file.name;
-                        this.files.push({
-                            data: file,
-                            inProgress: false,
-                            progress: 0,
-                        });
-
-                        const reader = new FileReader();
-                        reader.readAsBinaryString(file);
-                        reader.onloadend = () => {
-                            // Obtenemos el # de paginas del documento
-                            base64Result = reader.result.toString();
-                            base64Result = base64Result
-                                .slice(
-                                    base64Result.search("/Count"),
-                                    base64Result.search("/Count") + 10
-                                )
-                                .replace("/Count ", "");
-                            this.paginasEditar = false;
-                            // paginasInput.value = this.getNumbersInString(base64Result);
-                        };
-
-                        this.cambioFile = true;
-                    }
-                }
-                this.loadingIndicator = false;
-                this.spinner.hide();
-                fileInput.value = "";
-                this.limpiar();
-            }
-        };
-    } */
 
     descargarFormatoExcel(): void {
         this.exportExcel.exportAsExcelFile(
@@ -993,7 +861,27 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                 }
 
                 documento.clasificacion = meta;
-                
+
+                const arrExpedienteTipo: any = this.arrExpediente.filter((d) =>
+                this.normalize(d.descripcionTiposDocumentos.toLowerCase()).indexOf(row["TIPO DOCUMENTAL"].toLowerCase()) !== -1);
+                if (arrExpedienteTipo.length > 0) {
+                    documento.tipo_de_expediente =
+                        arrExpedienteTipo[0].id;
+                    documento.expediente =
+                        arrExpedienteTipo[0].cDescripcionTipoExpediente;
+                    documento.idExpediente =
+                        arrExpedienteTipo[0].id;
+                } else {
+                    if (textError.length > 0) {
+                        textError =
+                            "El tipo de documento no corresponde al tipo de expediente.";
+                    } else {
+                        textError =
+                            textError +
+                            ", el tipo de documento no corresponde al tipo de expediente";
+                    }
+                }
+
                 documento.errorText = textError;
 
                 if (documento.errorText.length === 0) {
@@ -1013,8 +901,6 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             excelInput.value = "";
         };
         reader.readAsBinaryString(file);
-
-        console.log(this.documentos);
     }
 
     validarTipoMetaDato(tipo: any, campo: any, indice: number) {
@@ -1086,10 +972,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             confirmButtonColor: '#039BE5',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Si',
-            cancelButtonText: 'No',
-            customClass: {
-              popup: 'custom-popup',
-            }
+            cancelButtonText: 'No'
           }).then(async (result: any) => {
             if (result.value) {
                 await Promise.all([this.confirmarGuardarDocumentos()]);
@@ -1155,49 +1038,56 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                             }
 
                             this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
-                                if (resp) {
-                                    // Obtenemos el historial de carga
-                                    this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
-                                    (resp: any) => { },
+                                // Obtenemos el historial de carga
+                                this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
+                                (resp: any) => { },
+                                (err) => {
+                                    console.log('Error al actualizar detalle ' + row.cNombreDocumento);
+                                });
+    
+                                this.documentos.splice(index, 1);
+                                this.documentos = [...this.documentos];
+                                if (this.documentos.length === 0) {
+                                    this.historialCarga.actualizarHistorial({ bCompletado: true },row.idEncabezado)
+                                    .subscribe((resp: any) => {
+                                        this.spinner.hide();
+                                        this.loadingIndicator = false;
+                                        this.selectedHistorial = "";
+                                        this.obtenerHistorialCarga();
+                                        this.limpiar();
+                                        Swal.fire(
+                                            "Éxito",
+                                            "Documentos guardados. ",
+                                            "success"
+                                        );
+                                        return resolve(true);
+                                    },
                                     (err) => {
-                                        console.log('Error al actualizar detalle ' + row.cNombreDocumento);
+                                        this.spinner.hide();
+                                        this.loadingIndicator = false;
+                                        this.selectedHistorial = "";
+                                        this.obtenerHistorialCarga();
+                                        this.limpiar();
+                                        Swal.fire(
+                                            "Error",
+                                            "Ocurrió un error al guardar el historial de cargas.",
+                                            "error"
+                                        );
+                                        return resolve(null);
                                     });
-        
-                                    this.documentos.splice(index, 1);
-                                    this.documentos = [...this.documentos];
-                                    if (this.documentos.length === 0) {
-                                        this.historialCarga.actualizarHistorial({ bCompletado: true },row.idEncabezado)
-                                        .subscribe((resp: any) => {
-                                            this.spinner.hide();
-                                            this.loadingIndicator = false;
-                                            this.selectedHistorial = "";
-                                            this.obtenerHistorialCarga();
-                                            this.limpiar();
-                                            Swal.fire(
-                                                "Éxito",
-                                                "Documentos guardados. ",
-                                                "success"
-                                            );
-                                            return resolve(true);
-                                        },
-                                        (err) => {
-                                            this.spinner.hide();
-                                            this.loadingIndicator = false;
-                                            this.selectedHistorial = "";
-                                            this.obtenerHistorialCarga();
-                                            this.limpiar();
-                                            Swal.fire(
-                                                "Error",
-                                                "Ocurrió un error al guardar el historial de cargas.",
-                                                "error"
-                                            );
-                                            return resolve(null);
-                                        });
-                                    }
                                 }
                             },
                             (err: any) => {
                                 console.log('Error al guardar documento ' + row.cNombreDocumento);
+                                this.documentos.splice(index, 1);
+                                this.documentos = [...this.documentos];
+                                if (this.documentos.length === 0) {
+                                    this.spinner.hide();
+                                    this.loadingIndicator = false;
+                                    this.selectedHistorial = "";
+                                    this.obtenerHistorialCarga();
+                                    this.limpiar();
+                                }
                             });
                         }
                     }
