@@ -36,7 +36,7 @@ import { ReporteDeEstadoDeDocumentosModule } from './main/reporte-de-estado-de-d
 import { HistorialDeVersionamientoDocumentosModule } from './main/tablero-de-documentos/clasficacion-de-documentos/historial-de-versionamiento/historial-de-versionamiento.module';
 //import { HistorialDeVersionamientoModule } from './main/historial-de-versionamiento/historial-de-versionamiento.module';
 import { DashboardDeIndicadoresModule } from './main/dashboard-de-indicadores/dashboard-de-indicadores.module';
-import { TableroDeCargaMasivaModule } from './main/tablero-de-carga-masiva/tablero-de-carga-masiva.module';
+//import { TableroDeCargaMasivaModule } from './main/tablero-de-carga-masiva/tablero-de-carga-masiva.module';
 import { ReporteDeDocumentoPorFechaModule } from './main/reporte-de-documento-por-fecha/reporte-de-documento-por-fecha.module';
 import { ReporteDeDocumentoPorUsuarioModule } from './main/reporte-de-documento-por-usuario/reporte-de-documento-por-usuario.module';
 import { SecretariasModule } from './main/secretarias/secretarias.module';
@@ -86,6 +86,7 @@ import { IniciativaModificadaSuspendidaModule } from './main/tablero-de-iniciati
 import { DashboardDeIndicadoresDeSesionesModule } from './main/dashboard-de-indicadores-de-sesiones/dashboard-de-indicadores-de-sesiones.module';
 import { DashboardDeIndicadoresIniciativasModule } from './main/dashboard-de-indicadores-iniciativas/dashboard-de-indicadores-iniciativas.module';
 import { IniciativasPendientesPorFirmarModule } from './main/tipo-de-iniciativas-pendientes-por-firmar/tipo-de-iniciativas-pendientes-por-firmar.module';
+import { TableroCargaMasivaDescargaModule } from './main/tablero-carga-masiva-descarga/tablero-carga-masiva-descarga.module';
 
 const appRoutes: Routes = [
     {
@@ -146,7 +147,7 @@ const appRoutes: Routes = [
         HistorialDeVersionamientoDocumentosModule,
         //HistorialDeVersionamientoModule,
         DashboardDeIndicadoresModule,
-        TableroDeCargaMasivaModule,
+        // TableroDeCargaMasivaModule,
         ReporteDeDocumentoPorFechaModule,
         ReporteDeDocumentoPorUsuarioModule,
         // SecretariasModule,
@@ -193,7 +194,8 @@ const appRoutes: Routes = [
         DashboardDeIndicadoresDeSesionesModule,
         IniciativaModificadaSuspendidaModule,
         DashboardDeIndicadoresIniciativasModule,
-        IniciativasPendientesPorFirmarModule
+        IniciativasPendientesPorFirmarModule,
+        TableroCargaMasivaDescargaModule
     ],             
     bootstrap   : [
         AppComponent
