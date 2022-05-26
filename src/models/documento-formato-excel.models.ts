@@ -3,6 +3,8 @@ export class DocumentoFormatoExcelModel {
     cNombreDocumento: string;
     fechaCreacion: string;
     fechaCarga: string;
+    fechaCreacionDate: string;
+    fechaCargaDate: string;
     paginas: number;
     tipo_de_documento: string;
     version: number;

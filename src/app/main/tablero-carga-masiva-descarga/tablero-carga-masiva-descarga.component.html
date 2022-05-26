@@ -29,7 +29,7 @@
                                         [disabled]="(excelSeleccionado || selectedHistorial !== '') && arrHistorialCarga.length == 0">
                                             <mat-option *ngFor="let historial of arrHistorialCarga"
                                                 [value]="historial.id">
-                                                {{historial.id}}
+                                                {{historial.id}} - {{historial.createdAt | date:'dd-MM-yyyy'}}
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
@@ -93,9 +93,9 @@
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Páginas" prop="paginas" [width]="100">
                                         </ngx-datatable-column>
-                                        <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion" [width]="130">
+                                        <ngx-datatable-column name="Fecha de creación" prop="fechaCreacionDate" [width]="140">
                                         </ngx-datatable-column>
-                                        <ngx-datatable-column name="Fecha de carga" prop="fechaCarga" [width]="130">
+                                        <ngx-datatable-column name="Fecha de carga" prop="fechaCargaDate" [width]="130">
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Tema" prop="cTema" [width]="300" [cellClass]="'class-tema'">
                                         </ngx-datatable-column>
