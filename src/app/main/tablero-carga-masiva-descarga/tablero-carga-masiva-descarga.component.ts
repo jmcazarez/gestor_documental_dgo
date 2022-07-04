@@ -28,10 +28,10 @@ import { UsuarioLoginService } from "services/usuario-login.service";
 import { LegislaturaService } from "services/legislaturas.service";
 
 @Component({
-  selector: 'app-tablero-carga-masiva-descarga',
-  templateUrl: './tablero-carga-masiva-descarga.component.html',
-  styleUrls: ['./tablero-carga-masiva-descarga.component.scss'],
-  providers: [DatePipe],
+    selector: 'app-tablero-carga-masiva-descarga',
+    templateUrl: './tablero-carga-masiva-descarga.component.html',
+    styleUrls: ['./tablero-carga-masiva-descarga.component.scss'],
+    providers: [DatePipe],
 })
 export class TableroCargaMasivaDescargaComponent implements OnInit {
 
@@ -230,7 +230,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                 documento.paginas = 0;
                                 documento.fechaCreacion = element.createdAt;
                                 documento.fechaCarga = this.datePipe.transform(fecha, "yyyy-MM-dd")
-                                + "T06:00:00.000Z";
+                                    + "T06:00:00.000Z";
                                 documento.fechaCreacionDate = this.datePipe.transform(new Date(element.createdAt), "dd-MM-yyyy");
                                 documento.fechaCargaDate = this.datePipe.transform(fecha, "dd-MM-yyyy");
                                 documento.metacatalogos = [];
@@ -256,19 +256,19 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     }
 
     async obtenerDocumento(id: any) {
-        return new Promise ( (resolve) => {
+        return new Promise((resolve) => {
             this.documentoService.obtenerDocumentoById(id).subscribe((resp: any) => {
                 console.log(resp);
                 resolve(resp.data);
             },
-            (err) => {
-                resolve(null);
-            });
+                (err) => {
+                    resolve(null);
+                });
         });
     }
 
     obtenerTiposDocumentos(): Promise<any> {
-        return new Promise ( (resolve) => {
+        return new Promise((resolve) => {
             for (const documentosAgregar of this.menuService.tipoDocumentos) {
                 // Si tiene permisos de agregar estos documentos los guardamos en una array
                 if (documentosAgregar.Consultar) {
@@ -285,91 +285,91 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
         });
     }
 
-    obtenerTiposExpedientes(): Promise<any>  {
-        return new Promise ( (resolve) => {
+    obtenerTiposExpedientes(): Promise<any> {
+        return new Promise((resolve) => {
             // Obtenemos los documentos
             this.tipoExpedientesService.obtenerTipoExpedientes().subscribe(
-            (resp: any) => {
-                // Buscamos permisos
-                // tslint:disable-next-line: max-line-length
-                const opciones = this.menuService.opcionesPerfil.find(
-                    (opcion: { cUrl: string }) => opcion.cUrl === this.url
-                );
-                this.optAgregar = opciones.Agregar;
-                this.optEditar = opciones.Editar;
-                this.optConsultar = opciones.Consultar;
-                this.optEliminar = opciones.Eliminar;
-                // Si tiene permisos para consultar
-                if (this.optAgregar) {
-                    this.arrExpediente = resp;
-                }
-                resolve(this.arrExpediente);
-            },
-            (err) => {
-                Swal.fire(
-                    "Error",
-                    "Ocurrió un error al obtener los tipos de expedientes.",
-                    "error"
-                );
-                resolve(err);
-            });
+                (resp: any) => {
+                    // Buscamos permisos
+                    // tslint:disable-next-line: max-line-length
+                    const opciones = this.menuService.opcionesPerfil.find(
+                        (opcion: { cUrl: string }) => opcion.cUrl === this.url
+                    );
+                    this.optAgregar = opciones.Agregar;
+                    this.optEditar = opciones.Editar;
+                    this.optConsultar = opciones.Consultar;
+                    this.optEliminar = opciones.Eliminar;
+                    // Si tiene permisos para consultar
+                    if (this.optAgregar) {
+                        this.arrExpediente = resp;
+                    }
+                    resolve(this.arrExpediente);
+                },
+                (err) => {
+                    Swal.fire(
+                        "Error",
+                        "Ocurrió un error al obtener los tipos de expedientes.",
+                        "error"
+                    );
+                    resolve(err);
+                });
         });
     }
 
-    obtenerEntes(): Promise<any>  {
-        return new Promise ( (resolve) => {
+    obtenerEntes(): Promise<any> {
+        return new Promise((resolve) => {
             // Obtenemos los entes
             this.usuariosService.obtenerEntes().subscribe(
-            (resp: any) => {
-                this.arrEntes = resp;
-                resolve(this.arrEntes);
-            },
-            (err) => {
-                Swal.fire(
-                    "Error",
-                    "Ocurrió un error al obtener los entes.",
-                    "error"
-                );
-                resolve(err);
-            });
+                (resp: any) => {
+                    this.arrEntes = resp;
+                    resolve(this.arrEntes);
+                },
+                (err) => {
+                    Swal.fire(
+                        "Error",
+                        "Ocurrió un error al obtener los entes.",
+                        "error"
+                    );
+                    resolve(err);
+                });
         });
     }
 
-    obtenerLegislaturas(): Promise<any>  {
-        return new Promise ( (resolve) => {
+    obtenerLegislaturas(): Promise<any> {
+        return new Promise((resolve) => {
             // Obtenemos secretarias
             this.legislaturaService.obtenerLegislatura().subscribe((resp: any) => {
-                this.arrLegislaturas =  resp;
+                this.arrLegislaturas = resp;
                 resolve(this.arrLegislaturas);
             },
-            (err) => {
-                Swal.fire(
-                    "Error",
-                    "Ocurrió un error obtener las legislaturas.",
-                    "error"
-                );
-                resolve(err);
-            });
+                (err) => {
+                    Swal.fire(
+                        "Error",
+                        "Ocurrió un error obtener las legislaturas.",
+                        "error"
+                    );
+                    resolve(err);
+                });
         });
     }
 
-    obtenerHistorialCarga(): Promise<any>  {
-        return new Promise ( (resolve) => {
+    obtenerHistorialCarga(): Promise<any> {
+        return new Promise((resolve) => {
             // Obtenemos el historial de carga
             this.historialCarga.obtenerHistorialCarga(this.usuario[0].data.id).subscribe((resp: any) => {
                 this.arrHistorialCarga = resp;
                 console.log(this.arrHistorialCarga);
                 resolve(this.arrHistorialCarga);
             },
-            (err) => {
-                Swal.fire(
-                    "Error",
-                    "Ocurrió un error al  obtener el historial de cargas.",
-                    "error"
-                );
-                this.arrHistorialCarga = [];
-                resolve(err);
-            });
+                (err) => {
+                    Swal.fire(
+                        "Error",
+                        "Ocurrió un error al  obtener el historial de cargas.",
+                        "error"
+                    );
+                    this.arrHistorialCarga = [];
+                    resolve(err);
+                });
         });
     }
 
@@ -426,7 +426,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                         "Estimado usuario:",
                         "El total de archivos subidos (" + matchDocFile + ") es menor al total de registros del excel" +
                         "(" + this.documentos.length + ") se recomienda eliminar dichos registros en el Excel para completar" +
-                        " la carga y puedan ser guardados, de lo contrario quedaran como carga pendiente y solo se " + 
+                        " la carga y puedan ser guardados, de lo contrario quedaran como carga pendiente y solo se " +
                         "guardaron los verificados.",
                         "warning"
                     );
@@ -567,36 +567,36 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                 else documento.cComision = '';
 
                 if (_.has(row, 'SOLICITANTE') && row['SOLICITANTE'].length > 0) documento.cSolicitante = row['SOLICITANTE']
-                else  documento.cSolicitante = '';
+                else documento.cSolicitante = '';
 
                 if (_.has(row, 'ENTIDAD') && row['ENTIDAD'].length > 0) documento.cEntidad = row['ENTIDAD']
-                else  documento.cEntidad = '';
+                else documento.cEntidad = '';
 
                 if (_.has(row, 'PERIODO') && row['PERIODO'].length > 0) documento.cPeriodo = row['PERIODO']
-                else  documento.cPeriodo = '';
+                else documento.cPeriodo = '';
 
                 if (_.has(row, 'NUMERO DE PERIODICO') && Number(row['NUMERO DE PERIODICO'])) documento.nNumeroPeriodico = Number(row['NUMERO DE PERIODICO'])
-                else  documento.nNumeroPeriodico = 0;
+                else documento.nNumeroPeriodico = 0;
 
                 if (_.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) documento.cDocumento = row['DOCUMENTO']
-                else  documento.cDocumento = '';
+                else documento.cDocumento = '';
 
                 if (_.has(row, 'ID LIBRO DE ACTAS') && Number(row['ID LIBRO DE ACTAS'])) documento.nIdActa = Number(row['ID LIBRO DE ACTAS'])
-                else  documento.nIdActa = 0;
+                else documento.nIdActa = 0;
 
                 if (_.has(row, 'ACTAS') && row['ACTAS'].length > 0) documento.cActa = row['ACTAS']
-                else  documento.cActa = '';
+                else documento.cActa = '';
 
                 if (_.has(row, 'HORA') && row['HORA'].length > 0) documento.cHora = row['HORA']
-                else  documento.cHora = '';
+                else documento.cHora = '';
 
                 if (_.has(row, 'TIPO DE SESION') && row['TIPO DE SESION'].length > 0) documento.cTipoSesion = row['TIPO DE SESION']
-                else  documento.cTipoSesion = '';
-                
+                else documento.cTipoSesion = '';
+
                 if (_.has(row, 'TIPO DOCUMENTAL') && row['TIPO DOCUMENTAL'].length > 0) {
                     const encontro = this.menuService.tipoDocumentos.find(
                         (tipo: { cDescripcionTipoDocumento: any; }) =>
-                        this.normalize(tipo.cDescripcionTipoDocumento.trim().toLowerCase()) == row['TIPO DOCUMENTAL'].trim().toLowerCase()
+                            this.normalize(tipo.cDescripcionTipoDocumento.trim().toLowerCase()) == row['TIPO DOCUMENTAL'].trim().toLowerCase()
                     );
                     if (encontro) {
                         if (encontro.Agregar === "undefined") {
@@ -619,138 +619,138 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                     if (this.arrMetacatalogos[i].bOligatorio) {
                                         if (
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TEMA' &&
-                                            _.has(row, 'TEMA') && row['TEMA'].length > 0) ||
+                                                _.has(row, 'TEMA') && row['TEMA'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'COMISION' &&
-                                            _.has(row, 'COMISION') && row['COMISION'].length > 0) ||
+                                                _.has(row, 'COMISION') && row['COMISION'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'SOLICITANTE' &&
-                                            _.has(row, 'SOLICITANTE') && row['SOLICITANTE'].length > 0) ||
+                                                _.has(row, 'SOLICITANTE') && row['SOLICITANTE'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ENTIDAD' &&
-                                            _.has(row, 'ENTIDAD') && row['ENTIDAD'].length > 0) ||
+                                                _.has(row, 'ENTIDAD') && row['ENTIDAD'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'PERIODO' &&
-                                            _.has(row, 'PERIODO') && row['PERIODO'].length > 0) ||
+                                                _.has(row, 'PERIODO') && row['PERIODO'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'NUMERO DE PERIODICO' &&
-                                            _.has(row, 'NUMERO DE PERIODICO') && Number(row['NUMERO DE PERIODICO'])) ||
+                                                _.has(row, 'NUMERO DE PERIODICO') && Number(row['NUMERO DE PERIODICO'])) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'DOCUMENTO' &&
-                                            _.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) ||
+                                                _.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ID LIBRO DE ACTAS' &&
-                                            _.has(row, 'ID LIBRO DE ACTAS') && Number(row['ID LIBRO DE ACTAS'])) ||
+                                                _.has(row, 'ID LIBRO DE ACTAS') && Number(row['ID LIBRO DE ACTAS'])) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ACTAS' &&
-                                            _.has(row, 'ACTAS') && row['ACTAS'].length > 0) ||
+                                                _.has(row, 'ACTAS') && row['ACTAS'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'HORA' &&
-                                            _.has(row, 'HORA') && row['HORA'].length > 0) ||
+                                                _.has(row, 'HORA') && row['HORA'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TIPO DE SESION' &&
-                                            _.has(row, 'TIPO DE SESION') && row['TIPO DE SESION'].length > 0)
+                                                _.has(row, 'TIPO DE SESION') && row['TIPO DE SESION'].length > 0)
                                         ) {
                                             if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TEMA' &&
-                                            _.has(row, 'TEMA') && row['TEMA'].length > 0) {
+                                                _.has(row, 'TEMA') && row['TEMA'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['TEMA'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'COMISION' &&
-                                            _.has(row, 'COMISION') && row['COMISION'].length > 0) {
+                                                _.has(row, 'COMISION') && row['COMISION'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['COMISION'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'SOLICITANTE' &&
-                                            _.has(row, 'SOLICITANTE') && row['SOLICITANTE'].length > 0) {
+                                                _.has(row, 'SOLICITANTE') && row['SOLICITANTE'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['SOLICITANTE'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ENTIDAD' &&
-                                            _.has(row, 'ENTIDAD') && row['ENTIDAD'].length > 0) {
+                                                _.has(row, 'ENTIDAD') && row['ENTIDAD'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['ENTIDAD'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'PERIODO' &&
-                                            _.has(row, 'PERIODO') && row['PERIODO'].length > 0) {
+                                                _.has(row, 'PERIODO') && row['PERIODO'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['PERIODO'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'NUMERO DE PERIODICO' &&
-                                            _.has(row, 'NUMERO DE PERIODICO') && Number(row['NUMERO DE PERIODICO'])) {
+                                                _.has(row, 'NUMERO DE PERIODICO') && Number(row['NUMERO DE PERIODICO'])) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['NUMERO DE PERIODICO'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'DOCUMENTO' &&
-                                            _.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) {
+                                                _.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['DOCUMENTO'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ID LIBRO DE ACTAS' &&
-                                            _.has(row, 'ID LIBRO DE ACTAS') && Number(row['ID LIBRO DE ACTAS'])) {
+                                                _.has(row, 'ID LIBRO DE ACTAS') && Number(row['ID LIBRO DE ACTAS'])) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['ID LIBRO DE ACTAS'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ACTAS' &&
-                                            _.has(row, 'ACTAS') && row['ACTAS'].length > 0) {
+                                                _.has(row, 'ACTAS') && row['ACTAS'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['ACTAS'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'HORA' &&
-                                            _.has(row, 'HORA') && row['HORA'].length > 0) {
+                                                _.has(row, 'HORA') && row['HORA'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['HORA'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TIPO DE SESION' &&
-                                            _.has(row, 'TIPO DE SESION') && row['TIPO DE SESION'].length > 0) {
+                                                _.has(row, 'TIPO DE SESION') && row['TIPO DE SESION'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['TIPO DE SESION'], i);
                                             }
 
                                             if (!valido) {
                                                 if (textError.length == 0) {
-                                                    textError = "El Metadato Meta_" + (i+1) + "(" + this.arrMetacatalogos[i].cDescripcionMetacatalogo +
-                                                    ") es incorrecto";
+                                                    textError = "El Metadato Meta_" + (i + 1) + "(" + this.arrMetacatalogos[i].cDescripcionMetacatalogo +
+                                                        ") es incorrecto";
                                                 } else {
-                                                    textError = textError + ", el Metadato Meta_" + (i+1) + "(" + this.arrMetacatalogos[i].cDescripcionMetacatalogo +
-                                                    ") es incorrecto";
+                                                    textError = textError + ", el Metadato Meta_" + (i + 1) + "(" + this.arrMetacatalogos[i].cDescripcionMetacatalogo +
+                                                        ") es incorrecto";
                                                 }
                                             }
                                         } else {
                                             if (textError.length == 0) {
-                                                textError = "El Meta_" + (i+1) + " (" +
-                                                this.arrMetacatalogos[i].cDescripcionMetacatalogo + ") es obligatorio";
+                                                textError = "El Meta_" + (i + 1) + " (" +
+                                                    this.arrMetacatalogos[i].cDescripcionMetacatalogo + ") es obligatorio";
                                             } else {
-                                                textError = textError + ", el Meta_" + (i+1) + " (" +
-                                                this.arrMetacatalogos[i].cDescripcionMetacatalogo + ") es obligatorio";
+                                                textError = textError + ", el Meta_" + (i + 1) + " (" +
+                                                    this.arrMetacatalogos[i].cDescripcionMetacatalogo + ") es obligatorio";
                                             }
                                         }
                                     } else {
                                         if (
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TEMA' &&
-                                            _.has(row, 'TEMA') && row['TEMA'].length > 0) ||
+                                                _.has(row, 'TEMA') && row['TEMA'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'COMISION' &&
-                                            _.has(row, 'COMISION') && row['COMISION'].length > 0) ||
+                                                _.has(row, 'COMISION') && row['COMISION'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'SOLICITANTE' &&
-                                            _.has(row, 'SOLICITANTE') && row['SOLICITANTE'].length > 0) ||
+                                                _.has(row, 'SOLICITANTE') && row['SOLICITANTE'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ENTIDAD' &&
-                                            _.has(row, 'ENTIDAD') && row['ENTIDAD'].length > 0) ||
+                                                _.has(row, 'ENTIDAD') && row['ENTIDAD'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'PERIODO' &&
-                                            _.has(row, 'PERIODO') && row['PERIODO'].length > 0) ||
+                                                _.has(row, 'PERIODO') && row['PERIODO'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'NUMERO DE PERIODICO' &&
-                                            _.has(row, 'NUMERO DE PERIODICO') && Number(row['NUMERO DE PERIODICO'])) ||
+                                                _.has(row, 'NUMERO DE PERIODICO') && Number(row['NUMERO DE PERIODICO'])) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'DOCUMENTO' &&
-                                            _.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) ||
+                                                _.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ID LIBRO DE ACTAS' &&
-                                            _.has(row, 'ID LIBRO DE ACTAS') && Number(row['ID LIBRO DE ACTAS'])) ||
+                                                _.has(row, 'ID LIBRO DE ACTAS') && Number(row['ID LIBRO DE ACTAS'])) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ACTAS' &&
-                                            _.has(row, 'ACTAS') && row['ACTAS'].length > 0)||
+                                                _.has(row, 'ACTAS') && row['ACTAS'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'HORA' &&
-                                            _.has(row, 'HORA') && row['HORA'].length > 0) ||
+                                                _.has(row, 'HORA') && row['HORA'].length > 0) ||
                                             (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TIPO DE SESION' &&
-                                            _.has(row, 'TIPO DE SESION') && row['TIPO DE SESION'].length > 0)
+                                                _.has(row, 'TIPO DE SESION') && row['TIPO DE SESION'].length > 0)
                                         ) {
                                             if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TEMA' &&
-                                            _.has(row, 'TEMA') && row['TEMA'].length > 0) {
+                                                _.has(row, 'TEMA') && row['TEMA'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['TEMA'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'COMISION' &&
-                                            _.has(row, 'COMISION') && row['COMISION'].length > 0) {
+                                                _.has(row, 'COMISION') && row['COMISION'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['COMISION'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'SOLICITANTE' &&
-                                            _.has(row, 'SOLICITANTE') && row['SOLICITANTE'].length > 0) {
+                                                _.has(row, 'SOLICITANTE') && row['SOLICITANTE'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['SOLICITANTE'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ENTIDAD' &&
-                                            _.has(row, 'ENTIDAD') && row['ENTIDAD'].length > 0) {
+                                                _.has(row, 'ENTIDAD') && row['ENTIDAD'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['ENTIDAD'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'PERIODO' &&
-                                            _.has(row, 'PERIODO') && row['PERIODO'].length > 0) {
+                                                _.has(row, 'PERIODO') && row['PERIODO'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['PERIODO'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'NUMERO DE PERIODICO' &&
-                                            _.has(row, 'NUMERO DE PERIODICO') && Number(row['NUMERO DE PERIODICO'])) {
+                                                _.has(row, 'NUMERO DE PERIODICO') && Number(row['NUMERO DE PERIODICO'])) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['NUMERO DE PERIODICO'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'DOCUMENTO' &&
-                                            _.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) {
+                                                _.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['DOCUMENTO'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ID LIBRO DE ACTAS' &&
-                                            _.has(row, 'ID LIBRO DE ACTAS') && Number(row['ID LIBRO DE ACTAS'])) {
+                                                _.has(row, 'ID LIBRO DE ACTAS') && Number(row['ID LIBRO DE ACTAS'])) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['ID LIBRO DE ACTAS'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ACTAS' &&
-                                            _.has(row, 'ACTAS') && row['ACTAS'].length > 0) {
+                                                _.has(row, 'ACTAS') && row['ACTAS'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['ACTAS'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'HORA' &&
-                                            _.has(row, 'HORA') && row['HORA'].length > 0) {
+                                                _.has(row, 'HORA') && row['HORA'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['HORA'], i);
                                             } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TIPO DE SESION' &&
-                                            _.has(row, 'TIPO DE SESION') && row['TIPO DE SESION'].length > 0) {
+                                                _.has(row, 'TIPO DE SESION') && row['TIPO DE SESION'].length > 0) {
                                                 valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['TIPO DE SESION'], i);
                                             }
                                         }
@@ -798,7 +798,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
 
                 if (_.has(row, 'FOLIO EXPEDIENTE') && Number(row['FOLIO EXPEDIENTE'])) {
                     if (_.has(row, 'TIPO DOCUMENTAL') && row['TIPO DOCUMENTAL'].length > 0 &&
-                    this.normalize(row['TIPO DOCUMENTAL'].toUpperCase()) === 'ACTA') {
+                        this.normalize(row['TIPO DOCUMENTAL'].toUpperCase()) === 'ACTA') {
                         documento.folioExpediente = "";
                     } else {
                         documento.folioExpediente = String(
@@ -807,7 +807,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                     }
                 } else {
                     if (_.has(row, 'TIPO DOCUMENTAL') && row['TIPO DOCUMENTAL'].length > 0 &&
-                    this.normalize(row['TIPO DOCUMENTAL'].toUpperCase()) === 'ACTA') {
+                        this.normalize(row['TIPO DOCUMENTAL'].toUpperCase()) === 'ACTA') {
                         documento.folioExpediente = '';
                     } else {
                         if (textError.length > 0) {
@@ -828,7 +828,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                 if (_.has(row, 'FECHA') && new Date(row["FECHA"])) {
                     const fecha = new Date((row["FECHA"] - (25567 + 2)) * 86400 * 1000);
                     documento.fechaCreacion = this.datePipe.transform(fecha, "yyyy-MM-dd")
-                    + "T06:00:00.000Z";
+                        + "T06:00:00.000Z";
                     documento.fechaCreacionDate = this.datePipe.transform(fecha, "dd-MM-yyyy");
 
                 } else {
@@ -854,7 +854,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                             if (i.text) {
                                 if (new Date(i.text)) {
                                     meta = meta + i.cDescripcionMetacatalogo + ": " +
-                                    this.datePipe.transform(i.text, "yyyy-MM-dd") +"T06:00:00.000Z";
+                                        this.datePipe.transform(i.text, "yyyy-MM-dd") + "T06:00:00.000Z";
                                 }
                             }
                         } else {
@@ -867,7 +867,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                             if (i.text) {
                                 if (new Date(i.text)) {
                                     meta = meta + " , " + i.cDescripcionMetacatalogo + ": " +
-                                    this.datePipe.transform(i.text, "yyyy-MM-dd") + "T06:00:00.000Z";
+                                        this.datePipe.transform(i.text, "yyyy-MM-dd") + "T06:00:00.000Z";
                                 }
                             }
                         } else if (i.cTipoMetacatalogo === "Sí o no") {
@@ -878,7 +878,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                             }
                         } else {
                             if (i.text) {
-                                meta = meta + " , " + i.cDescripcionMetacatalogo + ": " +i.text;
+                                meta = meta + " , " + i.cDescripcionMetacatalogo + ": " + i.text;
                             }
                         }
                     }
@@ -886,8 +886,22 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
 
                 documento.clasificacion = meta;
 
-                const arrExpedienteTipo: any = this.arrExpediente.filter((d) =>
-                this.normalize(d.descripcionTiposDocumentos.toLowerCase()).indexOf(row["TIPO DOCUMENTAL"].toLowerCase()) !== -1);
+                const arrExpedienteTipo: any = this.arrExpediente.filter((d) => {
+                    if (row["TIPO DOCUMENTAL"]) {
+
+
+                        this.normalize(d.descripcionTiposDocumentos.toLowerCase()).indexOf(row["TIPO DOCUMENTAL"].toLowerCase()) !== -1
+                    }else{
+                        if (textError.length > 0) {
+                            textError =
+                                "Formato de carga mal formado.";
+                        } else {
+                            textError =
+                                textError +
+                                ", el formato de carga esta mal formado";
+                        }
+                    }
+                });
                 if (arrExpedienteTipo.length > 0) {
                     documento.tipo_de_expediente =
                         arrExpedienteTipo[0].id;
@@ -930,10 +944,10 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     validarTipoMetaDato(tipo: any, campo: any, indice: number) {
         if (this.arrMetacatalogos[indice].bOligatorio) {
             if (String(campo).length > 0) {
-                if (this.arrMetacatalogos[indice].cTipoMetacatalogo ==="Fecha") {
+                if (this.arrMetacatalogos[indice].cTipoMetacatalogo === "Fecha") {
                     if (new Date(campo)) {
                         this.arrMetacatalogos[indice].text = this.datePipe.transform(
-                        campo, "yyyy-MM-dd") + "T06:00:00.000Z";
+                            campo, "yyyy-MM-dd") + "T06:00:00.000Z";
                     } else {
                         return false;
                     }
@@ -965,7 +979,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                     this.arrMetacatalogos[indice].text = "";
                 }
             } else if (this.arrMetacatalogos[indice].cTipoMetacatalogo === "Sí o no" ||
-            this.arrMetacatalogos[indice].cTipoMetacatalogo ==="Texto") {
+                this.arrMetacatalogos[indice].cTipoMetacatalogo === "Texto") {
                 if (String(campo)) {
                     this.arrMetacatalogos[indice].text = String(campo);
                 } else {
@@ -997,20 +1011,30 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             cancelButtonColor: '#d33',
             confirmButtonText: 'Si',
             cancelButtonText: 'No'
-          }).then(async (result: any) => {
+        }).then(async (result: any) => {
             if (result.value) {
                 console.log(this.documentos);
                 // await this.confirmarGuardarDocumentos();
             }
-          });
+        });
     }
 
     async confirmarGuardarDocumentos() {
         this.historialCarga.guardarHistorial({ cUsuario: this.menuService.usuario })
-        .subscribe(async (resp: any) => {
-            if (resp.data) {
-                await this.subirDocumentos(resp.data.id);
-            } else {
+            .subscribe(async (resp: any) => {
+                if (resp.data) {
+                    await this.subirDocumentos(resp.data.id);
+                } else {
+                    this.arrHistorialCarga = [];
+                    this.limpiar();
+                    await this.obtenerHistorialCarga();
+                    Swal.fire(
+                        "Error",
+                        "Ocurrió un error al guardar el historial de cargas.",
+                        "error"
+                    );
+                }
+            }, async (err: any) => {
                 this.arrHistorialCarga = [];
                 this.limpiar();
                 await this.obtenerHistorialCarga();
@@ -1018,22 +1042,12 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                     "Error",
                     "Ocurrió un error al guardar el historial de cargas.",
                     "error"
-                );    
-            }
-        }, async (err: any) => {
-            this.arrHistorialCarga = [];
-            this.limpiar();
-            await this.obtenerHistorialCarga();
-            Swal.fire(
-                "Error",
-                "Ocurrió un error al guardar el historial de cargas.",
-                "error"
-            );
-        });
+                );
+            });
     }
 
     async subirDocumentos(idHistorial) {
-        return new Promise ( async (resolve) => {
+        return new Promise(async (resolve) => {
             this.spinner.show();
             this.loadingIndicator = true;
             const fecha = new Date(); // Fecha actual
@@ -1042,14 +1056,14 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                 row.usuario = this.menuService.usuario;
                 row.idEncabezado = idHistorial;
                 const hCarga = await this.historialCarga.guardarHistorialDetalle(
-                {
-                    documento: '',
-                    historial_carga_encabezados: [
-                        idHistorial,
-                    ],
-                });
+                    {
+                        documento: '',
+                        historial_carga_encabezados: [
+                            idHistorial,
+                        ],
+                    });
                 setTimeout(() => {
-                  }, 1000);
+                }, 1000);
                 console.log(hCarga);
                 if (hCarga.error) {
                     console.log("Error al guardar detalle del historial: " + idHistorial);
@@ -1060,7 +1074,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                     row.idDetalle = hCarga.data.id;
                     if (row.bActivo) {
                         const resultado = await this.uploadService.subirArchivo(
-                            {name: row.filePDF.name},
+                            { name: row.filePDF.name },
                             row.fileBase.data
                         );
                         setTimeout(() => {
@@ -1073,60 +1087,60 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                         this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
                             // Actualizamos el detalle del historial de carga
                             this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
-                            (resp: any) => {});
+                                (resp: any) => { });
                         },
-                        (err: any) => {
-                            console.log('Error al guardar documento ' + row.cNombreDocumento);
-                            this.historialCarga.actualizarDetalle({ bCargado: false }, row.idDetalle).subscribe(
-                            (resp: any) => {});
-                        });
+                            (err: any) => {
+                                console.log('Error al guardar documento ' + row.cNombreDocumento);
+                                this.historialCarga.actualizarDetalle({ bCargado: false }, row.idDetalle).subscribe(
+                                    (resp: any) => { });
+                            });
                     } else {
                         this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
                             // Actualizamos el detalle del historial de carga
                             this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
-                            (resp: any) => {});
+                                (resp: any) => { });
                         },
-                        (err: any) => {
-                            console.log('Error al guardar documento ' + row.cNombreDocumento);
-                            this.historialCarga.actualizarDetalle({ bCargado: false }, row.idDetalle).subscribe(
-                            (resp: any) => {});
-                        });
+                            (err: any) => {
+                                console.log('Error al guardar documento ' + row.cNombreDocumento);
+                                this.historialCarga.actualizarDetalle({ bCargado: false }, row.idDetalle).subscribe(
+                                    (resp: any) => { });
+                            });
                     }
                 }
             };
             setTimeout(() => {
             }, 2000);
 
-            this.historialCarga.actualizarHistorial({ bCompletado: true },idHistorial)
-            .subscribe(async (resp: any) => {
-                this.loadingIndicator = false;
-                this.spinner.hide();
-                this.arrHistorialCarga = [];
-                this.limpiar();
-                await this.obtenerHistorialCarga();
-                this.limpiar();
-                Swal.fire(
-                    "Éxito",
-                    "Documentos guardados. ",
-                    "success"
-                );
-                resolve(true);
-            },
-            async (err) => {
-                this.loadingIndicator = false;
-                this.spinner.hide();
-                this.selectedHistorial = "";
-                this.arrHistorialCarga = [];
-                this.limpiar();
-                await this.obtenerHistorialCarga();
-                this.limpiar();
-                Swal.fire(
-                    "Error",
-                    "Ocurrió un error al actualizar el historial.",
-                    "error"
-                );
-                resolve(true);
-            });
+            this.historialCarga.actualizarHistorial({ bCompletado: true }, idHistorial)
+                .subscribe(async (resp: any) => {
+                    this.loadingIndicator = false;
+                    this.spinner.hide();
+                    this.arrHistorialCarga = [];
+                    this.limpiar();
+                    await this.obtenerHistorialCarga();
+                    this.limpiar();
+                    Swal.fire(
+                        "Éxito",
+                        "Documentos guardados. ",
+                        "success"
+                    );
+                    resolve(true);
+                },
+                    async (err) => {
+                        this.loadingIndicator = false;
+                        this.spinner.hide();
+                        this.selectedHistorial = "";
+                        this.arrHistorialCarga = [];
+                        this.limpiar();
+                        await this.obtenerHistorialCarga();
+                        this.limpiar();
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al actualizar el historial.",
+                            "error"
+                        );
+                        resolve(true);
+                    });
 
         });
     }
@@ -1139,7 +1153,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
         this.cargarArchivos = false;
         this.validarGuardado = false;
         this.myStepper.previous();
-        window.scroll(0,0);
+        window.scroll(0, 0);
     }
 
     borrarFiltros(): void {
@@ -1178,23 +1192,23 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
         }).then((result) => {
             if (result.value) {
                 // realizamos delete
-                this.historialCarga.actualizarHistorial({ bActivo: false },this.selectedHistorial)
-                .subscribe(async (resp: any) => {
-                    this.selectedHistorial = "";
-                    this.arrHistorialCarga = [];
-                    await this.obtenerHistorialCarga();
-                    this.myStepper.previous();
-                    window.scroll(0,0);
-                    this.spinner.hide();
-                },
-                (err) => {
-                    this.spinner.hide();
-                    Swal.fire(
-                        "Error",
-                        "Ocurrió un error al eliminar el historial de carga.",
-                        "error"
-                    );
-                });
+                this.historialCarga.actualizarHistorial({ bActivo: false }, this.selectedHistorial)
+                    .subscribe(async (resp: any) => {
+                        this.selectedHistorial = "";
+                        this.arrHistorialCarga = [];
+                        await this.obtenerHistorialCarga();
+                        this.myStepper.previous();
+                        window.scroll(0, 0);
+                        this.spinner.hide();
+                    },
+                        (err) => {
+                            this.spinner.hide();
+                            Swal.fire(
+                                "Error",
+                                "Ocurrió un error al eliminar el historial de carga.",
+                                "error"
+                            );
+                        });
             }
         });
     }
@@ -1916,21 +1930,21 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     }
 
     normalize(str: string): any {
-        let from = "ÃÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüûÑñÇç", 
-            to   = "AAAAAEEEEIIIIOOOOUUUUaaaaaeeeeiiiioooouuuunncc",
+        let from = "ÃÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüûÑñÇç",
+            to = "AAAAAEEEEIIIIOOOOUUUUaaaaaeeeeiiiioooouuuunncc",
             mapping = {};
-       
-        for(let i = 0, j = from.length; i < j; i++ )
-            mapping[ from.charAt( i ) ] = to.charAt( i );
-       
+
+        for (let i = 0, j = from.length; i < j; i++)
+            mapping[from.charAt(i)] = to.charAt(i);
+
         let ret = [];
-        for( let i = 0, j = str.length; i < j; i++ ) {
-            const c = str.charAt( i );
-            if( mapping.hasOwnProperty( str.charAt( i ) ) )
-                ret.push( mapping[ c ] );
+        for (let i = 0, j = str.length; i < j; i++) {
+            const c = str.charAt(i);
+            if (mapping.hasOwnProperty(str.charAt(i)))
+                ret.push(mapping[c]);
             else
-                ret.push( c );
-        }      
-        return ret.join( '' );
+                ret.push(c);
+        }
+        return ret.join('');
     }
 }

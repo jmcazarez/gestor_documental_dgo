@@ -81,3 +81,30 @@
     }
     
 }
+
+::ng-deep {
+    ngx-datatable {
+      .datatable-header,
+      .datatable-footer,
+      .datatable-body {
+        width: 100% !important;
+      }
+      .datatable-body {
+        height: 100% !important;
+      }
+      .datatable-body-row {
+        white-space: normal !important;
+      }
+      datatable-body-cell {
+        white-space: normal !important;
+        line-height: 1.4 !important;
+      }
+  
+      datatable-body-cell.class-tema {
+        align-items: baseline !important;
+        overflow-y: auto !important;
+      }
+      
+    }
+  }
+  

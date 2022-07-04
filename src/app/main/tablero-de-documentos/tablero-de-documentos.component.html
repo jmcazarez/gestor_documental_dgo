@@ -36,8 +36,11 @@
             </div>
 
             <ngx-datatable  class="material shadow-none" [rows]="documentos" 
-                [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50"
-                [rowHeight]="'auto'" [reorderable]="reorderable" [limit]="10" [scrollbarH]="true">
+                [loadingIndicator]="loadingIndicator" [columnMode]="'force'"  [headerHeight]="50"
+                [footerHeight]="50"
+                [rowHeight]="80"
+                [reorderable]="reorderable" [limit]="10" [scrollbarH]="true"
+                                        [scrollbarV]="true">
                 <!-- <ngx-datatable-column name="Id. documento" prop="id"></ngx-datatable-column> -->
                 <ngx-datatable-column name="Documento" prop="cNombreDocumento"></ngx-datatable-column>
                 <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
@@ -49,7 +52,7 @@
                 <ngx-datatable-column name="Versión" prop="version"></ngx-datatable-column>
                 <ngx-datatable-column name="Folio de expediente" prop="cFolioExpediente"></ngx-datatable-column>
                 
-                <ngx-datatable-column name="Clasificación" prop="clasificacion"></ngx-datatable-column>
+                <ngx-datatable-column name="Clasificación" prop="clasificacion" [width]="300" [cellClass]="'class-tema'"></ngx-datatable-column>
                 <ngx-datatable-column name="Estatus" sortable="false">
                     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                         <mat-icon *ngIf="row.bActivo" color="accent" class="material-icons">check_circle</mat-icon>
