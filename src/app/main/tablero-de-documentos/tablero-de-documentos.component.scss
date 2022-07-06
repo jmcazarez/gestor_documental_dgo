@@ -82,16 +82,11 @@
     
 }
 
-::ng-deep {
+/*  ::ng-deep {
     ngx-datatable {
-      .datatable-header,
-      .datatable-footer,
-      .datatable-body {
-        width: 100% !important;
-      }
-      .datatable-body {
-        height: 100% !important;
-      }
+        height: 100%;
+        width: 100%;
+        overflow-x: scroll;
       .datatable-body-row {
         white-space: normal !important;
       }
@@ -106,5 +101,39 @@
       }
       
     }
-  }
-  
+  }  */
+  /* 
+    .ngx-datatable {
+    max-height: 70vh;
+    overflow-y: scroll;
+  } */
+
+/*   .ngx-datatable {
+    max-height: 70vh;
+    } */
+
+    ::ng-deep {
+        ngx-datatable {
+          .datatable-header,
+          .datatable-footer,
+          .datatable-body {
+            width: 100% !important;
+          }
+          .datatable-body {
+            height: 55vh !important;
+          }
+          .datatable-body-row {
+            white-space: normal !important;
+          }
+          datatable-body-cell {
+            white-space: normal !important;
+            line-height: 1.4 !important;
+          }
+      
+          datatable-body-cell.class-tema {
+            align-items: baseline !important;
+            overflow-y: auto !important;
+          }
+          
+        }
+      }

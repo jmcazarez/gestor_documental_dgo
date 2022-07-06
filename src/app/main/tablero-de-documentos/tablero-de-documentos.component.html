@@ -35,12 +35,36 @@
             
             </div>
 
-            <ngx-datatable  class="material shadow-none" [rows]="documentos" 
-                [loadingIndicator]="loadingIndicator" [columnMode]="'force'"  [headerHeight]="50"
-                [footerHeight]="50"
-                [rowHeight]="80"
-                [reorderable]="reorderable" [limit]="10" [scrollbarH]="true"
-                                        [scrollbarV]="true">
+           
+          <!--   <ngx-datatable class="material shadow-none" [rows]="documentos" [loadingIndicator]="loadingIndicator"
+            [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="80" [scrollbarH]="true" [scrollbarV]="true" 
+            [externalPaging]="true" [externalSorting]="true" [count]="20" [offset]="pageNumber" [limit]="10"
+            (page)="setPage($event)">  -->
+         <!--     <ngx-datatable   class="material" [rows]="documentos" 
+     
+            [columnMode]="'force'"
+            [loadingIndicator]="loadingIndicator"
+            [scrollbarV]="true" 
+            [scrollbarH]="true" 
+            [rowHeight]="50"
+            [externalPaging]="true"
+            [externalSorting]="true"
+            [count]="50"
+            [offset]="pageNumber"
+            (page)="setPage($event)" > -->
+            <ngx-datatable
+            class="material shadow-none"
+            [rows]="documentos"
+            [loadingIndicator]="loadingIndicator"
+            [columnMode]="'force'"
+            [headerHeight]="50"
+            [rowHeight]="80"
+            [reorderable]="reorderable"
+            [limit]="10"
+            [scrollbarH]="true"
+            [scrollbarV]="true"
+            (page)="setPage($event)" 
+        >
                 <!-- <ngx-datatable-column name="Id. documento" prop="id"></ngx-datatable-column> -->
                 <ngx-datatable-column name="Documento" prop="cNombreDocumento"></ngx-datatable-column>
                 <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>

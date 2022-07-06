@@ -11,7 +11,14 @@ import Swal from 'sweetalert2';
 import { ClasficacionDeDocumentosComponent } from './clasficacion-de-documentos/clasficacion-de-documentos.component';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ExportAsService, ExportAsConfig } from 'ngx-export-as';
-
+import { Page } from 'models/page.models';
+import { Console } from 'console';
+interface PageInfo {
+    offset: number;
+    pageSize: number;
+    limit: number;
+    count: number;
+}
 @Component({
     selector: 'app-tablero-de-documentos',
     templateUrl: './tablero-de-documentos.component.html',
@@ -37,6 +44,10 @@ export class TableroDeDocumentosComponent implements OnInit {
     optEliminar: boolean;
     fileBase64: any;
     valueBuscador: string;
+    pageNumber: number;
+    cache: any = {};
+    isLoading = 0;
+    size = 20
     constructor(
         private spinner: NgxSpinnerService,
         private datePipe: DatePipe,
@@ -48,14 +59,81 @@ export class TableroDeDocumentosComponent implements OnInit {
     ) {
         // Obtenemos documentos
 
-
     }
 
     ngOnInit() {
 
-        this.obtenerDocumentos();
-    }
+        this.obtenerDocumentos( 0);
 
+    }
+    setPage(pageInfo: PageInfo) {
+        let pageActual = this.pageNumber
+      
+        // Current page number is determined by last call to setPage
+        // This is the page the UI is currently displaying
+        // The current page is based on the UI pagesize and scroll position
+        // Pagesize can change depending on browser size
+        pageInfo.pageSize =  this.size;
+        this.pageNumber = pageInfo.offset;
+
+        // Calculate row offset in the UI using pageInfo
+        // This is the scroll position in rows
+        const rowOffset = pageInfo.offset * pageInfo.pageSize;
+
+        // When calling the server, we keep page size fixed
+        // This should be the max UI pagesize or larger
+        // This is not necessary but helps simplify caching since the UI page size can change
+        const page = new Page();
+        page.size = this.size;
+        page.pageNumber = Math.floor(rowOffset / page.size);
+        if (pageActual !== this.pageNumber ) {
+            this.obtenerDocumentos( this.pageNumber);
+        }
+      
+
+        // We keep a index of server loaded pages so we don't load same data twice
+        // This is based on the server page not the UI
+        if (this.cache[page.pageNumber]) return;
+        this.cache[page.pageNumber] = true;
+
+        // Counter of pending API calls
+        this.isLoading++;
+
+       
+        /* 
+                if (pageActual !== this.pageNumber && this.pageNumber !== 0) {
+                    console.log('prueba', this.pageNumber);
+        
+                    this.obtenerDocumentos('_limit=' + this.size +'&_sort=id%3AASC&_start=' + (this.pageNumber * this.size).toString(), this.pageNumber);
+                } */
+
+        /*   this.serverResultsService.getResults(page).subscribe(pagedData => {
+            // Update total count
+            this.totalElements = pagedData.page.totalElements;
+      
+            // Create array to store data if missing
+            // The array should have the correct number of with "holes" for missing data
+            if (!this.rows) {
+              this.rows = new Array<CorporateEmployee>(this.totalElements || 0);
+            }
+      
+            // Calc starting row offset
+            // This is the position to insert the new data
+            const start = pagedData.page.pageNumber * pagedData.page.size;
+      
+            // Copy existing data
+            const rows = [...this.rows];
+      
+            // Insert new rows into correct position
+            rows.splice(start, pagedData.page.size, ...pagedData.data);
+      
+            // Set rows to our new rows for display
+            this.rows = rows;
+      
+            // Decrement the counter of pending API calls
+            this.isLoading--;
+          }); */
+    }
     nuevoDocumento(): void {
         // Abrimos modal de guardar usuario
         const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
@@ -70,19 +148,19 @@ export class TableroDeDocumentosComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                this.obtenerDocumentos();
+                this.obtenerDocumentos( this.pageNumber);
                 if (result.documento) {
-                    this.clasificarDocumento(result);
+                    this.clasificarDocumento(result,this.pageNumber);
                 }
             }
         });
     }
 
 
-    obtenerDocumentos(): void {
+    async obtenerDocumentos( numeroPagina: number): Promise<void> {
 
         this.spinner.show();
-        const documentosTemp: any[] = [];
+        const documentosTemp: any[] = this.documentos;
         let idDocumento: any;
         this.loadingIndicator = true;
         let meta = '';
@@ -91,9 +169,13 @@ export class TableroDeDocumentosComponent implements OnInit {
         this.valueBuscador = '';
         let countFecha = 0;
         let cFolioExpediente = '';
+        let filtro = '_limit=' + this.size +'&_sort=id%3AASC&_start=' + (numeroPagina * this.size).toString()
         // Obtenemos los documentos
         try {
-            this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
+            // obtenerDocumentoReporte
+            console.log(filtro);
+            await this.documentoService.obtenerDocumentoReporte(filtro).subscribe((resp: any) => {
+                // await this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
 
                 // Buscamos permisos
 
@@ -108,7 +190,10 @@ export class TableroDeDocumentosComponent implements OnInit {
                 if (this.optConsultar) {
 
                     for (const documento of resp.data) {
-
+                        let eliminar = documentosTemp.findIndex(p => p.id == documento.id)
+                        if (eliminar >= 0) {
+                           // this.documentos.splice(eliminar, 1)
+                        }
                         idDocumento = '';
                         // Validamos permisos
 
@@ -123,7 +208,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                                 if (documento.tipo_de_documento.bActivo && encontro.Consultar) {
 
                                     if (documento.documento) {
-
+                                        
                                         idDocumento = documento.documento.hash + documento.documento.ext;
 
                                         if (documento.metacatalogos) {
@@ -180,42 +265,84 @@ export class TableroDeDocumentosComponent implements OnInit {
 
                                         // tslint:disable-next-line: no-unused-expression
                                         if (documento.legislatura) {
-                                            if (documento.legislatura.cLegislatura){
+                                            if (documento.legislatura.cLegislatura) {
+                                                cFolioExpediente = '';
                                                 cFolioExpediente = documento.legislatura.cLegislatura + '-' + documento.folioExpediente
-                                                console.log(cFolioExpediente);
+                                                
                                             }
                                         }
                                         // Seteamos valores y permisos
-                                        documentosTemp.push({
-                                            id: documento.id,
-                                            cNombreDocumento: documento.cNombreDocumento,
-                                            tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
-                                            tipo_de_documento: documento.tipo_de_documento.id,
-                                            fechaCarga: this.datePipe.transform(documento.fechaCarga, 'yyyy-MM-dd'),
-                                            fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
-                                            paginas: documento.paginas,
-                                            bActivo: documento.bActivo,
-                                            fechaModificacion: this.datePipe.transform(documento.updatedAt, 'yyyy-MM-dd'),
-                                            Agregar: encontro.Agregar,
-                                            Eliminar: encontro.Eliminar,
-                                            Editar: encontro.Editar,
-                                            Consultar: encontro.Consultar,
-                                            idDocumento: idDocumento,
-                                            version: parseFloat(documento.version).toFixed(1),
-                                            documento: documento.documento,
-                                            //ente: documento.ente,
-                                            // secretaria: documento.secretaria,
-                                            // direccione: documento.direccione,
-                                            // departamento: documento.departamento,
-                                            folioExpediente: documento.folioExpediente,
-                                            cFolioExpediente,
-                                            clasificacion: meta,
-                                            metacatalogos: documento.metacatalogos,
-                                            informacion: visibilidad,
-                                            visibilidade: documento.visibilidade,
-                                            tipo_de_expediente: documento.tipo_de_expediente,
-                                            usuario: this.menuService.usuario
-                                        });
+
+                                        if (eliminar >= 0) {
+                                            documentosTemp[eliminar] =
+                                            {
+                                                id: documento.id,
+                                                cNombreDocumento: documento.cNombreDocumento,
+                                                tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
+                                                tipo_de_documento: documento.tipo_de_documento.id,
+                                                fechaCarga: this.datePipe.transform(documento.fechaCarga, 'yyyy-MM-dd'),
+                                                fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
+                                                paginas: documento.paginas,
+                                                bActivo: documento.bActivo,
+                                                fechaModificacion: this.datePipe.transform(documento.updatedAt, 'yyyy-MM-dd'),
+                                                Agregar: encontro.Agregar,
+                                                Eliminar: encontro.Eliminar,
+                                                Editar: encontro.Editar,
+                                                Consultar: encontro.Consultar,
+                                                idDocumento: idDocumento,
+                                                version: parseFloat(documento.version).toFixed(1),
+                                                documento: documento.documento,
+                                                //ente: documento.ente,
+                                                // secretaria: documento.secretaria,
+                                                // direccione: documento.direccione,
+                                                // departamento: documento.departamento,
+                                                folioExpediente: documento.folioExpediente,
+                                                cFolioExpediente,
+                                                clasificacion: meta,
+                                                metacatalogos: documento.metacatalogos,
+                                                informacion: visibilidad,
+                                                visibilidade: documento.visibilidade,
+                                                tipo_de_expediente: documento.tipo_de_expediente,
+                                                usuario: this.menuService.usuario,
+                                                numeroPagina: numeroPagina
+                                            }
+                                        } else {
+
+                                            //  this.documentos.splice(eliminar,1);
+                                            documentosTemp.push({
+                                                id: documento.id,
+                                                cNombreDocumento: documento.cNombreDocumento,
+                                                tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
+                                                tipo_de_documento: documento.tipo_de_documento.id,
+                                                fechaCarga: this.datePipe.transform(documento.fechaCarga, 'yyyy-MM-dd'),
+                                                fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
+                                                paginas: documento.paginas,
+                                                bActivo: documento.bActivo,
+                                                fechaModificacion: this.datePipe.transform(documento.updatedAt, 'yyyy-MM-dd'),
+                                                Agregar: encontro.Agregar,
+                                                Eliminar: encontro.Eliminar,
+                                                Editar: encontro.Editar,
+                                                Consultar: encontro.Consultar,
+                                                idDocumento: idDocumento,
+                                                version: parseFloat(documento.version).toFixed(1),
+                                                documento: documento.documento,
+                                                //ente: documento.ente,
+                                                // secretaria: documento.secretaria,
+                                                // direccione: documento.direccione,
+                                                // departamento: documento.departamento,
+                                                folioExpediente: documento.folioExpediente,
+                                                cFolioExpediente,
+                                                clasificacion: meta,
+                                                metacatalogos: documento.metacatalogos,
+                                                informacion: visibilidad,
+                                                visibilidade: documento.visibilidade,
+                                                tipo_de_expediente: documento.tipo_de_expediente,
+                                                usuario: this.menuService.usuario,
+                                                numeroPagina: numeroPagina
+                                            });
+
+                                        }
+
 
                                         meta = '';
                                     }
@@ -224,9 +351,14 @@ export class TableroDeDocumentosComponent implements OnInit {
                         }
                     }
 
-                    this.documentos = documentosTemp;
-                    this.documentosTemporal = this.documentos;
+                    /* 
+                                        this.documentos = documentosTemp;
+                                        this.documentosTemporal = this.documentos; */
                 }
+
+
+                this.documentos = [...documentosTemp];
+                this.documentosTemporal = [...documentosTemp];
                 this.loadingIndicator = false;
                 this.spinner.hide();
             }, err => {
@@ -241,7 +373,6 @@ export class TableroDeDocumentosComponent implements OnInit {
 
 
     editarDocumento(documento: DocumentosModel): void {
-
         // Abrimos modal de guardar perfil
         const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
             width: '60%',
@@ -254,10 +385,10 @@ export class TableroDeDocumentosComponent implements OnInit {
 
             if (result) {
 
-                this.obtenerDocumentos();
+                this.obtenerDocumentos( documento.numeroPagina);
                 if (result.documento) {
                     this.valueBuscador = '';
-                    this.clasificarDocumento(result);
+                    this.clasificarDocumento(result,documento.numeroPagina);
                 }
             }
 
@@ -278,10 +409,12 @@ export class TableroDeDocumentosComponent implements OnInit {
                 row.documento = '';
                 row.usuario = this.menuService.usuario;
                 // realizamos delete
+
                 this.documentoService.borrarDocumentos(row).subscribe((resp: any) => {
                     Swal.fire('Eliminado', 'El documento ha sido eliminado.', 'success');
-
-                    this.obtenerDocumentos();
+                    let eliminar = this.documentos.findIndex(p => p.id == row.id)
+                    this.documentos.splice(eliminar, 1);
+                    // this.obtenerDocumentos('_limit=-1');
                 }, err => {
                     this.cargando = false;
                     Swal.fire(
@@ -318,7 +451,7 @@ export class TableroDeDocumentosComponent implements OnInit {
         return btoa(binstr);
     }
 
-    clasificarDocumento(result: any): void {
+    clasificarDocumento(result: any, numeroPagina: number): void {
         let encontro: any;
         encontro = this.menuService.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === result.tipo_de_documento.id);
         if (encontro) {
@@ -341,8 +474,9 @@ export class TableroDeDocumentosComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
 
             if (result) {
+                
                 this.valueBuscador = '';
-                this.obtenerDocumentos();
+                this.obtenerDocumentos( numeroPagina);
             }
         });
     }
@@ -365,7 +499,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                 result.disabled = true;
                 // this.obtenerDocumentos();
                 //  if (result.documento.ext === '.pdf') {
-                this.clasificarDocumento(result);
+                this.clasificarDocumento(result,documento.numeroPagina);
                 // }
             }
 
@@ -381,8 +515,8 @@ export class TableroDeDocumentosComponent implements OnInit {
             const val = value.target.value.toLowerCase();
             const temp = this.documentos.filter((d) => d.cNombreDocumento.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.clasificacion.toLowerCase().indexOf(val) !== - 1 || d.tipoDocumento.toLowerCase().indexOf(val) !== - 1 ||
-                d.informacion.toLowerCase().indexOf(val) !== - 1 || d.fechaCarga.toLowerCase().indexOf(val)  !== - 1
-                || d.cFolioExpediente.toLowerCase().indexOf(val)  !== - 1);
+                d.informacion.toLowerCase().indexOf(val) !== - 1 || d.fechaCarga.toLowerCase().indexOf(val) !== - 1
+                || d.cFolioExpediente.toLowerCase().indexOf(val) !== - 1);
             this.documentos = temp;
         }
     }
@@ -391,12 +525,10 @@ export class TableroDeDocumentosComponent implements OnInit {
         console.log(event);
     }
 
-    keytab(event, row){
-        console.log( row)
-        console.log('entro');
+    keytab(event, row) {
         let element = event.srcElement.nextElementSibling; // get the sibling element
-    
-        if(element == null)  // check if its null
+
+        if (element == null)  // check if its null
             return;
         else
             element.focus();   // focus if not null

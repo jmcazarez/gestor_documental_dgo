@@ -26,6 +26,7 @@ import { ExportService } from "services/export.service";
 import { HistorialCargaService } from "services/historial-carga.service";
 import { UsuarioLoginService } from "services/usuario-login.service";
 import { LegislaturaService } from "services/legislaturas.service";
+import { Console } from "console";
 
 @Component({
     selector: 'app-tablero-carga-masiva-descarga',
@@ -885,12 +886,31 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                 }
 
                 documento.clasificacion = meta;
+                let arrExpedienteTipo: any[]
+                if (row["TIPO DOCUMENTAL"]) {
+                    arrExpedienteTipo  = this.arrExpediente.filter(
+                        (d) =>
+                        this.normalize(d.descripcionTiposDocumentos
+                                .toLowerCase()
+                                .indexOf(row["TIPO DOCUMENTAL"].toLowerCase())) !== -1 
+                    );
+                }else{
+                    if (textError.length > 0) {
+                        textError =
+                            "Formato de carga mal formado.";
+                    } else {
+                        textError =
+                            textError +
+                            ", el formato de carga esta mal formado";
+                    }
+                }
+               
 
-                const arrExpedienteTipo: any = this.arrExpediente.filter((d) => {
+              /*   const arrExpedienteTipo: any = this.arrExpediente.filter((d) => {
                     if (row["TIPO DOCUMENTAL"]) {
 
-
-                        this.normalize(d.descripcionTiposDocumentos.toLowerCase()).indexOf(row["TIPO DOCUMENTAL"].toLowerCase()) !== -1
+                        d.descripcionTiposDocumentos.toLowerCase().indexOf(row["TIPO DOCUMENTAL"].toLowerCase()) !== -1 
+                     //   this.normalize(d.descripcionTiposDocumentos.toLowerCase()).indexOf(row["TIPO DOCUMENTAL"].toLowerCase()) !== -1
                     }else{
                         if (textError.length > 0) {
                             textError =
@@ -901,7 +921,9 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                 ", el formato de carga esta mal formado";
                         }
                     }
-                });
+                }); */
+                console.log(documento.tipo_de_expediente);
+                console.log( arrExpedienteTipo);
                 if (arrExpedienteTipo.length > 0) {
                     documento.tipo_de_expediente =
                         arrExpedienteTipo[0].id;
@@ -1014,7 +1036,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
         }).then(async (result: any) => {
             if (result.value) {
                 console.log(this.documentos);
-                // await this.confirmarGuardarDocumentos();
+                 await this.confirmarGuardarDocumentos();
             }
         });
     }

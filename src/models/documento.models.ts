@@ -30,4 +30,5 @@ export class DocumentosModel {
     ordenDelDia: any;
     listaDeAsistencia: any;
     actasSesion: any;
+    numeroPagina: number;
 }
