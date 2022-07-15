@@ -42,6 +42,7 @@ export class GuardarDepartamentosComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public direcciones: DireccionesModel,
     ) { }
     ngOnInit(): void {
+        console.log(this.idDireccion)
         this.obtenerDepartamento();
     }
 
@@ -53,13 +54,12 @@ export class GuardarDepartamentosComponent implements OnInit {
         this.usuariosService.obtenerDepartamentos().subscribe((resp: any) => {
 
             // Buscamos permisos
-            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
-
-            this.optAgregar = opciones.Agregar;
-            this.optEditar = opciones.Editar;
-            this.optConsultar = opciones.Consultar;
-            this.optEliminar = opciones.Eliminar;
             
+            this.optAgregar = true;
+            this.optEditar = true;
+            this.optConsultar = true;
+            this.optEliminar = true;
+            console.log(resp);
             // Si tiene permisos para consultar
             if (this.optConsultar) {
                 for (const departamento of resp) {
@@ -124,6 +124,7 @@ export class GuardarDepartamentosComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        this.departamento = this.departamentoTemp;
         // Filtramos tabla
         if (value.target.value === '') {
             this.departamento = this.departamentoTemp;
@@ -165,6 +166,7 @@ export class GuardarDepartamentosComponent implements OnInit {
 
     limpiar(): void{
         this.valueBuscador = '';
+        console.log('buscador' + this.valueBuscador);
     }
 
     cerrar(ent): void {

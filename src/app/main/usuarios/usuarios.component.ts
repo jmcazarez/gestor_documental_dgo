@@ -80,7 +80,7 @@ export class UsuariosComponent implements OnInit {
       confirmButtonText: 'Si',
       cancelButtonText: 'No'
     }).then((result) => {
-      if (result.value) {
+    /*   if (result.value) {
         this.cargando = true;
 
         this._usuariosService.eliminarUsuario(usuario).subscribe( (resp: any) => {
@@ -99,7 +99,7 @@ export class UsuariosComponent implements OnInit {
             );          
         });
         
-      }
+      } */
     });
   }
 }

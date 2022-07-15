@@ -132,7 +132,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             let cLegislatura = "";
             this.arrMetacatalogos = [];
             let folioExpedienteRequerido = [];
-            await this.obtenerLegislaturas();
+          //  await this.obtenerLegislaturas();
             await this.obtenerTiposExpedientes();
             if (!this.documento.iniciativas) {
                 if (this.documento.tipo_de_documento.id) {
@@ -683,7 +683,8 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         // this.documento.departamento = this.selectedDepartamento;
         // this.documento.visibilidade = this.selectedInformacion;
         this.spinner.show();
-        this.documento.legislatura = this.selectedLegislaturas;
+        /* this.documento.legislatura = ""; */
+        /* this.documento.legislatura = this.selectedLegislaturas; */
         this.documento.folioExpediente = this.form.get("folioExpediente").value;
         if (this.entroVersionamiento) {
             this.documento.tipo_de_documento = this.documento.tipo_de_documento.id;

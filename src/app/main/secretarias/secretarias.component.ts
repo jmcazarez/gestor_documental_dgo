@@ -39,20 +39,16 @@ export class SecretariasComponent implements OnInit {
     obtenerSecretaria(): void {
         this.spinner.show();
         this.loadingIndicator = true;
+        this.optAgregar = true;
+        this.optEditar = true;
+        this.optConsultar = true;
+        this.optEliminar = true;
         // Obtenemos los documentos
         this.usuariosService.obtenerSecretarias().subscribe((resp: any) => {
 
             // Buscamos permisos
-            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
-            this.optAgregar = opciones.Agregar;
-            this.optEditar = opciones.Editar;
-            this.optConsultar = opciones.Consultar;
-            this.optEliminar = opciones.Eliminar;
-            // Si tiene permisos para consultar
-            if (this.optConsultar) {
-                this.secretarias = resp;
-                this.secretariasTemp = this.secretarias;
-            }
+            this.secretarias = resp;
+            this.secretariasTemp = this.secretarias;
             this.loadingIndicator = false;
             this.spinner.hide();
         }, err => {
@@ -118,6 +114,7 @@ export class SecretariasComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        this.secretarias = this.secretariasTemp;
         // Filtramos tabla
         if (value.target.value === '') {
             this.secretarias = this.secretariasTemp;

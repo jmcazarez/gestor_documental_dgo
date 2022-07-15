@@ -2,13 +2,13 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { SecretariasModel } from 'models/secretarias.models';
-import { DireccionesModel} from 'models/direcciones.models';
+import { DireccionesModel } from 'models/direcciones.models';
 import { UsuariosService } from 'services/usuarios.service';
 import { MenuService } from 'services/menu.service';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { SecretariasComponent } from '../secretarias.component';
-import { ModaldireccionesComponent} from './modaldirecciones/modaldirecciones.component';
+import { ModaldireccionesComponent } from './modaldirecciones/modaldirecciones.component';
 import { stringify } from '@angular/compiler/src/util';
 import { GuardarDepartamentosComponent } from '../guardar-departamentos/guardar-departamentos.component';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -17,7 +17,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
     selector: 'app-guardar-direcciones',
     templateUrl: './guardar-direcciones.component.html',
     styleUrls: ['./guardar-direcciones.component.scss']
-  })
+})
 export class GuardarDireccionesComponent implements OnInit {
     loadingIndicator: boolean;
     reorderable: boolean;
@@ -40,7 +40,7 @@ export class GuardarDireccionesComponent implements OnInit {
         private dialog: MatDialog,
         private spinner: NgxSpinnerService,
         @Inject(MAT_DIALOG_DATA) public secretaria: SecretariasModel,
-        
+
     ) { }
 
     ngOnInit(): void {
@@ -56,31 +56,26 @@ export class GuardarDireccionesComponent implements OnInit {
         this.usuariosService.obtenerDirecciones().subscribe((resp: any) => {
 
             // Buscamos permisos
-            const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
 
-            this.optAgregar = opciones.Agregar;
-            this.optEditar = opciones.Editar;
-            this.optConsultar = opciones.Consultar;
-            this.optEliminar = opciones.Eliminar;
-            
+            this.optAgregar = true;
+            this.optEditar = true;
+            this.optConsultar = true;
+            this.optEliminar = true;
+            console.log(resp);
             // Si tiene permisos para consultar
-            if (this.optConsultar) {
-                for (const direccion of resp) {
-                            //secretariaId = '';
-                        if (direccion.secretariaId === this.secretaria.id) {
-                        direccionesTemp.push({
+            for (const direccion of resp) {
+                //secretariaId = '';
+                if (direccion.secretariaId === this.secretaria.id) {
+                    direccionesTemp.push({
                         id: direccion.id,
                         cDescripcionDireccion: direccion.cDescripcionDireccion,
                         bActivo: direccion.bActivo,
-                     });
-                    }       
+                    });
                 }
-
-                this.direcciones = direccionesTemp;
-                this.direccionesTemp = this.direcciones;
-                this.spinner.hide();
             }
-            this.loadingIndicator = false;
+
+            this.direcciones = direccionesTemp;
+            this.direccionesTemp = this.direcciones;
             this.spinner.hide();
         }, err => {
             this.spinner.hide();
@@ -110,6 +105,7 @@ export class GuardarDireccionesComponent implements OnInit {
     nuevaDireccion(): void {
         // Abrimos modal de guardar direccion
         this.usuariosService.idSecretaria = this.secretaria.id;
+  
         const dialogRef = this.dialog.open(ModaldireccionesComponent, {
             width: '50%',
             height: '80%',
@@ -127,12 +123,13 @@ export class GuardarDireccionesComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+        this.direcciones = this.direccionesTemp;
         // Filtramos tabla
         if (value.target.value === '') {
             this.direcciones = this.direccionesTemp;
         } else {
             const val = value.target.value.toLowerCase();
-            const temp = this.direcciones.filter((d) => d.cDescripcionDireccion.toLowerCase().indexOf(val) !== -1 || !val );
+            const temp = this.direcciones.filter((d) => d.cDescripcionDireccion.toLowerCase().indexOf(val) !== -1 || !val);
             this.direcciones = temp;
         }
     }
@@ -184,8 +181,9 @@ export class GuardarDireccionesComponent implements OnInit {
         });
     }
 
-    limpiar(): void{
+    limpiar(): void {
         this.valueBuscador = '';
+        console.log('buscador' + this.valueBuscador);
     }
 
     cerrar(ent): void {

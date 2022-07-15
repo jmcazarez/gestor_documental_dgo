@@ -83,7 +83,7 @@ export class GuardarUsuarioComponent implements OnInit, OnDestroy
         this.usuario.cPassword = this.form.get('password').value;
 
         if (this.usuario.nIdUsuario && this.usuario.nIdUsuario > 0) {
-            this._usuariosService.actualizarUsuario(this.usuario).subscribe( (resp: any) => {
+      /*       this._usuariosService.actualizarUsuario(this.usuario).subscribe( (resp: any) => {
                 if (resp.affectedRows && resp.affectedRows > 0){
                     Swal.fire('Exito', 'El usuario se ha actualizado correctamente.', 'success');
                     this.cerrar(true);
@@ -92,9 +92,9 @@ export class GuardarUsuarioComponent implements OnInit, OnDestroy
                 }
             }, err => {
                 Swal.fire('Error', 'Ocurrió un error al actualizar.', 'error');
-            });
+            }); */
         } else {
-            this._usuariosService.guardarUsuario(this.usuario).subscribe( (resp: any) => {
+          /*   this._usuariosService.guardarUsuario(this.usuario).subscribe( (resp: any) => {
                 if (resp.affectedRows && resp.affectedRows > 0){
                     Swal.fire('Exito', 'El usuario se ha guardado correctamente.', 'success');
                     this.cerrar(true);
@@ -103,7 +103,7 @@ export class GuardarUsuarioComponent implements OnInit, OnDestroy
                 }
             }, err => {
                 Swal.fire('Error', 'Ocurrió un error al guardar.', 'error');
-            });
+            }); */
         }
 
         

@@ -33,6 +33,14 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
     rowsTemp = [];
     arrPerfilDocumentos: any;
     searchText: string;
+    arrSecretarias: any[];
+    arrDirecciones: any[];
+    arrDireccionesFilter: any[];
+    arrDepartamentos: any[];
+    arrDepartamentosFilter: any[];
+    selectedSecretaria: any;
+    selectedDireccion: any;
+    selectedDepartamento: any;
     // Array definido en el CU -- Falta que se defina si sera un Catalogo
     arrTipo = [
         {
@@ -81,7 +89,18 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public documento: TipoDocumentoModel
     ) { }
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
+        this.arrSecretarias = [];
+        this.arrDepartamentos = [];
+        this.arrDirecciones = [];
+        // this.arrDirecciones = [];
+        this.selectedSecretaria = '';
+        this.selectedDireccion = '';
+        this.selectedDepartamento = '';
+
+        console.log(this.documento);
+
+    
         // Seteamos valores
         if (this.documento.metacatalogos) {
             this.rows = this.documento.metacatalogos;
@@ -128,6 +147,105 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
             metacatalogoTipo: [
                 { value: this.arrTipo, disabled: this.documento.disabled },
             ],
+            secretarias: ["", [Validators.required]],
+            direcciones: ["", [Validators.required]],
+            departamentos: ["", [Validators.required]],
+        });
+
+        await this.obtenerDirecciones();
+        // Obtenemos las secretarias
+        await this.obtenerSecretarias();
+        // Obtenemos los departamentos
+        await this.obtenerDepartamentos();
+
+        if (this.documento.secretaria) {
+            this.selectedSecretaria = this.documento.secretaria.id;
+        }
+        // Seteamos valores
+        if (this.documento.departamento) {
+            this.selectedDepartamento = this.documento.departamento.id;
+        }
+
+        // Seteamos valores
+        if (this.documento.direccione) {
+            this.selectedDireccion = this.documento.direccione.id;
+        }
+
+        
+        if (this.arrDirecciones.length === 0) {
+            this.form.get('direcciones').clearValidators();
+            this.form.get('direcciones').updateValueAndValidity();
+            this.form.get('departamentos').clearValidators();
+            this.form.get('departamentos').updateValueAndValidity();
+            this.arrDepartamentos = [];
+
+            this.arrDepartamentos = [...this.arrDepartamentos];
+
+            console.log('entro');
+        } else {
+            this.form.get('direcciones').setValidators([Validators.required]);
+            this.form.get('direcciones').updateValueAndValidity();
+        }
+
+        if (this.arrDepartamentos.length === 0) {
+            this.form.get('departamentos').clearValidators();
+            this.form.get('departamentos').updateValueAndValidity();
+        } else {
+            this.form.get('departamentos').setValidators([Validators.required]);
+            this.form.get('departamentos').updateValueAndValidity();
+        }
+
+        // Si el valor cambia filtramos el resultado
+        this.form.get('secretarias').valueChanges.subscribe(val => {
+
+            if (val.length > 0) {
+
+                this.form.controls['direcciones'].enable();
+                if (this.arrDireccionesFilter) {
+                    this.arrDirecciones = this.arrDireccionesFilter.filter(item => item['secretariaId'] === val);
+
+                    if (this.arrDirecciones.length === 0) {
+                        this.form.get('direcciones').clearValidators();
+                        this.form.get('direcciones').updateValueAndValidity();
+
+                        this.form.get('departamentos').clearValidators();
+                        this.form.get('departamentos').updateValueAndValidity();
+
+                        this.arrDepartamentos = [];
+                    } else {
+                        this.form.get('direcciones').setValidators([Validators.required]);
+                        this.form.get('direcciones').updateValueAndValidity();
+                    }
+                }
+                this.selectedDepartamento = '';
+            }
+        });
+
+        // Si el valor cambia filtramos el resultado
+        this.form.get('direcciones').valueChanges.subscribe(val => {
+
+            if (val.length > 0) {
+
+                this.form.controls['departamentos'].enable();
+                if (this.arrDepartamentosFilter) {
+                    this.arrDepartamentos = this.arrDepartamentosFilter.filter(item => item['direccionId'] === val);
+                    console.log(this.arrDepartamentos)
+
+                    if (this.arrDirecciones.length === 0) {
+                        this.arrDepartamentos = [];
+
+                        this.arrDepartamentos = [...this.arrDepartamentos];
+
+                    }
+                    if (this.arrDepartamentos.length === 0) {
+                        this.form.get('departamentos').clearValidators();
+                        this.form.get('departamentos').updateValueAndValidity();
+                    } else {
+                        this.form.get('departamentos').setValidators([Validators.required]);
+                        this.form.get('departamentos').updateValueAndValidity();
+                    }
+                }
+            }
         });
 
         this.obtenerFormatos();
@@ -153,6 +271,120 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         this.selectedObligatorio = this.documento.bObligatorio;
     }
 
+    async obtenerDirecciones(): Promise<void> {
+        return new Promise(async (resolve) => {
+            {
+                const direccionesTemp: any[] = [];
+                this.cargando = true;
+                // Obtenemos direcciones
+                await this.usuarioService.obtenerDirecciones().subscribe((resp: any) => {
+
+                    for (const direccion of resp) {
+                        if (direccion.bActivo && direccion.secretariaId) {
+                            //  if (direccion.departamentos.length > 0) {
+                            direccionesTemp.push({
+                                id: direccion.id,
+                                cDescripcionDireccion: direccion.cDescripcionDireccion,
+                                bActivo: direccion.bActivo,
+                                secretariaId: direccion.secretariaId,
+                                departamentos: direccion.departamentos
+                            });
+                            // }
+                        }
+
+                    }
+                    this.arrDirecciones = direccionesTemp;
+                    this.arrDireccionesFilter = direccionesTemp;
+
+                    // Si tenemos informacion ya guardada filtramos
+                    if (this.selectedSecretaria) {
+                        this.arrDirecciones = this.arrDireccionesFilter.filter(item => item['secretariaId'] === this.selectedSecretaria);
+                    }
+                    this.cargando = false;
+                    resolve(resp)
+                }, err => {
+                    this.cargando = false;
+                    resolve(err)
+                });
+            }
+        })
+    }
+
+    async obtenerDepartamentos(): Promise<void> {
+        return new Promise(async (resolve) => {
+            {
+                this.cargando = true;
+                // Obtenemos departamentos
+                const departamentosTemp: any[] = [];
+                this.usuarioService.obtenerDepartamentos().subscribe((resp: any) => {
+
+                    for (const departamentos of resp) {
+
+                        if (departamentos.bActivo && departamentos.direccionId) {
+                            //  if (this.arrDireccionesFilter.filter(item => item['id'] === departamentos.direccionId).length > 0) {
+                            departamentosTemp.push({
+                                id: departamentos.id,
+                                cDescripcionDepartamento: departamentos.cDescripcionDepartamento,
+                                bActivo: departamentos.bActivo,
+                                direccionId: departamentos.direccionId
+                            });
+                            // }
+                        }
+
+                    }
+                    this.arrDepartamentos = departamentosTemp;
+                    this.arrDepartamentosFilter = departamentosTemp;
+                    // Si tenemos informacion ya guardada filtramos
+                    if (this.selectedDireccion) {
+                        this.arrDepartamentos = this.arrDepartamentosFilter.filter(item => item['direccionId'] === this.selectedDireccion);
+                    }
+
+                    this.cargando = false;
+                    resolve(resp)
+                }, err => {
+                    this.cargando = false;
+                    resolve(err)
+                });
+            }
+        })
+    }
+
+    async obtenerSecretarias(): Promise<void> {
+        return new Promise(async (resolve) => {
+            {
+                // Obtenemos secretarias
+                const secretariasTemp: any[] = [];
+                this.cargando = true;
+                await this.usuarioService.obtenerSecretarias().subscribe((resp: any) => {
+
+                    for (const secretaria of resp) {
+
+                        if (secretaria.bActivo) {
+                            //    if (this.arrDireccionesFilter.filter(item => item['secretariaId'] === secretaria.id).length > 0) {
+                            secretariasTemp.push({
+                                id: secretaria.id,
+                                cDescripcionSecretaria: secretaria.cDescripcionSecretaria,
+                                direcciones: secretaria.direccionesActivas,
+                                bActivo: secretaria.bActivo
+                            });
+
+                            // }
+
+                        }
+
+                    }
+                    this.arrSecretarias = secretariasTemp;
+
+                    this.cargando = false;
+                    resolve(resp)
+                }, err => {
+                    this.cargando = false;
+                    resolve(err)
+                });
+            }
+        });
+    }
+
     cerrar(ent): void {
         if (ent) {
             this.dialogRef.close(ent);
@@ -161,6 +393,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         }
     }
 
+    
     async guardar(): Promise<void> {
         // Guardamos documento
         let tipoFormato = "";
@@ -176,6 +409,30 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         this.documento.tipos_de_formato = this.selectedFormato;
         this.documento.visibilidade = this.selectedInformacion;
         this.documento.metacatalogos = this.rows;
+        this.documento.secretaria = this.selectedSecretaria;
+        this.documento.direccione = this.selectedDireccion;
+        this.documento.departamento = this.selectedDepartamento;
+
+
+
+        if(this.selectedSecretaria !== ''){
+            this.documento.secretaria = this.selectedSecretaria;
+        }else{
+            delete this.documento['secretaria']
+        }
+
+        if(this.selectedDireccion !== ''){
+            this.documento.direccione = this.selectedDireccion;
+        }else{
+            delete this.documento['direccione']
+        }
+       
+        if(this.selectedDepartamento !== ''){
+            this.documento.departamento = this.selectedDepartamento;
+        }else{
+            delete this.documento['departamento']
+        }
+       
         const usuario = localStorage.getItem("usr");
         const usr = JSON.parse(usuario);
         if (this.documento.id) {

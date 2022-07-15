@@ -30,6 +30,7 @@ export class ModaldireccionesComponent implements OnInit {
     ngOnInit(): void {
         // Form reactivo
         this.secretariaId = this.usuariosService.idSecretaria;
+        console.log(this.secretariaId);
         this.form = this.formBuilder.group({
             descripcionDireccion: [this.direcciones.cDescripcionDireccion, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
             estatus: this.direcciones.bActivo,
@@ -39,6 +40,7 @@ export class ModaldireccionesComponent implements OnInit {
     async guardarDireccion(): Promise<void> {
         this.spinner.show();
         // Guardamos dependencia
+        // console.log(this.secretaria);
         // Asignamos valores a objeto.
         let secretariaid = this.usuariosService.idSecretaria;
         this.direcciones.bActivo = this.form.get('estatus').value;
@@ -52,6 +54,7 @@ export class ModaldireccionesComponent implements OnInit {
             cDescripcionDireccion: cDireccion,
             secretaria: [secretariaid]
         };
+        console.log(direcciones)
         if (this.direcciones.id) {
 
             // Actualizamos la dirección

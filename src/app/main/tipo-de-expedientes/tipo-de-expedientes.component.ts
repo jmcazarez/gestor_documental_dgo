@@ -51,6 +51,7 @@ export class TipoDeExpedientesComponent implements OnInit {
                 this.optEliminar = opciones.Eliminar;
                 // Si tiene permisos para consultar
                 if (this.optConsultar) {
+                    console.log(resp);
                     this.tipoExpedientes = resp;
                     this.tipoExpedientesTemp = this.tipoExpedientes;
                 }
@@ -114,6 +115,8 @@ export class TipoDeExpedientesComponent implements OnInit {
 
     editarExpediente(expediente: TipoExpedientesModel): void {
         // Abrimos modal de editar expediente
+
+        console.log('edit');
         const dialogRef = this.dialog.open(GuardarTipoDeExpedientesComponent, {
             width: '50%',
             height: '80%',

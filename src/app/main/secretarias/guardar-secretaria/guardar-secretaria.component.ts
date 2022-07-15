@@ -36,6 +36,7 @@ export class GuardarSecretariaComponent implements OnInit {
 
         this.spinner.show();
         // Guardamos dependencia
+        // console.log(this.secretaria);
         // Asignamos valores a objeto
         this.secretaria.bActivo = this.form.get('estatus').value;
         this.secretaria.cDescripcionSecretaria = this.form.get('descripcionSecretaria').value;
@@ -47,6 +48,7 @@ export class GuardarSecretariaComponent implements OnInit {
             bActivo: activo,
             cDescripcionSecretaria: secretaria
         }
+        console.log(secretarias);
         if (this.secretaria.id) {
 
             // Actualizamos el secretaria

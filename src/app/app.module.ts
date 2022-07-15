@@ -88,6 +88,9 @@ import { DashboardDeIndicadoresIniciativasModule } from './main/dashboard-de-ind
 import { IniciativasPendientesPorFirmarModule } from './main/tipo-de-iniciativas-pendientes-por-firmar/tipo-de-iniciativas-pendientes-por-firmar.module';
 import { TableroCargaMasivaDescargaModule } from './main/tablero-carga-masiva-descarga/tablero-carga-masiva-descarga.module';
 
+import { UsuariosFinanzasModule } from './main/usuarios-finanzas/usuarios-finanzas.module';
+import { GuardarUsuarioFinanzasModule } from './main/usuarios-finanzas/guardar-usuario-finanzas/guardar-usuario-finanzas.module';
+GuardarUsuarioFinanzasModule
 const appRoutes: Routes = [
     {
         path      : '**',
@@ -150,18 +153,18 @@ const appRoutes: Routes = [
         // TableroDeCargaMasivaModule,
         ReporteDeDocumentoPorFechaModule,
         ReporteDeDocumentoPorUsuarioModule,
-        // SecretariasModule,
-        // GuardarSecretariaModule,
+         SecretariasModule,
+         GuardarSecretariaModule,
         NotificacionesModule,
         CompartirLinkModule,
         PartidosPoliticosModule,
         GuardarPartidosPoliticosModule,
         //LegislaturasModule,
         //GuardarLegislaturasModule,
-        // GuardarDireccionesModule,
-        // GuardarDepartamentosModule,
-        // ModalDireccionesModule,
-        // DepartamentosModule,
+         GuardarDireccionesModule,
+         GuardarDepartamentosModule,
+         ModalDireccionesModule,
+        DepartamentosModule,
         DiputadosModule,
         GuardarDiputadosModule,
         ComisionesModule,
@@ -195,7 +198,10 @@ const appRoutes: Routes = [
         IniciativaModificadaSuspendidaModule,
         DashboardDeIndicadoresIniciativasModule,
         IniciativasPendientesPorFirmarModule,
-        TableroCargaMasivaDescargaModule
+        TableroCargaMasivaDescargaModule,
+        UsuariosFinanzasModule,
+        GuardarUsuarioFinanzasModule
+        
     ],             
     bootstrap   : [
         AppComponent

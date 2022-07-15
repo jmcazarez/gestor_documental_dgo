@@ -54,6 +54,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
                 disabled: this.expediente.disabled
             }, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
             estatus: { value: this.expediente.bActivo, disabled: this.expediente.disabled },
+            
         });
         this.rows = [];
 
@@ -182,7 +183,9 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
                         tipos_de_formato: result.tipos_de_formato.id,
                         selected: false,
                         visibilidade: result.visibilidade.id,
-
+                        secretaria: result.secretaria,
+                        departamento: result.departamento,
+                        direccione: result.direccione,
                     });
                     this.rows = [...this.rows];
 
@@ -214,6 +217,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
     }
     guardarTipoDocumento(row: TipoDocumentoModel): void {
         // Abrimos modal de guardar expediente
+        console.log(row);
         const dialogRef = this.dialog.open(GuardarTipoDeDocumentosComponent, {
             width: '50%',
             height: '98%',

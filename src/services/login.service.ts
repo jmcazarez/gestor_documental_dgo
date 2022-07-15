@@ -8,6 +8,15 @@ import { environment } from "./../environments/environment";
 export class LoginService {
     private baseUrl: string;
     private urlLogin = "login";
+    private urlSecretarias = 'secretarias';
+    private urlDirecciones = 'direcciones';
+    private urlDepartamentos = 'departamentos';
+    private TOKEN = localStorage.getItem('token');
+    private httpOptions = {
+        headers: new HttpHeaders({
+            Authorization: this.TOKEN,
+        }),
+    };
 
     constructor(private http: HttpClient) {
         this.baseUrl = environment.apiCms;
@@ -15,6 +24,18 @@ export class LoginService {
 
     validarUsuario(usuario: any): any {
         return this.http.post(this.baseUrl + this.urlLogin, usuario);
+    }
+
+    obtenerSecretarias(): any {
+        return this.http.get(this.baseUrl + this.urlSecretarias, this.httpOptions);
+    }
+
+    obtenerDirecciones(): any {
+        return this.http.get(this.baseUrl + this.urlDirecciones, this.httpOptions);
+    }
+
+    obtenerDepartamentos(): any {
+        return this.http.get(this.baseUrl + this.urlDepartamentos, this.httpOptions);
     }
 
     refrescUsuario(): any {

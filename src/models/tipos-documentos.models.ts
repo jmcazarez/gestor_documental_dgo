@@ -12,4 +12,7 @@ export class TipoDocumentoModel {
     visibilidade: any;
     disabled: boolean;
     metacatalogos: any;
+    secretaria: any;
+    direccione: any;
+    departamento: any;
 }

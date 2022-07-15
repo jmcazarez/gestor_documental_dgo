@@ -66,6 +66,11 @@ export class MenuService {
 
                     let tipoFormato = '';
                     let visibilidade = '';
+                    let secretaria = [];
+                    let departamento = [];
+                    let direccione = [];
+                   
+
                     let metacatalogos = [];
                     let tipo: any;
                     const usuarioLogin = await this.usuarioLoginService.obtenerUsuario();
@@ -121,6 +126,7 @@ export class MenuService {
                                 for (const documentos of perfiles.Documentos) {
                                     if (documentos.tipo_de_documento) {
                                         if (documentos.tipo_de_documento.bActivo) {
+                                            console.log(documentos.tipo_de_documento);
                                             const resultado = this.tipoDocumentos.find(tipoDocumento => tipoDocumento.id === documentos.tipo_de_documento.id);
 
                                             if (resultado) {
@@ -146,6 +152,7 @@ export class MenuService {
                                             } else {
                                                 // Si el permiso es unico lo agregamos
 
+                                                console.log(documentos.tipo_de_documento);
                                                 if (documentos.tipo_de_documento.tipos_de_formato) {
                                                     tipoFormato = documentos.tipo_de_documento.tipos_de_formato;
                                                 }
@@ -156,6 +163,19 @@ export class MenuService {
                                                 if (documentos.tipo_de_documento.visibilidade) {
                                                     visibilidade = documentos.tipo_de_documento.visibilidade;
                                                 }
+                                                if (documentos.tipo_de_documento.secretaria) {
+                                                    secretaria = documentos.tipo_de_documento.secretaria;
+                                                }
+
+                                                if (documentos.tipo_de_documento.departamento) {
+                                                    departamento = documentos.tipo_de_documento.departamento;
+                                                }
+
+                                                if (documentos.tipo_de_documento.direccione) {
+                                                    direccione = documentos.tipo_de_documento.direccione;
+                                                }
+
+                                            
 
                                                 this.tipoDocumentos.push({
                                                     id: documentos.tipo_de_documento.id,
@@ -167,9 +187,13 @@ export class MenuService {
                                                     bObligatorio: documentos.tipo_de_documento.bObligatorio,
                                                     tipos_de_formato: tipoFormato,
                                                     metacatalogos,
-                                                    visibilidade
+                                                    visibilidade,
+                                                    secretaria,
+                                                    departamento,
+                                                    direccione,
                                                 });
 
+                                              
 
                                                 this.tipoDocumentos = [...this.tipoDocumentos];
                                             }
@@ -308,8 +332,8 @@ export class MenuService {
                             }
                         }
 
-
-                        if(usuarioLogin[0].data.empleado){
+//Se comenta esta parte para finanzas
+                       /*  if(usuarioLogin[0].data.empleado){
                             const itemMenu: ItemMenuModel = {
                                 id: 'modulo-autoriza-iniciativas',
                                 title: 'Tablero de iniciativas pendientes por firmar',
@@ -320,7 +344,7 @@ export class MenuService {
                                 }
                             };
                             grupoMenu.children.push(itemMenu);
-                        }
+                        } */
                         if (grupoMenu.children.length === 0 && grupoMenuCatalagos.children.length === 0 && grupoMenuReportes.children.length === 0) {
 
                             this.router.navigate(['login']);
