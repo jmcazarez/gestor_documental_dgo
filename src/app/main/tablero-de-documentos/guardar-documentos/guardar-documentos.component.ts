@@ -152,8 +152,8 @@ export class GuardarDocumentosComponent implements OnInit {
             fechaCreacion: [{ value: this.documentos.fechaCreacion, disabled: this.documentos.disabled }, [Validators.required]],
             //fechaCreacion: [{ value: this.documentos.fechaCreacion, disabled: this.documentos.disabled }, [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
             fechaCarga: [{ value: this.documentos.fechaCarga, disabled: true }],
-            paginas: [{ value: this.documentos.paginas, disabled: this.paginasEditar }],
-            plazoDeConservacion: [{ value: this.documentos.plazoDeConservacion, disabled: this.paginasEditar }, Validators.required],
+            paginas: [{ value: this.documentos.paginas, disabled: this.paginasEditar }, [ Validators.pattern("^[0-9]*$")]],
+            plazoDeConservacion: [{ value: this.documentos.plazoDeConservacion, disabled: this.paginasEditar }, [Validators.required, Validators.max(50), Validators.min(0), Validators.pattern("^[0-9]*$")]],
             clave: [{ value: this.documentos.clave, disabled: this.paginasEditar }, Validators.required]
         });
 
