@@ -134,7 +134,7 @@ export class SecretariasComponent implements OnInit {
     eliminarSecretaria(row: { id: string; }): void {
         // Eliminamos secretaría
         Swal.fire({
-            title: '¿Está seguro que desea eliminar esta secretaria?',
+            title: '¿Está seguro que desea eliminar esta SubSecretaria?',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonText: 'Si',
@@ -144,13 +144,13 @@ export class SecretariasComponent implements OnInit {
 
                 // realizamos delete
                 this.usuariosService.eliminarSecretaria(row.id).subscribe((resp: any) => {
-                    Swal.fire('Eliminado', 'La secretaria ha sido eliminada.', 'success');
+                    Swal.fire('Eliminado', 'La SubSecretaria ha sido eliminada.', 'success');
                     this.obtenerSecretaria();
                 }, err => {
                     this.cargando = false;
                     Swal.fire(
                         'Error',
-                        'Ocurrió un error al eliminar la secretaria.' + err,
+                        'Ocurrió un error al eliminar la SubSecretaria.' + err,
                         'error'
                     );
                 });

@@ -50,24 +50,24 @@
         </div>
 
         <mat-form-field appearance="outline" fxFlex="50">
-            <mat-label>Secretarías *</mat-label>
+            <mat-label>SubSecretaria *</mat-label>
             <mat-select formControlName="secretarias" [(ngModel)]="selectedSecretaria" name="secretarias">
                 <mat-option *ngFor="let secretaria of arrSecretarias" [value]="secretaria.id">
                     {{secretaria.cDescripcionSecretaria}}
                 </mat-option>
             </mat-select>
-            <mat-error>La secretaría es requerida</mat-error>
+            <mat-error>El ente es requerido</mat-error>
 
         </mat-form-field>
         <mat-form-field appearance="outline" fxFlex="50">
-            <mat-label *ngIf="this.arrDirecciones.length > 0">Direcciones *</mat-label>
-            <mat-label *ngIf="this.arrDirecciones.length === 0">Direcciones</mat-label>
+            <mat-label *ngIf="this.arrDirecciones.length > 0">Direccion *</mat-label>
+            <mat-label *ngIf="this.arrDirecciones.length === 0">Direccion</mat-label>
             <mat-select formControlName="direcciones" [(ngModel)]="selectedDireccion" name="direcciones">
                 <mat-option *ngFor="let direccion of arrDirecciones" [value]="direccion.id">
                     {{direccion.cDescripcionDireccion}}
                 </mat-option>
             </mat-select>
-            <mat-error>La dirección es requerida</mat-error>
+            <mat-error>Las entidades son requeridas</mat-error>
 
         </mat-form-field>
         <mat-form-field appearance="outline" fxFlex="50">
@@ -80,7 +80,7 @@
                     {{departamento.cDescripcionDepartamento}}
                 </mat-option>
             </mat-select>
-            <mat-error *ngIf="form.get('departamentos').hasError('required')">El departamento es requerido
+            <mat-error *ngIf="form.get('departamentos').hasError('required')">La dependencia es requerida
             </mat-error>
         </mat-form-field>
 

@@ -147,9 +147,9 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
             metacatalogoTipo: [
                 { value: this.arrTipo, disabled: this.documento.disabled },
             ],
-            secretarias: ["", [Validators.required]],
-            direcciones: ["", [Validators.required]],
-            departamentos: ["", [Validators.required]],
+            secretarias: [this.documento.secretaria, [Validators.required]],
+            direcciones: [this.documento.direccione, [Validators.required]],
+            departamentos: [this.documento.departamento, [Validators.required]],
         });
 
         await this.obtenerDirecciones();
@@ -159,16 +159,16 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         await this.obtenerDepartamentos();
 
         if (this.documento.secretaria) {
-            this.selectedSecretaria = this.documento.secretaria.id;
+            this.selectedSecretaria = this.documento.secretaria;
         }
         // Seteamos valores
         if (this.documento.departamento) {
-            this.selectedDepartamento = this.documento.departamento.id;
+            this.selectedDepartamento = this.documento.departamento;
         }
 
         // Seteamos valores
         if (this.documento.direccione) {
-            this.selectedDireccion = this.documento.direccione.id;
+            this.selectedDireccion = this.documento.direccione;
         }
 
         
@@ -197,7 +197,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
 
         // Si el valor cambia filtramos el resultado
         this.form.get('secretarias').valueChanges.subscribe(val => {
-
+         if (val){
             if (val.length > 0) {
 
                 this.form.controls['direcciones'].enable();
@@ -219,11 +219,12 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                 }
                 this.selectedDepartamento = '';
             }
+        }
         });
 
         // Si el valor cambia filtramos el resultado
         this.form.get('direcciones').valueChanges.subscribe(val => {
-
+            if (val){
             if (val.length > 0) {
 
                 this.form.controls['departamentos'].enable();
@@ -246,6 +247,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                     }
                 }
             }
+        }
         });
 
         this.obtenerFormatos();
@@ -356,7 +358,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                 const secretariasTemp: any[] = [];
                 this.cargando = true;
                 await this.usuarioService.obtenerSecretarias().subscribe((resp: any) => {
-
+                    console.log(resp);
                     for (const secretaria of resp) {
 
                         if (secretaria.bActivo) {

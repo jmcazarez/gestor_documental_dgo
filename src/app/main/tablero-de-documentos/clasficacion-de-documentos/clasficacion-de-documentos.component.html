@@ -274,6 +274,37 @@
                     </mat-form-field>
                 </div>
 
+                <div fxLayout="row"  fxLayoutAlign="start center" fxFlex="1 0 auto">
+                    <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
+                        <mat-label>Pasillo *</mat-label>
+                        <input matInput formControlName="pasillo" type="text"    name="pasillo" >
+                        <mat-error>El pasillo es requerido</mat-error>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
+                        <mat-label>Estante *</mat-label>
+                        <input matInput formControlName="estante" type="text"    name="estante" >
+                        <mat-error>El estante es requerido</mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div fxLayout="row"  fxLayoutAlign="start center" fxFlex="1 0 auto">
+                  
+                </div>
+
+                <div fxLayout="row"  fxLayoutAlign="start center" fxFlex="1 0 auto">
+                    <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
+                        <mat-label>Nivel *</mat-label>
+                        <input matInput formControlName="nivel" type="text"    name="nivel" >
+                        <mat-error>El nivel es requerido</mat-error>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
+                        <mat-label>Sección *</mat-label>
+                        <input matInput formControlName="seccion" type="text"    name="seccion" >
+                        <mat-error>La seccion es requerida</mat-error>
+                    </mat-form-field>
+                  
+                </div>
+
                 <!-- <div fxLayout="row" *ngIf="this.descriptionTipoDocumento !== 'Acta'" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
                         <mat-label>Tipo de información *</mat-label>
@@ -283,6 +314,12 @@
                 </div> -->
                
                 <div fxLayout="row" *ngIf="this.descriptionTipoDocumento !== 'Acta'" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                    <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
+                        <mat-label>Número de caja *</mat-label>
+                        <input matInput formControlName="numeroDeCaja" type="number"   name="numeroDeCaja" >                
+                        <mat-error>El Número de caja es requerido</mat-error>
+                    </mat-form-field>
+                    
                     <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
                         <mat-label>Folio de expediente *</mat-label>
                         <input matInput formControlName="folioExpediente" type="number"  [(ngModel)]="this.selectedFolioExpediente" pattern="[0-9]+" name="folioExpediente" [disabled]="disableFolioExpediente">
@@ -306,6 +343,7 @@
                       </mat-chip-list>
                 </div>
  -->
+            <h1>Metadatos</h1>
                 <form #formRef="ngForm">
                     <div *ngFor="let meta of arrMetacatalogos; let in=index" class="col-sm-1">
                         <div class="form-group">
@@ -358,7 +396,7 @@
                 [disabled]="!formRef.form.valid ||  form.invalid || disabledGuardar || this.documento.disabled || !this.form.touched "
                 mat-raised-button color="accent" (click)="guardar()">Guardar</button>
             <!--  <button  mat-raised-button color="accent" (click)="pruebaForm()">Upload</button> -->
-
+        <!-- {{formRef.form.valid }} , {{form.invalid}} , {{disabledGuardar}}, {{this.documento.disabled}} , {{this.form.touched}}  -->
         </mat-dialog-actions>
     </mat-drawer-content>
 

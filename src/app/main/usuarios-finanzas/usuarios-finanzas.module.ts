@@ -16,7 +16,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 
 const routes = [
     {
-        path     : 'usuarios-finanzas',
+        path     : 'usuarios',
         component: UsuariosFinanzasComponent,
         canActivate: [SeguridadGuard]
     }

@@ -87,7 +87,6 @@ export class GuardarInventarioFisicoComponent implements OnInit {
             ],
             legislatura: [
                 { value: this.inventario.legislatura, disabled: false },
-                Validators.required,
             ],
             tipoExpediente: [
                 { value: this.inventario.tipo_de_expediente, disabled: false },
@@ -123,7 +122,7 @@ export class GuardarInventarioFisicoComponent implements OnInit {
         this.spinner.show();
 
         // Asignamos valores a objeto
-        this.inventario.legislatura = this.selectLegislatura;
+       /*  this.inventario.legislatura = this.selectLegislatura; */
         this.inventario.tipo_de_expediente = this.selectTipoExpediente;
         this.inventario.cIdExpedienteIni = this.form.get(
             "expedienteInicio"

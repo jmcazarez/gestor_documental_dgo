@@ -75,7 +75,7 @@ export class UploadFileService {
                 formData.append('data', JSON.stringify(data));
                 // formData.append('files', file, data.name);                           
                 formData.append('base64', base64);
-
+                console.log(this.urlApi + this.urlUpload);
                 this.http.post(this.urlApi + this.urlUpload, formData, httpOptions).subscribe(
                     (res) => {
                         resolve(res);

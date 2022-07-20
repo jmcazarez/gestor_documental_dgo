@@ -115,6 +115,7 @@ export class GuardarDocumentosComponent implements OnInit {
         } else {
             // Seteamos la fecha de carga con la fecha actual
             this.documentos.fechaCarga = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
+            this.documentos.fechaCreacion = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
             this.documentos.bActivo = true;
             if (this.documentos.tipo_de_documento) {
                 this.tipoDocumento = this.documentos.tipo_de_documento;
@@ -151,7 +152,9 @@ export class GuardarDocumentosComponent implements OnInit {
             fechaCreacion: [{ value: this.documentos.fechaCreacion, disabled: this.documentos.disabled }, [Validators.required]],
             //fechaCreacion: [{ value: this.documentos.fechaCreacion, disabled: this.documentos.disabled }, [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
             fechaCarga: [{ value: this.documentos.fechaCarga, disabled: true }],
-            paginas: [{ value: this.documentos.paginas, disabled: this.paginasEditar }]
+            paginas: [{ value: this.documentos.paginas, disabled: this.paginasEditar }],
+            plazoDeConservacion: [{ value: this.documentos.plazoDeConservacion, disabled: this.paginasEditar }, Validators.required],
+            clave: [{ value: this.documentos.clave, disabled: this.paginasEditar }, Validators.required]
         });
 
 
@@ -201,6 +204,9 @@ export class GuardarDocumentosComponent implements OnInit {
             if (mesCreacion < 10) {
                 mesCreacion = '0' + mesCreacion; // agrega cero si el menor de 10
             }
+
+            this.documentos.plazoDeConservacion = this.form.get('plazoDeConservacion').value;
+            this.documentos.clave = this.form.get('clave').value;
             this.documentos.fechaCreacion = moment(this.form.get('fechaCreacion').value).format('YYYY-MM-DD') + 'T16:00:00.000Z';
             this.documentos.fechaCarga = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
             this.documentos.tipo_de_documento = this.selectTipoDocument;
@@ -404,7 +410,7 @@ export class GuardarDocumentosComponent implements OnInit {
         // const resp = await this.uploadService.uploadFile(this.files[0].data);
 
         const resp = await this.uploadService.subirArchivo(this.fileInput.nativeElement.files[0], this.base64);
-
+        console.log(resp);
         if (resp.error) {
             Swal.fire('Error', 'Ocurrió un error al subir el documento. ' + resp.error.error, 'error');
             this.documentos.documento = '';

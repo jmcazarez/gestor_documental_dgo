@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { environment } from '../environments/environment';
 import { DocumentosModel } from 'models/documento.models';
+import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: "root",
@@ -226,6 +227,28 @@ export class DocumentosService {
         }
     }
 
+     dowloadDocumentStrapi(
+        url: string
+    ): Observable<any> {
+
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/pdf');
+
+        return  this.http.get(url, { headers: headers, responseType: 'blob' });
+
+       
+    /*     let options = {
+            headers: new HttpHeaders({
+                Authorization: localStorage.getItem("token"),
+            }),
+        };
+
+        return this.http.get(
+            url,
+            options
+        );*/
+    } 
+
     documentoFileSinVersion(
         idFile: string,
         idDocumento: string,
@@ -237,6 +260,18 @@ export class DocumentosService {
                 Authorization: localStorage.getItem("token"),
             }),
         };
+        console.log( this.baseUrl +
+            this.urlDescargarDocumentoSinVersion +
+            "/" +
+            idFile +
+            "/" +
+            idDocumento +
+            "/" +
+            usuario +
+            "/" +
+            nombreDocumento,)
+
+            console.log(localStorage.getItem("token"));
         return this.http.get(
             this.baseUrl +
                 this.urlDescargarDocumentoSinVersion +

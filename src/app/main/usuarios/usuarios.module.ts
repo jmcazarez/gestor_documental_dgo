@@ -16,7 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 const routes = [
     {
-        path     : 'usuarios',
+        path     : 'usuarios-doc',
         component: UsuariosComponent,
         canActivate: [SeguridadGuard]
     }

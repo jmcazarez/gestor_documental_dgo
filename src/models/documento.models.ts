@@ -31,4 +31,6 @@ export class DocumentosModel {
     listaDeAsistencia: any;
     actasSesion: any;
     numeroPagina: number;
+    plazoDeConservacion: number;
+    clave: string;
 }

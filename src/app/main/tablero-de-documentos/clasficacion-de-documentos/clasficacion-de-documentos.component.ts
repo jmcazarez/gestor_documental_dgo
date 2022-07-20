@@ -25,6 +25,8 @@ import { NgxSpinnerService } from "ngx-spinner";
 import { AutorizarService } from "services/autorizar.service";
 import { ParametrosService } from "services/parametros.service";
 import { FirmasPorEtapaService } from "services/configuracion-de-firmas-por-etapa.service";
+import { environment } from 'environments/environment';
+
 export interface Metacatalogos {
     name: string;
 }
@@ -133,6 +135,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             this.arrMetacatalogos = [];
             let folioExpedienteRequerido = [];
           //  await this.obtenerLegislaturas();
+          console.log(this.documento);
             await this.obtenerTiposExpedientes();
             if (!this.documento.iniciativas) {
                 if (this.documento.tipo_de_documento.id) {
@@ -302,7 +305,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                         value: this.documento.legislatura,
                         disabled: this.documento.disabled,
                     },
-                    [Validators.required],
+                  //  [Validators.required],
                 ],
                 expediente: [
                     {
@@ -325,7 +328,12 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                         value: 'hola'
                     }
                 ],
-                informacion: [{ value: this.documento.visibilidade.cDescripcionVisibilidad, disabled: this.documento.disabled }, [Validators.required]]
+                informacion: [{ value: this.documento.visibilidade.cDescripcionVisibilidad, disabled: this.documento.disabled }, [Validators.required]],
+                pasillo: [{ value: this.documento.pasillo, disabled: this.documento.disabled }, [Validators.required]],
+                estante: [{ value: this.documento.estante, disabled: this.documento.disabled }, [Validators.required]],
+                nivel: [{ value: this.documento.nivel, disabled: this.documento.disabled }, [Validators.required]],
+                seccion: [{ value: this.documento.seccion, disabled: this.documento.disabled }, [Validators.required]],
+                numeroDeCaja: [{ value: this.documento.numeroDeCaja, disabled: this.documento.disabled }, [Validators.required]],
                 //   imagen        : [this.usuario.cPassword,[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
             });
 
@@ -403,7 +411,14 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             if (this.documento.disabled === true) {
                 await this.descargarDocumentoClasificacion();
             } else {
-                await this.descargarDocumento();
+                //await this.descargarDocumento();
+
+                
+                if(this.documento.documento){
+                    
+                    this.pdfSrc = environment.apiStrapiMin + this.documento.documento.url
+                }
+                
             }
 
             this.form.controls["folioExpediente2"].setValue(
@@ -472,6 +487,8 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
 
     async descargarDocumento(): Promise<string> {
+        console.log('descarga');
+        this.pdfSrc = 'http://localhost:8082/uploads/219_01_04_2017_NOMINAS_BUROCRATAS_PENSIONES_a773af37ed.pdf'
         return new Promise(async (resolve) => {
             {
                 // Descargamos el documento
@@ -508,6 +525,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
 
     async descargarDocumentoClasificacion(): Promise<string> {
+        console.log('entro');
         return new Promise(async (resolve) => {
             {
                 try {
@@ -683,9 +701,15 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         // this.documento.departamento = this.selectedDepartamento;
         // this.documento.visibilidade = this.selectedInformacion;
         this.spinner.show();
+   
         /* this.documento.legislatura = ""; */
         /* this.documento.legislatura = this.selectedLegislaturas; */
-        this.documento.folioExpediente = this.form.get("folioExpediente").value;
+        this.documento.pasillo = this.form.get("pasillo").value;
+        this.documento.estante = this.form.get("estante").value;
+        this.documento.nivel = this.form.get("nivel").value;
+        this.documento.seccion = this.form.get("seccion").value;
+        this.documento.numeroDeCaja = this.form.get("numeroDeCaja").value;
+        console.log(this.documento);
         if (this.entroVersionamiento) {
             this.documento.tipo_de_documento = this.documento.tipo_de_documento.id;
         }
@@ -705,6 +729,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         } else {
             this.documento.tipo_de_expediente = this.selectedExpediente;
         }
+
 
         if (this.documento.id) {
             if (this.documento.disabled) {

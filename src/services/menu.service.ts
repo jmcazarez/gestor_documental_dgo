@@ -126,7 +126,6 @@ export class MenuService {
                                 for (const documentos of perfiles.Documentos) {
                                     if (documentos.tipo_de_documento) {
                                         if (documentos.tipo_de_documento.bActivo) {
-                                            console.log(documentos.tipo_de_documento);
                                             const resultado = this.tipoDocumentos.find(tipoDocumento => tipoDocumento.id === documentos.tipo_de_documento.id);
 
                                             if (resultado) {
@@ -152,7 +151,6 @@ export class MenuService {
                                             } else {
                                                 // Si el permiso es unico lo agregamos
 
-                                                console.log(documentos.tipo_de_documento);
                                                 if (documentos.tipo_de_documento.tipos_de_formato) {
                                                     tipoFormato = documentos.tipo_de_documento.tipos_de_formato;
                                                 }

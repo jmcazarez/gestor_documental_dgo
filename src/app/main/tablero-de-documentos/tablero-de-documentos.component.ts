@@ -13,6 +13,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import { ExportAsService, ExportAsConfig } from 'ngx-export-as';
 import { Page } from 'models/page.models';
 import { Console } from 'console';
+import { environment } from 'environments/environment';
 interface PageInfo {
     offset: number;
     pageSize: number;
@@ -44,7 +45,7 @@ export class TableroDeDocumentosComponent implements OnInit {
     optEliminar: boolean;
     fileBase64: any;
     valueBuscador: string;
-    pageNumber: number;
+    pageNumber = 0;
     cache: any = {};
     isLoading = 0;
     size = 20
@@ -63,17 +64,17 @@ export class TableroDeDocumentosComponent implements OnInit {
 
     ngOnInit() {
 
-        this.obtenerDocumentos( 0);
+        this.obtenerDocumentos(0);
 
     }
     setPage(pageInfo: PageInfo) {
         let pageActual = this.pageNumber
-      
+
         // Current page number is determined by last call to setPage
         // This is the page the UI is currently displaying
         // The current page is based on the UI pagesize and scroll position
         // Pagesize can change depending on browser size
-        pageInfo.pageSize =  this.size;
+        pageInfo.pageSize = this.size;
         this.pageNumber = pageInfo.offset;
 
         // Calculate row offset in the UI using pageInfo
@@ -86,10 +87,10 @@ export class TableroDeDocumentosComponent implements OnInit {
         const page = new Page();
         page.size = this.size;
         page.pageNumber = Math.floor(rowOffset / page.size);
-        if (pageActual !== this.pageNumber ) {
-            this.obtenerDocumentos( this.pageNumber);
+        if (pageActual !== this.pageNumber) {
+            this.obtenerDocumentos(this.pageNumber);
         }
-      
+
 
         // We keep a index of server loaded pages so we don't load same data twice
         // This is based on the server page not the UI
@@ -99,7 +100,7 @@ export class TableroDeDocumentosComponent implements OnInit {
         // Counter of pending API calls
         this.isLoading++;
 
-       
+
         /* 
                 if (pageActual !== this.pageNumber && this.pageNumber !== 0) {
                     console.log('prueba', this.pageNumber);
@@ -148,16 +149,16 @@ export class TableroDeDocumentosComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                this.obtenerDocumentos( this.pageNumber);
+                this.obtenerDocumentos(this.pageNumber);
                 if (result.documento) {
-                    this.clasificarDocumento(result,this.pageNumber);
+                    this.clasificarDocumento(result, this.pageNumber);
                 }
             }
         });
     }
 
 
-    async obtenerDocumentos( numeroPagina: number): Promise<void> {
+    async obtenerDocumentos(numeroPagina: number): Promise<void> {
 
         this.spinner.show();
         const documentosTemp: any[] = this.documentos;
@@ -169,7 +170,7 @@ export class TableroDeDocumentosComponent implements OnInit {
         this.valueBuscador = '';
         let countFecha = 0;
         let cFolioExpediente = '';
-        let filtro = '_limit=' + this.size +'&_sort=id%3AASC&_start=' + (numeroPagina * this.size).toString()
+        let filtro = '_limit=' + this.size + '&_sort=id%3AASC&_start=' + (numeroPagina * this.size).toString()
         // Obtenemos los documentos
         try {
             // obtenerDocumentoReporte
@@ -192,7 +193,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                     for (const documento of resp.data) {
                         let eliminar = documentosTemp.findIndex(p => p.id == documento.id)
                         if (eliminar >= 0) {
-                           // this.documentos.splice(eliminar, 1)
+                            // this.documentos.splice(eliminar, 1)
                         }
                         idDocumento = '';
                         // Validamos permisos
@@ -208,7 +209,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                                 if (documento.tipo_de_documento.bActivo && encontro.Consultar) {
 
                                     if (documento.documento) {
-                                        
+
                                         idDocumento = documento.documento.hash + documento.documento.ext;
 
                                         if (documento.metacatalogos) {
@@ -264,13 +265,15 @@ export class TableroDeDocumentosComponent implements OnInit {
 
 
                                         // tslint:disable-next-line: no-unused-expression
-                                        if (documento.legislatura) {
-                                            if (documento.legislatura.cLegislatura) {
-                                                cFolioExpediente = '';
-                                                cFolioExpediente = documento.legislatura.cLegislatura + '-' + documento.folioExpediente
-                                                
-                                            }
-                                        }
+                                        /*   if (documento.legislatura) {
+                                              if (documento.legislatura.cLegislatura) {
+                                                  cFolioExpediente = '';
+                                                  cFolioExpediente = documento.legislatura.cLegislatura + '-' + documento.folioExpediente
+                                                  
+                                              }
+                                          } */
+
+                                        cFolioExpediente = documento.folioExpediente
                                         // Seteamos valores y permisos
 
                                         if (eliminar >= 0) {
@@ -304,7 +307,9 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                 visibilidade: documento.visibilidade,
                                                 tipo_de_expediente: documento.tipo_de_expediente,
                                                 usuario: this.menuService.usuario,
-                                                numeroPagina: numeroPagina
+                                                numeroPagina: numeroPagina,
+                                                plazoDeConservacion: documento.plazoDeConservacion,
+                                                clave: documento.clave
                                             }
                                         } else {
 
@@ -338,7 +343,9 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                 visibilidade: documento.visibilidade,
                                                 tipo_de_expediente: documento.tipo_de_expediente,
                                                 usuario: this.menuService.usuario,
-                                                numeroPagina: numeroPagina
+                                                numeroPagina: numeroPagina,
+                                                plazoDeConservacion: documento.plazoDeConservacion,
+                                                clave: documento.clave
                                             });
 
                                         }
@@ -385,10 +392,10 @@ export class TableroDeDocumentosComponent implements OnInit {
 
             if (result) {
 
-                this.obtenerDocumentos( documento.numeroPagina);
+                this.obtenerDocumentos(documento.numeroPagina);
                 if (result.documento) {
                     this.valueBuscador = '';
-                    this.clasificarDocumento(result,documento.numeroPagina);
+                    this.clasificarDocumento(result, documento.numeroPagina);
                 }
             }
 
@@ -428,18 +435,30 @@ export class TableroDeDocumentosComponent implements OnInit {
         });
     }
 
-    descargarDocumento(row: any): void {
+    async descargarDocumento(row: any): Promise<void> {
         // Descargamos el documento
-        this.documentoService.dowloadDocument(row.idDocumento, row.id, this.menuService.usuario, row.cNombreDocumento).subscribe((resp: any) => {
 
-            const linkSource = 'data:application/octet-stream;base64,' + resp.data;
+
+        if (row.documento.url) { }
+        this.spinner.show();
+        await this.documentoService.dowloadDocument(row.idDocumento, row.id, this.menuService.usuario, row.cNombreDocumento).subscribe((resp: any) => {
+
+            const filePath = window.URL.createObjectURL(new Blob([new Uint8Array(resp.data.data, resp.data.data.byteOffset, resp.data.data.length)]));
+
             const downloadLink = document.createElement('a');
             const fileName = row.idDocumento;
 
-            downloadLink.href = linkSource;
+            downloadLink.href = filePath;
             downloadLink.download = fileName;
             downloadLink.click();
+            this.spinner.hide();
         }, err => {
+            this.spinner.hide();
+            Swal.fire(
+                'Error',
+                'Ocurrió un error al descargar el documento.' + err,
+                'error'
+            );
             this.loadingIndicator = false;
         });
     }
@@ -474,9 +493,9 @@ export class TableroDeDocumentosComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
 
             if (result) {
-                
+
                 this.valueBuscador = '';
-                this.obtenerDocumentos( numeroPagina);
+                this.obtenerDocumentos(numeroPagina);
             }
         });
     }
@@ -499,7 +518,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                 result.disabled = true;
                 // this.obtenerDocumentos();
                 //  if (result.documento.ext === '.pdf') {
-                this.clasificarDocumento(result,documento.numeroPagina);
+                this.clasificarDocumento(result, documento.numeroPagina);
                 // }
             }
 
