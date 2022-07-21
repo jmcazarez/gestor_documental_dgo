@@ -27,6 +27,7 @@ import { HistorialCargaService } from "services/historial-carga.service";
 import { UsuarioLoginService } from "services/usuario-login.service";
 import { LegislaturaService } from "services/legislaturas.service";
 import { Console } from "console";
+import { isNumber } from "lodash";
 
 @Component({
     selector: 'app-tablero-carga-masiva-descarga',
@@ -133,8 +134,8 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             fechaCarga: new FormControl(""),
             fechaModificacion: new FormControl(""),
             tipoDocumentos: new FormControl(""),
-            entes: new FormControl(""),
-            legislatura: new FormControl(""),
+            /*          entes: new FormControl(""),
+                     legislatura: new FormControl(""), */
             expediente: new FormControl(""),
             folioExpediente: new FormControl(""),
             historialFiltro: new FormControl(""),
@@ -149,8 +150,8 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
         this.changeValueHistorial();
         await Promise.all([
             this.obtenerTiposDocumentos(),
-            this.obtenerLegislaturas(),
-            this.obtenerEntes(),
+            /*      this.obtenerLegislaturas(),
+                 this.obtenerEntes(), */
             this.obtenerTiposExpedientes(),
             this.obtenerHistorialCarga()
         ]);
@@ -209,19 +210,20 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                 documento.id = element.documento.id;
                                 documento.cNombreDocumento = element.documento.name;
                                 documento.metacatalogos = [];
-                                documento.cLegislatura = '';
-                                documento.idLegislatura = '';
-                                documento.cTema = '';
-                                documento.cComision = '';
-                                documento.cSolicitante = '';
-                                documento.cEntidad = '';
-                                documento.cPeriodo = '';
-                                documento.nNumeroPeriodico = 0;
+                                /*      documento.cLegislatura = '';
+                                     documento.idLegislatura = '';
+                                     documento.cTema = '';
+                                     documento.cComision = '';
+                                     documento.cSolicitante = '';
+                                     documento.cEntidad = '';
+                                     documento.cPeriodo = '';
+                                     documento.nNumeroPeriodico = 0; 
+                                     documento.nIdActa = 0;
+                                     documento.cActa = '';
+                                     documento.cHora = '';
+                                     documento.cTipoSesion = '';*/
                                 documento.cDocumento = '';
-                                documento.nIdActa = 0;
-                                documento.cActa = '';
-                                documento.cHora = '';
-                                documento.cTipoSesion = '';
+
                                 documento.tipoDocumento = '';
                                 documento.tipo_de_documento = '';
                                 documento.informacion = '';
@@ -486,481 +488,440 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
         excelInput.click();
     }
     onFileChange(ev: any): void {
-        this.loadingIndicator = true;
-        this.spinner.show();
-        this.documentos = [];
-        let workBook = null;
-        let jsonData = null;
-        const file = ev.target.files[0];
-        const excelInput = this.excelInput.nativeElement;
-        this.excelSeleccionado = true;
-        const reader = new FileReader();
-        reader.onload = async (event) => {
-            this.myStepper.next();
-            const data = reader.result;
 
-            workBook = XLSX.read(data, { type: "binary" });
-            jsonData = workBook.SheetNames.reduce((initial, name) => {
-                const sheet = workBook.Sheets[name];
-                initial[name] = XLSX.utils.sheet_to_json(sheet);
-                return initial;
-            }, {});
-            if (!_.has(jsonData, 'data')) {
-                this.loadingIndicator = false;
-                this.spinner.hide();
-                Swal.fire(
-                    'Error',
-                    'El archivo seleccionado ' + file.name + ', no contiene hoja con nombre (data). Por favor, intente de nuevo.',
-                    'error'
-                );
-                this.excelSeleccionado = false;
-                excelInput.value = "";
-                this.myStepper.previous();
-                return;
-            }
-            this.cargarArchivos = true;
+        try {
 
-            jsonData['data'].forEach((row) => {
-                let textError = "";
-                this.arrMetacatalogos = [];
-                let documento = new DocumentoFormatoExcelModel;
-                const fechaHoy: any = new Date();
-                documento.metacatalogos = [];
-                if (_.has(row, 'PDF') && row['PDF'].length > 0) {
-                    documento.cNombreDocumento = row['PDF'].trim() + '.pdf';
-                } else {
-                    if (textError.length == 0) {
-                        textError =
-                            "El nombre del documento es obligatorio";
-                    } else {
-                        textError =
-                            textError +
-                            ", el nombre del documento es obligatorio";
-                    }
-                }
 
-                if (_.has(row, 'LEGISLATURA') && row['LEGISLATURA'].length > 0) {
-                    const encontro = this.arrLegislaturas.find((legislatura: { cLegislatura: any }) =>
-                        legislatura.cLegislatura.trim().toUpperCase() == row["LEGISLATURA"].trim().toUpperCase()
+            this.loadingIndicator = true;
+            this.spinner.show();
+            this.documentos = [];
+            let workBook = null;
+            let jsonData = null;
+            const file = ev.target.files[0];
+            const excelInput = this.excelInput.nativeElement;
+            this.excelSeleccionado = true;
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                this.myStepper.next();
+                const data = reader.result;
+
+                workBook = XLSX.read(data, { type: "binary" });
+                jsonData = workBook.SheetNames.reduce((initial, name) => {
+                    const sheet = workBook.Sheets[name];
+                    initial[name] = XLSX.utils.sheet_to_json(sheet);
+                    return initial;
+                }, {});
+                if (!_.has(jsonData, 'data')) {
+                    this.loadingIndicator = false;
+                    this.spinner.hide();
+                    Swal.fire(
+                        'Error',
+                        'El archivo seleccionado ' + file.name + ', no contiene hoja con nombre (data). Por favor, intente de nuevo.',
+                        'error'
                     );
-                    if (encontro) {
-                        documento.cLegislatura = row['LEGISLATURA'];
-                        documento.idLegislatura = encontro["id"];
-                    } else {
-                        if (textError.length == 0) {
-                            textError = "La legislatura es obligatoria";
-                        } else {
-                            textError = textError + ", la legislatura es obligatoria";
-                        }
-                    }
-                } else {
-                    if (textError.length == 0) {
-                        textError = "La legislatura es obligatoria";
-                    } else {
-                        textError = textError + ", la legislatura es obligatoria";
-                    }
+                    this.excelSeleccionado = false;
+                    excelInput.value = "";
+                    this.myStepper.previous();
+                    return;
                 }
+                this.cargarArchivos = true;
 
-                if (_.has(row, 'TEMA') && row['TEMA'].length > 0) documento.cTema = row['TEMA']
-                else documento.cTema = '';
+                jsonData['data'].forEach((row) => {
+                    try {
 
-                if (_.has(row, 'COMISION') && row['COMISION'].length > 0) documento.cComision = row['COMISION']
-                else documento.cComision = '';
 
-                if (_.has(row, 'SOLICITANTE') && row['SOLICITANTE'].length > 0) documento.cSolicitante = row['SOLICITANTE']
-                else documento.cSolicitante = '';
-
-                if (_.has(row, 'ENTIDAD') && row['ENTIDAD'].length > 0) documento.cEntidad = row['ENTIDAD']
-                else documento.cEntidad = '';
-
-                if (_.has(row, 'PERIODO') && row['PERIODO'].length > 0) documento.cPeriodo = row['PERIODO']
-                else documento.cPeriodo = '';
-
-                if (_.has(row, 'NUMERO DE PERIODICO') && Number(row['NUMERO DE PERIODICO'])) documento.nNumeroPeriodico = Number(row['NUMERO DE PERIODICO'])
-                else documento.nNumeroPeriodico = 0;
-
-                if (_.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) documento.cDocumento = row['DOCUMENTO']
-                else documento.cDocumento = '';
-
-                if (_.has(row, 'ID LIBRO DE ACTAS') && Number(row['ID LIBRO DE ACTAS'])) documento.nIdActa = Number(row['ID LIBRO DE ACTAS'])
-                else documento.nIdActa = 0;
-
-                if (_.has(row, 'ACTAS') && row['ACTAS'].length > 0) documento.cActa = row['ACTAS']
-                else documento.cActa = '';
-
-                if (_.has(row, 'HORA') && row['HORA'].length > 0) documento.cHora = row['HORA']
-                else documento.cHora = '';
-
-                if (_.has(row, 'TIPO DE SESION') && row['TIPO DE SESION'].length > 0) documento.cTipoSesion = row['TIPO DE SESION']
-                else documento.cTipoSesion = '';
-
-                if (_.has(row, 'TIPO DOCUMENTAL') && row['TIPO DOCUMENTAL'].length > 0) {
-                    const encontro = this.menuService.tipoDocumentos.find(
-                        (tipo: { cDescripcionTipoDocumento: any; }) =>
-                            this.normalize(tipo.cDescripcionTipoDocumento.trim().toLowerCase()) == row['TIPO DOCUMENTAL'].trim().toLowerCase()
-                    );
-                    if (encontro) {
-                        if (encontro.Agregar === "undefined") {
-                            if (textError.length == 0) {
-                                textError =
-                                    "El tipo de documento es obligatorio";
+                        console.log('entro');
+                        let textError = "";
+                        this.arrMetacatalogos = [];
+                        let documento = new DocumentoFormatoExcelModel;
+                        const fechaHoy: any = new Date();
+                        documento.metacatalogos = [];
+                        if (_.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) {
+                            if (_.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) {
+                                documento.cNombreDocumento = row['DOCUMENTO'].trim();
                             } else {
-                                textError =
-                                    textError +
-                                    ", el tipo de documento es obligatorio";
-                            }
-                        } else {
-                            documento.tipoDocumento = row['TIPO DOCUMENTAL'];
-                            documento.tipo_de_documento = encontro.id;
-                            this.arrMetacatalogos = encontro.metacatalogos;
-
-                            if (this.arrMetacatalogos.length > 0) {
-                                for (let i = 0; i < this.arrMetacatalogos.length; i++) {
-                                    let valido = false;
-                                    if (this.arrMetacatalogos[i].bOligatorio) {
-                                        if (
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TEMA' &&
-                                                _.has(row, 'TEMA') && row['TEMA'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'COMISION' &&
-                                                _.has(row, 'COMISION') && row['COMISION'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'SOLICITANTE' &&
-                                                _.has(row, 'SOLICITANTE') && row['SOLICITANTE'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ENTIDAD' &&
-                                                _.has(row, 'ENTIDAD') && row['ENTIDAD'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'PERIODO' &&
-                                                _.has(row, 'PERIODO') && row['PERIODO'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'NUMERO DE PERIODICO' &&
-                                                _.has(row, 'NUMERO DE PERIODICO') && Number(row['NUMERO DE PERIODICO'])) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'DOCUMENTO' &&
-                                                _.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ID LIBRO DE ACTAS' &&
-                                                _.has(row, 'ID LIBRO DE ACTAS') && Number(row['ID LIBRO DE ACTAS'])) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ACTAS' &&
-                                                _.has(row, 'ACTAS') && row['ACTAS'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'HORA' &&
-                                                _.has(row, 'HORA') && row['HORA'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TIPO DE SESION' &&
-                                                _.has(row, 'TIPO DE SESION') && row['TIPO DE SESION'].length > 0)
-                                        ) {
-                                            if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TEMA' &&
-                                                _.has(row, 'TEMA') && row['TEMA'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['TEMA'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'COMISION' &&
-                                                _.has(row, 'COMISION') && row['COMISION'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['COMISION'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'SOLICITANTE' &&
-                                                _.has(row, 'SOLICITANTE') && row['SOLICITANTE'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['SOLICITANTE'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ENTIDAD' &&
-                                                _.has(row, 'ENTIDAD') && row['ENTIDAD'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['ENTIDAD'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'PERIODO' &&
-                                                _.has(row, 'PERIODO') && row['PERIODO'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['PERIODO'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'NUMERO DE PERIODICO' &&
-                                                _.has(row, 'NUMERO DE PERIODICO') && Number(row['NUMERO DE PERIODICO'])) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['NUMERO DE PERIODICO'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'DOCUMENTO' &&
-                                                _.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['DOCUMENTO'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ID LIBRO DE ACTAS' &&
-                                                _.has(row, 'ID LIBRO DE ACTAS') && Number(row['ID LIBRO DE ACTAS'])) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['ID LIBRO DE ACTAS'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ACTAS' &&
-                                                _.has(row, 'ACTAS') && row['ACTAS'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['ACTAS'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'HORA' &&
-                                                _.has(row, 'HORA') && row['HORA'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['HORA'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TIPO DE SESION' &&
-                                                _.has(row, 'TIPO DE SESION') && row['TIPO DE SESION'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['TIPO DE SESION'], i);
-                                            }
-
-                                            if (!valido) {
-                                                if (textError.length == 0) {
-                                                    textError = "El Metadato Meta_" + (i + 1) + "(" + this.arrMetacatalogos[i].cDescripcionMetacatalogo +
-                                                        ") es incorrecto";
-                                                } else {
-                                                    textError = textError + ", el Metadato Meta_" + (i + 1) + "(" + this.arrMetacatalogos[i].cDescripcionMetacatalogo +
-                                                        ") es incorrecto";
-                                                }
-                                            }
-                                        } else {
-                                            if (textError.length == 0) {
-                                                textError = "El Meta_" + (i + 1) + " (" +
-                                                    this.arrMetacatalogos[i].cDescripcionMetacatalogo + ") es obligatorio";
-                                            } else {
-                                                textError = textError + ", el Meta_" + (i + 1) + " (" +
-                                                    this.arrMetacatalogos[i].cDescripcionMetacatalogo + ") es obligatorio";
-                                            }
-                                        }
-                                    } else {
-                                        if (
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TEMA' &&
-                                                _.has(row, 'TEMA') && row['TEMA'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'COMISION' &&
-                                                _.has(row, 'COMISION') && row['COMISION'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'SOLICITANTE' &&
-                                                _.has(row, 'SOLICITANTE') && row['SOLICITANTE'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ENTIDAD' &&
-                                                _.has(row, 'ENTIDAD') && row['ENTIDAD'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'PERIODO' &&
-                                                _.has(row, 'PERIODO') && row['PERIODO'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'NUMERO DE PERIODICO' &&
-                                                _.has(row, 'NUMERO DE PERIODICO') && Number(row['NUMERO DE PERIODICO'])) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'DOCUMENTO' &&
-                                                _.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ID LIBRO DE ACTAS' &&
-                                                _.has(row, 'ID LIBRO DE ACTAS') && Number(row['ID LIBRO DE ACTAS'])) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ACTAS' &&
-                                                _.has(row, 'ACTAS') && row['ACTAS'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'HORA' &&
-                                                _.has(row, 'HORA') && row['HORA'].length > 0) ||
-                                            (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TIPO DE SESION' &&
-                                                _.has(row, 'TIPO DE SESION') && row['TIPO DE SESION'].length > 0)
-                                        ) {
-                                            if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TEMA' &&
-                                                _.has(row, 'TEMA') && row['TEMA'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['TEMA'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'COMISION' &&
-                                                _.has(row, 'COMISION') && row['COMISION'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['COMISION'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'SOLICITANTE' &&
-                                                _.has(row, 'SOLICITANTE') && row['SOLICITANTE'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['SOLICITANTE'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ENTIDAD' &&
-                                                _.has(row, 'ENTIDAD') && row['ENTIDAD'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['ENTIDAD'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'PERIODO' &&
-                                                _.has(row, 'PERIODO') && row['PERIODO'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['PERIODO'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'NUMERO DE PERIODICO' &&
-                                                _.has(row, 'NUMERO DE PERIODICO') && Number(row['NUMERO DE PERIODICO'])) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['NUMERO DE PERIODICO'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'DOCUMENTO' &&
-                                                _.has(row, 'DOCUMENTO') && row['DOCUMENTO'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['DOCUMENTO'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ID LIBRO DE ACTAS' &&
-                                                _.has(row, 'ID LIBRO DE ACTAS') && Number(row['ID LIBRO DE ACTAS'])) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['ID LIBRO DE ACTAS'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'ACTAS' &&
-                                                _.has(row, 'ACTAS') && row['ACTAS'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['ACTAS'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'HORA' &&
-                                                _.has(row, 'HORA') && row['HORA'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['HORA'], i);
-                                            } else if (this.normalize(this.arrMetacatalogos[i].cDescripcionMetacatalogo.trim().toUpperCase()) == 'TIPO DE SESION' &&
-                                                _.has(row, 'TIPO DE SESION') && row['TIPO DE SESION'].length > 0) {
-                                                valido = this.validarTipoMetaDato(this.arrMetacatalogos[i], row['TIPO DE SESION'], i);
-                                            }
-                                        }
-                                    }
+                                if (textError.length == 0) {
+                                    textError =
+                                        "El nombre del documento es obligatorio";
+                                } else {
+                                    textError =
+                                        textError +
+                                        ", el nombre del documento es obligatorio";
                                 }
                             }
 
-                            if (encontro.visibilidade && encontro.visibilidade.length > 0) {
-                                const visibilidad = this.menuService.tipoInformacion.find(
-                                    (tipo: { id: string }) => tipo.id === encontro.visibilidade
-                                );
-                                if (visibilidad) {
-                                    documento.informacion = visibilidad.cDescripcionVisibilidad;
-                                    documento.visibilidade = visibilidad.id;
+
+                            if (_.has(row, 'NUMERO DE CAJA') && row['NUMERO DE CAJA'].length > 0) {
+                                documento.folioExpediente = row['NUMERO DE CAJA'].trim();
+                            } else {
+                                if (textError.length == 0) {
+                                    textError =
+                                        "El Nro. de caja es obligatorio";
                                 } else {
-                                    if (textError.length == 0) {
-                                        textError = "El tipo de información es obligatorio";
+                                    textError =
+                                        textError +
+                                        ", el Nro. de caja es obligatorio";
+                                }
+                            }
+                            if (_.has(row, 'TIPO DOCUMENTAL') && row['TIPO DOCUMENTAL'].length > 0) {
+                                const encontro = this.menuService.tipoDocumentos.find(
+                                    (tipo: { cDescripcionTipoDocumento: any; }) =>
+                                        this.normalize(tipo.cDescripcionTipoDocumento.trim().toLowerCase()) == row['TIPO DOCUMENTAL'].trim().toLowerCase()
+                                );
+                                if (encontro) {
+                                    if (encontro.Agregar === "undefined") {
+                                        if (textError.length == 0) {
+                                            textError =
+                                                "El tipo de documento es obligatorio";
+                                        } else {
+                                            textError =
+                                                textError +
+                                                ", el tipo de documento es obligatorio";
+                                        }
                                     } else {
-                                        textError = textError + ", el tipo de información es obligatorio";
+                                        documento.tipoDocumento = row['TIPO DOCUMENTAL'];
+                                        documento.tipo_de_documento = encontro.id;
+                                        this.arrMetacatalogos = encontro.metacatalogos;
+
+                                        if (this.arrMetacatalogos.length > 0) {
+                                            for (let i = 0; i < this.arrMetacatalogos.length; i++) {
+                                                let valido = false;
+
+                                            }
+                                        }
+
+                                    }
+                                } else {
+                                    documento.tipoDocumento = row['TIPO DOCUMENTAL'];
+                                    if (textError.length == 0) {
+                                        textError = "El tipo de documento es obligatorio";
+                                    } else {
+                                        textError = textError + ", el tipo de documento es obligatorio";
                                     }
                                 }
                             } else {
                                 if (textError.length == 0) {
-                                    textError = "El tipo de información es obligatorio";
+                                    textError = "El tipo de documento es obligatorio";
                                 } else {
-                                    textError = textError + ", el tipo de información es obligatorio";
+                                    textError = textError + ", el tipo de documento es obligatorio";
                                 }
                             }
-                        }
-                    } else {
-                        documento.tipoDocumento = row['TIPO DOCUMENTAL'];
-                        if (textError.length == 0) {
-                            textError = "El tipo de documento es obligatorio";
-                        } else {
-                            textError = textError + ", el tipo de documento es obligatorio";
-                        }
-                    }
-                } else {
-                    if (textError.length == 0) {
-                        textError = "El tipo de documento es obligatorio";
-                    } else {
-                        textError = textError + ", el tipo de documento es obligatorio";
-                    }
-                }
+                            /*       if (_.has(row, 'FOLIO EXPEDIENTE') && Number(row['FOLIO EXPEDIENTE'])) {
+                                      if (_.has(row, 'TIPO DOCUMENTAL') && row['TIPO DOCUMENTAL'].length > 0 &&
+                                          this.normalize(row['TIPO DOCUMENTAL'].toUpperCase()) === 'ACTA') {
+                                          documento.folioExpediente = "";
+                                      } else {
+                                          documento.folioExpediente = String(
+                                              row["FOLIO EXPEDIENTE"]
+                                          );
+                                      }
+                                  } else {
+                                      if (_.has(row, 'TIPO DOCUMENTAL') && row['TIPO DOCUMENTAL'].length > 0 &&
+                                          this.normalize(row['TIPO DOCUMENTAL'].toUpperCase()) === 'ACTA') {
+                                          documento.folioExpediente = '';
+                                      } else {
+                                          if (textError.length > 0) {
+                                              textError =
+                                                  "El folio de expediente es obligatorio";
+                                          } else {
+                                              textError =
+                                                  textError +
+                                                  ", el folio de expediente es obligatorio";
+                                          }
+                                      }
+                  
+                                  } */
 
-                if (_.has(row, 'FOLIO EXPEDIENTE') && Number(row['FOLIO EXPEDIENTE'])) {
-                    if (_.has(row, 'TIPO DOCUMENTAL') && row['TIPO DOCUMENTAL'].length > 0 &&
-                        this.normalize(row['TIPO DOCUMENTAL'].toUpperCase()) === 'ACTA') {
-                        documento.folioExpediente = "";
-                    } else {
-                        documento.folioExpediente = String(
-                            row["FOLIO EXPEDIENTE"]
-                        );
-                    }
-                } else {
-                    if (_.has(row, 'TIPO DOCUMENTAL') && row['TIPO DOCUMENTAL'].length > 0 &&
-                        this.normalize(row['TIPO DOCUMENTAL'].toUpperCase()) === 'ACTA') {
-                        documento.folioExpediente = '';
-                    } else {
-                        if (textError.length > 0) {
-                            textError =
-                                "El folio de expediente es obligatorio";
-                        } else {
-                            textError =
-                                textError +
-                                ", el folio de expediente es obligatorio";
-                        }
-                    }
+                            if (_.has(row, 'FECHA') && new Date(row["FECHA"])) {
+                                const fecha = new Date((row["FECHA"] - (25567 + 2)) * 86400 * 1000);
+                                documento.fechaCreacion = this.datePipe.transform(fecha, "yyyy-MM-dd")
+                                    + "T06:00:00.000Z";
+                                documento.fechaCreacionDate = this.datePipe.transform(fecha, "dd-MM-yyyy");
 
-                }
-
-                if (_.has(row, 'PAGINAS') && Number(row['PAGINAS'])) documento.paginas = Number(row['PAGINAS'])
-                else documento.paginas = 0;
-
-                if (_.has(row, 'FECHA') && new Date(row["FECHA"])) {
-                    const fecha = new Date((row["FECHA"] - (25567 + 2)) * 86400 * 1000);
-                    documento.fechaCreacion = this.datePipe.transform(fecha, "yyyy-MM-dd")
-                        + "T06:00:00.000Z";
-                    documento.fechaCreacionDate = this.datePipe.transform(fecha, "dd-MM-yyyy");
-
-                } else {
-                    if (textError.length == 0) {
-                        textError =
-                            "La fecha de creación obligatorio";
-                    } else {
-                        textError =
-                            textError +
-                            ", la fecha de creación obligatorio";
-                    }
-                }
-
-                documento.fechaCarga = this.datePipe.transform(fechaHoy, "yyyy-MM-dd") + "T06:00:00.000Z";
-                documento.fechaCargaDate = this.datePipe.transform(fechaHoy, "dd-MM-yyyy");
-
-                documento.metacatalogos = this.arrMetacatalogos;
-
-                let meta = "";
-                for (const i of documento.metacatalogos) {
-                    if (meta === "") {
-                        if (i.cTipoMetacatalogo === "Fecha") {
-                            if (i.text) {
-                                if (new Date(i.text)) {
-                                    meta = meta + i.cDescripcionMetacatalogo + ": " +
-                                        this.datePipe.transform(i.text, "yyyy-MM-dd") + "T06:00:00.000Z";
-                                }
-                            }
-                        } else {
-                            if (i.text) {
-                                meta = meta + i.cDescripcionMetacatalogo + ": " + i.text;
-                            }
-                        }
-                    } else {
-                        if (i.cTipoMetacatalogo === "Fecha") {
-                            if (i.text) {
-                                if (new Date(i.text)) {
-                                    meta = meta + " , " + i.cDescripcionMetacatalogo + ": " +
-                                        this.datePipe.transform(i.text, "yyyy-MM-dd") + "T06:00:00.000Z";
-                                }
-                            }
-                        } else if (i.cTipoMetacatalogo === "Sí o no") {
-                            if (i.text) {
-                                meta = meta + " , " + i.cDescripcionMetacatalogo + ": Sí";
                             } else {
-                                meta = meta + " , " + i.cDescripcionMetacatalogo + ": No";
+                                if (textError.length == 0) {
+                                    textError =
+                                        "La fecha de creación obligatorio";
+                                } else {
+                                    textError =
+                                        textError +
+                                        ", la fecha de creación obligatorio";
+                                }
                             }
-                        } else {
-                            if (i.text) {
-                                meta = meta + " , " + i.cDescripcionMetacatalogo + ": " + i.text;
+                            documento.paginas = 0;
+                            documento.fechaCarga = this.datePipe.transform(fechaHoy, "yyyy-MM-dd") + "T06:00:00.000Z";
+                            documento.fechaCargaDate = this.datePipe.transform(fechaHoy, "dd-MM-yyyy");
+                            documento.metacatalogos = this.arrMetacatalogos;
+                            console.log(row['PLAZO DE CONSERVACION']);
+                            if (_.has(row, 'PLAZO DE CONSERVACION') && (row['PLAZO DE CONSERVACION'].length > 0 || isNumber(row['PLAZO DE CONSERVACION']))) {
+                                if (isNumber(row['PLAZO DE CONSERVACION'])) {
+                                    documento.plazoDeConservacion = String(
+                                        row["PLAZO DE CONSERVACION"]
+                                    );
+                                } else {
+                                    documento.plazoDeConservacion = row['PLAZO DE CONSERVACION'].trim();
+                                }
+
+                            } else {
+                                if (textError.length == 0) {
+                                    textError =
+                                        "El plazo de conservación es obligatorio";
+                                } else {
+                                    textError =
+                                        textError +
+                                        ", el plazo de conservación es obligatorio";
+                                }
                             }
+
+                            if (_.has(row, 'CLAVE') && (row['CLAVE'].length > 0 || isNumber(row['CLAVE']))) {
+                                if (isNumber(row['CLAVE'])) {
+                                    documento.clave = String(
+                                        row["CLAVE"]
+                                    );
+                                } else {
+                                    documento.clave = row['CLAVE'].trim();
+                                }
+                            } else {
+                                if (textError.length == 0) {
+                                    textError =
+                                        "La clave es obligatorio";
+                                } else {
+                                    textError =
+                                        textError +
+                                        ", la clave es obligatorio";
+                                }
+                            }
+
+                            if (_.has(row, 'PASILLO') && (row['PASILLO'].length > 0 || isNumber(row['PASILLO']))) {
+                                if (isNumber(row['PASILLO'])) {
+                                    documento.pasillo = String(
+                                        row["PASILLO"]
+                                    );
+                                } else {
+                                    documento.pasillo = row['PASILLO'].trim();
+                                }
+                            } else {
+                                if (textError.length == 0) {
+                                    textError =
+                                        "La clave es obligatorio";
+                                } else {
+                                    textError =
+                                        textError +
+                                        ", la clave es obligatorio";
+                                }
+                            }
+
+
+                            if (_.has(row, 'ESTANTE') && (row['ESTANTE'].length > 0 || isNumber(row['ESTANTE']))) {
+                                if (isNumber(row['ESTANTE'])) {
+                                    documento.estante = String(
+                                        row["ESTANTE"]
+                                    );
+                                } else {
+                                    documento.estante = row['ESTANTE'].trim();
+                                }
+                            } else {
+                                if (textError.length == 0) {
+                                    textError =
+                                        "La clave es obligatorio";
+                                } else {
+                                    textError =
+                                        textError +
+                                        ", la clave es obligatorio";
+                                }
+                            }
+
+                            if (_.has(row, 'NIVEL') && (row['NIVEL'].length > 0 || isNumber(row['NIVEL']))) {
+                                if (isNumber(row['NIVEL'])) {
+                                    documento.nivel = String(
+                                        row["NIVEL"]
+                                    );
+                                } else {
+                                    documento.plazoDeConservacion = row['NIVEL'].trim();
+                                }
+                            } else {
+                                if (textError.length == 0) {
+                                    textError =
+                                        "La clave es obligatorio";
+                                } else {
+                                    textError =
+                                        textError +
+                                        ", la clave es obligatorio";
+                                }
+                            }
+
+                            if (_.has(row, 'SECCION') && (row['SECCION'].length > 0 || isNumber(row['SECCION']))) {
+                                if (isNumber(row['SECCION'])) {
+                                    documento.seccion = String(
+                                        row["SECCION"]
+                                    );
+                                } else {
+                                    documento.seccion = row['SECCION'].trim();
+                                }
+                            } else {
+                                if (textError.length == 0) {
+                                    textError =
+                                        "La clave es obligatorio";
+                                } else {
+                                    textError =
+                                        textError +
+                                        ", la clave es obligatorio";
+                                }
+                            }
+
+
+
+
+
+                            /* 
+                            
+                                            if (_.has(row, 'LEGISLATURA') && row['LEGISLATURA'].length > 0) {
+                                                const encontro = this.arrLegislaturas.find((legislatura: { cLegislatura: any }) =>
+                                                    legislatura.cLegislatura.trim().toUpperCase() == row["LEGISLATURA"].trim().toUpperCase()
+                                                );
+                                                if (encontro) {
+                                                    documento.cLegislatura = row['LEGISLATURA'];
+                                                    documento.idLegislatura = encontro["id"];
+                                                } else {
+                                                    if (textError.length == 0) {
+                                                        textError = "La legislatura es obligatoria";
+                                                    } else {
+                                                        textError = textError + ", la legislatura es obligatoria";
+                                                    }
+                                                }
+                                            } else {
+                                                if (textError.length == 0) {
+                                                    textError = "La legislatura es obligatoria";
+                                                } else {
+                                                    textError = textError + ", la legislatura es obligatoria";
+                                                }
+                                            } */
+
+                            let meta = "";
+                            for (const i of documento.metacatalogos) {
+                                if (meta === "") {
+                                    if (i.cTipoMetacatalogo === "Fecha") {
+                                        if (i.text) {
+                                            if (new Date(i.text)) {
+                                                meta = meta + i.cDescripcionMetacatalogo + ": " +
+                                                    this.datePipe.transform(i.text, "yyyy-MM-dd") + "T06:00:00.000Z";
+                                            }
+                                        }
+                                    } else {
+                                        if (i.text) {
+                                            meta = meta + i.cDescripcionMetacatalogo + ": " + i.text;
+                                        }
+                                    }
+                                } else {
+                                    if (i.cTipoMetacatalogo === "Fecha") {
+                                        if (i.text) {
+                                            if (new Date(i.text)) {
+                                                meta = meta + " , " + i.cDescripcionMetacatalogo + ": " +
+                                                    this.datePipe.transform(i.text, "yyyy-MM-dd") + "T06:00:00.000Z";
+                                            }
+                                        }
+                                    } else if (i.cTipoMetacatalogo === "Sí o no") {
+                                        if (i.text) {
+                                            meta = meta + " , " + i.cDescripcionMetacatalogo + ": Sí";
+                                        } else {
+                                            meta = meta + " , " + i.cDescripcionMetacatalogo + ": No";
+                                        }
+                                    } else {
+                                        if (i.text) {
+                                            meta = meta + " , " + i.cDescripcionMetacatalogo + ": " + i.text;
+                                        }
+                                    }
+                                }
+                            }
+
+                            documento.clasificacion = meta;
+                            console.log(this.arrExpediente);
+                            let arrExpedienteTipo: any[]
+                            if (row["TIPO DOCUMENTAL"]) {
+                                arrExpedienteTipo = this.arrExpediente.filter(
+                                    (d) =>
+                                        this.normalize(d.descripcionTiposDocumentos
+                                            .toLowerCase()
+                                            .indexOf(row["TIPO DOCUMENTAL"].toLowerCase())) !== -1
+                                );
+                            } else {
+                                if (textError.length > 0) {
+                                    textError =
+                                        "Formato de carga mal formado.";
+                                } else {
+                                    textError =
+                                        textError +
+                                        ", el formato de carga esta mal formado";
+                                }
+                            }
+
+                            /* 
+                                           const arrExpedienteTipo: any = this.arrExpediente.filter((d) => {
+                                                if (row["TIPO DOCUMENTAL"]) {
+                            
+                                                    d.descripcionTiposDocumentos.toLowerCase().indexOf(row["TIPO DOCUMENTAL"].toLowerCase()) !== -1 
+                                                 //   this.normalize(d.descripcionTiposDocumentos.toLowerCase()).indexOf(row["TIPO DOCUMENTAL"].toLowerCase()) !== -1
+                                                }else{
+                                                    if (textError.length > 0) {
+                                                        textError =
+                                                            "Formato de carga mal formado.";
+                                                    } else {
+                                                        textError =
+                                                            textError +
+                                                            ", el formato de carga esta mal formado";
+                                                    }
+                                                }
+                                            }); */
+
+                            console.log(arrExpedienteTipo);
+                            if (arrExpedienteTipo.length > 0) {
+                                documento.tipo_de_expediente =
+                                    arrExpedienteTipo[0].id;
+                                documento.expediente =
+                                    arrExpedienteTipo[0].cDescripcionTipoExpediente;
+                                documento.idExpediente =
+                                    arrExpedienteTipo[0].id;
+                            } else {
+                                if (textError.length > 0) {
+                                    textError =
+                                        "El tipo de documento no corresponde al tipo de expediente.";
+                                } else {
+                                    textError =
+                                        textError +
+                                        ", el tipo de documento no corresponde al tipo de expediente";
+                                }
+                            }
+
+                            documento.errorText = textError;
+
+                            if (documento.errorText.length === 0) {
+                                documento.valido = true;
+                            } else {
+                                documento.valido = false;
+                            }
+
+                            documento.bActivo = false;
+
+                            this.documentos.push(documento);
+                            textError = '';
                         }
+                    } catch (error) {
+                        this.spinner.hide();
+                        Swal.fire("Error", error, "error");
                     }
-                }
+                });
+                this.documentos = [...this.documentos];
+                this.loadingIndicator = false;
+                this.spinner.hide();
+                excelInput.value = "";
+            };
 
-                documento.clasificacion = meta;
-                let arrExpedienteTipo: any[]
-                if (row["TIPO DOCUMENTAL"]) {
-                    arrExpedienteTipo  = this.arrExpediente.filter(
-                        (d) =>
-                        this.normalize(d.descripcionTiposDocumentos
-                                .toLowerCase()
-                                .indexOf(row["TIPO DOCUMENTAL"].toLowerCase())) !== -1 
-                    );
-                }else{
-                    if (textError.length > 0) {
-                        textError =
-                            "Formato de carga mal formado.";
-                    } else {
-                        textError =
-                            textError +
-                            ", el formato de carga esta mal formado";
-                    }
-                }
-               
+            reader.readAsBinaryString(file);
 
-              /*   const arrExpedienteTipo: any = this.arrExpediente.filter((d) => {
-                    if (row["TIPO DOCUMENTAL"]) {
+        } catch (error) {
 
-                        d.descripcionTiposDocumentos.toLowerCase().indexOf(row["TIPO DOCUMENTAL"].toLowerCase()) !== -1 
-                     //   this.normalize(d.descripcionTiposDocumentos.toLowerCase()).indexOf(row["TIPO DOCUMENTAL"].toLowerCase()) !== -1
-                    }else{
-                        if (textError.length > 0) {
-                            textError =
-                                "Formato de carga mal formado.";
-                        } else {
-                            textError =
-                                textError +
-                                ", el formato de carga esta mal formado";
-                        }
-                    }
-                }); */
-                console.log(documento.tipo_de_expediente);
-                console.log( arrExpedienteTipo);
-                if (arrExpedienteTipo.length > 0) {
-                    documento.tipo_de_expediente =
-                        arrExpedienteTipo[0].id;
-                    documento.expediente =
-                        arrExpedienteTipo[0].cDescripcionTipoExpediente;
-                    documento.idExpediente =
-                        arrExpedienteTipo[0].id;
-                } else {
-                    if (textError.length > 0) {
-                        textError =
-                            "El tipo de documento no corresponde al tipo de expediente.";
-                    } else {
-                        textError =
-                            textError +
-                            ", el tipo de documento no corresponde al tipo de expediente";
-                    }
-                }
 
-                documento.errorText = textError;
-
-                if (documento.errorText.length === 0) {
-                    documento.valido = true;
-                } else {
-                    documento.valido = false;
-                }
-
-                documento.bActivo = false;
-
-                this.documentos.push(documento);
-                textError = '';
-            });
-            this.documentos = [...this.documentos];
-            this.loadingIndicator = false;
-            this.spinner.hide();
-            excelInput.value = "";
-        };
-        reader.readAsBinaryString(file);
+        }
     }
 
     validarTipoMetaDato(tipo: any, campo: any, indice: number) {
@@ -1036,7 +997,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
         }).then(async (result: any) => {
             if (result.value) {
                 console.log(this.documentos);
-                 await this.confirmarGuardarDocumentos();
+                await this.confirmarGuardarDocumentos();
             }
         });
     }
@@ -1128,6 +1089,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                     (resp: any) => { });
                             });
                     }
+                    row.fileBase.data = '';
                 }
             };
             setTimeout(() => {

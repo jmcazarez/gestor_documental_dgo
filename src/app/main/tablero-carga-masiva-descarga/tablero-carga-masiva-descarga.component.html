@@ -61,7 +61,7 @@
                                         [headerHeight]="50"
                                         [footerHeight]="50"
                                         [rowHeight]="80"
-                                        [contentEditable]="true"
+                                      
                                         [reorderable]="reorderable"
                                         [limit]="10"
                                         [scrollbarH]="true"
@@ -82,45 +82,29 @@
                                         <ngx-datatable-column name="Id. Archivo" prop="id" [width]="100">
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="PDF" prop="cNombreDocumento" [minWidth]="200">
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="Legislatura" prop="cLegislatura" [minWidth]="100">
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="Folio Expediente" prop="folioExpediente" [width]="100">
+                                        </ngx-datatable-column>                                       
+                                        <ngx-datatable-column name="Nro. de caja" prop="folioExpediente" [width]="100">
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Tipo Expediente" prop="expediente" [width]="200">
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento" [width]="200">
                                         </ngx-datatable-column>
                                    <!--      <ngx-datatable-column name="Páginas" prop="paginas" [width]="100">
-                                        </ngx-datatable-column> -->
-                                        <ngx-datatable-column name="Fecha de creación" prop="fechaCreacionDate" [width]="140">
-                                        </ngx-datatable-column>
+                                        </ngx-datatable-column> -->                             
                                         <ngx-datatable-column name="Fecha de carga" prop="fechaCargaDate" [width]="130">
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="Tema" prop="cTema" [width]="300" [cellClass]="'class-tema'">
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="Comisión" prop="cComision" [width]="200">
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="Solicitante" prop="cSolicitante" [cellClass]="'class-tema'"
-                                        [width]="200">
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="Entidad" prop="cEntidad" [cellClass]="'class-tema'"
-                                        [width]="200">
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="Período" prop="cPeriodo">
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="Número de periódico" prop="nNumeroPeriodico">
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="Documento" prop="cDocumento">
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="ID Acta" prop="nIdActa">
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="Acta" prop="cActa">
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="Hora" prop="cHora">
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="Tiempo de sesión" prop="cTipoSesion">
-                                        </ngx-datatable-column>
+                                        </ngx-datatable-column>    
+                                        <ngx-datatable-column name="Plazo" prop="plazoDeConservacion" [width]="160">
+                                        </ngx-datatable-column> 
+                                        <ngx-datatable-column name="Clave" prop="clave" [width]="130">
+                                        </ngx-datatable-column>      
+                                        <ngx-datatable-column name="Pasillo" prop="pasillo" [width]="130">
+                                        </ngx-datatable-column>     
+                                        <ngx-datatable-column name="Estante" prop="estante" [width]="130">
+                                        </ngx-datatable-column>         
+                                        <ngx-datatable-column name="Nivel" prop="nivel" [width]="130">
+                                        </ngx-datatable-column>   
+                                        <ngx-datatable-column name="Sección" prop="seccion" [width]="130">
+                                        </ngx-datatable-column>                              
                                         <ngx-datatable-column name="Estatus" [sortable]="false" [width]="100"
                                         [canAutoResize]="false" [resizeable]="false" [contentEditable]="false">
                                             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
