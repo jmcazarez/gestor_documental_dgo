@@ -104,9 +104,9 @@ export class GuardarDocumentosComponent implements OnInit {
             this.tipoDocumento = this.documentos.tipo_de_documento;
             this.fechaCreacion = this.documentos.fechaCreacion;
             this.documentos.fechaCreacion
-            console.log('entro');
+           
             if (this.documentos.fechaCreacion instanceof Date) {
-                console.log('valido');
+               
             }
             this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
             this.documentos.fechaCarga = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
@@ -123,6 +123,7 @@ export class GuardarDocumentosComponent implements OnInit {
             }
         }
 
+        console.log(this.menu.tipoDocumentos);
         for (const documentosAgregar of this.menu.tipoDocumentos) {
 
             // Si tiene permisos de agregar estos documentos los guardamos en una array
@@ -216,9 +217,10 @@ export class GuardarDocumentosComponent implements OnInit {
 
                 this.documentos.visibilidade = tipoDoc[0]['visibilidade'];
             }
-            if (this.paginasInput.nativeElement.value > 0) {
+            this.documentos.paginas = 1
+           /*  if (this.paginasInput.nativeElement.value > 0) {
                 this.documentos.paginas = this.paginasInput.nativeElement.value;
-            }
+            } */
 
             // Validamos el selecciono un archivo para subirlo
             if (this.cambioFile) {
@@ -349,7 +351,7 @@ export class GuardarDocumentosComponent implements OnInit {
         let base64Result: string;
         this.files = [];
         const fileInput = this.fileInput.nativeElement;
-        const paginasInput = this.paginasInput.nativeElement;
+       /*  const paginasInput = this.paginasInput.nativeElement; */
         fileInput.onchange = () => {
 
 
@@ -365,6 +367,7 @@ export class GuardarDocumentosComponent implements OnInit {
                     // Obtenemos el # de paginas del documento
 
                     base64Result = reader.result.toString();
+                    //console.log(base64Result);
                     //  base64Result = base64Result.slice(this.base64.search('/Count'), this.base64.search('/Count') + 10).replace('/Count ', '');
                     this.paginasEditar = false;
                     // paginasInput.value = this.getNumbersInString(base64Result);
@@ -374,6 +377,7 @@ export class GuardarDocumentosComponent implements OnInit {
                 reader2.readAsDataURL(file);
                 reader2.onloadend = () => {
                     //me.modelvalue = reader.result;
+                    console.log(reader2);
                     this.base64 = reader2.result.toString();
                 };
 
@@ -408,8 +412,11 @@ export class GuardarDocumentosComponent implements OnInit {
     async upload(): Promise<void> {
         // Subimos documento
         // const resp = await this.uploadService.uploadFile(this.files[0].data);
-
-        const resp = await this.uploadService.subirArchivo(this.fileInput.nativeElement.files[0], this.base64);
+      /*   console.log(this.fileInput.nativeElement.files[0]);
+        const date = new Date(this.fileInput.nativeElement.files[0].lastModified)
+        console.log(date);
+        this.documentos.fechaCreacion = date; */
+         const resp = await this.uploadService.subirArchivo(this.fileInput.nativeElement.files[0], this.base64);
         console.log(resp);
         if (resp.error) {
             Swal.fire('Error', 'Ocurrió un error al subir el documento. ' + resp.error.error, 'error');
@@ -423,7 +430,7 @@ export class GuardarDocumentosComponent implements OnInit {
             } else {
                 this.documentos.documento = '';
             }
-        }
+        } 
 
     }
 

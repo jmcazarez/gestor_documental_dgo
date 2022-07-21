@@ -79,6 +79,7 @@ export class TableroDeBusquedaComponent implements OnInit {
         this.spinner.show();
         // await this.obtenerEntes();
         
+        console.log(this.menuService.tipoDocumentos);
         for (const documentosAgregar of this.menuService.tipoDocumentos) {
 
             // Si tiene permisos de agregar estos documentos los guardamos en una array

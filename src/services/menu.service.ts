@@ -123,6 +123,7 @@ export class MenuService {
                                 }
 
                                 // Agregamos permisos a tipos de documentos
+                                console.log(perfiles.Documentos);
                                 for (const documentos of perfiles.Documentos) {
                                     if (documentos.tipo_de_documento) {
                                         if (documentos.tipo_de_documento.bActivo) {

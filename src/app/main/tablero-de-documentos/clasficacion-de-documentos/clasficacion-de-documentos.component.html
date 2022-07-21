@@ -135,13 +135,13 @@
                 </div>
 
                 <div fxLayout="row" fxFlex="100">
-                    <div fxLayout="row" fxFlex="20">
+                  <!--   <div fxLayout="row" fxFlex="20">
                         <p class="info">Páginas:</p>
                     </div>
                     <div fxLayout="row" fxFlex="30">
                         <p>{{this.documento.paginas}}</p>
                     </div>
-
+ -->
                     
                     <div fxLayout="row" fxFlex="20">
                         <p class="info">Versión:</p>
@@ -262,7 +262,7 @@
                     </mat-form-field>
                 </div>
  -->
-                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+           <!--      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="100">
                         <mat-label>Tipo de expediente *</mat-label>
                         <mat-select formControlName="expediente" [(ngModel)]="selectedExpediente" name="expediente">
@@ -272,7 +272,7 @@
                         </mat-select>
                         <mat-error>El tipo de expediente es requerido</mat-error>
                     </mat-form-field>
-                </div>
+                </div> -->
 
                 <div fxLayout="row"  fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
@@ -314,17 +314,17 @@
                 </div> -->
                
                 <div fxLayout="row" *ngIf="this.descriptionTipoDocumento !== 'Acta'" fxLayoutAlign="start center" fxFlex="1 0 auto">
-                    <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
+             <!--        <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
                         <mat-label>Número de caja *</mat-label>
                         <input matInput formControlName="numeroDeCaja" type="number"   name="numeroDeCaja" >                
                         <mat-error>El Número de caja es requerido</mat-error>
-                    </mat-form-field>
+                    </mat-form-field> -->
                     
                     <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
-                        <mat-label>Folio de expediente *</mat-label>
+                        <mat-label>Número de caja *</mat-label>
                         <input matInput formControlName="folioExpediente" type="number"  [(ngModel)]="this.selectedFolioExpediente" pattern="[0-9]+" name="folioExpediente" [disabled]="disableFolioExpediente">
                         <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
-                        <mat-error>El folio de expediente invalido</mat-error>
+                        <mat-error>El Número de caja es requerido</mat-error>
                     </mat-form-field>
                 </div>
                 <!-- 

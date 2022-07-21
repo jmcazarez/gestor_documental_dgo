@@ -286,16 +286,10 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 cLegislatura = this.documento.legislatura.id;
             }
 
-
+            console.log(this.documento.folioExpediente);
             this.selectedFolioExpediente = this.documento.folioExpediente;
 
-            if (this.documento.tipo_de_documento) {
-                this.descriptionTipoDocumento = this.documento.tipo_de_documento.cDescripcionTipoDocumento;
-                if (this.documento.tipo_de_documento.cDescripcionTipoDocumento !== 'Acta') {
-                    folioExpedienteRequerido = [Validators.required];
-                }
-
-            }
+            folioExpedienteRequerido = [Validators.required]
 
             this.form = this.formBuilder.group({
                 // entes: [{ value: this.documento.ente, disabled: this.documento.disabled }],
@@ -312,7 +306,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                         value: this.documento.tipo_de_expediente,
                         disabled: this.documento.disabled,
                     },
-                    [Validators.required],
                 ],
                 // direcciones: [{ value: this.documento.direccione, disabled: this.documento.disabled }, [Validators.required]],
                 // departamentos: [{ value: this.documento.departamento, disabled: this.documento.disabled }, [Validators.required]],
@@ -321,7 +314,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                         value: this.documento.folioExpediente,
                         disabled: this.disableFolioExpediente,
                     },
-                    folioExpedienteRequerido,
+                    [Validators.required],
                 ],
                 folioExpediente2: [
                     {
@@ -333,11 +326,11 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 estante: [{ value: this.documento.estante, disabled: this.documento.disabled }, [Validators.required]],
                 nivel: [{ value: this.documento.nivel, disabled: this.documento.disabled }, [Validators.required]],
                 seccion: [{ value: this.documento.seccion, disabled: this.documento.disabled }, [Validators.required]],
-                numeroDeCaja: [{ value: this.documento.numeroDeCaja, disabled: this.documento.disabled }, [Validators.required]],
+                numeroDeCaja: [{ value: this.documento.numeroDeCaja, disabled: this.documento.disabled }],
                 //   imagen        : [this.usuario.cPassword,[Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
             });
 
-
+            this.documento.numeroDeCaja = 0
             // Obtenemos las entes
             // await this.obtenerEntes();
             this.documento.fechaCarga = this.documento.fechaCarga.replace(
@@ -409,7 +402,8 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
               }
               */
             if (this.documento.disabled === true) {
-                await this.descargarDocumentoClasificacion();
+               /*  await this.descargarDocumentoClasificacion(); */
+               this.pdfSrc = environment.apiStrapiMin + this.documento.documento.url
             } else {
                 //await this.descargarDocumento();
 
@@ -709,7 +703,8 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         this.documento.nivel = this.form.get("nivel").value;
         this.documento.seccion = this.form.get("seccion").value;
         this.documento.numeroDeCaja = this.form.get("numeroDeCaja").value;
-        console.log(this.documento);
+        this.documento.folioExpediente = this.form.get("folioExpediente").value;
+        
         if (this.entroVersionamiento) {
             this.documento.tipo_de_documento = this.documento.tipo_de_documento.id;
         }
@@ -724,9 +719,13 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         if (this.documento.trazabilidads.length === 0) {
             delete this.documento["trazabilidads"];
         }
+     
+        this.arrExpediente
         if (this.selectedExpediente === "") {
-            delete this.documento["tipo_de_expediente"];
+            /* delete this.documento["tipo_de_expediente"]; */
+            this.documento.tipo_de_expediente    = this.arrExpediente[0].id
         } else {
+          
             this.documento.tipo_de_expediente = this.selectedExpediente;
         }
 

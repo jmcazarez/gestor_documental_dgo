@@ -71,17 +71,18 @@
         </div>
 
 
-        <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+     <!--    <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
 
             <mat-form-field disabled appearance="outline" fxFlex="1 0 auto" class="pl-4">
                 <mat-label disabled class="example-margin">Páginas</mat-label>
                 <input matInput disabled formControlName="paginas" #paginasInput type="number" (change)="change()">
                 <mat-icon matSuffix class="secondary-text">pages</mat-icon>
-                <!-- Image Preview -->
+             
             </mat-form-field>
 
 
-        </div>
+        </div> 
+    -->
 
         
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
@@ -129,6 +130,7 @@
        
 <mat-dialog-actions align="end" class="buttons">
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
+<!--     <button mat-raised-button color="warn" (click)="upload()">subir</button> -->
     <button [disabled]="form.invalid || fileName.length === 0" mat-raised-button color="accent" (click)="guardar()">Siguiente</button>
     <!--<button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
 </mat-dialog-actions>
