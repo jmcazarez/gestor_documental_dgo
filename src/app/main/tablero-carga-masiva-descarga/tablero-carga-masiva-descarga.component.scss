@@ -142,6 +142,19 @@ a{
   width: 35% !important;
 }
 
+#box1{
+  text-align: center;
+  border: 1px solid gray;
+  height: 250px;
+  overflow: auto;
+}
+
+#progressbar{
+  text-align: left;
+  height: 20px;
+}
+
+
 ::ng-deep {
   ngx-datatable {
     .datatable-header,

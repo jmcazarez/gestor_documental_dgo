@@ -77,6 +77,7 @@ export class GuardarDireccionesComponent implements OnInit {
             this.direcciones = direccionesTemp;
             this.direccionesTemp = this.direcciones;
             this.spinner.hide();
+            this.loadingIndicator = false;
         }, err => {
             this.spinner.hide();
             this.loadingIndicator = false;

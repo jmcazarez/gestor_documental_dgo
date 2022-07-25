@@ -104,9 +104,9 @@ export class GuardarDocumentosComponent implements OnInit {
             this.tipoDocumento = this.documentos.tipo_de_documento;
             this.fechaCreacion = this.documentos.fechaCreacion;
             this.documentos.fechaCreacion
-           
+
             if (this.documentos.fechaCreacion instanceof Date) {
-               
+
             }
             this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
             this.documentos.fechaCarga = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
@@ -153,7 +153,7 @@ export class GuardarDocumentosComponent implements OnInit {
             fechaCreacion: [{ value: this.documentos.fechaCreacion, disabled: this.documentos.disabled }, [Validators.required]],
             //fechaCreacion: [{ value: this.documentos.fechaCreacion, disabled: this.documentos.disabled }, [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
             fechaCarga: [{ value: this.documentos.fechaCarga, disabled: true }],
-            paginas: [{ value: this.documentos.paginas, disabled: this.paginasEditar }, [ Validators.pattern("^[0-9]*$")]],
+            paginas: [{ value: this.documentos.paginas, disabled: this.paginasEditar }, [Validators.pattern("^[0-9]*$")]],
             plazoDeConservacion: [{ value: this.documentos.plazoDeConservacion, disabled: this.paginasEditar }, [Validators.required, Validators.max(50), Validators.min(0), Validators.pattern("^[0-9]*$")]],
             clave: [{ value: this.documentos.clave, disabled: this.paginasEditar }, Validators.required]
         });
@@ -218,9 +218,9 @@ export class GuardarDocumentosComponent implements OnInit {
                 this.documentos.visibilidade = tipoDoc[0]['visibilidade'];
             }
             this.documentos.paginas = 1
-           /*  if (this.paginasInput.nativeElement.value > 0) {
-                this.documentos.paginas = this.paginasInput.nativeElement.value;
-            } */
+            /*  if (this.paginasInput.nativeElement.value > 0) {
+                 this.documentos.paginas = this.paginasInput.nativeElement.value;
+             } */
 
             // Validamos el selecciono un archivo para subirlo
             if (this.cambioFile) {
@@ -351,7 +351,7 @@ export class GuardarDocumentosComponent implements OnInit {
         let base64Result: string;
         this.files = [];
         const fileInput = this.fileInput.nativeElement;
-       /*  const paginasInput = this.paginasInput.nativeElement; */
+        /*  const paginasInput = this.paginasInput.nativeElement; */
         fileInput.onchange = () => {
 
 
@@ -412,25 +412,29 @@ export class GuardarDocumentosComponent implements OnInit {
     async upload(): Promise<void> {
         // Subimos documento
         // const resp = await this.uploadService.uploadFile(this.files[0].data);
-      /*   console.log(this.fileInput.nativeElement.files[0]);
-        const date = new Date(this.fileInput.nativeElement.files[0].lastModified)
-        console.log(date);
-        this.documentos.fechaCreacion = date; */
-         const resp = await this.uploadService.subirArchivo(this.fileInput.nativeElement.files[0], this.base64);
-        console.log(resp);
-        if (resp.error) {
+        /*   console.log(this.fileInput.nativeElement.files[0]);
+          const date = new Date(this.fileInput.nativeElement.files[0].lastModified)
+          console.log(date);
+          this.documentos.fechaCreacion = date; */
+        const resp = await this.uploadService.subirArchivoStrapi(this.fileInput.nativeElement.files[0]);
+
+        if (resp.length == 0) {
             Swal.fire('Error', 'Ocurrió un error al subir el documento. ' + resp.error.error, 'error');
             this.documentos.documento = '';
         } else {
             // La peticion nos retorna el id del documento y lo seteamos al usuario
-            if (resp.data) {
-                this.documentos.documento = resp.data[0].id;
-
-                this.documentos.textoOcr = resp.text;
+            if (resp) {
+                console.log(resp[0]);
+                this.documentos.documento = resp[0].id;
+                let ocr = await this.uploadService.subirOCR(resp[0]);
+                console.log(ocr);
+                if (!ocr) {
+                    Swal.fire('Error', 'Ocurrió un error al subir el OCR. ', 'error');                    
+                }         
             } else {
                 this.documentos.documento = '';
             }
-        } 
+        }
 
     }
 

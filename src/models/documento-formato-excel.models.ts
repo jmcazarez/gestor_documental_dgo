@@ -33,4 +33,5 @@ export class DocumentoFormatoExcelModel {
     fileBase: any | null;
     idEncabezado: string;
     idDetalle: string;
+    progress: any
 }

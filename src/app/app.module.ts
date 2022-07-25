@@ -90,7 +90,10 @@ import { TableroCargaMasivaDescargaModule } from './main/tablero-carga-masiva-de
 
 import { UsuariosFinanzasModule } from './main/usuarios-finanzas/usuarios-finanzas.module';
 import { GuardarUsuarioFinanzasModule } from './main/usuarios-finanzas/guardar-usuario-finanzas/guardar-usuario-finanzas.module';
-GuardarUsuarioFinanzasModule
+import { PerfilUsuariosModule } from 'app/main/perfil-usuarios/perfil-usuarios.module';
+import { GuardarPerfilUsuarioModule } from './main/perfil-usuarios/guardar-perfil-usuarios/guardar-perfil-usuarios.module';
+import { GuardarPermisosUsuariosModule } from './main/perfil-usuarios/guardar-perfil-usuarios/guardar-permisos-usuarios/guardar-permisos.usuarios.module';
+
 const appRoutes: Routes = [
     {
         path      : '**',
@@ -157,21 +160,21 @@ const appRoutes: Routes = [
          GuardarSecretariaModule,
         NotificacionesModule,
         CompartirLinkModule,
-        PartidosPoliticosModule,
-        GuardarPartidosPoliticosModule,
+    /*     PartidosPoliticosModule,
+        GuardarPartidosPoliticosModule, */
         //LegislaturasModule,
         //GuardarLegislaturasModule,
          GuardarDireccionesModule,
          GuardarDepartamentosModule,
          ModalDireccionesModule,
         DepartamentosModule,
-        DiputadosModule,
+      /*   DiputadosModule,
         GuardarDiputadosModule,
         ComisionesModule,
         GuardarComisionesModule,
-        GuardarDiputadosModule,
+        GuardarDiputadosModule, */
         //EmpleadosDelCongresoModule,
-		MesasDirectivasModule,
+		/* MesasDirectivasModule,
         GuardarMesaModule,
         TableroDeIniciativasModule,
         GuardarIniciativasModule,
@@ -179,28 +182,32 @@ const appRoutes: Routes = [
 		GuardarParticipantesModule,
         GuardarParticipantesComisionModule,
         TableroDeRecepcionDeActasModule,
-        GuardarRecepcionDeActasModule,
-        TableroDeRecepcionDeExpedientesModule,
-        GuardarRecepcionDeExpedienteModule,
-        TableroDeLibroDeActasModule,
-        GuardarlibroDeActasModule,
+        GuardarRecepcionDeActasModule, */
+     /*    TableroDeRecepcionDeExpedientesModule,
+        GuardarRecepcionDeExpedienteModule, */
+       /*  TableroDeLibroDeActasModule,
+        GuardarlibroDeActasModule, */
         TableroDePrestamosDeDocumentosModule,
         GuardarPrestamoModule,
         TableroDeDanoDeDocumentosModule,
         TableroDeInventarioFisicoModule,
         GuardarInventarioFisicoModule,
-        IniciativaTurnadaAComisionModule,
-        TableroDeCentroDeInvestigacionesYEstudiosLegislativosModule,
-        RecepcionDeIniciativasModule,
-        SesionesModule,
+  /*       IniciativaTurnadaAComisionModule, */
+       /*  TableroDeCentroDeInvestigacionesYEstudiosLegislativosModule,
+        RecepcionDeIniciativasModule, */
+    /*     SesionesModule,
         GuardarSesionesModule,
-        DashboardDeIndicadoresDeSesionesModule,
-        IniciativaModificadaSuspendidaModule,
+        DashboardDeIndicadoresDeSesionesModule, */
+/*         IniciativaModificadaSuspendidaModule,
         DashboardDeIndicadoresIniciativasModule,
-        IniciativasPendientesPorFirmarModule,
+        IniciativasPendientesPorFirmarModule, */
         TableroCargaMasivaDescargaModule,
         UsuariosFinanzasModule,
-        GuardarUsuarioFinanzasModule
+        GuardarUsuarioFinanzasModule,
+        PerfilUsuariosModule,
+        GuardarPerfilUsuarioModule,
+        GuardarPermisosUsuariosModule
+       
         
     ],             
     bootstrap   : [

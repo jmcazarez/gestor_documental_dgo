@@ -23,6 +23,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { TableroCargaMasivaDescargaComponent } from './tablero-carga-masiva-descarga.component';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 const routes = [
   {
@@ -64,7 +65,8 @@ const routes = [
       MatTableModule,
       MatTabsModule,
       MatMenuModule,
-      NgxSpinnerModule
+      NgxSpinnerModule,
+      MatProgressBarModule
   ],
   providers: [
       {

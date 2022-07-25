@@ -24,9 +24,10 @@
                                 <div class="select ">
                                     <p class="tag">Cargas masivas pendientes</p>
                                     <mat-form-field appearance="fill" class="input corte">
-                                        <mat-label>{{arrHistorialCarga.length == 0 ? 'No tiene cargas pendientes' : 'Seleccionar'}}</mat-label>
+                                        <mat-label>{{arrHistorialCarga.length == 0 ? 'No tiene cargas pendientes' :
+                                            'Seleccionar'}}</mat-label>
                                         <mat-select formControlName="historial" [formControlName]="'historial'"
-                                        [disabled]="(excelSeleccionado || selectedHistorial !== '') && arrHistorialCarga.length == 0">
+                                            [disabled]="(excelSeleccionado || selectedHistorial !== '') && arrHistorialCarga.length == 0">
                                             <mat-option *ngFor="let historial of arrHistorialCarga"
                                                 [value]="historial.id">
                                                 {{historial.id}} - {{historial.createdAt | date:'dd-MM-yyyy'}}
@@ -35,14 +36,14 @@
                                     </mat-form-field>
                                 </div>
                                 <div>
-                                    <button mat-raised-button
-                                    color="accent" class="btn-search" (click)="subirExcel()"
-                                    [disabled]="excelSeleccionado || selectedHistorial !== ''">
+                                    <button mat-raised-button color="accent" class="btn-search" (click)="subirExcel()"
+                                        [disabled]="excelSeleccionado || selectedHistorial !== ''">
                                         Cargar formato&nbsp;<mat-icon>add</mat-icon>
                                     </button>
                                     <input type="file" (change)="onFileChange($event)" #excelInput id="excelUpload"
-                                    name="excelUpload" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                    style="display:none;" />
+                                        name="excelUpload"
+                                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                        style="display:none;" />
                                 </div>
                             </section>
                         </form>
@@ -53,22 +54,12 @@
                             <div class="content p-24" align="center" style="border: 1px">
                                 <div class="content">
 
-                                    <ngx-datatable
-                                        class="material shadow-none"
-                                        [rows]="documentos"
-                                        [loadingIndicator]="loadingIndicator"
-                                        [columnMode]="'force'"
-                                        [headerHeight]="50"
-                                        [footerHeight]="50"
-                                        [rowHeight]="80"
-                                      
-                                        [reorderable]="reorderable"
-                                        [limit]="10"
-                                        [scrollbarH]="true"
-                                        [scrollbarV]="true"
-                                    >
+                                    <ngx-datatable class="material shadow-none" [rows]="documentos"
+                                        [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50"
+                                        [footerHeight]="50" [rowHeight]="80" [reorderable]="reorderable" [limit]="10"
+                                        [scrollbarH]="true" [scrollbarV]="true">
                                         <ngx-datatable-column name="Valido" [sortable]="false" [width]="100"
-                                        [canAutoResize]="false" [resizeable]="false" [contentEditable]="false">
+                                            [canAutoResize]="false" [resizeable]="false" [contentEditable]="false">
                                             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                                                 <mat-icon *ngIf="row.valido" color="accent" class="material-icons">
                                                     check_circle
@@ -81,32 +72,47 @@
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Id. Archivo" prop="id" [width]="100">
                                         </ngx-datatable-column>
+                                        <ngx-datatable-column name="Carga" [sortable]="false" [width]="100"
+                                        [canAutoResize]="false" [resizeable]="false" [contentEditable]="false">
+                                        <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
+                                            <div class="progress" style="width: 140px; height: 15px">
+                                                <span>{{row.progress.value}}%</span>
+                                                <div id="progressbar">
+                                                    <mat-progress-bar mode="determinate" value={{row.progress.value}}>
+                                                    </mat-progress-bar>
+                                                </div>
+                                            </div>
+
+                                        </ng-template>
+
+                                    </ngx-datatable-column>
                                         <ngx-datatable-column name="PDF" prop="cNombreDocumento" [minWidth]="200">
-                                        </ngx-datatable-column>                                       
+                                        </ngx-datatable-column>
                                         <ngx-datatable-column name="Nro. de caja" prop="folioExpediente" [width]="100">
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Tipo Expediente" prop="expediente" [width]="200">
                                         </ngx-datatable-column>
-                                        <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento" [width]="200">
+                                        <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"
+                                            [width]="200">
                                         </ngx-datatable-column>
-                                   <!--      <ngx-datatable-column name="Páginas" prop="paginas" [width]="100">
-                                        </ngx-datatable-column> -->                             
+                                        <!--      <ngx-datatable-column name="Páginas" prop="paginas" [width]="100">
+                                        </ngx-datatable-column> -->
                                         <ngx-datatable-column name="Fecha de carga" prop="fechaCargaDate" [width]="130">
-                                        </ngx-datatable-column>    
+                                        </ngx-datatable-column>
                                         <ngx-datatable-column name="Plazo" prop="plazoDeConservacion" [width]="160">
-                                        </ngx-datatable-column> 
+                                        </ngx-datatable-column>
                                         <ngx-datatable-column name="Clave" prop="clave" [width]="130">
-                                        </ngx-datatable-column>      
+                                        </ngx-datatable-column>
                                         <ngx-datatable-column name="Pasillo" prop="pasillo" [width]="130">
-                                        </ngx-datatable-column>     
+                                        </ngx-datatable-column>
                                         <ngx-datatable-column name="Estante" prop="estante" [width]="130">
-                                        </ngx-datatable-column>         
+                                        </ngx-datatable-column>
                                         <ngx-datatable-column name="Nivel" prop="nivel" [width]="130">
-                                        </ngx-datatable-column>   
+                                        </ngx-datatable-column>
                                         <ngx-datatable-column name="Sección" prop="seccion" [width]="130">
-                                        </ngx-datatable-column>                              
+                                        </ngx-datatable-column>
                                         <ngx-datatable-column name="Estatus" [sortable]="false" [width]="100"
-                                        [canAutoResize]="false" [resizeable]="false" [contentEditable]="false">
+                                            [canAutoResize]="false" [resizeable]="false" [contentEditable]="false">
                                             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                                                 <mat-icon *ngIf="row.bActivo" color="accent" class="material-icons">
                                                     check_circle
@@ -116,23 +122,44 @@
                                                 </mat-icon>
                                             </ng-template>
                                         </ngx-datatable-column>
+                                
+
                                     </ngx-datatable>
                                 </div>
                             </div>
+                            <div id="box2">
+                                <button id="selectButton" mat-raised-button (click)="fileInput.click()">Seleccione
+                                    archivos para subir</button>
+                                <input #fileInput type="file" hidden multiple (change)="selectFiles($event)"
+                                    accept="application/pdf" />
+                                <span *ngIf="fileName">{{fileName}}</span>
+                            </div>
                             <div class="select buttons">
-                                <button mat-raised-button color="accent" class="btn-search"
-                                (click)="cargarDocumentos()" *ngIf="excelSeleccionado"
-                                [disabled]="!cargarArchivos">
+                                <button mat-raised-button color="accent" class="btn-search" (click)="cargarDocumentos()"
+                                    *ngIf="excelSeleccionado" [disabled]="!cargarArchivos">
                                     Cargar documentos&nbsp;<mat-icon>add</mat-icon>
                                 </button>
+
+                                <!--    <div mode="buffer" *ngFor="let progress of progressInfo">
+                                        <span>{{progress.fileName}}</span>
+                                        <span>{{progress.value}}%</span>
+                                        <div id="progressbar">
+                                            <mat-progress-bar mode="buffer" value={{progress.value}}>
+                                            </mat-progress-bar>
+                                        </div>
+                                    </div> -->
+
+                                <button mat-raised-button color="accent" class="btn-search" (click)="uploadFiles()">
+                                    sUBIR&nbsp;<mat-icon>add</mat-icon>
+                                </button>
                                 <input type="file" #fileInput id="fileUpload" name="fileUpload" multiple="multiple"
-                                    accept="application/pdf" style="display:none;"/>
+                                    accept="application/pdf" style="display:none;" />
                                 <button mat-raised-button [disabled]="selectedHistorial === ''" color="warn"
-                                class="btn-search" (click)="eliminarHistorialCarga()" *ngIf="!excelSeleccionado">
-                                        Eliminar carga masiva pendiente&nbsp;<mat-icon>delete</mat-icon>
+                                    class="btn-search" (click)="eliminarHistorialCarga()" *ngIf="!excelSeleccionado">
+                                    Eliminar carga masiva pendiente&nbsp;<mat-icon>delete</mat-icon>
                                 </button>
                                 <button mat-raised-button matStepperPrevious color="warn" class="btn-search"
-                                [disabled]="documentos.length == 0" (click)="limpiar()">
+                                    [disabled]="documentos.length == 0" (click)="limpiar()">
                                     Volver
                                 </button>
                                 <button [disabled]="!validarGuardado" mat-raised-button color="accent"
@@ -266,37 +293,39 @@
                                             <div class="form-group">
                                                 <div class="select"
                                                     *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Numérico'">
-                                                    <p class="tag">{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}</p>
+                                                    <p class="tag">
+                                                        {{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}</p>
                                                     <mat-form-field appearance="fill" class="input">
                                                         <mat-label>Capture un numero</mat-label>
                                                         <input type="number"
                                                             *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Numérico'"
                                                             matInput [(ngModel)]="meta.text"
-                                                            name="{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}"
-                                                           >
+                                                            name="{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}">
                                                     </mat-form-field>
                                                 </div>
                                                 <div class="select"
                                                     *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Texto'">
-                                                    <p class="tag">{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}</p>
+                                                    <p class="tag">
+                                                        {{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}</p>
                                                     <mat-form-field appearance="fill" class="input">
                                                         <mat-label>Capture un texto</mat-label>
-                                                        <input *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Texto'"
+                                                        <input
+                                                            *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Texto'"
                                                             matInput [(ngModel)]="meta.text"
-                                                            name="{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}"
-                                                            >
+                                                            name="{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}">
                                                     </mat-form-field>
                                                 </div>
                                                 <div class="select"
                                                     *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Fecha'">
-                                                    <p class="tag">{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}</p>
+                                                    <p class="tag">
+                                                        {{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}</p>
                                                     <mat-form-field appearance="fill" class="input">
                                                         <mat-label>Seleccione una Fecha</mat-label>
-                                                        <input *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Fecha'"
+                                                        <input
+                                                            *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Fecha'"
                                                             matInput [(ngModel)]="meta.text"
                                                             name="{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}"
-                                                            [matDatepicker]="picker2"
-                                                           >
+                                                            [matDatepicker]="picker2">
                                                         <mat-datepicker-toggle matSuffix [for]="picker2">
                                                         </mat-datepicker-toggle>
                                                         <mat-datepicker #picker2></mat-datepicker>
@@ -305,12 +334,12 @@
 
                                                 <div class="select"
                                                     *ngIf="arrMetacatalogosFiltro[in].cTipoMetacatalogo==='Sí o no'">
-                                                    <p class="tag">{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}</p>
+                                                    <p class="tag">
+                                                        {{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}</p>
                                                     <mat-form-field appearance="fill" class="input">
                                                         <mat-label>Si/No</mat-label>
                                                         <mat-select [(ngModel)]="meta.text"
-                                                            name="{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}"
-                                                            >
+                                                            name="{{arrMetacatalogosFiltro[in].cDescripcionMetacatalogo}}">
                                                             <mat-option value="Sí">Sí</mat-option>
                                                             <mat-option value="No">No</mat-option>
                                                         </mat-select>
@@ -368,7 +397,7 @@
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Tipo de información" prop="informacion">
                                         </ngx-datatable-column>
-                                      <!--   <ngx-datatable-column name="Páginas" prop="paginas" [width]="100">
+                                        <!--   <ngx-datatable-column name="Páginas" prop="paginas" [width]="100">
                                         </ngx-datatable-column> -->
                                         <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion">
                                         </ngx-datatable-column>
@@ -380,7 +409,7 @@
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Clasificación" prop="clasificacion">
                                         </ngx-datatable-column>
-                                      <!--  <ngx-datatable-column name="Ente" prop="ente.cDescripcionEnte">
+                                        <!--  <ngx-datatable-column name="Ente" prop="ente.cDescripcionEnte">
                                         </ngx-datatable-column>-->
                                         <ngx-datatable-column name="Tipo de expediente" prop="descripcionExpediente">
                                         </ngx-datatable-column>

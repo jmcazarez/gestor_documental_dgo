@@ -1,0 +1,70 @@
+<ngx-spinner type="timer"></ngx-spinner>
+<div id="clientes" class="page-layout simple fullwidth docs">
+
+    <!-- HEADER -->
+    <div class="header  p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
+
+        <div class="hero-text mb-32">
+            <h1>Perfil de usuarios</h1>
+            <h3>Listado de perfiles de usuarios</h3>
+        </div>
+
+    </div>
+
+
+    <div class="content p-24" style="border: 1px" align="right">
+
+
+        <mat-form-field >
+
+            <mat-label>Buscar</mat-label>
+            <input  type='text' matInput placeholder='' (keyup)='filterDatatable($event)' [(ngModel)]="valueBuscador">   
+          
+        </mat-form-field>   
+        <mat-icon class="buscar">search</mat-icon>
+        <button mat-raised-button color="accent" (click)="nuevoPerfilUsuarios()">
+            <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un nuevo perfil de usuarios">
+                person_add</mat-icon>
+            Nuevo Perfil
+        </button>
+
+        <div class="content">
+            <ngx-datatable class="material" [rows]="rows" [loadingIndicator]="loadingIndicator"
+        [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
+        [reorderable]="reorderable" [limit]="10">
+
+                <ngx-datatable-column name="ID. Perfil" prop="id"></ngx-datatable-column>
+                <ngx-datatable-column name="Perfil de Usuario" prop="cNombrePerfil"></ngx-datatable-column>
+                <!-- <ngx-datatable-column name="Usuarios"></ngx-datatable-column> -->
+                <ngx-datatable-column name="Estatus" sortable="false">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                        <mat-icon *ngIf="row.bActivo" color="accent" class="material-icons"
+                            matTooltip="Clic para eliminar">check_circle</mat-icon>
+                        <mat-icon *ngIf="!row.bActivo" color="warn" class="material-icons"
+                            matTooltip="Clic para eliminar">remove_circle</mat-icon>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="Acciones" sortable="false" prop="id">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+
+                        <a (click)="eliminarPerfilUsuarios(row)">
+                            <mat-icon color="warn" class="material-icons pointer" matTooltip="Clic para eliminar">delete
+                            </mat-icon>
+                        </a>
+
+                        <a (click)="guardarPerfilUsuarios(row)">
+                            <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para editar">edit
+                            </mat-icon>
+                        </a>
+
+                    </ng-template>
+                </ngx-datatable-column>
+
+            </ngx-datatable>
+
+        </div>
+    </div>
+    <!-- CONTENT -->
+
+</div>

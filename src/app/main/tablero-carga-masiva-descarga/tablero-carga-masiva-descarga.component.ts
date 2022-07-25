@@ -28,6 +28,8 @@ import { UsuarioLoginService } from "services/usuario-login.service";
 import { LegislaturaService } from "services/legislaturas.service";
 import { Console } from "console";
 import { isNumber } from "lodash";
+import { HttpEventType, HttpResponse } from "@angular/common/http";
+
 
 @Component({
     selector: 'app-tablero-carga-masiva-descarga',
@@ -41,7 +43,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     @ViewChild("excelInput", { static: false }) excelInput: ElementRef;
     @ViewChild("paginasInput", { static: false }) paginasInput: ElementRef;
     @ViewChild('stepper') private myStepper: MatStepper;
-
+    selectedFiles: FileList;
     cambioFile: boolean;
     paginasEditar: boolean;
     documentoBusqueda: "";
@@ -90,7 +92,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     base64: any;
     usuario: any;
     excelSeleccionado: boolean = false;
-
+    /* progressInfo = [] */
     constructor(
         private datePipe: DatePipe,
         private usuariosService: UsuariosService,
@@ -186,6 +188,39 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             }
         });
     }
+     
+    uploadFiles() {
+     
+        for (let i = 0; i < this.selectedFiles.length; i++) {
+            console.log(this.selectedFiles[i]);
+          this.upload(i, this.selectedFiles[i]);
+        }
+  
+      }
+
+    selectFiles(event) {
+        /* this.progressInfo = []; */
+        event.target.files.length == 1 ? this.fileName = event.target.files[0].name : this.fileName = event.target.files.length + " archivos";
+        this.selectedFiles = event.target.files;
+      }
+    
+    upload(index, file) {
+        console.log(this.documentos[index]);
+        this.documentos[index].progress = { value: 0, fileName: file.name }
+       
+    
+        this.uploadService.upload(file).subscribe(
+          event => {
+            if (event.type === HttpEventType.UploadProgress) {
+                this.documentos[index].progress.value = Math.round(100 * event.loaded / event.total);
+            } else if (event instanceof HttpResponse) {
+            /*   this.fileInfos = this.uploadFilesService.getFiles(); */
+            }
+          },
+          err => {
+            this.documentos[index].progress.value = 0;
+          });
+      }
 
     changeValueHistorial() {
 
@@ -246,6 +281,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                 documento.bActivo = false;
                                 documento.filePDF = null;
                                 documento.fileBase = null;
+                                documento.progress = { value: 0, fileName: '' }
                                 this.documentos.push(documento);
 
                                 this.documentos = [...this.documentos];
@@ -873,7 +909,9 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                                 }
                                             }); */
 
-                            console.log(arrExpedienteTipo);
+                     
+
+                            documento.progress = { value: 0, fileName: '' }
                             if (arrExpedienteTipo.length > 0) {
                                 documento.tipo_de_expediente =
                                     arrExpedienteTipo[0].id;
@@ -1031,7 +1069,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
 
     async subirDocumentos(idHistorial) {
         return new Promise(async (resolve) => {
-            this.spinner.show();
+          //  this.spinner.show();
             this.loadingIndicator = true;
             const fecha = new Date(); // Fecha actual
             for (const row of this.documentos) {
@@ -1056,6 +1094,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                     row.fechaCarga = this.datePipe.transform(fecha, "yyyy-MM-dd") + "T06:00:00.000Z";
                     row.idDetalle = hCarga.data.id;
                     if (row.bActivo) {
+
                         const resultado = await this.uploadService.subirArchivo(
                             { name: row.filePDF.name },
                             row.fileBase.data
@@ -1065,8 +1104,9 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                         if (resultado.error) {
                             console.log("Error upload archivo: " + row.filePDF.name);
                         }
-                        row.documento = resultado.error ? '' : resultado.data[0].id;
+                      /*   row.documento = resultado.error ? '' : resultado.data[0].id;
                         row.version = resultado.error ? '' : '1';
+                        console.log(row);
                         this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
                             // Actualizamos el detalle del historial de carga
                             this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
@@ -1076,9 +1116,9 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                 console.log('Error al guardar documento ' + row.cNombreDocumento);
                                 this.historialCarga.actualizarDetalle({ bCargado: false }, row.idDetalle).subscribe(
                                     (resp: any) => { });
-                            });
+                            }); */
                     } else {
-                        this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
+                      /*   this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
                             // Actualizamos el detalle del historial de carga
                             this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
                                 (resp: any) => { });
@@ -1087,7 +1127,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                 console.log('Error al guardar documento ' + row.cNombreDocumento);
                                 this.historialCarga.actualizarDetalle({ bCargado: false }, row.idDetalle).subscribe(
                                     (resp: any) => { });
-                            });
+                            }); */
                     }
                     row.fileBase.data = '';
                 }

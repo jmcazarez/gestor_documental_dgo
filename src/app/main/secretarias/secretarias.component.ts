@@ -99,7 +99,7 @@ export class SecretariasComponent implements OnInit {
         // Abrimos modal de guardar direccion
         const dialogRef = this.dialog.open(GuardarDireccionesComponent, {
             width: '80%',
-            height: '80%',
+            height: '90%',
             disableClose: true,
             data: secretaria,
         });
