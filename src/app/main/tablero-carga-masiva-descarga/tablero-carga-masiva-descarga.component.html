@@ -20,7 +20,7 @@
                         <form [formGroup]="firstFormGroup">
                             <ng-template matStepLabel>Carga de documentos</ng-template>
 
-                            <section class="container carga">
+                           <!--  <section class="container carga">
                                 <div class="select ">
                                     <p class="tag">Cargas masivas pendientes</p>
                                     <mat-form-field appearance="fill" class="input corte">
@@ -34,7 +34,7 @@
                                             </mat-option>
                                         </mat-select>
                                     </mat-form-field>
-                                </div>
+                                </div> -->
                                 <div>
                                     <button mat-raised-button color="accent" class="btn-search" (click)="subirExcel()"
                                         [disabled]="excelSeleccionado || selectedHistorial !== ''">
@@ -45,7 +45,7 @@
                                         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                                         style="display:none;" />
                                 </div>
-                            </section>
+                       <!--      </section> -->
                         </form>
                     </mat-step>
                     <mat-step [stepControl]="secondFormGroup">
@@ -111,6 +111,7 @@
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Sección" prop="seccion" [width]="130">
                                         </ngx-datatable-column>
+                                        <ngx-datatable-column name="Clasificación" prop="clasificacion" [width]="300" [cellClass]="'class-tema'"></ngx-datatable-column>
                                         <ngx-datatable-column name="Estatus" [sortable]="false" [width]="100"
                                             [canAutoResize]="false" [resizeable]="false" [contentEditable]="false">
                                             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
@@ -127,13 +128,13 @@
                                     </ngx-datatable>
                                 </div>
                             </div>
-                            <div id="box2">
+                       <!--     <div id="box2">
                                 <button id="selectButton" mat-raised-button (click)="fileInput.click()">Seleccione
                                     archivos para subir</button>
                                 <input #fileInput type="file" hidden multiple (change)="selectFiles($event)"
                                     accept="application/pdf" />
                                 <span *ngIf="fileName">{{fileName}}</span>
-                            </div>
+                            </div>  -->
                             <div class="select buttons">
                                 <button mat-raised-button color="accent" class="btn-search" (click)="cargarDocumentos()"
                                     *ngIf="excelSeleccionado" [disabled]="!cargarArchivos">
@@ -148,11 +149,11 @@
                                             </mat-progress-bar>
                                         </div>
                                     </div> -->
-
+<!-- 
                                 <button mat-raised-button color="accent" class="btn-search" (click)="uploadFiles()">
                                     sUBIR&nbsp;<mat-icon>add</mat-icon>
-                                </button>
-                                <input type="file" #fileInput id="fileUpload" name="fileUpload" multiple="multiple"
+                                </button> -->
+                                <input type="file" #fileInput id="fileUpload" name="fileUpload" multiple="multiple" (change)="selectFiles($event)"
                                     accept="application/pdf" style="display:none;" />
                                 <button mat-raised-button [disabled]="selectedHistorial === ''" color="warn"
                                     class="btn-search" (click)="eliminarHistorialCarga()" *ngIf="!excelSeleccionado">

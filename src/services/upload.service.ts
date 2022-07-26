@@ -142,16 +142,13 @@ export class UploadFileService {
     }
 
     upload(file: File): Observable<HttpEvent<any>> {
-        this.TOKEN = localStorage.getItem('token');
-
-        console.log(file);
+        this.TOKEN = localStorage.getItem('token');      
         const formData: FormData = new FormData();
 
         formData.append('files', file);
      
         const req = new HttpRequest('POST', this.urlCms + 'upload/', formData, {
-            reportProgress: true,
-            responseType: 'json'
+            reportProgress: true
         });
         return this.http.request(req);
     }

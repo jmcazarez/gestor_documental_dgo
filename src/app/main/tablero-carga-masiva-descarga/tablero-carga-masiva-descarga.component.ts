@@ -188,39 +188,46 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             }
         });
     }
-     
+
     uploadFiles() {
-     
+
         for (let i = 0; i < this.selectedFiles.length; i++) {
-            console.log(this.selectedFiles[i]);
-          this.upload(i, this.selectedFiles[i]);
+
+            this.upload(i, this.selectedFiles[i]);
         }
-  
-      }
+
+    }
 
     selectFiles(event) {
         /* this.progressInfo = []; */
         event.target.files.length == 1 ? this.fileName = event.target.files[0].name : this.fileName = event.target.files.length + " archivos";
         this.selectedFiles = event.target.files;
-      }
-    
-    upload(index, file) {
-        console.log(this.documentos[index]);
+    }
+
+    async upload(index, file) {
         this.documentos[index].progress = { value: 0, fileName: file.name }
-       
-    
-        this.uploadService.upload(file).subscribe(
-          event => {
-            if (event.type === HttpEventType.UploadProgress) {
-                this.documentos[index].progress.value = Math.round(100 * event.loaded / event.total);
-            } else if (event instanceof HttpResponse) {
-            /*   this.fileInfos = this.uploadFilesService.getFiles(); */
-            }
-          },
-          err => {
-            this.documentos[index].progress.value = 0;
-          });
-      }
+        return new Promise<string>(async (resolve) => {
+            await this.uploadService.upload(file).subscribe(
+                event => {
+
+                    if (event.type === HttpEventType.UploadProgress) {
+                        this.documentos[index].progress.value = Math.round(100 * event.loaded / event.total);
+                        if (this.documentos[index].progress.value == 100) {
+
+                        }
+                    } else if (event instanceof HttpResponse) {
+                        console.log('response');
+                        resolve(event.body[0].id)
+                    }
+                },
+                err => {
+                    this.documentos[index].progress.value = 0;
+                });
+
+        })
+
+
+    }
 
     changeValueHistorial() {
 
@@ -397,7 +404,6 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             // Obtenemos el historial de carga
             this.historialCarga.obtenerHistorialCarga(this.usuario[0].data.id).subscribe((resp: any) => {
                 this.arrHistorialCarga = resp;
-                console.log(this.arrHistorialCarga);
                 resolve(this.arrHistorialCarga);
             },
                 (err) => {
@@ -429,9 +435,8 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                     for (const pdf of fileInput.files) {
                         if (pdf.name.trim() == documento.cNombreDocumento.trim()) {
                             matchDocFile = matchDocFile + 1;
-                            documento.fileBase = await this.readAsDataURL(pdf);
+                            /*   documento.fileBase = await this.readAsDataURL(pdf); */
                             documento.filePDF = pdf;
-                            console.log(documento.filePDF);
                             encontrado = true;
                             break;
                         }
@@ -458,7 +463,6 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                 }
                 this.loadingIndicator = false;
                 this.spinner.hide();
-                console.log(this.documentos);
                 this.validarGuardado = (matchDocFile > 0) ? true : false;
                 if (matchDocFile < this.documentos.length) {
                     Swal.fire(
@@ -566,7 +570,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                     try {
 
 
-                        console.log('entro');
+
                         let textError = "";
                         this.arrMetacatalogos = [];
                         let documento = new DocumentoFormatoExcelModel;
@@ -688,7 +692,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                             documento.fechaCarga = this.datePipe.transform(fechaHoy, "yyyy-MM-dd") + "T06:00:00.000Z";
                             documento.fechaCargaDate = this.datePipe.transform(fechaHoy, "dd-MM-yyyy");
                             documento.metacatalogos = this.arrMetacatalogos;
-                            console.log(row['PLAZO DE CONSERVACION']);
+
                             if (_.has(row, 'PLAZO DE CONSERVACION') && (row['PLAZO DE CONSERVACION'].length > 0 || isNumber(row['PLAZO DE CONSERVACION']))) {
                                 if (isNumber(row['PLAZO DE CONSERVACION'])) {
                                     documento.plazoDeConservacion = String(
@@ -834,44 +838,108 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                             } */
 
                             let meta = "";
+
+                            const keys = Object.keys(row);
+                            ;
+                            let iMeta = 0;
+                            for (let i = 10; i < keys.length; i++) {
+
+                                documento.metacatalogos[iMeta].text = row[keys[i]]
+                                iMeta++
+                            };
+
+
                             for (const i of documento.metacatalogos) {
+
                                 if (meta === "") {
-                                    if (i.cTipoMetacatalogo === "Fecha") {
-                                        if (i.text) {
+                                    if (i.bOligatorio && i.text == '') {
+                                        meta = meta + i.cDescripcionMetacatalogo + ": " + '';
+                                        if (textError.length == 0) {
+                                            textError =
+                                                "El metacatalogo " + i.cDescripcionMetacatalogo + " es obligatorio";
+                                        } else {
+                                            textError =
+                                                textError +
+                                                ", el metacatalogo " + i.cDescripcionMetacatalogo + " es obligatorio";
+                                        }
+
+                                    } else {
+                                        if (i.cTipoMetacatalogo === "Fecha") {
+
                                             if (new Date(i.text)) {
                                                 meta = meta + i.cDescripcionMetacatalogo + ": " +
                                                     this.datePipe.transform(i.text, "yyyy-MM-dd") + "T06:00:00.000Z";
+                                            } else {
+                                                if (textError.length == 0) {
+                                                    textError =
+                                                        "El metacatalogo " + i.cDescripcionMetacatalogo + " tiene un valor no valido";
+                                                } else {
+                                                    textError =
+                                                        textError +
+                                                        ", el metacatalogo " + i.cDescripcionMetacatalogo + " tiene un valor no valido";
+                                                }
                                             }
-                                        }
-                                    } else {
-                                        if (i.text) {
+
+                                        } else {
+
                                             meta = meta + i.cDescripcionMetacatalogo + ": " + i.text;
+
                                         }
                                     }
+
+
+
                                 } else {
-                                    if (i.cTipoMetacatalogo === "Fecha") {
-                                        if (i.text) {
+                                    if (i.bOligatorio && i.text == '') {
+                                        meta = meta + i.cDescripcionMetacatalogo + ": " + '';
+                                        if (textError.length == 0) {
+                                            textError =
+                                                "El metacatalogo " + i.cDescripcionMetacatalogo + " es obligatorio";
+                                        } else {
+                                            textError =
+                                                textError +
+                                                ", el metacatalogo " + i.cDescripcionMetacatalogo + " es obligatorio";
+                                        }
+
+                                    } else {
+                                        if (i.cTipoMetacatalogo === "Fecha") {
+
                                             if (new Date(i.text)) {
                                                 meta = meta + " , " + i.cDescripcionMetacatalogo + ": " +
                                                     this.datePipe.transform(i.text, "yyyy-MM-dd") + "T06:00:00.000Z";
+
+                                            } else {
+                                                if (textError.length == 0) {
+                                                    textError =
+                                                        "El metacatalogo " + i.cDescripcionMetacatalogo + " tiene un valor no valido";
+                                                } else {
+                                                    textError =
+                                                        textError +
+                                                        ", el metacatalogo " + i.cDescripcionMetacatalogo + " tiene un valor no valido";
+                                                }
                                             }
-                                        }
-                                    } else if (i.cTipoMetacatalogo === "Sí o no") {
-                                        if (i.text) {
-                                            meta = meta + " , " + i.cDescripcionMetacatalogo + ": Sí";
+
+                                        } else if (i.cTipoMetacatalogo === "Sí o no") {
+                                            if (i.text) {
+                                                meta = meta + " , " + i.cDescripcionMetacatalogo + ": Sí";
+                                            } else {
+                                                meta = meta + " , " + i.cDescripcionMetacatalogo + ": No";
+                                            }
                                         } else {
-                                            meta = meta + " , " + i.cDescripcionMetacatalogo + ": No";
-                                        }
-                                    } else {
-                                        if (i.text) {
+
                                             meta = meta + " , " + i.cDescripcionMetacatalogo + ": " + i.text;
+
                                         }
                                     }
                                 }
                             }
 
+                            /*  for (var x in row) if (row.hasOwnProperty(x)) {
+                                console.log(x);
+                             } */
+
                             documento.clasificacion = meta;
-                            console.log(this.arrExpediente);
+                            /* console.log( documento.clasificacion); */
                             let arrExpedienteTipo: any[]
                             if (row["TIPO DOCUMENTAL"]) {
                                 arrExpedienteTipo = this.arrExpediente.filter(
@@ -909,7 +977,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                                 }
                                             }); */
 
-                     
+
 
                             documento.progress = { value: 0, fileName: '' }
                             if (arrExpedienteTipo.length > 0) {
@@ -1034,7 +1102,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             cancelButtonText: 'No'
         }).then(async (result: any) => {
             if (result.value) {
-                console.log(this.documentos);
+
                 await this.confirmarGuardarDocumentos();
             }
         });
@@ -1069,9 +1137,10 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
 
     async subirDocumentos(idHistorial) {
         return new Promise(async (resolve) => {
-          //  this.spinner.show();
+            //  this.spinner.show();
             this.loadingIndicator = true;
             const fecha = new Date(); // Fecha actual
+            let index = 0;
             for (const row of this.documentos) {
                 // Agregamos elemento file
                 row.usuario = this.menuService.usuario;
@@ -1083,9 +1152,6 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                             idHistorial,
                         ],
                     });
-                setTimeout(() => {
-                }, 1000);
-                console.log(hCarga);
                 if (hCarga.error) {
                     console.log("Error al guardar detalle del historial: " + idHistorial);
                 } else {
@@ -1094,47 +1160,61 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                     row.fechaCarga = this.datePipe.transform(fecha, "yyyy-MM-dd") + "T06:00:00.000Z";
                     row.idDetalle = hCarga.data.id;
                     if (row.bActivo) {
+                        //heber
+                        let resp = await this.upload(index, this.selectedFiles[index]);
+                        if (resp) {
+                            row.documento = resp;
+                            row.version = 1;
+                            this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
+                                // Actualizamos el detalle del historial de carga
+                                this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
+                                    (resp: any) => { });
+                            },
+                                (err: any) => {
+                                    console.log('Error al guardar documento ' + row.cNombreDocumento);
+                                    this.historialCarga.actualizarDetalle({ bCargado: false }, row.idDetalle).subscribe(
+                                        (resp: any) => { });
+                                });
+                        } else {
 
-                        const resultado = await this.uploadService.subirArchivo(
-                            { name: row.filePDF.name },
-                            row.fileBase.data
-                        );
-                        setTimeout(() => {
-                        }, 1500);
-                        if (resultado.error) {
-                            console.log("Error upload archivo: " + row.filePDF.name);
+                            Swal.fire(
+                                "Error",
+                                "Ocurrió un error al subir el documento.",
+                                "error"
+                            );
                         }
-                      /*   row.documento = resultado.error ? '' : resultado.data[0].id;
-                        row.version = resultado.error ? '' : '1';
-                        console.log(row);
-                        this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
-                            // Actualizamos el detalle del historial de carga
-                            this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
-                                (resp: any) => { });
-                        },
-                            (err: any) => {
-                                console.log('Error al guardar documento ' + row.cNombreDocumento);
-                                this.historialCarga.actualizarDetalle({ bCargado: false }, row.idDetalle).subscribe(
-                                    (resp: any) => { });
-                            }); */
-                    } else {
-                      /*   this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
-                            // Actualizamos el detalle del historial de carga
-                            this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
-                                (resp: any) => { });
-                        },
-                            (err: any) => {
-                                console.log('Error al guardar documento ' + row.cNombreDocumento);
-                                this.historialCarga.actualizarDetalle({ bCargado: false }, row.idDetalle).subscribe(
-                                    (resp: any) => { });
-                            }); */
-                    }
-                    row.fileBase.data = '';
-                }
-            };
-            setTimeout(() => {
-            }, 2000);
+                        /*   this.upload(index, row.filePDF); */
+                        /*     const resultado = await this.uploadService.subirArchivo(
+                                { name: row.filePDF.name },
+                                row.fileBase.data
+                            );
+                            setTimeout(() => {
+                            }, 1500);
+                            if (resultado.error) {
+                                console.log("Error upload archivo: " + row.filePDF.name);
+                            } */
 
+
+
+                    } else {
+                        /*   this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
+                              // Actualizamos el detalle del historial de carga
+                              this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
+                                  (resp: any) => { });
+                          },
+                              (err: any) => {
+                                  console.log('Error al guardar documento ' + row.cNombreDocumento);
+                                  this.historialCarga.actualizarDetalle({ bCargado: false }, row.idDetalle).subscribe(
+                                      (resp: any) => { });
+                              }); */
+                    }
+                    /* row.fileBase.data = ''; */
+                }
+                index++
+            };
+
+          
+       
             this.historialCarga.actualizarHistorial({ bCompletado: true }, idHistorial)
                 .subscribe(async (resp: any) => {
                     this.loadingIndicator = false;
@@ -1177,6 +1257,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
         this.cargarArchivos = false;
         this.validarGuardado = false;
         this.myStepper.previous();
+        this.fileInput.nativeElement.value = "";
         window.scroll(0, 0);
     }
 
