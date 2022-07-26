@@ -151,7 +151,7 @@ export class MenuService {
 
                                             } else {
                                                 // Si el permiso es unico lo agregamos
-
+                                               
                                                 if (documentos.tipo_de_documento.tipos_de_formato) {
                                                     tipoFormato = documentos.tipo_de_documento.tipos_de_formato;
                                                 }

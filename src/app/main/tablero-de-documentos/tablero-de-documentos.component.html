@@ -65,10 +65,12 @@
             [scrollbarH]="true"
             [scrollbarV]="true"
             (page)="setPage($event)" 
-        >
+        >  
+                <ngx-datatable-column name="Departamento" prop="departamento"></ngx-datatable-column>
                 <!-- <ngx-datatable-column name="Id. documento" prop="id"></ngx-datatable-column> -->
-                <ngx-datatable-column name="Documento" prop="cNombreDocumento" [width]="500"></ngx-datatable-column>
                 <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
+                <ngx-datatable-column name="Nombre de documento" prop="cNombreDocumento" [width]="500"></ngx-datatable-column>
+              
                 <ngx-datatable-column name="Tipo de información" prop="informacion"></ngx-datatable-column>
                <!--  <ngx-datatable-column name="Páginas" prop="paginas"></ngx-datatable-column> -->
                 <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion" [width]="130"></ngx-datatable-column>

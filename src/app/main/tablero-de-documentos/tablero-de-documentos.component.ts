@@ -14,6 +14,7 @@ import { ExportAsService, ExportAsConfig } from 'ngx-export-as';
 import { Page } from 'models/page.models';
 import { Console } from 'console';
 import { environment } from 'environments/environment';
+import { UsuariosService } from 'services/usuarios.service';
 interface PageInfo {
     offset: number;
     pageSize: number;
@@ -39,6 +40,7 @@ export class TableroDeDocumentosComponent implements OnInit {
     cargando: boolean;
     documentos = [];
     documentosTemporal = [];
+    arrDepartamentos = [];
     optAgregar: boolean;
     optConsultar: boolean;
     optEditar: boolean;
@@ -56,7 +58,8 @@ export class TableroDeDocumentosComponent implements OnInit {
         public dialog: MatDialog,
         private documentoService: DocumentosService,
         private menuService: MenuService,
-        private sanitizer: DomSanitizer
+        private sanitizer: DomSanitizer,
+        private usuariosService: UsuariosService,
     ) {
         // Obtenemos documentos
 
@@ -175,6 +178,7 @@ export class TableroDeDocumentosComponent implements OnInit {
         try {
             // obtenerDocumentoReporte
             console.log(filtro);
+            await this.obtenerDepartamentos();
             await this.documentoService.obtenerDocumentoReporte(filtro).subscribe((resp: any) => {
                 // await this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
 
@@ -197,7 +201,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                         }
                         idDocumento = '';
                         // Validamos permisos
-
+                        console.log(documento.tipo_de_documento);
                         if (documento.tipo_de_documento) {
                             const encontro = this.menuService.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento.id);
 
@@ -263,7 +267,12 @@ export class TableroDeDocumentosComponent implements OnInit {
                                             documento.fechaCarga = '';
                                         }
 
-
+                                        console.log(this.arrDepartamentos);
+                                        let departamento = ""
+                                        if (documento.tipo_de_documento.departamento){
+                                            departamento = this.arrDepartamentos.find((depto: { id: string; }) => depto.id === documento.tipo_de_documento.departamento).cDescripcionDepartamento;
+                                        }
+                                        
                                         // tslint:disable-next-line: no-unused-expression
                                         /*   if (documento.legislatura) {
                                               if (documento.legislatura.cLegislatura) {
@@ -309,7 +318,8 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                 usuario: this.menuService.usuario,
                                                 numeroPagina: numeroPagina,
                                                 plazoDeConservacion: documento.plazoDeConservacion,
-                                                clave: documento.clave
+                                                clave: documento.clave,
+                                                departamento: departamento
                                             }
                                         } else {
 
@@ -345,7 +355,8 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                 usuario: this.menuService.usuario,
                                                 numeroPagina: numeroPagina,
                                                 plazoDeConservacion: documento.plazoDeConservacion,
-                                                clave: documento.clave
+                                                clave: documento.clave,
+                                                departamento: departamento
                                             });
 
                                         }
@@ -468,6 +479,24 @@ export class TableroDeDocumentosComponent implements OnInit {
         // Convertimos el resultado en binstring
         const binstr = Array.prototype.map.call(buf, (ch: number) => String.fromCharCode(ch)).join('');
         return btoa(binstr);
+    }
+
+    async obtenerDepartamentos(): Promise<void> {
+        // Obtenemos departamentos
+        this.usuariosService.obtenerDepartamentos().subscribe(
+            (resp: any) => {
+                this.arrDepartamentos = resp;
+               
+               
+            },
+            (err) => {
+                Swal.fire(
+                    "Error",
+                    "Ocurrió un error obtener el documento." + err,
+                    "error"
+                );
+            }
+        );
     }
 
     clasificarDocumento(result: any, numeroPagina: number): void {
