@@ -36,7 +36,7 @@ export class DocumentosCompartidosService {
         return this.http.get(this.baseUrl + this.urlDocumentoPublico + '/' + id);
     }
 
-    dowloadDocument(idFile: string, idDocumento: string, usuario: string, nombreDocumento: string): any {
+    dowloadDocument(idFile: string, idDocumento: string, nombreDocumento: string): any {
         this.TOKEN = localStorage.getItem('token');
 
         let httpOptions = {
@@ -44,10 +44,10 @@ export class DocumentosCompartidosService {
                 Authorization: this.TOKEN,
             }),
         };
-        return this.http.get(this.baseUrl + this.urlDowloadDocument + '/' + idFile + '/' + idDocumento + '/' + usuario + '/' + nombreDocumento, httpOptions);
+        return this.http.get(this.baseUrl + this.urlDowloadDocument + '/' + idFile + '/' + idDocumento + '/' + nombreDocumento, httpOptions);
     }
 
-    dowloadDocumentClasificacion(idFile: string, idDocumento: string, usuario: string, nombreDocumento: string): any {
+    dowloadDocumentClasificacion(idFile: string, idDocumento: string,  nombreDocumento: string): any {
         this.TOKEN = localStorage.getItem('token');
 
         let httpOptions = {
@@ -55,7 +55,7 @@ export class DocumentosCompartidosService {
                 Authorization: this.TOKEN,
             }),
         };
-        return this.http.get(this.baseUrl + this.urlDescargarDocumentoClasificacion + '/' + idFile + '/' + idDocumento + '/' + usuario + '/' + nombreDocumento, httpOptions);
+        return this.http.get(this.baseUrl + this.urlDescargarDocumentoClasificacion + '/' + idFile + '/' + idDocumento +'/' + nombreDocumento, httpOptions);
     }
 
     downloadAlready(compartidos: CompartirModel): any{

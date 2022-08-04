@@ -123,7 +123,7 @@ export class GuardarIniciativasComponent implements OnInit {
 
     async ngOnInit() {
         let validaTags = [];
-        console.log('1');
+       
         var isoDateString = new Date().toISOString();
 
         await this.obtenerDocumento();
@@ -359,7 +359,7 @@ export class GuardarIniciativasComponent implements OnInit {
                 // Actualizamos la iniciativa
                 if (this.iniciativa.estatus == "Registrada") {
                     reporte = await this.generaReport();
-                    console.log('salio reporte');
+                   
                     if (reporte === "err") {
                         return
                     }
@@ -439,7 +439,7 @@ export class GuardarIniciativasComponent implements OnInit {
                                 this.cerrar(this.iniciativa);
                             } else {
                                 this.spinner.hide();
-                                console.log('err1')
+                            
                                 this.temas = [];
                                 this.autores = [];
                                 Swal.fire(
@@ -450,7 +450,7 @@ export class GuardarIniciativasComponent implements OnInit {
                             }
                         },
                         (err) => {
-                            console.log('err2')
+                       
                             this.temas = [];
                             this.autores = [];
                             this.spinner.hide();
@@ -530,7 +530,7 @@ export class GuardarIniciativasComponent implements OnInit {
             }
             this.autores.splice(index, 1);
         } else {
-            console.log('limpio');
+          
         }
     }
 
@@ -553,13 +553,13 @@ export class GuardarIniciativasComponent implements OnInit {
 
         if (index >= 0) {
             if (index === 0) {
-                console.log('tema limpio');
+              
                 this.form.get('tema').setValue('');
                 this.iniciativa.tema = '';
             }
             this.temas.splice(index, 1);
         } else {
-            console.log('limpio');
+          
         }
     }
 
@@ -956,8 +956,7 @@ export class GuardarIniciativasComponent implements OnInit {
                     legislaturas[0]
                 );
                 if (documentoRespuesta.error) {
-                    console.log('salio err');
-                    console.log(this.iniciativa.formatosTipoIniciativa.length);
+                   
                     resolve("err");
                 } else {
                     const dd = {
@@ -1031,7 +1030,7 @@ export class GuardarIniciativasComponent implements OnInit {
                         tipoInformacion[0]["cValor"],
                         legislaturas[0]
                     );
-                    console.log('dps de todo')
+                   
                     resolve("ok");
                 }
 
@@ -1233,7 +1232,7 @@ export class GuardarIniciativasComponent implements OnInit {
                             (err: any) => {
                                 this.spinner.hide();
                                 console.log(err);
-                                console.log(this.iniciativa.formatosTipoIniciativa);
+                            
                                 if (err.error.data === "La descripción del documento ya se encuentra capturada en otro documento.") {
                                     Swal.fire(
                                         "Error",
@@ -1575,7 +1574,7 @@ export class GuardarIniciativasComponent implements OnInit {
             const fechaActual = dia + "/" + mes + "/" + anio;
             this.documentos.bActivo = true;
             if (!this.documentos.id) {
-                console.log('entro');
+              
                 this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
                 this.documentos.fechaCarga = this.documentos.fechaCreacion + 'T16:00:00.000Z';
             }

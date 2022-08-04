@@ -89,8 +89,8 @@
                                         <!--<ngx-datatable-column name="Id. documento" prop="id">
                                         </ngx-datatable-column>
                                         -->
-                                        <ngx-datatable-column name="Id. Archivo" prop="documento">
-                                        </ngx-datatable-column>
+                                      <!--   <ngx-datatable-column name="Id. Archivo" prop="documento">
+                                        </ngx-datatable-column> -->
                                         <ngx-datatable-column name="Documento" prop="cNombreDocumento">
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento">
@@ -100,14 +100,14 @@
                                         -->
                                        <!--  <ngx-datatable-column name="Páginas" prop="paginas" [width]="100">
                                         </ngx-datatable-column> -->
-                                        <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion">
+                                        <ngx-datatable-column name="Fecha de ingreso" prop="fechaCreacion">
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Fecha de carga" prop="fechaCargaText">
                                         </ngx-datatable-column>
 
                                         <ngx-datatable-column name="Versión" prop="version" [width]="100">
                                         </ngx-datatable-column>
-                                        <ngx-datatable-column name="Clasificación" prop="clasificacion">
+                                        <ngx-datatable-column name="Clasificación(Meta catalogo)" prop="clasificacion">
                                         </ngx-datatable-column>
                                         <!-- <ngx-datatable-column name="Ente" prop="ente.cDescripcionEnte"></ngx-datatable-column>
                                         </ngx-datatable-column>-->
@@ -164,14 +164,14 @@
                                     <div class="select">
                                         <p class="tag">Estatus</p>
                                         <mat-form-field appearance="fill" class="input">
-                                            <mat-label>Vigente/no Vigente</mat-label>
+                                            <mat-label>Activo/Inactivo</mat-label>
                                             <mat-select formControlName="vigente" [(ngModel)]="vigenteBusqueda">
-                                                <mat-option value="true">Vigente</mat-option>
-                                                <mat-option value="false">No Vigente</mat-option>
+                                                <mat-option value="true">Activo</mat-option>
+                                                <mat-option value="false">Inactivo</mat-option>
                                             </mat-select>
                                         </mat-form-field>
                                     </div>
-                                    <div class="select">
+                                   <!--  <div class="select">
                                         <p class="tag">Tipo de información</p>
                                         <mat-form-field appearance="fill" class="input">
                                             <mat-label>Seleccionar</mat-label>
@@ -183,9 +183,9 @@
                                                 </mat-option>
                                             </mat-select>
                                         </mat-form-field>
-                                    </div>
+                                    </div> -->
                                     <div class="select">
-                                        <p class="tag">Fecha de creación</p>
+                                        <p class="tag">Fecha de ingreso</p>
                                         <mat-form-field appearance="fill" class="input">
                                             <mat-label>Seleccione una Fecha</mat-label>
                                             <input matInput [matDatepicker]="picker" formControlName="fechaCreacion"
@@ -258,7 +258,7 @@
                                         </mat-form-field>
                                     </div>
                                     <div class="select">
-                                        <p class="tag">Folio de expediente</p>
+                                        <p class="tag">Numero de caja</p>
                                         <mat-form-field appearance="fill" class="input">
                                             <input matInput placeholder="Folio" formControlName="folioExpediente"
                                                 [(ngModel)]="selectedFolioExpediente">
@@ -369,11 +369,11 @@
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento">
                                         </ngx-datatable-column>
-                                        <ngx-datatable-column name="Tipo de información" prop="informacion">
-                                        </ngx-datatable-column>
+                                        <!-- <ngx-datatable-column name="Tipo de información" prop="informacion">
+                                        </ngx-datatable-column> -->
                                         <!-- <ngx-datatable-column name="Páginas" prop="paginas" [width]="100">
                                         </ngx-datatable-column> -->
-                                        <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion">
+                                        <ngx-datatable-column name="Fecha de ingreso" prop="fechaCreacion">
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Fecha de carga" prop="fechaCarga">
                                         </ngx-datatable-column>
@@ -381,13 +381,13 @@
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Versión" prop="version" [width]="100">
                                         </ngx-datatable-column>
-                                        <ngx-datatable-column name="Clasificación" prop="clasificacion">
+                                        <ngx-datatable-column name="Clasificación(Meta catalogo)" prop="clasificacion">
                                         </ngx-datatable-column>
                                       <!--  <ngx-datatable-column name="Ente" prop="ente.cDescripcionEnte">
                                         </ngx-datatable-column>-->
                                         <ngx-datatable-column name="Tipo de expediente" prop="descripcionExpediente">
                                         </ngx-datatable-column>
-                                        <ngx-datatable-column name="Folio de expediente" prop="folioExpediente">
+                                        <ngx-datatable-column name="Numero de caja" prop="folioExpediente">
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Estatus" sortable="false" [width]="100">
                                             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>

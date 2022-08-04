@@ -20,7 +20,7 @@
                         <form [formGroup]="firstFormGroup">
                             <ng-template matStepLabel>Carga de documentos</ng-template>
 
-                           <!--  <section class="container carga">
+                            <!--  <section class="container carga">
                                 <div class="select ">
                                     <p class="tag">Cargas masivas pendientes</p>
                                     <mat-form-field appearance="fill" class="input corte">
@@ -35,17 +35,17 @@
                                         </mat-select>
                                     </mat-form-field>
                                 </div> -->
-                                <div>
-                                    <button mat-raised-button color="accent" class="btn-search" (click)="subirExcel()"
-                                        [disabled]="excelSeleccionado || selectedHistorial !== ''">
-                                        Cargar formato&nbsp;<mat-icon>add</mat-icon>
-                                    </button>
-                                    <input type="file" (change)="onFileChange($event)" #excelInput id="excelUpload"
-                                        name="excelUpload"
-                                        accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                                        style="display:none;" />
-                                </div>
-                       <!--      </section> -->
+                            <div>
+                                <button mat-raised-button color="accent" class="btn-search" (click)="subirExcel()"
+                                    [disabled]="excelSeleccionado || selectedHistorial !== ''">
+                                    Cargar formato&nbsp;<mat-icon>add</mat-icon>
+                                </button>
+                                <input type="file" (change)="onFileChange($event)" #excelInput id="excelUpload"
+                                    name="excelUpload"
+                                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                    style="display:none;" />
+                            </div>
+                            <!--      </section> -->
                         </form>
                     </mat-step>
                     <mat-step [stepControl]="secondFormGroup">
@@ -70,22 +70,23 @@
                                                 </mat-icon>
                                             </ng-template>
                                         </ngx-datatable-column>
-                                        <ngx-datatable-column name="Id. Archivo" prop="id" [width]="100">
-                                        </ngx-datatable-column>
+                                        <!-- <ngx-datatable-column name="Id. Archivo" prop="id" [width]="100"> 
+                                        </ngx-datatable-column>-->
                                         <ngx-datatable-column name="Carga" [sortable]="false" [width]="100"
-                                        [canAutoResize]="false" [resizeable]="false" [contentEditable]="false">
-                                        <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
-                                            <div class="progress" style="width: 140px; height: 15px">
-                                                <span>{{row.progress.value}}%</span>
-                                                <div id="progressbar">
-                                                    <mat-progress-bar mode="determinate" value={{row.progress.value}}>
-                                                    </mat-progress-bar>
+                                            [canAutoResize]="false" [resizeable]="false" [contentEditable]="false">
+                                            <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
+                                                <div class="progress" style="width: 140px; height: 15px">
+                                                    <span>{{row.progress.value}}%</span>
+                                                    <div id="progressbar">
+                                                        <mat-progress-bar mode="determinate"
+                                                            value={{row.progress.value}}>
+                                                        </mat-progress-bar>
+                                                    </div>
                                                 </div>
-                                            </div>
 
-                                        </ng-template>
+                                            </ng-template>
 
-                                    </ngx-datatable-column>
+                                        </ngx-datatable-column>
                                         <ngx-datatable-column name="PDF" prop="cNombreDocumento" [minWidth]="200">
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Nro. de caja" prop="folioExpediente" [width]="100">
@@ -111,7 +112,8 @@
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Sección" prop="seccion" [width]="130">
                                         </ngx-datatable-column>
-                                        <ngx-datatable-column name="Clasificación" prop="clasificacion" [width]="300" [cellClass]="'class-tema'"></ngx-datatable-column>
+                                        <ngx-datatable-column name="Clasificación(Meta catalogo)" prop="clasificacion"
+                                            [width]="300" [cellClass]="'class-tema'"></ngx-datatable-column>
                                         <ngx-datatable-column name="Estatus" [sortable]="false" [width]="100"
                                             [canAutoResize]="false" [resizeable]="false" [contentEditable]="false">
                                             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
@@ -123,12 +125,12 @@
                                                 </mat-icon>
                                             </ng-template>
                                         </ngx-datatable-column>
-                                
+
 
                                     </ngx-datatable>
                                 </div>
                             </div>
-                       <!--     <div id="box2">
+                            <!--     <div id="box2">
                                 <button id="selectButton" mat-raised-button (click)="fileInput.click()">Seleccione
                                     archivos para subir</button>
                                 <input #fileInput type="file" hidden multiple (change)="selectFiles($event)"
@@ -149,12 +151,12 @@
                                             </mat-progress-bar>
                                         </div>
                                     </div> -->
-<!-- 
+                                <!-- 
                                 <button mat-raised-button color="accent" class="btn-search" (click)="uploadFiles()">
                                     sUBIR&nbsp;<mat-icon>add</mat-icon>
                                 </button> -->
-                                <input type="file" #fileInput id="fileUpload" name="fileUpload" multiple="multiple" (change)="selectFiles($event)"
-                                    accept="application/pdf" style="display:none;" />
+                                <input type="file" #fileInput id="fileUpload" name="fileUpload" multiple="multiple"
+                                    (change)="selectFiles($event)" accept="application/pdf" style="display:none;" />
                                 <button mat-raised-button [disabled]="selectedHistorial === ''" color="warn"
                                     class="btn-search" (click)="eliminarHistorialCarga()" *ngIf="!excelSeleccionado">
                                     Eliminar carga masiva pendiente&nbsp;<mat-icon>delete</mat-icon>
@@ -190,14 +192,14 @@
                                     <div class="select">
                                         <p class="tag">Estatus</p>
                                         <mat-form-field appearance="fill" class="input">
-                                            <mat-label>Vigente/no Vigente</mat-label>
+                                            <mat-label>Activo/Inactivo</mat-label>
                                             <mat-select formControlName="vigente" [(ngModel)]="vigenteBusqueda">
-                                                <mat-option value="true">Vigente</mat-option>
-                                                <mat-option value="false">No Vigente</mat-option>
+                                                <mat-option value="true">Activo</mat-option>
+                                                <mat-option value="false">Inactivo</mat-option>
                                             </mat-select>
                                         </mat-form-field>
                                     </div>
-                                    <div class="select">
+                                    <!-- <div class="select">
                                         <p class="tag">Tipo de información</p>
                                         <mat-form-field appearance="fill" class="input">
                                             <mat-label>Seleccionar</mat-label>
@@ -209,9 +211,9 @@
                                                 </mat-option>
                                             </mat-select>
                                         </mat-form-field>
-                                    </div>
+                                    </div> -->
                                     <div class="select">
-                                        <p class="tag">Fecha de creación</p>
+                                        <p class="tag">Fecha de ingreso</p>
                                         <mat-form-field appearance="fill" class="input">
                                             <mat-label>Seleccione una Fecha</mat-label>
                                             <input matInput [matDatepicker]="picker" formControlName="fechaCreacion"
@@ -283,7 +285,7 @@
                                         </mat-form-field>
                                     </div>
                                     <div class="select">
-                                        <p class="tag">Folio de expediente</p>
+                                        <p class="tag">Nro. de caja</p>
                                         <mat-form-field appearance="fill" class="input">
                                             <input matInput placeholder="Folio" formControlName="folioExpediente"
                                                 [(ngModel)]="selectedFolioExpediente">
@@ -389,18 +391,34 @@
                                                     [(ngModel)]="row.selected" (change)="onCheckboxChangeFn($event)">
                                                 </mat-checkbox>
                                             </ng-template>
-
+                                            
                                         </ngx-datatable-column>
-                                        <ngx-datatable-column name="Id. documento" prop="id"></ngx-datatable-column>
+                                        <!--    <ngx-datatable-column name="Id. documento" prop="id"></ngx-datatable-column> -->
                                         <ngx-datatable-column name="Documento" prop="cNombreDocumento">
                                         </ngx-datatable-column>
+                                        <ngx-datatable-column name="Descarga" [sortable]="false" [width]="100"
+                                                [canAutoResize]="false" [resizeable]="false" [contentEditable]="false">
+                                                <ng-template ngx-datatable-cell-template let-value="value"
+                                                    let-row="row">
+                                                    <div class="progress" style="width: 140px; height: 15px">
+                                                        <span>{{row.progress.value}}%</span>
+                                                        <div id="progressbarDescarga">
+                                                            <mat-progress-bar mode="determinate"
+                                                                value={{row.progress.value}}>
+                                                            </mat-progress-bar>
+                                                        </div>
+                                                    </div>
+
+                                                </ng-template>
+
+                                            </ngx-datatable-column>
                                         <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento">
                                         </ngx-datatable-column>
-                                        <ngx-datatable-column name="Tipo de información" prop="informacion">
-                                        </ngx-datatable-column>
+                                        <!--    <ngx-datatable-column name="Tipo de información" prop="informacion">
+                                        </ngx-datatable-column> -->
                                         <!--   <ngx-datatable-column name="Páginas" prop="paginas" [width]="100">
                                         </ngx-datatable-column> -->
-                                        <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion">
+                                        <ngx-datatable-column name="Fecha de ingreso" prop="fechaCreacion">
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Fecha de carga" prop="fechaCarga">
                                         </ngx-datatable-column>
@@ -408,13 +426,13 @@
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Versión" prop="version" [width]="100">
                                         </ngx-datatable-column>
-                                        <ngx-datatable-column name="Clasificación" prop="clasificacion">
+                                        <ngx-datatable-column name="Clasificación(Meta catalogo)" prop="clasificacion">
                                         </ngx-datatable-column>
                                         <!--  <ngx-datatable-column name="Ente" prop="ente.cDescripcionEnte">
                                         </ngx-datatable-column>-->
                                         <ngx-datatable-column name="Tipo de expediente" prop="descripcionExpediente">
                                         </ngx-datatable-column>
-                                        <ngx-datatable-column name="Folio de expediente" prop="folioExpediente">
+                                        <ngx-datatable-column name="Nro. de caja" prop="folioExpediente">
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="Estatus" sortable="false" [width]="100">
                                             <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>

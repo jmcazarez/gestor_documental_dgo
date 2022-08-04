@@ -42,10 +42,10 @@ export class UsuariosService {
   }
 
 
-  dowloadDocument(idFile: string, idDocumento: string, usuario: string, nombreDocumento: string): any {
+  dowloadDocument(idFile: string, idDocumento: string, nombreDocumento: string): any {
 
-    if (usuario.length > 0) {
-        return this.http.get(this.baseUrl + this.urlDowloadDocument + '/' + idFile + '/' + idDocumento + '/' + usuario + '/' + nombreDocumento, this.httpOptions);
+    if (nombreDocumento) {
+        return this.http.get(this.baseUrl + this.urlDowloadDocument + '/' + idFile + '/' + idDocumento + '/' + nombreDocumento, this.httpOptions);
     } else {
         return this.http.get(this.baseUrl + this.urlDowloadDocument + '/' + idFile, this.httpOptions);
     }

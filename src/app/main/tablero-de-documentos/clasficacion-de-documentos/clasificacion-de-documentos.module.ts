@@ -8,6 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { FuseSharedModule } from '@fuse/shared.module';
+
 import { ClasficacionDeDocumentosComponent } from './clasficacion-de-documentos.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -22,6 +23,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import {MatMenuModule} from '@angular/material/menu';
 import { NgxSpinnerModule } from "ngx-spinner";
 import { SafePipePipe } from 'pipes/safe-pipe.pipe';
+import { FuseProgressBarModule } from '@fuse/components';
 
 const routes: Routes = [
     {
@@ -44,6 +46,7 @@ const routes: Routes = [
         MatSelectModule,
         MatStepperModule,
         FuseSharedModule,
+        FuseProgressBarModule,
         MatDialogModule,
         NgxSpinnerModule,
         MatCheckboxModule,

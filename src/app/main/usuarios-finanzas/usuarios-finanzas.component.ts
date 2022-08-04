@@ -33,7 +33,7 @@ export class UsuariosFinanzasComponent implements OnInit {
     nuevoUsuario(): void {
         // Abrimos modal de guardar usuario
         const dialogRef = this.dialog.open(GuardarUsuarioFinanzasComponent, {
-            width: '60%',
+            width: '40%',
             height: '90%',
             // height: '75%',
             // height: '100%',
@@ -53,7 +53,7 @@ export class UsuariosFinanzasComponent implements OnInit {
         
         // Abrimos modal de guardar usuario
         const dialogRef = this.dialog.open(GuardarUsuarioFinanzasComponent, {
-            width: '60%',
+            width: '40%',
             height: '90%',
             // height: '75%',
             // height: '100%',

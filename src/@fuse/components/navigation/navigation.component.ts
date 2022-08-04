@@ -3,6 +3,7 @@ import { merge, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
+import { MenuService } from 'services/menu.service';
 
 @Component({
     selector       : 'fuse-navigation',
@@ -29,7 +30,8 @@ export class FuseNavigationComponent implements OnInit
      */
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
-        private _fuseNavigationService: FuseNavigationService
+        private _fuseNavigationService: FuseNavigationService,
+   /*      private _menuService: MenuService */
     )
     {
         // Set the private defaults
@@ -43,8 +45,10 @@ export class FuseNavigationComponent implements OnInit
     /**
      * On init
      */
-    ngOnInit(): void
+    async ngOnInit(): Promise<void>
     {
+      /*  await this._menuService.crearMenu();
+       console.log('nav') ; */
         // Load the navigation either from the input or from the service
         this.navigation = this.navigation || this._fuseNavigationService.getCurrentNavigation();
 

@@ -22,7 +22,7 @@ import { NotificacionesComponent } from './notificaciones.component';
 
 const routes = [
     {
-        path     : 'notificaciones',
+        path     : 'notificaciones-de-eventos',
         component: NotificacionesComponent,
         canActivate: [SeguridadGuard],
         

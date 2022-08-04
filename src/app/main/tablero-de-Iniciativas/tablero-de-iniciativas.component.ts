@@ -81,7 +81,7 @@ export class TableroDeIniciativasComponent implements OnInit {
             this.loadingIndicator = true;
             const iniciativasTemp: any[] = [];
             const usuarioLogin = await this.usuarioLoginService.obtenerUsuario();
-            console.log(usuarioLogin);
+          
             let autores: string;
             let temas: string;
             let clasificaciones: any;
@@ -279,7 +279,7 @@ export class TableroDeIniciativasComponent implements OnInit {
             });
 
             dialogRef.afterClosed().subscribe(result => {
-                console.log('salio');
+            
                 this.obtenerIniciativas();
                
           

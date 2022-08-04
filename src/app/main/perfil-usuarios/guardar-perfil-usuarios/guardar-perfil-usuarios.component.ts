@@ -318,7 +318,7 @@ export class GuardarPerfilUsuariosComponent implements OnInit {
                         }
                         this.rowVisibilidad = this.visibilidadModel;
                         this.rowVisibilidadTemp = this.rowVisibilidad;
-                        console.log(this.rowVisibilidad);
+                      
                         resolve(resp)
                     } else {
                         this.rowVisibilidad = this.visibilidadModel;
@@ -345,7 +345,7 @@ export class GuardarPerfilUsuariosComponent implements OnInit {
                 let respuesta: any;
                 // Obtenemos usuarios
                 await this.usuariosService.obtenerUsuariosPerfil().subscribe((resp: any) => {
-                    console.log(resp);
+                   
                     respuesta = resp.data.filter((d) => d.bActivo === true);;
                     if (this.perfilUsuario.id && this.perfilUsuario.id.length > 0) {
                         // tslint:disable-next-line: forin
@@ -383,7 +383,7 @@ export class GuardarPerfilUsuariosComponent implements OnInit {
             width: '60%',
             // height: '75%',
             // height: '100%',
-            height: '90%',
+     
             disableClose: true,
             data: new PermisosUsuarioModel(),
         });
@@ -400,12 +400,11 @@ export class GuardarPerfilUsuariosComponent implements OnInit {
     guardarOpcion(permisosUsuario: PermisosUsuarioModel): void {
         // abrimos modal de permisos         
         permisosUsuario.idTipoPermiso = 'Opcion del sistema';
-        console.log(permisosUsuario);
+      
         const dialogRef = this.dialog2.open(GuardarPermisosUsuariosComponent, {
             width: '60%',
             // height: '75%',
             // height: '100%',
-            height: '90%',
             disableClose: true,
             data: permisosUsuario,
         });

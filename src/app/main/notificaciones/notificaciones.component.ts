@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MenuService } from 'services/menu.service';
 import { TrazabilidadService } from 'services/trazabilidad.service';
+import { UsuariosService } from 'services/usuarios.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -9,20 +11,119 @@ import Swal from 'sweetalert2';
 })
 export class NotificacionesComponent implements OnInit {
     historial = [];
-
+    arrDepartamentos = [];
     loadingIndicator = true;
     reorderable = true;
-    constructor(private trazabilidadService: TrazabilidadService) { }
+    constructor(private trazabilidadService: TrazabilidadService, private usuariosService: UsuariosService,  private menuService: MenuService,) { }
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
+        await this.obtenerDepartamentos();
         this.obtenerTrazabilidad();
     }
 
+
+    /*     async obtenerDepartamentos(): Promise<void> {
+            // Obtenemos departamentos
+            await this.usuariosService.obtenerDepartamentos().subscribe(
+                (resp: any) => {
+                    this.arrDepartamentos = resp;
+                   
+                   
+                },
+                (err) => {
+                    Swal.fire(
+                        "Error",
+                        "Ocurrió un error obtener el documento." + err,
+                        "error"
+                    );
+                }
+            );
+        } */
+        async obtenerDepartamentos(): Promise<void> {
+            return new Promise(async (resolve) => {
+                {
+                 
+                    // Obtenemos departamentos
+                    const departamentosTemp: any[] = [];
+                   await this.usuariosService.obtenerDepartamentos().subscribe((resp: any) => {
+    
+                        for (const departamentos of resp) {
+    
+                            if (departamentos.bActivo && departamentos.direccionId) {
+                            
+                                departamentosTemp.push({
+                                    id: departamentos.id,
+                                    cDescripcionDepartamento: departamentos.cDescripcionDepartamento,
+                                    bActivo: departamentos.bActivo,
+                                    direccionId: departamentos.direccionId
+                                });
+                                // }
+                            }
+    
+                        }
+                        this.arrDepartamentos = departamentosTemp;
+                        
+                      
+                        resolve(resp)
+                    }, err => {
+                      
+                        resolve(err)
+                    });
+                }
+            })
+        }
     obtenerTrazabilidad(): void {
+        let historialTemp = [];
         // Obtenemos la lista historica de notificaciones.
         this.loadingIndicator = true;
         this.trazabilidadService.obtenerTrazabilidadHistorial('').subscribe((resp: any) => {
-            this.historial = resp.historial;
+            console.log(resp.historial);
+            for (const historial of resp.historial) {
+                let aDepartamento: any;
+             
+                const encontro = this.menuService.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === historial.tipoDeDocumento);
+            
+                if(encontro){
+                    aDepartamento = this.arrDepartamentos.find(dep=> dep.id = encontro.departamento)
+                    let cDepartamento = '';
+                    
+                    if (aDepartamento){
+                        cDepartamento =aDepartamento.cDescripcionDepartamento
+                    }
+                    historialTemp.push({
+                        cNombreDocumento: historial.cNombreDocumento,
+                        documentoId: historial.documentoId,
+                        fecha: historial.fecha,
+                        fechaFiltro: historial.fechaFiltro,
+                        hora: historial.hora,
+                        id: historial.id,
+                        movimiento: historial.movimiento,
+                        tipoDeDocumento: historial.tipoDeDocumento,
+                        cDepartamento: cDepartamento,
+                        usuario: historial.usuario,
+                        version: historial.version
+                    });
+                }else{
+                     historialTemp.push({
+                        cNombreDocumento: historial.cNombreDocumento,
+                        documentoId: historial.documentoId,
+                        fecha: historial.fecha,
+                        fechaFiltro: historial.fechaFiltro,
+                        hora: historial.hora,
+                        id: historial.id,
+                        movimiento: historial.movimiento,
+                        tipoDeDocumento: historial.tipoDeDocumento,
+                        cDepartamento: "",
+                        usuario: historial.usuario,
+                        version: historial.version
+                    }); 
+                }
+               
+
+            }
+
+             this.historial = [...historialTemp];
+          /*   this.historial = resp.historial */;
             this.loadingIndicator = false;
         }, err => {
             this.loadingIndicator = false;
@@ -45,7 +146,7 @@ export class NotificacionesComponent implements OnInit {
             if (result.value) {
 
                 // realizamos delete
-                this.trazabilidadService.actualizarTrazabilidad({id: row.id, excluirNotificacion: true}).subscribe((resp: any) => {
+                this.trazabilidadService.actualizarTrazabilidad({ id: row.id, excluirNotificacion: true }).subscribe((resp: any) => {
                     Swal.fire('Eliminado', 'La notificación ha sido eliminada.', 'success');
                     this.obtenerTrazabilidad();
                 }, err => {

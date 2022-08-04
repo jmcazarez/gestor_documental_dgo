@@ -127,6 +127,7 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
                                         cEstatus: prestamos.cEstatus,
                                         cTipoDanio: prestamos.cTipoDanio,
                                         cTipoExpediente,
+                                        cDetallePrestamo: prestamos.cDetallePrestamo
                                     });
                                 }
                             }
@@ -150,6 +151,7 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
         if (value.target.value === "") {
             this.prestamoDocumentos = this.prestamoDocumentosTemp;
         } else {
+          
             const val = value.target.value.toLowerCase();
             const temp = this.prestamoDocumentos.filter(
                 (d) =>
@@ -169,6 +171,10 @@ export class TableroDeDanoDeDocumentosComponent implements OnInit {
                     !val ||
                     d.cIdExpediente.toLowerCase().indexOf(val) !== -1 ||
                     d.cTipoDanio.toLowerCase().indexOf(val) !== -1 ||
+                    d.cDetallePrestamo.toLowerCase().indexOf(val) !== -1 ||
+                    d.cNotas.toLowerCase().indexOf(val) !== -1 ||
+                    d.dFechaDevolucionT.toLowerCase().indexOf(val) !== -1 ||
+                    d.tHoraDevolucion.toLowerCase().indexOf(val) !== -1 ||
                     d.id.toLowerCase().indexOf(val) !== -1
             );
 

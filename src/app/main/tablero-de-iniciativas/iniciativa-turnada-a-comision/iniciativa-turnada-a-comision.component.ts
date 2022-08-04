@@ -554,7 +554,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 this.iniciativa.estatus = 'Publicada';
             } else if (this.iniciativa.estatus == 'Turnar dictamen a Mesa Directiva' && this.iniciativa.tipo_de_iniciativa.descripcion == 'Iniciativa' &&
                 this.selectedDictamenDeIniciativa == 'Aprobada') {
-                console.log(this.adiciones);
+               
                 this.iniciativa.adicion = this.adiciones;
                 this.iniciativa.etiquetas = this.etiquetas;
                 this.iniciativa.dictamenDeIniciativa = this.selectedDictamenDeIniciativa;
@@ -1231,9 +1231,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 this.spinner.hide();
                 return
             }
-            console.log(puestoSecretarioGeneral[0].cValor);
-            console.log(firmasPorEtapas[0].participantes);
-
+           
             let puestoSecretario = firmasPorEtapas[0].participantes.filter((d) => d['puesto'] === puestoSecretarioGeneral[0].cValor);
             if (this.iniciativa.estatus !== 'Turnar dictamen a Mesa Directiva') {
                 if (puestoSecretario.length === 0) {
@@ -1846,7 +1844,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 await this.upload(base64, 'SSP 008.pdf');
                 await this.guardarSSP08(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
             } if (this.iniciativa.estatus === 'Turnar dictamen a secretaría de servicios parlamentarios') {
-                console.log('entro SSP05');
+              
                 await this.upload(base64, 'SSP 005.pdf');
                 await this.guardarSSP05(cTemas, tipoDocumento[0]['cValor'], tipoExpediente[0]['cValor'], tipoInformacion[0]['cValor'], legislaturas[0]);
             }
@@ -3270,7 +3268,7 @@ export class IniciativaTurnadaAComisionComponent implements OnInit {
                 .subscribe(
                     (resp: any) => {
                         if (resp.data) {
-                            console.log(resp.data);
+                        
                             this.documentos = resp.data;
 
                             let documentoId: string = this.documentos.id;

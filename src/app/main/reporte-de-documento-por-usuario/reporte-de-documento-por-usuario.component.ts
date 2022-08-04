@@ -37,18 +37,19 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
     arrBody: any[] = [];
     arr: any[] = [];
     imageBase64: any;
+    arrDepartamentos = [];
 
 
     constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe,
-                private usuariosService: UsuariosService,
-                private router: Router,
-                private spinner: NgxSpinnerService,
-                private documentoService: DocumentosService,
-                private menuService: MenuService) {
+        private usuariosService: UsuariosService,
+        private router: Router,
+        private spinner: NgxSpinnerService,
+        private documentoService: DocumentosService,
+        private menuService: MenuService) {
         this.imageBase64 = environment.imageBase64;
     }
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
 
         // Formulario reactivo
         this.firstFormGroup = this._formBuilder.group({
@@ -64,11 +65,31 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
             usuario: ['', Validators.required],
         });
 
-        this.obtenerListaUsuarios();
-
+        await this.obtenerListaUsuarios();
+        await this.obtenerDepartamentos();
     }
 
+    async obtenerDepartamentos(): Promise<void> {
+        return new Promise(resolve => {
+            // Obtenemos departamentos
+            this.usuariosService.obtenerDepartamentos().subscribe(
+                (resp: any) => {
+                    this.arrDepartamentos = resp;
+                    resolve(resp)
 
+                },
+                (err) => {
+                    Swal.fire(
+                        "Error",
+                        "Ocurrió un error obtener el documento." + err,
+                        "error"
+                    );
+                    resolve(err)
+                }
+            );
+        })
+
+    }
     borrarFiltros(): void {
         // Limpiamos inputs
         this.selectedUsuario = '';
@@ -97,12 +118,10 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
                 if (this.optConsultar) {
                     for (const documento of resp.listado) {
                         idDocumento = '';
-                        if (documento.legislatura) {
-                            if (documento.legislatura.cLegislatura){
-                                cFolioExpediente = documento.legislatura.cLegislatura + '-' + documento.folioExpediente
-                            }
-                        }else{
-                            cFolioExpediente = documento.folioExpediente
+                        cFolioExpediente = documento.folioExpediente
+                        let departamento
+                        if (documento.tipo_de_documento.departamento) {
+                            departamento = this.arrDepartamentos.find((depto: { id: string; }) => depto.id === documento.tipo_de_documento.departamento).cDescripcionDepartamento;
                         }
                         documentosTemp.push({
                             id: documento.id,
@@ -117,12 +136,17 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
                             bActivo: documento.estatus,
                             ente: documento.ente,
                             version: parseFloat(documento.version).toFixed(1),
-                            cAccion: documento.accion
+                            cAccion: documento.accion,
+                            departamento,
+                            pasillo: documento.pasillo,
+                            estante: documento.estante,
+                            nivel: documento.nivel,
+                            seccion: documento.seccion
                         });
 
                     }
 
-                    this.documentos = documentosTemp;                  
+                    this.documentos = documentosTemp;
                     this.spinner.hide();
                 }
 
@@ -131,7 +155,7 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
                 this.spinner.hide();
             }
 
-         
+
         }, err => {
             Swal.fire('Error', 'Ocurrió un problema al consultar la información.', 'error');
             this.spinner.hide();
@@ -142,17 +166,17 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
     buildTableBody(data: any[], columns: any[]) {
         const body = [];
         // Fecha, acción, documento (nombre del documento), tipo de documento, 
-        // fecha de creación, fecha de carga, fecha de ultima modificación, 
+        // fecha de ingreso, fecha de carga, fecha de ultima modificación, 
         // tipo de información, tipo de documento, tipo de expediente, 
         // folio de expediente y estatus
         body.push([{ text: 'Fecha', style: 'tableHeader' },
         { text: 'Acción', style: 'tableHeader' },
         { text: 'Documento', style: 'tableHeader' },
         { text: 'Tipo de documento', style: 'tableHeader' },
-        { text: 'Fecha de creación', style: 'tableHeader' },
+        { text: 'Fecha de ingreso', style: 'tableHeader' },
         { text: 'Fecha de carga', style: 'tableHeader' },
         { text: 'Fecha de modificación', style: 'tableHeader' },
-        { text: 'Tipo de información', style: 'tableHeader' },
+        /*   { text: 'Tipo de información', style: 'tableHeader' }, */
         { text: 'Tipo de documento', style: 'tableHeader' },
         { text: 'Tipo de expediente', style: 'tableHeader' },
         { text: 'Folio de expediente', style: 'tableHeader' },
@@ -283,7 +307,7 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
                 this.table({
                     data: value, columns: [
                         'fechaModificacion', 'accion', 'nombreDocumento', 'tipoDocumento',
-                        'fechaCreacion', 'fechaCarga', 'fechaModificacion', 'tipoInformacion',
+                        'fechaCreacion', 'fechaCarga', 'fechaModificacion',
                         'tipoDocumento', 'tipoExpediente', 'folioExpediente', 'estatus',
                     ]
                 })
@@ -360,10 +384,10 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
     }
 
 
-    obtenerListaUsuarios(): void {
+    async obtenerListaUsuarios(): Promise<void> {
         this.spinner.show();
         // Obtenemos la lista de usuarios
-        this.usuariosService.obtenerUsuarios().subscribe((resp: any) => {
+      await  this.usuariosService.obtenerUsuarios().subscribe((resp: any) => {
             this.arrUsuarios = resp;
             this.spinner.hide();
         }, err => {

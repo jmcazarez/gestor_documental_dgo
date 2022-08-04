@@ -18,6 +18,8 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ExportAsModule } from 'ngx-export-as';
+import { FuseProgressBarModule } from '@fuse/components';
+
 const routes = [
     {
        
@@ -44,7 +46,7 @@ const routes = [
                 selectedMessage: 'selected' // Footer selected message
             }
         }),
-        
+        FuseProgressBarModule,
         MatIconModule,
         MatCheckboxModule,
         MatDialogModule,

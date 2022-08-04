@@ -223,7 +223,7 @@ export class ResultadoDeBusquedaComponent implements OnInit {
 
     descargarDocumento(row: any): void {
         // Descargamos el documento
-        this.documentoService.dowloadDocument(row.idDocumento, row.id, this.menuService.usuario, row.cNombreDocumento).subscribe((resp: any) => {
+        this.documentoService.dowloadDocument(row.idDocumento, row.id, row.cNombreDocumento).subscribe((resp: any) => {
 
             const linkSource = 'data:application/octet-stream;base64,' + resp.data;
             const downloadLink = document.createElement('a');

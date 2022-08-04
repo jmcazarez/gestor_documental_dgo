@@ -27,6 +27,7 @@
                     <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)'
                         [(ngModel)]="valueBuscador">
                 </mat-form-field>
+           
                 <button [disabled]="!this.optAgregar" mat-raised-button color="warn" (click)="nuevoDocumento()"
                     class="button">
                     <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un documento">post_add
@@ -66,20 +67,24 @@
             [scrollbarV]="true"
             (page)="setPage($event)" 
         >  
-                <ngx-datatable-column name="Departamento" prop="departamento"></ngx-datatable-column>
+                <ngx-datatable-column name="Departamento" prop="departamento"[width]="200"></ngx-datatable-column>
                 <!-- <ngx-datatable-column name="Id. documento" prop="id"></ngx-datatable-column> -->
                 <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
                 <ngx-datatable-column name="Nombre de documento" prop="cNombreDocumento" [width]="500"></ngx-datatable-column>
               
-                <ngx-datatable-column name="Tipo de información" prop="informacion"></ngx-datatable-column>
+                <!-- <ngx-datatable-column name="Tipo de información" prop="informacion"></ngx-datatable-column> -->
                <!--  <ngx-datatable-column name="Páginas" prop="paginas"></ngx-datatable-column> -->
-                <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion" [width]="130"></ngx-datatable-column>
+                <ngx-datatable-column name="Fecha de ingreso" prop="fechaCreacion" [width]="130"></ngx-datatable-column>
                 <ngx-datatable-column name="Fecha de carga" prop="fechaCarga" [width]="130"></ngx-datatable-column>
                 <ngx-datatable-column name="Fecha de modificación" prop="fechaModificacion" [width]="160"></ngx-datatable-column>
+                <ngx-datatable-column name="Plazo de conservación" prop="plazoDeConservacion" [width]="170"></ngx-datatable-column>
                 <ngx-datatable-column name="Versión" prop="version" [width]="80"></ngx-datatable-column>
                 <ngx-datatable-column name="Nro. caja" prop="cFolioExpediente" [width]="100"></ngx-datatable-column>
-                
-                <ngx-datatable-column name="Clasificación" prop="clasificacion" [width]="300" [cellClass]="'class-tema'"></ngx-datatable-column>
+                <ngx-datatable-column name="Pasillo" prop="pasillo" [width]="70"></ngx-datatable-column>
+                <ngx-datatable-column name="Estante" prop="estante" [width]="70"></ngx-datatable-column>
+                <ngx-datatable-column name="Nivel" prop="nivel" [width]="70"></ngx-datatable-column>
+                <ngx-datatable-column name="Sección" prop="seccion" [width]="70"></ngx-datatable-column>
+                <ngx-datatable-column name="Clasificación(Meta catalogo)" prop="clasificacion" [width]="300" [cellClass]="'class-tema'"></ngx-datatable-column>
                 <ngx-datatable-column name="Estatus" sortable="false" [width]="80">
                     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                         <mat-icon *ngIf="row.bActivo" color="accent" class="material-icons">check_circle</mat-icon>
@@ -89,7 +94,7 @@
 
                 <ngx-datatable-column name="Acciones" sortable="false" prop="id" >
                     <ng-template let-row="row" let-value="value" ngx-datatable-cell-template [width]="80">
-                        <a *ngIf="this.optEliminar && row.Eliminar" (click)="eliminarDocumento(row)">
+                        <a *ngIf="this.optEliminar && row.Eliminar && row.bActivo" (click)="eliminarDocumento(row)">
                             <mat-icon color="warn" class="material-icons pointer" matTooltip="Clic para eliminar">delete
                             </mat-icon>
                         </a>

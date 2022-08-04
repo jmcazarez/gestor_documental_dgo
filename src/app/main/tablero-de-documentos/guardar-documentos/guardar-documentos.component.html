@@ -48,11 +48,11 @@
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
 
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Fecha de creación *</mat-label>
+                <mat-label>Fecha de ingreso *</mat-label>
                 <input matInput [matDatepicker]="picker1"  formControlName="fechaCreacion" datePickerFormat="DD/MM/YYYY" (change)="change()" [max]="maxDate">
                 <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
                 <mat-datepicker #picker1></mat-datepicker>
-                <mat-error>La fecha de creación no es valida ej. 28/11/2020</mat-error>
+                <mat-error>La fecha de ingreso no es valida ej. 28/11/2020</mat-error>
 
             </mat-form-field>
 
@@ -88,7 +88,7 @@
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
 
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Plazo de conservación *</mat-label>
+                <mat-label>Plazo de conservación (años) *</mat-label>
                 <input matInput formControlName="plazoDeConservacion" (change)="change()" type="number">
                 <mat-icon matSuffix class="secondary-text">linear_scale</mat-icon>
                 <mat-error *ngIf="form.get('plazoDeConservacion').hasError('required')">El plazo de conservacón requerido</mat-error>

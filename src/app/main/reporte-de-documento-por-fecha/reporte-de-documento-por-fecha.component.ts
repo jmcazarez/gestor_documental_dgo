@@ -44,6 +44,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
     imageBase64: any;
     fechaIni: Date;
     fechaFin: Date;
+    arrDepartamentos = [];
     externalDataRetrievedFromServer = [
         { name: 'Bartek', age: 34 },
         { name: 'John', age: 27 },
@@ -57,16 +58,17 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
         private router: Router,
         private spinner: NgxSpinnerService,
         private documentoService: DocumentosService,
+        private usuariosService: UsuariosService,
         private menuService: MenuService) {
         this.imageBase64 = environment.imageBase64;
     }
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         moment.locale('es');
         // Formulario reactivo
         this.firstFormGroup = this._formBuilder.group({
-            pickerFechaInicial: [new Date()],
-            pickerFechaFinal: [new Date()]
+            pickerFechaInicial: [new Date(), Validators.required],
+            pickerFechaFinal: [new Date(), Validators.required]
         });
 
 
@@ -76,10 +78,31 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
         });
 
         this.arrInformacion = this.menuService.tipoInformacion;
-
+        await this.obtenerDepartamentos();
         //  this.obtenerDocumentos();
     }
 
+    async obtenerDepartamentos(): Promise<void> {
+        return new Promise(resolve => {
+            // Obtenemos departamentos
+            this.usuariosService.obtenerDepartamentos().subscribe(
+                (resp: any) => {
+                    this.arrDepartamentos = resp;
+                    resolve(resp)
+
+                },
+                (err) => {
+                    Swal.fire(
+                        "Error",
+                        "Ocurrió un error obtener el documento." + err,
+                        "error"
+                    );
+                    resolve(err)
+                }
+            );
+        })
+
+    }
 
     async filterDatatable(): Promise<void> {
 
@@ -120,94 +143,106 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
         let idDocumento: any;
         this.loadingIndicator = true;
         let cFolioExpediente = '';
+        try {
+            this.spinner.show();
+            const dFechaInicial = this.pickerFechaInicial._datepickerInput.value;
+            const dFechaFinal = this.pickerFechaFinal._datepickerInput.value;
+            if (dFechaInicial == null || dFechaFinal == null) {
+                Swal.fire('Error', 'La fecha inicial y la fecha final son requeridas.', 'error');
+                this.spinner.hide();
+                return
+            }
+            const fIni = new Date(dFechaInicial);
+            const fFin = new Date(dFechaFinal);
 
-        this.spinner.show();
-        const dFechaInicial = this.pickerFechaInicial._datepickerInput.value;
-        const dFechaFinal = this.pickerFechaFinal._datepickerInput.value;
-        const fIni = new Date(dFechaInicial);
-        const fFin = new Date(dFechaFinal);
+            if (fIni > fFin) {
+                Swal.fire('Error', 'La fecha inicial no puede ser mayor a la final.', 'error');
+                this.spinner.hide();
+            } else if (this.pickerFechaInicial._datepickerInput.value === undefined || this.pickerFechaFinal._datepickerInput.value === undefined) {
+                Swal.fire('Error', 'Las fechas son obligatorias.', 'error');
+                this.spinner.hide();
+            } else {
 
-        if (fIni > fFin) {
-            Swal.fire('Error', 'La fecha inicial no puede ser mayor a la final.', 'error');
-            this.spinner.hide();
-        } else if (this.pickerFechaInicial._datepickerInput.value === undefined || this.pickerFechaFinal._datepickerInput.value === undefined) {
-            Swal.fire('Error', 'Las fechas son obligatorias.', 'error');
-            this.spinner.hide();
-        } else {
+                dFechaFinal.setHours(23);
+                dFechaFinal.setMinutes(59);
+                dFechaFinal.setSeconds(59);
+                const cFechaInicial = dFechaInicial.toISOString();
+                const cFechaFinal = dFechaFinal.toISOString();
+                const filtroReporte = `createdAt_gte=${cFechaInicial}&createdAt_lte=${cFechaFinal}`;
 
-            dFechaFinal.setHours(23);
-            dFechaFinal.setMinutes(59);
-            dFechaFinal.setSeconds(59);
-            const cFechaInicial = dFechaInicial.toISOString();         
-            const cFechaFinal = dFechaFinal.toISOString();
-            const filtroReporte = `createdAt_gte=${cFechaInicial}&createdAt_lte=${cFechaFinal}`;
+                // Obtenemos los documentos
+                this.documentoService.obtenerDocumentoReportePorFecha(filtroReporte).subscribe((resp: any) => {
 
-            // Obtenemos los documentos
-            this.documentoService.obtenerDocumentoReportePorFecha(filtroReporte).subscribe((resp: any) => {
+                    if (resp.listado && resp.listado.length > 0) {
 
-                if (resp.listado && resp.listado.length > 0) {
+                        // Buscamos permisos
+                        const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
+                        this.optAgregar = opciones.Agregar;
+                        this.optEditar = opciones.Editar;
+                        this.optConsultar = opciones.Consultar;
+                        this.optEliminar = opciones.Eliminar;
 
-                    // Buscamos permisos
-                    const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
-                    this.optAgregar = opciones.Agregar;
-                    this.optEditar = opciones.Editar;
-                    this.optConsultar = opciones.Consultar;
-                    this.optEliminar = opciones.Eliminar;
+                        // Si tiene permisos para consultar
+                        if (this.optConsultar) {
+                            for (const documento of resp.listado) {
+                                cFolioExpediente = documento.folioExpediente;
+                                let departamento = ""
 
-                    // Si tiene permisos para consultar
-                    if (this.optConsultar) {
-                        for (const documento of resp.listado) {
-                            cFolioExpediente  = '';
-                            console.log(documento.legislatura);
-                            if (documento.legislatura) {
-                                if (documento.legislatura.cLegislatura){
-                                    cFolioExpediente = documento.legislatura.cLegislatura + '-' + documento.folioExpediente
+                                if (documento.tipo_de_documento.departamento) {
+                                    departamento = this.arrDepartamentos.find((depto: { id: string; }) => depto.id === documento.tipo_de_documento.departamento).cDescripcionDepartamento;
                                 }
-                            }else{
-                                cFolioExpediente = documento.folioExpediente
+                                idDocumento = '';
+                                documentosTemp.push({
+                                    id: documento.id,
+                                    tipoDocumento: documento.tipoDocumento,
+                                    tipoExpediente: documento.tipoExpediente,
+                                    tipoInformacion: documento.tipoInformacion,
+                                    fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
+                                    folioExpediente: cFolioExpediente,
+                                    fechaCarga: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
+                                    fechaModificacion: this.datePipe.transform(documento.fechaModificacion, 'dd-MM-yyyy'),
+                                    fechaMovimiento: moment(documento.createdAt).format('DD-MM-YYYY'),
+                                    cNombreDocumento: documento.cNombreDocumento,
+                                    cNombreUsuario: documento.nombreUsuario,
+                                    bActivo: documento.estatus,
+                                    ente: documento.ente,
+                                    version: parseFloat(documento.version).toFixed(1),
+                                    cAccion: documento.accion,
+                                    departamento,
+                                    pasillo: documento.pasillo,
+                                    estante: documento.estante,
+                                    nivel: documento.nivel,
+                                    seccion: documento.seccion
+                                });
+
                             }
-                            idDocumento = '';
-                            documentosTemp.push({
-                                id: documento.id,
-                                tipoDocumento: documento.tipoDocumento,
-                                tipoExpediente: documento.tipoExpediente,
-                                tipoInformacion: documento.tipoInformacion,
-                                fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
-                                folioExpediente: cFolioExpediente,
-                                fechaCarga: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
-                                fechaModificacion: this.datePipe.transform(documento.fechaModificacion, 'dd-MM-yyyy'),
-                                fechaMovimiento: moment(documento.createdAt).format('DD-MM-YYYY'),
-                                cNombreDocumento: documento.cNombreDocumento,
-                                cNombreUsuario: documento.nombreUsuario,
-                                bActivo: documento.estatus,
-                                ente: documento.ente,
-                                version: parseFloat(documento.version).toFixed(1),
-                                cAccion: documento.accion
-                            });
+
+                            this.documentos = documentosTemp;
+                            this.documentosTemporal = this.documentos;
+
 
                         }
+                        this.loadingIndicator = false;
+                        this.spinner.hide();
 
-                        this.documentos = documentosTemp;
-                        this.documentosTemporal = this.documentos;
-
-
+                    } else {
+                        Swal.fire('Alerta', 'No existen movimientos en el periodo seleccionado.', 'warning');
+                        this.spinner.hide();
+                        this.loadingIndicator = false;
                     }
-                    this.loadingIndicator = false;
-                    this.spinner.hide();
 
-                } else {
-                    Swal.fire('Alerta', 'No existen movimientos en el periodo seleccionado.', 'warning');
                     this.spinner.hide();
                     this.loadingIndicator = false;
-                }
-
-                this.spinner.hide();
-                this.loadingIndicator = false;
-            }, err => {
-                Swal.fire('Error', 'Ocurrió un problema al consultar la información.', 'error');
-                this.spinner.hide();
-                this.loadingIndicator = false;
-            });
+                }, err => {
+                    Swal.fire('Error', 'Ocurrió un problema al consultar la información.', 'error');
+                    this.spinner.hide();
+                    this.loadingIndicator = false;
+                });
+            }
+        } catch (err) {
+            Swal.fire('Error', 'Ocurrió un problema al consultar la información.', 'error');
+            this.spinner.hide();
+            this.loadingIndicator = false;
         }
     }
 
@@ -215,7 +250,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
     buildTableBody(data: any[], columns: any[]) {
         const body = [];
         // Fecha, acción, documento (nombre del documento), tipo de documento, 
-        // fecha de creación, fecha de carga, fecha de ultima modificación, 
+        // fecha de ingreso, fecha de carga, fecha de ultima modificación, 
         // tipo de información, tipo de documento, tipo de expediente, 
         // folio de expediente y estatus
         body.push([{ text: 'Fecha', style: 'tableHeader' },
@@ -223,10 +258,10 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
         { text: 'Usuario', style: 'tableHeader' },
         { text: 'Documento', style: 'tableHeader' },
         { text: 'Tipo de documento', style: 'tableHeader' },
-        { text: 'Fecha de creación', style: 'tableHeader' },
+        { text: 'Fecha de ingreso', style: 'tableHeader' },
         { text: 'Fecha de carga', style: 'tableHeader' },
         { text: 'Fecha de modificación', style: 'tableHeader' },
-        { text: 'Tipo de información', style: 'tableHeader' },
+        /*  { text: 'Tipo de información', style: 'tableHeader' }, */
         { text: 'Tipo de documento', style: 'tableHeader' },
         { text: 'Tipo de expediente', style: 'tableHeader' },
         { text: 'Folio de expediente', style: 'tableHeader' },
@@ -364,7 +399,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
                 this.table({
                     data: value, columns: [
                         'fechaModificacion', 'accion', 'nombreUsuario', 'nombreDocumento', 'tipoDocumento',
-                        'fechaCreacion', 'fechaCarga', 'fechaModificacion', 'tipoInformacion',
+                        'fechaCreacion', 'fechaCarga', 'fechaModificacion',
                         'tipoDocumento', 'tipoExpediente', 'folioExpediente', 'estatus',
                     ]
                 })

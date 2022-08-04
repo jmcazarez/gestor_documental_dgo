@@ -54,7 +54,7 @@ export class DepartamentosComponent implements OnInit {
             cDescripcionDepartamento: cDepartamento,
             direcciones: idDireccion
         };
-        console.log(departamentos);
+       
         if (this.departamentos.id) {
 
             // Actualizamos el secretaria

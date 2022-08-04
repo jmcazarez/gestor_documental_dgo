@@ -42,7 +42,7 @@ export class GuardarDepartamentosComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public direcciones: DireccionesModel,
     ) { }
     ngOnInit(): void {
-        console.log(this.idDireccion)
+       
         this.obtenerDepartamento();
     }
 
@@ -59,7 +59,7 @@ export class GuardarDepartamentosComponent implements OnInit {
             this.optEditar = true;
             this.optConsultar = true;
             this.optEliminar = true;
-            console.log(resp);
+            
             // Si tiene permisos para consultar
             if (this.optConsultar) {
                 for (const departamento of resp) {

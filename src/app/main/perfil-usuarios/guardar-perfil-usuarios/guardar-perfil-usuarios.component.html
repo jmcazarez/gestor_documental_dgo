@@ -46,20 +46,18 @@
     </form>
 </div>
 
-<div class="h2 mb-24">Permisos
-    <div align="right" style="border: 1px">
-        <button mat-raised-button color="accent" (click)="nuevoPermisoUsuario()">
-            <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un nuevo permiso de usuario">
-                person_add</mat-icon>
-            Nuevo Permiso
-        </button>
-    </div>
-</div>
+
 
 <mat-tab-group (selectedTabChange)="clickOpcion()" animationDuration="1000ms">
 
     <mat-tab label="Tipo de información">
-
+        <div align="right" style="border: 1px">
+            <button mat-raised-button color="accent" (click)="nuevoPermisoUsuario()">
+                <mat-icon color="white" class="material-icons" matTooltip="Clic para añadir un nuevo permiso de usuario">
+                    person_add</mat-icon>
+                Nuevo tipo de información
+            </button>
+        </div>
         <mat-form-field>
 
             <mat-label>Buscar</mat-label>
@@ -73,6 +71,9 @@
         <mat-checkbox class="example-margin" [(ngModel)]="selectedVisibilidad" (click)="seleccionarVisibilidad()">
         </mat-checkbox>
 
+     
+
+       
         <ngx-datatable class="material" [rows]="rowVisibilidad" [loadingIndicator]="loadingIndicator"
             [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
             [reorderable]="reorderable" [limit]="10">
@@ -141,7 +142,7 @@
                     </mat-checkbox>
                 </ng-template>
             </ngx-datatable-column>
-            <ngx-datatable-column name="Acciones" sortable="false" prop="id">
+           <!--  <ngx-datatable-column name="Acciones" sortable="false" prop="id">
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
 
                     <a (click)="eliminarOpcion(row)">
@@ -155,7 +156,7 @@
                     </a>
 
                 </ng-template>
-            </ngx-datatable-column>
+            </ngx-datatable-column> -->
         </ngx-datatable>
     </mat-tab>
     <mat-tab label="Tipo de documento">

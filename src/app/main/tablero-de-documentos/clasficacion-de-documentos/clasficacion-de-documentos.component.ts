@@ -26,6 +26,7 @@ import { AutorizarService } from "services/autorizar.service";
 import { ParametrosService } from "services/parametros.service";
 import { FirmasPorEtapaService } from "services/configuracion-de-firmas-por-etapa.service";
 import { environment } from 'environments/environment';
+import { FuseProgressBarService } from "@fuse/components/progress-bar/progress-bar.service";
 
 export interface Metacatalogos {
     name: string;
@@ -38,6 +39,7 @@ export interface Metacatalogos {
 })
 export class ClasficacionDeDocumentosComponent implements OnInit {
     pdfSrc: string;
+    bMostarPdf = false;
     form: FormGroup;
     selectedEntes: any;
     selectedSecretaria: any;
@@ -113,6 +115,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         private usuariosService: UsuariosService,
         private parametros: ParametrosService,
         private firmas: FirmasPorEtapaService,
+        private _fuseLoadingService: FuseProgressBarService,
         @Inject(MAT_DIALOG_DATA) public documento,
         @Inject(MAT_DIALOG_DATA) public nuevo
     ) {
@@ -121,6 +124,8 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
     async ngOnInit(): Promise<void> {
         try {
+            this._fuseLoadingService.show();
+            this._fuseLoadingService.setMode("determinate");
             this.pasarAAutorizacion = true;
             this.disableFolioExpediente = false;
             this.pdfSrc = '';
@@ -134,8 +139,9 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
             let cLegislatura = "";
             this.arrMetacatalogos = [];
             let folioExpedienteRequerido = [];
+
           //  await this.obtenerLegislaturas();
-          console.log(this.documento);
+        
             await this.obtenerTiposExpedientes();
             if (!this.documento.iniciativas) {
                 if (this.documento.tipo_de_documento.id) {
@@ -147,8 +153,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
 
                     if (this.documento.ente !== undefined) {
                         this.obtenerDocumento(
-                            this.documento.id,
-                            this.documento.usuario
+                            this.documento.id
                         );
                     } else {
                     }
@@ -286,7 +291,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 cLegislatura = this.documento.legislatura.id;
             }
 
-            console.log(this.documento.folioExpediente);
+        
             this.selectedFolioExpediente = this.documento.folioExpediente;
 
             folioExpedienteRequerido = [Validators.required]
@@ -312,7 +317,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                 folioExpediente: [
                     {
                         value: this.documento.folioExpediente,
-                        disabled: this.disableFolioExpediente,
+                        disabled: this.documento.disabled,
                     },
                     [Validators.required],
                 ],
@@ -403,14 +408,14 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
               */
             if (this.documento.disabled === true) {
                /*  await this.descargarDocumentoClasificacion(); */
-               this.pdfSrc = environment.apiStrapiMin + this.documento.documento.url
+              this.pdfSrc = environment.apiStrapiMin + this.documento.documento.url
             } else {
                 //await this.descargarDocumento();
 
                 
                 if(this.documento.documento){
                     
-                    this.pdfSrc = environment.apiStrapiMin + this.documento.documento.url
+                  this.pdfSrc = environment.apiStrapiMin + this.documento.documento.url
                 }
                 
             }
@@ -430,6 +435,18 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         }
     }
 
+    onProgress(progressData: any) {
+        // do anything with progress data. For example progress indicator
+
+        if(progressData.loaded < progressData.total){
+            this._fuseLoadingService.setValue((progressData.loaded/progressData.total) * 100)
+            this.bMostarPdf = false;
+        }else{
+            this.bMostarPdf = true;
+          
+            this._fuseLoadingService.hide();
+        }
+      }
     obtenerTiposExpedientes(): void {
         // Obtenemos los documentos
         this.tipoExpedientesService.obtenerTipoExpedientes().subscribe(
@@ -455,6 +472,11 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
 
     cerrar(retult: boolean): void {
+
+
+        this.obtenerDocumentoConsulto(this.documento.id);
+        this._fuseLoadingService.hide();
+        this._fuseLoadingService.setValue(0);
         this.form.reset();
         this.dialogRef.close(retult);
     }
@@ -464,11 +486,26 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
 
     async obtenerDocumento(
-        idDocumento: string,
-        usuario: string
+        idDocumento: string
     ): Promise<void> {
         // Obtenemos los documentos
-        this.documentoService.obtenerDocumento(idDocumento, usuario).subscribe(
+        this.documentoService.obtenerDocumento(idDocumento).subscribe(
+            (resp: any) => { },
+            (err) => {
+                Swal.fire(
+                    "Error",
+                    "Ocurrió un error obtener el documento." + err,
+                    "error"
+                );
+            }
+        );
+    }
+
+    async obtenerDocumentoConsulto(
+        idDocumento: string
+    ): Promise<void> {
+        // Obtenemos los documentos
+        this.documentoService.obtenerDocumentoConsulto(idDocumento).subscribe(
             (resp: any) => { },
             (err) => {
                 Swal.fire(
@@ -481,8 +518,8 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
 
     async descargarDocumento(): Promise<string> {
-        console.log('descarga');
-        this.pdfSrc = 'http://localhost:8082/uploads/219_01_04_2017_NOMINAS_BUROCRATAS_PENSIONES_a773af37ed.pdf'
+      
+        this.spinner.show();
         return new Promise(async (resolve) => {
             {
                 // Descargamos el documento
@@ -491,7 +528,6 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                         this.documento.documento.hash +
                         this.documento.documento.ext,
                         this.documento.id,
-                        this.menuService.usuario,
                         this.documento.cNombreDocumento
                     )
                     .subscribe(
@@ -500,6 +536,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                                 "data:application/pdf;base64," +
                                 resp.data;
                             this.pdfSrc = source.toString();
+                            this.spinner.hide();
                             resolve("1");
                         },
                         (err) => {
@@ -510,6 +547,7 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
                                     err.error.data,
                                     "error"
                                 );
+                                this.spinner.hide();
                                 resolve("0");
                             }
                         }
@@ -519,17 +557,18 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
     }
 
     async descargarDocumentoClasificacion(): Promise<string> {
-        console.log('entro');
+       
+   
         return new Promise(async (resolve) => {
             {
                 try {
+                    this.spinner.show;
                     // Descargamos el documento
                     await this.documentoService
                         .dowloadDocumentClasificacion(
                             this.documento.documento.hash +
                             this.documento.documento.ext,
-                            this.documento.id,
-                            this.menuService.usuario,
+                            this.documento.id,                          
                             this.documento.cNombreDocumento
                         )
                         .subscribe(
@@ -694,6 +733,8 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         // this.documento.direccione = this.selectedDireccion;
         // this.documento.departamento = this.selectedDepartamento;
         // this.documento.visibilidade = this.selectedInformacion;
+        this._fuseLoadingService.hide();
+        this._fuseLoadingService.setValue(0);
         this.spinner.show();
    
         /* this.documento.legislatura = ""; */
@@ -779,37 +820,32 @@ export class ClasficacionDeDocumentosComponent implements OnInit {
         }
     }
 
-    descargar(): void {
+    async descargar(): Promise<void> {
         // Descargamos el documento
-        this.documentoService
-            .dowloadDocument(
-                this.documento.documento.hash + this.documento.documento.ext,
-                this.documento.id,
-                this.menuService.usuario,
-                this.documento.cNombreDocumento
-            )
-            .subscribe(
-                (resp: any) => {
-                    const linkSource =
-                        "data:application/octet-stream;base64," + resp.data;
-                    const downloadLink = document.createElement("a");
-                    const fileName =
-                        this.documento.documento.hash +
-                        this.documento.documento.ext;
+        this.spinner.show();
+        console.log(this.documento.documento);
+        await this.documentoService.dowloadDocument( this.documento.documento.hash + this.documento.documento.ext,  this.documento.id, this.documento.cNombreDocumento).subscribe((resp: any) => {
 
-                    downloadLink.href = linkSource;
-                    downloadLink.download = fileName;
-                    downloadLink.click();
-                },
-                (err) => {
-                    Swal.fire(
-                        "Error",
-                        "Ocurrió un error obtener al descargar el documento." +
-                        err,
-                        "error"
-                    );
-                }
+            const filePath = window.URL.createObjectURL(resp);
+
+            const downloadLink = document.createElement('a');
+            const fileName =   this.documento.documento.hash + this.documento.documento.ext;
+
+            downloadLink.href = filePath;
+            downloadLink.download = fileName;
+            downloadLink.click();
+            this.spinner.hide();
+            this.loadingIndicator = true;
+        }, err => {
+            this.spinner.hide();
+            Swal.fire(
+                'Error',
+                'Ocurrió un error al descargar el documento.' + err,
+                'error'
             );
+            this.loadingIndicator = false;
+        });
+       
     }
 
     eliminar(): void {

@@ -217,7 +217,7 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
     }
     guardarTipoDocumento(row: TipoDocumentoModel): void {
         // Abrimos modal de guardar expediente
-        console.log(row);
+      
         const dialogRef = this.dialog.open(GuardarTipoDeDocumentosComponent, {
             width: '50%',
             height: '98%',

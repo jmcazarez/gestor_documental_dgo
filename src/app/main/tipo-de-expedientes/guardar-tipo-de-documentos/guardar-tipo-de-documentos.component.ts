@@ -19,6 +19,7 @@ import { LoginService } from "services/login.service";
 
 import { Router } from "@angular/router";
 
+
 @Component({
     selector: "app-guardar-tipo-de-documentos",
     templateUrl: "./guardar-tipo-de-documentos.component.html",
@@ -98,9 +99,12 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         this.selectedDireccion = '';
         this.selectedDepartamento = '';
 
-        console.log(this.documento);
 
-    
+
+        // Seteamos valores
+        if (this.documento.departamento) {
+            this.selectedDepartamento = this.documento.departamento;
+        }
         // Seteamos valores
         if (this.documento.metacatalogos) {
             this.rows = this.documento.metacatalogos;
@@ -111,7 +115,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         if (this.documento.tipos_de_formato) {
             this.selectedFormato = this.documento.tipos_de_formato.id;
         }
-
+        
         this.arrInformacion = this.menuService.tipoInformacion;
         this.form = this.formBuilder.group({
             cDescripcionTipoDocumento: [
@@ -161,17 +165,19 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         if (this.documento.secretaria) {
             this.selectedSecretaria = this.documento.secretaria;
         }
-        // Seteamos valores
-        if (this.documento.departamento) {
-            this.selectedDepartamento = this.documento.departamento;
-        }
+        
 
         // Seteamos valores
         if (this.documento.direccione) {
             this.selectedDireccion = this.documento.direccione;
         }
 
-        
+            // Seteamos valores
+            if (this.documento.departamento) {
+                this.selectedDepartamento = this.documento.departamento;
+            }
+
+      
         if (this.arrDirecciones.length === 0) {
             this.form.get('direcciones').clearValidators();
             this.form.get('direcciones').updateValueAndValidity();
@@ -216,12 +222,13 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                         this.form.get('direcciones').setValidators([Validators.required]);
                         this.form.get('direcciones').updateValueAndValidity();
                     }
-                }
-                this.selectedDepartamento = '';
+                }/* 
+                this.selectedDepartamento = ''; */
             }
         }
         });
 
+    
         // Si el valor cambia filtramos el resultado
         this.form.get('direcciones').valueChanges.subscribe(val => {
             if (val){
@@ -230,7 +237,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                 this.form.controls['departamentos'].enable();
                 if (this.arrDepartamentosFilter) {
                     this.arrDepartamentos = this.arrDepartamentosFilter.filter(item => item['direccionId'] === val);
-                    console.log(this.arrDepartamentos)
+                   
 
                     if (this.arrDirecciones.length === 0) {
                         this.arrDepartamentos = [];
@@ -250,6 +257,11 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         }
         });
 
+            // Seteamos valores
+            if (this.documento.departamento) {
+                this.selectedDepartamento = this.documento.departamento;
+            }
+           
         this.obtenerFormatos();
 
         // Seteamos valores
@@ -870,7 +882,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                                 }
                             }
                         } else {
-                            console.log("push");
+                           
                             this.rows.push({
                                 cDescripcionMetacatalogo: metacatalogo,
                                 bOligatorio: metacatalogoObligatorio,

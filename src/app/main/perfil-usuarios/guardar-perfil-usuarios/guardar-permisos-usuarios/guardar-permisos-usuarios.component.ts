@@ -45,13 +45,14 @@ export class GuardarPermisosUsuariosComponent implements OnInit {
     ) { }
 
     async ngOnInit(): Promise<void> {
+        this.selectedValue  = 'Tipo de información'
         this.permisosUsuarios.tipoPermiso = this.tipos;
         if (this.permisosUsuarios.id) {
             this.permisosUsuarios.bActivo = this.permisosUsuarios.bActivo;
         } else {
             this.permisosUsuarios.bActivo = true;
         }
-        console.log(this.permisosUsuarios);
+        
         if (this.permisosUsuarios.idTipoPermiso) {
             this.selectedValue = this.permisosUsuarios.idTipoPermiso;
             this.tipoDisable = true;
@@ -136,7 +137,7 @@ export class GuardarPermisosUsuariosComponent implements OnInit {
 
             this.tipoDocumentoGuardar.bActivo = this.form.get('estatus').value;
             this.tipoDocumentoGuardar.cDescripcionTipoDocumento = this.form.get('nombre').value;
-            console.log(this.tipoDocumentoGuardar);
+            
             if (this.permisosUsuarios.id) {
                 // Guardamos
                 this.tipoDocumentoGuardar.id = this.permisosUsuarios.id;
@@ -177,7 +178,7 @@ export class GuardarPermisosUsuariosComponent implements OnInit {
                 this.permisosService.actualizarVisibilidad(this.visibilidad).subscribe((resp: any) => {
 
                     if (resp) {
-                        Swal.fire('Éxito', 'Visibilidad guardada correctamente.', 'success');
+                        Swal.fire('Éxito', 'Tipo de información guardada correctamente.', 'success');
                         this.cerrar(3);
                     } else {
                         Swal.fire('Error', 'Ocurrió un error al guardar.', 'error');
@@ -190,7 +191,7 @@ export class GuardarPermisosUsuariosComponent implements OnInit {
                 this.permisosService.guardarVisibilidad(this.visibilidad).subscribe((resp: any) => {
 
                     if (resp) {
-                        Swal.fire('Éxito', 'Visibilidad guardada correctamente.', 'success');
+                        Swal.fire('Éxito', 'Tipo de información guardada correctamente.', 'success');
                         this.cerrar(3);
                     } else {
                         Swal.fire('Error', 'Ocurrió un error al guardar.', 'error');

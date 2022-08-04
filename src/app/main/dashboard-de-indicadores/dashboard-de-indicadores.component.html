@@ -38,10 +38,10 @@
                         <div class="select">
                             <p class="tag">Estatus</p>
                             <mat-form-field appearance="fill" class="input">
-                                <mat-label>Vigente/No Vigente</mat-label>
+                                <mat-label>Activo/Inactivo</mat-label>
                                 <mat-select formControlName="vigente" [(ngModel)]="vigenteBusqueda">
-                                    <mat-option value="true">Vigente</mat-option>
-                                    <mat-option value="false">No Vigente</mat-option>
+                                    <mat-option value="true">Activo</mat-option>
+                                    <mat-option value="false">Inactivo</mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div>
@@ -73,7 +73,7 @@
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <div class="select">
+                       <!--  <div class="select">
                             <p class="tag">Tipo de información</p>
                             <mat-form-field appearance="fill" class="input">
                                 <mat-label>Seleccionar</mat-label>
@@ -85,7 +85,7 @@
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
-                        </div>
+                        </div> -->
 
 
                         <!--
@@ -154,7 +154,7 @@
                         <mat-tab label="Ayer">
                             <div class="contenedor">
                                 <div class="card">
-                                    <h3 class="card-title">Documentos disponibles</h3>
+                                    <h3 class="card-title">Documentos digitalizados integrados</h3>
                                     <div class="contenido">
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">assignment
@@ -163,7 +163,7 @@
                                     </div>
                                 </div>
                                 <div class="card">
-                                    <h3 class="card-title">Expedientes disponibles</h3>
+                                    <h3 class="card-title">Cajas digitalizadas integradas</h3>
                                     <div class="contenido">
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">folder
@@ -187,7 +187,7 @@
                                     <div class="position-relative p-24" fxLayout="row"
                                         fxLayoutAlign="space-between center">
                                         <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">Documentos ingresados</span>
+                                            <span class="h2">Documentos cargados</span>
                                         </div>
 
                                     </div>
@@ -216,7 +216,7 @@
                                     <div class="position-relative p-24" fxLayout="row"
                                         fxLayoutAlign="space-between center">
                                         <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">Documentos ingresados</span>
+                                            <span class="h2">Documentos consultados</span>
                                         </div>
 
                                     </div>
@@ -232,7 +232,7 @@
                             </div>
                             <div class="contenedor-grafica">
                                 <div class="card">
-                                    <h3 class="card-title">Documentos eliminados</h3>
+                                    <h3 class="card-title">documentos inactivos</h3>
                                     <div class="contenido">
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">assignment
@@ -245,7 +245,7 @@
                                     <div class="position-relative p-24" fxLayout="row"
                                         fxLayoutAlign="space-between center">
                                         <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">Documentos ingresados</span>
+                                            <span class="h2">documentos inactivos</span>
                                         </div>
 
                                     </div>
@@ -263,7 +263,7 @@
                         <mat-tab label="Últimos 7 dias en el mes">
                             <div class="contenedor">
                                 <div class="card">
-                                    <h3 class="card-title">Documentos disponibles</h3>
+                                    <h3 class="card-title">Documentos digitalizados integrados</h3>
                                     <div class="contenido">
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">assignment
@@ -272,7 +272,7 @@
                                     </div>
                                 </div>
                                 <div class="card">
-                                    <h3 class="card-title">Expedientes disponibles</h3>
+                                    <h3 class="card-title">Cajas digitalizadas integradas</h3>
                                     <div class="contenido">
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">folder
@@ -296,7 +296,7 @@
                                     <div class="position-relative p-24" fxLayout="row"
                                         fxLayoutAlign="space-between center">
                                         <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">Documentos ingresados</span>
+                                            <span class="h2">Documentos cargados</span>
                                         </div>
 
                                     </div>
@@ -325,7 +325,7 @@
                                     <div class="position-relative p-24" fxLayout="row"
                                         fxLayoutAlign="space-between center">
                                         <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">Documentos ingresados</span>
+                                            <span class="h2">Documentos consultados</span>
                                         </div>
 
                                     </div>
@@ -341,7 +341,7 @@
                             </div>
                             <div class="contenedor-grafica">
                                 <div class="card">
-                                    <h3 class="card-title">Documentos eliminados</h3>
+                                    <h3 class="card-title">documentos inactivos</h3>
                                     <div class="contenido">
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">assignment
@@ -354,7 +354,7 @@
                                     <div class="position-relative p-24" fxLayout="row"
                                         fxLayoutAlign="space-between center">
                                         <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">Documentos ingresados</span>
+                                            <span class="h2">documentos inactivos</span>
                                         </div>
 
                                     </div>
@@ -372,7 +372,7 @@
                         <mat-tab label="Último mes">
                             <div class="contenedor">
                                 <div class="card">
-                                    <h3 class="card-title">Documentos disponibles</h3>
+                                    <h3 class="card-title">Documentos digitalizados integrados</h3>
                                     <div class="contenido">
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">assignment
@@ -381,7 +381,7 @@
                                     </div>
                                 </div>
                                 <div class="card">
-                                    <h3 class="card-title">Expedientes disponibles</h3>
+                                    <h3 class="card-title">Cajas digitalizadas integradas</h3>
                                     <div class="contenido">
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">folder
@@ -405,7 +405,7 @@
                                     <div class="position-relative p-24" fxLayout="row"
                                         fxLayoutAlign="space-between center">
                                         <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">Documentos ingresados</span>
+                                            <span class="h2">Documentos cargados</span>
                                         </div>
 
                                     </div>
@@ -434,7 +434,7 @@
                                     <div class="position-relative p-24" fxLayout="row"
                                         fxLayoutAlign="space-between center">
                                         <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">Documentos ingresados</span>
+                                            <span class="h2">Documentos consultados</span>
                                         </div>
 
                                     </div>
@@ -450,7 +450,7 @@
                             </div>
                             <div class="contenedor-grafica">
                                 <div class="card">
-                                    <h3 class="card-title">Documentos eliminados</h3>
+                                    <h3 class="card-title">documentos inactivos</h3>
                                     <div class="contenido">
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">assignment
@@ -463,7 +463,7 @@
                                     <div class="position-relative p-24" fxLayout="row"
                                         fxLayoutAlign="space-between center">
                                         <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">Documentos ingresados</span>
+                                            <span class="h2">documentos inactivos</span>
                                         </div>
 
                                     </div>
@@ -523,7 +523,7 @@
                             </section>
                             <div class="contenedor">
                                 <div class="card">
-                                    <h3 class="card-title">Documentos disponibles</h3>
+                                    <h3 class="card-title">Documentos digitalizados integrados</h3>
                                     <div class="contenido">
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">assignment
@@ -532,7 +532,7 @@
                                     </div>
                                 </div>
                                 <div class="card">
-                                    <h3 class="card-title">Expedientes disponibles</h3>
+                                    <h3 class="card-title">Cajas digitalizadas integradas</h3>
                                     <div class="contenido">
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">folder
@@ -556,7 +556,7 @@
                                     <div class="position-relative p-24" fxLayout="row"
                                         fxLayoutAlign="space-between center">
                                         <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">Documentos Ingresados</span>
+                                            <span class="h2">Documentos cargados</span>
                                         </div>
 
                                     </div>
@@ -585,7 +585,7 @@
                                     <div class="position-relative p-24" fxLayout="row"
                                         fxLayoutAlign="space-between center">
                                         <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">Documentos ingresados</span>
+                                            <span class="h2">Documentos consultados</span>
                                         </div>
 
                                     </div>
@@ -601,7 +601,7 @@
                             </div>
                             <div class="contenedor-grafica">
                                 <div class="card">
-                                    <h3 class="card-title">Documentos eliminados</h3>
+                                    <h3 class="card-title">documentos inactivos</h3>
                                     <div class="contenido">
                                         <mat-icon color="white" class="material-icons mat-icon"
                                             matTooltip="Clic para añadir una Ente">assignment
@@ -614,7 +614,7 @@
                                     <div class="position-relative p-24" fxLayout="row"
                                         fxLayoutAlign="space-between center">
                                         <div fxLayout="column" fxLayoutAlign="start start">
-                                            <span class="h2">Documentos ingresados</span>
+                                            <span class="h2">documentos inactivos</span>
                                         </div>
 
                                     </div>

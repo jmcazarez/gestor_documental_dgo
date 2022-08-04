@@ -210,7 +210,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                         Legislatura: "",
                                         "Tipo de documento": "",
                                         Páginas: "",
-                                        "Fecha de creación": "",
+                                        "Fecha de ingreso": "",
                                         "Tipo de expediente": "",
                                         "Folio de expediente": "",
                                         Estatus: "",
@@ -1112,7 +1112,7 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                             Legislatura: "",
                             "Tipo de documento": "",
                             Páginas: "",
-                            "Fecha de creación": "",
+                            "Fecha de ingreso": "",
                             "Tipo de expediente": "",
                             "Folio de expediente": "",
                             Estatus: "",
@@ -1539,22 +1539,22 @@ export class TableroDeCargaMasivaComponent implements OnInit {
                                 this.documentos[x].paginas = "0";
                             }
 
-                            if (new Date(row["Fecha de creación"])) {
+                            if (new Date(row["Fecha de ingreso"])) {
                             
                                 this.documentos[x].fechaCreacion =
                                     this.datePipe.transform(
-                                        row["Fecha de creación"],
+                                        row["Fecha de ingreso"],
                                         "yyyy-MM-dd"
                                     ) + "T06:00:00.000Z";
                             } else {
                                 this.documentos[x].valido = false;
                                 if (textError.length > 0) {
                                     textError =
-                                        "La fecha de creación obligatorio";
+                                        "La fecha de ingreso obligatorio";
                                 } else {
                                     textError =
                                         textError +
-                                        ", la fecha de creación obligatorio";
+                                        ", la fecha de ingreso obligatorio";
                                 }
                             }
 

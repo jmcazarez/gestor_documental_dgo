@@ -10,7 +10,9 @@ import { Observable } from 'rxjs';
 })
 export class DocumentosService {
     private baseUrl: string;
+    private baseUrlStrapi: string;
     private urlDocumentos = "documentos";
+    private urlDocumentosConsulto = "documentos-consulto";
     private urlDocumentosSinVersion = "documentos-sinVersion";
     private urlDocumentosBorrar = "documentos-borrar";
     private urlDowloadDocument = "documento-file";
@@ -30,6 +32,7 @@ export class DocumentosService {
     };
     constructor(private http: HttpClient) {
         this.baseUrl = environment.apiCms;
+        this.baseUrlStrapi = environment.apiStrapi
         this.TOKEN = localStorage.getItem("token");
         this.httpOptions = {
             headers: new HttpHeaders({
@@ -49,9 +52,16 @@ export class DocumentosService {
         return this.http.get(this.baseUrl + this.urlDocumentos, httpOptions);
     }
 
-    obtenerDocumento(id: string, usuario: string): any {
+    obtenerDocumento(id: string): any {
         return this.http.get(
-            this.baseUrl + this.urlDocumentos + "/" + id + "/" + usuario,
+            this.baseUrl + this.urlDocumentos + "/" + id ,
+            this.httpOptions
+        );
+    }
+
+    obtenerDocumentoConsulto(id: string): any {
+        return this.http.get(
+            this.baseUrl + this.urlDocumentosConsulto + "/" + id ,
             this.httpOptions
         );
     }
@@ -152,7 +162,7 @@ export class DocumentosService {
                 Authorization: this.TOKEN,
             }),
         };
-        documento.documento = "";
+        
         documento.fechaCarga = documento.fechaCarga;
         documento.fechaCreacion = documento.fechaCreacion;
         return this.http.put(
@@ -196,7 +206,6 @@ export class DocumentosService {
     dowloadDocument(
         idFile: string,
         idDocumento: string,
-        usuario: string,
         nombreDocumento: string
     ): any {
         let options = {
@@ -204,27 +213,14 @@ export class DocumentosService {
                 Authorization: localStorage.getItem("token"),
             }),
         };
-
-        if (usuario.length > 0) {
-            return this.http.get(
-                this.baseUrl +
-                    this.urlDowloadDocument +
-                    "/" +
-                    idFile +
-                    "/" +
-                    idDocumento +
-                    "/" +
-                    usuario +
-                    "/" +
-                    nombreDocumento,
-                options
-            );
-        } else {
-            return this.http.get(
-                this.baseUrl + this.urlDowloadDocument + "/" + idFile,
-                options
-            );
-        }
+        let headers = new HttpHeaders();
+        headers = headers.set('Accept', 'application/pdf');
+        return  this.http.get(this.baseUrlStrapi+'uploads'+ "/" + idFile, { headers: headers, responseType: 'blob' });
+      /*   console.log(this.baseUrl + this.urlDowloadDocument + "/" + idFile);
+        return this.http.get(
+            this.baseUrl + this.urlDowloadDocument + "/" + idFile,
+            options
+        ); */
     }
 
      dowloadDocumentStrapi(
@@ -290,7 +286,6 @@ export class DocumentosService {
     dowloadDocumentClasificacion(
         idFile: string,
         idDocumento: string,
-        usuario: string,
         nombreDocumento: string
     ): any {
         let options = {
@@ -305,8 +300,6 @@ export class DocumentosService {
                 idFile +
                 "/" +
                 idDocumento +
-                "/" +
-                usuario +
                 "/" +
                 nombreDocumento,
             options

@@ -19,4 +19,5 @@ export class PrestamoDeDocumentosModels {
     cTipoDanio: string;
     tipo_de_expediente: any;
     cTipoExpediente: any;
+    cDetallePrestamo: string;
 }

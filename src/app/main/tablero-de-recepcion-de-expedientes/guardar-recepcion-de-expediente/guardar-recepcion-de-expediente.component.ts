@@ -163,7 +163,7 @@ export class GuardarRecepcionDeExpedienteComponent implements OnInit {
         // Obtenemos empleados
         this.spinner.show();
         await this.empleados.obtenerEmpleados().subscribe((resp: any) => {
-            console.log(resp);
+          
             this.arrEmisores = resp;
             this.arrReceptores = this.arrEmisores;
             this.spinner.hide();

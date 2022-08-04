@@ -96,6 +96,7 @@ export class LoginComponent implements OnInit {
             }
             else {
                 // Crear menú
+               
                 await this._menuService.crearMenu();
                 this.error = false;
                 this._router.navigate(['home']);

@@ -198,7 +198,7 @@ export class ToolbarComponent implements OnInit, OnDestroy {
                 const token = this.usr[0].data.token;
                 localStorage.setItem('token', token);
                 if (this.usr[0].data.imagen.length > 0) {
-                    await this.documentoService.dowloadDocument(this.usr[0].data.imagen, '', '', '').subscribe((resp: any) => {
+                    await this.documentoService.dowloadDocument(this.usr[0].data.imagen, '', '').subscribe((resp: any) => {
 
                         const linkSource = 'data:application/octet-stream;base64,' + resp.data;
                         this.srcImagenLogo = linkSource;

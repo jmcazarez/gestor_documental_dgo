@@ -5,8 +5,7 @@
     <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
 
         <div class="hero-text content">
-            <h1>Tablero de búsqueda de documentos</h1>
-            <h3>Búsqueda de documentos</h3>
+            <h1>Búsqueda de documentos</h1>
         </div>
 
     </div>
@@ -37,14 +36,14 @@
                         <div class="select">
                             <p class="tag">Estatus</p>
                             <mat-form-field appearance="fill" class="input">
-                                <mat-label>Vigente/no Vigente</mat-label>
+                                <mat-label>Activo/Inactivo</mat-label>
                                 <mat-select formControlName="vigente" [(ngModel)]="vigenteBusqueda">
-                                    <mat-option value="true">Vigente</mat-option>
-                                    <mat-option value="false">No Vigente</mat-option>
+                                    <mat-option value="true">Activo</mat-option>
+                                    <mat-option value="false">Inactivo</mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <div class="select">
+                       <!--  <div class="select">
                             <p class="tag">Tipo de información</p>
                             <mat-form-field appearance="fill" class="input">
                                 <mat-label>Seleccionar</mat-label>
@@ -56,9 +55,9 @@
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
-                        </div>
+                        </div> -->
                         <div class="select">
-                            <p class="tag">Fecha de creación</p>
+                            <p class="tag">Fecha de ingreso</p>
                             <mat-form-field appearance="fill" class="input">
                                 <mat-label>Seleccione una Fecha</mat-label>
                                 <input matInput [matDatepicker]="picker" formControlName="fechaCreacion"
@@ -184,7 +183,7 @@
                         </div> -->
 
                         <div class="select">
-                            <p class="tag">Folio de expediente</p>
+                            <p class="tag">Numero de caja</p>
                             <mat-form-field appearance="fill" class="input">
                                 <input matInput placeholder="Folio" formControlName="folioExpediente"
                                     [(ngModel)]="selectedFolioExpediente">
@@ -276,23 +275,26 @@
                             <!-- <ngx-datatable-column name="Id. documento" prop="id"></ngx-datatable-column>-->
                             <ngx-datatable-column name="Documento" prop="cNombreDocumento"></ngx-datatable-column>
                             <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
-                            <ngx-datatable-column name="Tipo de información" prop="informacion"></ngx-datatable-column>
+                          <!--   <ngx-datatable-column name="Tipo de información" prop="informacion"></ngx-datatable-column> -->
                            <!--  <ngx-datatable-column name="Páginas" prop="paginas" [width]="100"></ngx-datatable-column> -->
-                            <ngx-datatable-column name="Fecha de creación" prop="fechaCreacionView">
+                            <ngx-datatable-column name="Fecha de ingreso" prop="fechaCreacionView">
                             </ngx-datatable-column>
                             <ngx-datatable-column name="Fecha de carga" prop="fechaCargaView"></ngx-datatable-column>
                             <ngx-datatable-column name="Fecha de modificación" prop="fechaModificacionView">
                             </ngx-datatable-column>
                             <ngx-datatable-column name="Versión" prop="version" [width]="100"></ngx-datatable-column>
-                            <ngx-datatable-column name="Clasificación" prop="clasificacion"></ngx-datatable-column>
+                            <ngx-datatable-column name="Clasificación(Meta catalogo)" prop="clasificacion"></ngx-datatable-column>
                             <!-- <ngx-datatable-column name="Ente" prop="ente.cDescripcionEnte"></ngx-datatable-column>-->
                             <!--<ngx-datatable-column name="Tipo de expediente"
                                 prop="tipo_de_expediente.cDescripcionTipoExpediente"></ngx-datatable-column>
                                 -->
-                            <ngx-datatable-column name="Legislatura" prop="legislatura.cLegislatura">
-                            </ngx-datatable-column>
-                            <ngx-datatable-column name="Folio de expediente" prop="folioExpediente">
-                            </ngx-datatable-column>
+                          <!--   <ngx-datatable-column name="Legislatura" prop="legislatura.cLegislatura">
+                            </ngx-datatable-column> -->                         
+                            <ngx-datatable-column name="Nro. caja" prop="folioExpediente" [width]="80"></ngx-datatable-column>
+                            <ngx-datatable-column name="Pasillo" prop="pasillo" [width]="70"></ngx-datatable-column>
+                            <ngx-datatable-column name="Estante" prop="estante" [width]="70"></ngx-datatable-column>
+                            <ngx-datatable-column name="Nivel" prop="nivel" [width]="70"></ngx-datatable-column>
+                            <ngx-datatable-column name="Sección" prop="seccion" [width]="70"></ngx-datatable-column>
                             <ngx-datatable-column name="Estatus" sortable="false" [width]="100">
                                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                                     <mat-icon *ngIf="row.bActivo" color="accent" class="material-icons">check_circle
@@ -305,7 +307,7 @@
                             <ngx-datatable-column name="Acciones" sortable="false" prop="id" [width]="150">
                                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
 
-                                    <a *ngIf="this.optEliminar && row.Eliminar && row.documento"
+                                    <a *ngIf="this.optEliminar && row.Eliminar && row.documento && row.bActivo"
                                         (click)="eliminarDocumento(row)">
                                         <mat-icon color="warn" class="material-icons pointer"
                                             matTooltip="Clic para eliminar">delete

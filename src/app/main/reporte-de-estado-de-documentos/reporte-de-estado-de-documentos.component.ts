@@ -10,6 +10,7 @@ import pdfFonts from 'pdfmake/build/vfs_fonts';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;  // fonts provided for pdfmake
 import { EncabezadoReporte1Model } from 'models/encabezadoReporte1';
 import { environment } from '../../../environments/environment';
+import Swal from 'sweetalert2';
 @Component({
     selector: 'app-reporte-de-estado-de-documentos',
     templateUrl: './reporte-de-estado-de-documentos.component.html',
@@ -38,6 +39,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
     arrBody: any[] = [];
     arr: any[] = [];
     imageBase64: any;
+    arrDepartamentos = [];
 
     constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe,
         private usuariosService: UsuariosService,
@@ -47,8 +49,8 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
         this.imageBase64 = environment.imageBase64;
     }
 
-    ngOnInit(): void {
-
+    async ngOnInit(): Promise<void> {
+        
         this.arrInformacion = this.menuServices.tipoInformacion;
         // Formulario reactivo
         this.firstFormGroup = this._formBuilder.group({
@@ -61,33 +63,47 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
             documento: ['', Validators.required],
             usuario: ['', Validators.required],
         });
-
+    await this.obtenerDepartamentos();
 
         //  this.obtenerDocumentos();
     }
 
+    async obtenerDepartamentos(): Promise<void> {
+        return new Promise(resolve => {
+            // Obtenemos departamentos
+            this.usuariosService.obtenerDepartamentos().subscribe(
+                (resp: any) => {
+                    this.arrDepartamentos = resp;
+                    resolve(resp)
+
+                },
+                (err) => {
+                    Swal.fire(
+                        "Error",
+                        "Ocurrió un error obtener el documento." + err,
+                        "error"
+                    );
+                    resolve(err)
+                }
+            );
+        })
+
+    }
 
     async filterDatatable(): Promise<void> {
 
         await this.obtenerDocumentos();
         let temp = [];
-        if (this.documentosTemporal) {
+     /*    if (this.documentosTemporal) {
             this.documentos = this.documentosTemporal;
-        }
+        } */
         // Filtramos tabla
-        if (this.vigenteBusqueda !== '' && this.vigenteBusqueda !== undefined) {
-            if (this.vigenteBusqueda === 'false') {
-                temp = this.documentos.filter((d) => d.bActivo === false);
-            } else {
-                temp = this.documentos.filter((d) => d.bActivo === true);
-            }
-            this.documentos = temp;
-        }
+      
 
-        if (this.selectedInformacion !== '' && this.selectedInformacion !== undefined) {
+       /*  if (this.selectedInformacion !== '' && this.selectedInformacion !== undefined) {
             temp = this.documentos.filter((d) => d.informacion.toLowerCase().indexOf(this.selectedInformacion.toLowerCase()) !== -1 || !this.selectedInformacion);
             this.documentos = temp;
-        }
+        } */
 
     }
 
@@ -98,8 +114,8 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
         this.selectedInformacion = '';
     }
 
-    obtenerDocumentos(): void {
-        const documentosTemp: any[] = [];
+    async obtenerDocumentos(): Promise<void> {
+        let documentosTemp: any[] = [];
         let idDocumento: any;
         this.loadingIndicator = true;
         let meta = '';
@@ -109,15 +125,15 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
         let info: any;
         let filtroReporte = '';
         let cFolioExpediente = '';
-        if (this.vigenteBusqueda.length > 0) {
+      /*   if (this.vigenteBusqueda.length > 0) {
             filtroReporte = 'bActivo=' + this.vigenteBusqueda + '&';
-        }
-        if (this.selectedInformacion.length > 0) {
+        } */
+     /*    if (this.selectedInformacion.length > 0) {
             filtroReporte = filtroReporte + 'visibilidade=' + this.selectedInformacion;
-        }
+        } */
 
         // Obtenemos los documentos
-        this.documentoService.obtenerDocumentoReporte(filtroReporte).subscribe((resp: any) => {
+       await this.documentoService.obtenerDocumentoReporte(filtroReporte).subscribe((resp: any) => {
 
             // Buscamos permisos
             const opciones = this.menuServices.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
@@ -144,8 +160,9 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
                                     if (documento.documento) {
                                         idDocumento = documento.documento.hash + documento.documento.ext;
                                     }
+                                    cFolioExpediente = documento.folioExpediente
                                     if (documento.legislatura) {
-                                        if (documento.legislatura.cLegislatura){
+                                        if (documento.legislatura.cLegislatura) {
                                             cFolioExpediente = documento.legislatura.cLegislatura + '-' + documento.folioExpediente
                                         }
                                     }
@@ -199,9 +216,26 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
                                         idExpediente = documento.tipo_de_expediente.id;
                                     }
 
-
                                     // tslint:disable-next-line: no-unused-expression
                                     // Seteamos valores y permisos
+                                    let departamento = ""                                
+                                    if (documento.tipo_de_documento.departamento) {
+                                        departamento = this.arrDepartamentos.find((depto: { id: string; }) => depto.id === documento.tipo_de_documento.departamento).cDescripcionDepartamento;
+                                    }
+                                    const vigencia = new Date(documento.fechaCreacion);
+                                    const fechaActual = new Date();
+                                    let bActivo = false;
+                                    if (documento.plazoDeConservacion) {
+                                        vigencia.setFullYear(vigencia.getFullYear() + documento.plazoDeConservacion);
+                                    }
+
+                                  if (vigencia.getTime() >= fechaActual.getTime()) {
+                                        console.log('entro');
+                                        bActivo = true
+                                    } 
+
+                             
+
                                     documentosTemp.push({
                                         id: documento.id,
                                         cNombreDocumento: documento.cNombreDocumento,
@@ -210,7 +244,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
                                         fechaCarga: this.datePipe.transform(documento.fechaCarga, 'MM-dd-yyyy'),
                                         fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'MM-dd-yyyy'),
                                         paginas: documento.paginas,
-                                        bActivo: documento.bActivo,
+                                        bActivo: bActivo,
                                         fechaModificacion: this.datePipe.transform(documento.updatedAt, 'MM-dd-yyyy'),
                                         Agregar: encontro.Agregar,
                                         Eliminar: encontro.Eliminar,
@@ -222,7 +256,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
                                         ente: documento.ente,
                                         secretaria: documento.secretaria,
                                         direccione: documento.direccione,
-                                        departamento: documento.departamento,
+                                        departamento: departamento,
                                         folioExpediente: cFolioExpediente,
                                         clasificacion: meta,
                                         metacatalogos: documento.metacatalogos,
@@ -231,7 +265,12 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
                                         idEnte,
                                         tipo_de_expediente: documento.tipo_de_expediente,
                                         idExpediente,
-                                        selected: false
+                                        selected: false,
+                                        vigencia: this.datePipe.transform(vigencia, 'MM-dd-yyyy'),
+                                        pasillo: documento.pasillo,
+                                        estante: documento.estante,
+                                        nivel: documento.nivel,
+                                        seccion: documento.seccion
                                     });
 
                                     meta = '';
@@ -241,7 +280,21 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
                     }
                 }
 
-                this.documentos = documentosTemp;
+                
+                if (this.vigenteBusqueda !== '' && this.vigenteBusqueda !== undefined) {
+                    if(this.vigenteBusqueda == 'true'){
+                        console.log('true');
+                        documentosTemp = documentosTemp.filter((d) => d.bActivo == true);
+                    }else{
+                        console.log('false');
+                        documentosTemp = documentosTemp.filter((d) => d.bActivo == false);
+                    }
+                    
+                  
+                }
+
+              
+                this.documentos =  [...documentosTemp];
                 this.documentosTemporal = this.documentos;
 
             }
@@ -255,17 +308,18 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
     buildTableBody(data: any[], columns: any[]) {
         const body = [];
 
-        body.push([{ text: 'Id. documento', style: 'tableHeader' },
-        { text: 'Documento', style: 'tableHeader' },
-        { text: 'Tipo de documento', style: 'tableHeader' },
-        { text: 'Fecha de creación', style: 'tableHeader' },
-        { text: 'Fecha de carga', style: 'tableHeader' },
-        { text: 'Fecha de modificación', style: 'tableHeader' },
-        { text: 'Tipo de información', style: 'tableHeader' },
-        { text: 'Tipo de expediente', style: 'tableHeader' },
-        { text: 'Folio de expediente', style: 'tableHeader' },
-        { text: 'Versión', style: 'tableHeader' },
-        { text: 'Estatus', style: 'tableHeader' },
+        body.push([
+            /*   { text: 'Id. documento', style: 'tableHeader' }, */
+            { text: 'Nombre de documento', style: 'tableHeader' },
+            { text: 'Tipo de documento', style: 'tableHeader' },
+            { text: 'Fecha de ingreso', style: 'tableHeader' },
+            { text: 'Fecha de carga', style: 'tableHeader' },
+            { text: 'Fecha de modificación', style: 'tableHeader' },
+            { text: 'Fecha de baja', style: 'tableHeader' },
+            { text: 'Tipo de expediente', style: 'tableHeader' },
+            { text: 'Nro. de caja', style: 'tableHeader' },
+            { text: 'Versión', style: 'tableHeader' },
+            { text: 'Estatus', style: 'tableHeader' },
         ]);
 
         data.forEach((row) => {
@@ -306,6 +360,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
             let folioExpediente = '';
             let version = '';
             let estatus = '';
+            let vigencia = ''
             if (row.cNombreDocumento) {
                 nombreDocumento = row.cNombreDocumento;
             }
@@ -330,6 +385,9 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
             if (row.folioExpediente) {
                 folioExpediente = row.folioExpediente.toString();
             }
+            if (row.vigencia) {
+                vigencia = row.vigencia;
+            }
             if (row.version) {
                 version = row.version;
             }
@@ -340,13 +398,13 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
             }
 
             value.push({
-                id: row.id,
+                /*       id: row.id, */
                 Documento: nombreDocumento,
                 tipoDocumento: tipoDocumento,
                 fechaCreacion: fechaCreacion,
                 fechaCarga: fechaCarga,
                 fechaModificacion: fechaModificacion,
-                informacion: informacion,
+                vigencia,
                 tipoExpediente: tipoExpediente,
                 folioExpediente: folioExpediente,
                 version: version,
@@ -380,8 +438,8 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
                 { text: '', style: 'tableExample' },
                 this.table({
                     data: value, columns: [
-                        'id', 'Documento', 'tipoDocumento', 'fechaCreacion', 'fechaCarga',
-                        'fechaModificacion', 'informacion', 'tipoExpediente', 'folioExpediente',
+                        'Documento', 'tipoDocumento', 'fechaCreacion', 'fechaCarga',
+                        'fechaModificacion', 'vigencia', 'tipoExpediente', 'folioExpediente',
                         'version', 'estatus',
                     ]
                 })
@@ -431,7 +489,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
         stack.push({
             text: 'Reporte de estado de documentos',
             nodeName: 'H1',
-            fontSize: 24,
+            fontSize: 22,
             bold: true,
             marginBottom: 5,
             marginLeft: 35,
@@ -478,7 +536,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
             });
         }
 
-        if (this.selectedInformacion.length > 0) {
+       /*  if (this.selectedInformacion.length > 0) {
             stack.push({
                 text: 'Tipo de información: ' + this.selectedInformacion,
                 nodeName: 'H4',
@@ -492,7 +550,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
                     'html-div'
                 ]
             });
-        }
+        } */
 
 
         return { stack };

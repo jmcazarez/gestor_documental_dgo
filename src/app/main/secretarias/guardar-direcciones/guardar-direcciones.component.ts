@@ -61,7 +61,7 @@ export class GuardarDireccionesComponent implements OnInit {
             this.optEditar = true;
             this.optConsultar = true;
             this.optEliminar = true;
-            console.log(resp);
+            
             // Si tiene permisos para consultar
             for (const direccion of resp) {
                 //secretariaId = '';
@@ -184,7 +184,7 @@ export class GuardarDireccionesComponent implements OnInit {
 
     limpiar(): void {
         this.valueBuscador = '';
-        console.log('buscador' + this.valueBuscador);
+      
     }
 
     cerrar(ent): void {

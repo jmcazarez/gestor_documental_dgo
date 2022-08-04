@@ -48,7 +48,7 @@ export class GuardarSecretariaComponent implements OnInit {
             bActivo: activo,
             cDescripcionSecretaria: secretaria
         }
-        console.log(secretarias);
+        
         if (this.secretaria.id) {
 
             // Actualizamos el secretaria

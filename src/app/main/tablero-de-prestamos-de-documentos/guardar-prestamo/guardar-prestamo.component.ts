@@ -152,7 +152,7 @@ export class GuardarPrestamoComponent implements OnInit {
                });
                */
         } else {
-
+            this.prestamo.cDetallePrestamo = '';
             // Seteamos la fecha de carga con la fecha actual
             //this.recepcion.fechaRecepcion = this.recepcion.fechaRecepcion;
             this.selectEstado = 'Pendiente';
@@ -190,9 +190,10 @@ export class GuardarPrestamoComponent implements OnInit {
                 tHoraDocEntregado: [{ value: this.prestamo.tHoraDocEntregado, disabled: false }, Validators.required],
                 cEstatus: [{ value: this.prestamo.cEstatus, disabled: false }, Validators.required],
                 cTipoDanio: [{ value: this.prestamo.cTipoDanio, disabled: false }, validacion],
-                cNotas: [this.prestamo.cNotas, [Validators.maxLength(500)]]
+                cNotas: [this.prestamo.cNotas, [Validators.maxLength(500)]],
+                cDetallePrestamo: [this.prestamo.cDetallePrestamo, [Validators.maxLength(500)]]
             });
-            console.log(this.prestamo);
+            
             this.selectExpediente = this.prestamo.cTipoExpediente;
         } else {
             this.form = this.formBuilder.group({
@@ -204,7 +205,8 @@ export class GuardarPrestamoComponent implements OnInit {
                 cIdExpediente: [this.prestamo.cIdExpediente, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
                 dFechaDevolucion: [{ value: this.prestamo.dFechaDevolucion, disabled: false }, Validators.required],
                 tHoraDevolucion: [{ value: this.prestamo.tHoraDevolucion, disabled: false }, Validators.required],
-                cEstatus: [{ value: this.prestamo.cEstatus, disabled: true }, Validators.required]
+                cEstatus: [{ value: this.prestamo.cEstatus, disabled: true }, Validators.required],
+                cDetallePrestamo: [this.prestamo.cDetallePrestamo, [Validators.maxLength(500)]]
             });
         }
 
@@ -231,7 +233,7 @@ export class GuardarPrestamoComponent implements OnInit {
 
     async guardar(): Promise<void> {
         this.spinner.show();
-        console.log(this.prestamo);
+       
         // Asignamos valores a objeto
         if (this.prestamo.id) {
 
@@ -248,6 +250,7 @@ export class GuardarPrestamoComponent implements OnInit {
             this.prestamo.dFechaDevolucion = this.form.get('dFechaDevolucion').value;
             this.prestamo.cEstatus = this.form.get('cEstatus').value;
             this.prestamo.cTipoExpediente = this.selectExpediente;
+            this.prestamo.cDetallePrestamo = this.form.get('cDetallePrestamo').value;
             if (this.prestamo.cEstatus == 'Completo') {
 
                 this.prestamo.cTipoDanio = '';
@@ -282,7 +285,7 @@ export class GuardarPrestamoComponent implements OnInit {
             this.prestamo.dFechaDevolucion = this.form.get('dFechaDevolucion').value;
             this.prestamo.cEstatus = this.form.get('cEstatus').value;
             this.prestamo.cTipoExpediente = this.selectExpediente;
-
+            this.prestamo.cDetallePrestamo = this.form.get('cDetallePrestamo').value;
 
             const fechaSolicitud = moment(dFechaSolicitud).subtract(1, 'day').format('YYYY-MM-DD');
             const fechaDevolucion = moment(dFechaDevolucion).format('YYYY-MM-DD');
@@ -295,7 +298,7 @@ export class GuardarPrestamoComponent implements OnInit {
 
         }
         if (this.prestamo.id) {
-
+           
             // Actualizamos la recepcion de actas
             this.prestamosService.actualizarPrestamosDeDocumentos(this.prestamo).subscribe((resp: any) => {
                 if (resp) {

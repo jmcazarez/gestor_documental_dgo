@@ -63,7 +63,7 @@ export class FuseThemeOptionsComponent implements OnInit, OnDestroy
     /**
      * On init
      */
-    ngOnInit(): void
+    async ngOnInit(): Promise<void>
     {
         // Build the config form
         // noinspection TypeScriptValidateTypes
@@ -131,8 +131,8 @@ export class FuseThemeOptionsComponent implements OnInit, OnDestroy
                 // Update the config
                 this._fuseConfigService.config = config;
             });
-
-        this._menuService.crearMenu();
+        await this._menuService.crearMenu();
+       
     }
 
     /**

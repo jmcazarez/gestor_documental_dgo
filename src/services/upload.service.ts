@@ -100,7 +100,7 @@ export class UploadFileService {
         return new Promise(resolve => {
             {
 
-             
+              
                 this.http.post(this.urlApi + this.urlOCR, documento, httpOptions).subscribe(
                     (res) => {
                         resolve(res);
@@ -140,6 +140,17 @@ export class UploadFileService {
         });
 
     }
+
+    download(id: string): Observable<HttpEvent<any>> {
+        this.TOKEN = localStorage.getItem('token');            
+     
+        const req = new HttpRequest('GET', this.urlCms + 'uploads/'  + id, {
+            reportProgress: true,
+            responseType: 'blob'
+        });
+        return this.http.request(req);
+    }
+
 
     upload(file: File): Observable<HttpEvent<any>> {
         this.TOKEN = localStorage.getItem('token');      

@@ -5,8 +5,8 @@
     <div class="header p-16 p-sm-24" fxLayout="column" fxLayoutAlign="center center">
 
         <div class="hero-text content">
-            <h1>Reporte de movimiento de documentos por fecha</h1>
-            <h3>Búsqueda de documentos</h3>
+            <h1>Reporte de movimientos de documentos por fecha</h1>
+<!--             <h3>Búsqueda de documentos</h3> -->
         </div>
 
     </div>
@@ -25,6 +25,7 @@
                               <input matInput [matDatepicker]="pickerFechaInicial" [(ngModel)]="fechaIni" formControlName="pickerFechaInicial">
                               <mat-datepicker-toggle matSuffix [for]="pickerFechaInicial"></mat-datepicker-toggle>
                               <mat-datepicker #pickerFechaInicial></mat-datepicker>
+                              <mat-error *ngIf="firstFormGroup.get('pickerFechaInicial').hasError('required')">La fecha inicial es requerida</mat-error>
                             </mat-form-field>
                         </div>
                         
@@ -40,10 +41,11 @@
                               <input matInput [matDatepicker]="pickerFechaFinal" [(ngModel)]="fechaFin" formControlName="pickerFechaFinal">
                               <mat-datepicker-toggle matSuffix [for]="pickerFechaFinal"></mat-datepicker-toggle>
                               <mat-datepicker #pickerFechaFinal></mat-datepicker>
+                              <mat-error *ngIf="firstFormGroup.get('pickerFechaFinal').hasError('required')">La fecha final es requerida</mat-error>
                             </mat-form-field>
                         </div>
                         <div class="select buttons">
-                            <button  mat-raised-button matStepperNext color="warn"
+                            <button [disabled]="firstFormGroup.invalid" mat-raised-button matStepperNext color="warn"
                                 (click)="filterDatatable()" class="btn-search">Consultar</button>
                             <button  mat-raised-button color="warn"
                                 class="btn-search" (click)="borrarFiltros()">Borrar</button>
@@ -71,21 +73,24 @@
                         <ngx-datatable class="material shadow-none" [rows]="documentos" [loadingIndicator]="loadingIndicator"
                             [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'auto'"
                             [reorderable]="reorderable" [limit]="10" [scrollbarH]="true" >
-                            <ngx-datatable-column name="Fecha" prop="fechaModificacion"></ngx-datatable-column>
+                          
                             <ngx-datatable-column name="Acción" prop="cAccion"></ngx-datatable-column>
                             <ngx-datatable-column name="Usuario" prop="cNombreUsuario"></ngx-datatable-column>
-                            <ngx-datatable-column name="Documento" prop="cNombreDocumento"></ngx-datatable-column>
+                            <ngx-datatable-column name="Nombre de documento" prop="cNombreDocumento"></ngx-datatable-column>
                             <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
-                            <ngx-datatable-column name="Fecha de movimiento" prop="fechaMovimiento"></ngx-datatable-column>
-                            <ngx-datatable-column name="Fecha de creación" prop="fechaCreacion"></ngx-datatable-column>
+                            <ngx-datatable-column name="Departamento" prop="departamento"></ngx-datatable-column>
+                           <!--  <ngx-datatable-column name="Fecha de movimiento" prop="fechaMovimiento"></ngx-datatable-column> -->
+                            <ngx-datatable-column name="Fecha de ingreso" prop="fechaCreacion"></ngx-datatable-column>
                             <ngx-datatable-column name="Fecha de carga" prop="fechaCarga"></ngx-datatable-column>
                             <ngx-datatable-column name="Fecha de modificación" prop="fechaModificacion"></ngx-datatable-column>
-                            <ngx-datatable-column name="Tipo de información" prop="tipoInformacion"></ngx-datatable-column>
-                            <ngx-datatable-column name="Tipo de documento" prop="tipoDocumento"></ngx-datatable-column>
+                           <!--  <ngx-datatable-column name="Tipo de información" prop="tipoInformacion"></ngx-datatable-column>     -->                    
                             <ngx-datatable-column name="Tipo de expediente" prop="tipoExpediente"></ngx-datatable-column>
                             
-                            <ngx-datatable-column name="Folio de expediente" prop="folioExpediente">
-                            </ngx-datatable-column>
+                            <ngx-datatable-column name="Nro. caja" prop="folioExpediente" [width]="100"></ngx-datatable-column>
+                            <ngx-datatable-column name="Pasillo" prop="pasillo" [width]="70"></ngx-datatable-column>
+                            <ngx-datatable-column name="Estante" prop="estante" [width]="70"></ngx-datatable-column>
+                            <ngx-datatable-column name="Nivel" prop="nivel" [width]="70"></ngx-datatable-column>
+                            <ngx-datatable-column name="Sección" prop="seccion" [width]="70"></ngx-datatable-column>
                             <ngx-datatable-column name="Estatus" sortable="false">
                                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
                                     <mat-icon *ngIf="row.bActivo" color="accent" class="material-icons">check_circle

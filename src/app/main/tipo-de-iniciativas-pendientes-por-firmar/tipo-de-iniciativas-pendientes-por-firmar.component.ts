@@ -615,7 +615,7 @@ export class IniciativasPendientesPorFirmarComponent implements OnInit {
             }
             iniciativa.iniciativa.estatus = estatus;
             iniciativa.iniciativa.fechaCreacion = isoDateString;
-            console.log(iniciativa.iniciativa.fechaCreacion);
+            
             this.iniciativaService
                 .actualizarIniciativa({
                     id: iniciativa.iniciativa.id,

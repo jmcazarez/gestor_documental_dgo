@@ -71,7 +71,7 @@
 
         <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
             <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
-                <mat-label>Folio de expediente *</mat-label>
+                <mat-label>Numero de caja *</mat-label>
                 <input matInput formControlName="cIdExpediente" >
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
                 <mat-error *ngIf="form.get('cIdExpediente').hasError('required')">El identificador del expediente es requerido</mat-error>
@@ -79,6 +79,14 @@
                     y el máximo son 50 </mat-error>
             </mat-form-field>
         </div>
+
+        <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
+            <mat-label>Detalle del prestamo</mat-label>
+            <textarea matInput formControlName="cDetallePrestamo" name="cDetallePrestamo" #inputTarget></textarea>
+            <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
+            <mat-error *ngIf="form.get('cDetallePrestamo').hasError('minlength') || form.get('cDetallePrestamo').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
+                y el máximo son 500 </mat-error>
+        </mat-form-field>
 
         <mat-form-field appearance="outline" fxFlex="1 0 auto" class="pl-4">
             <mat-label>Fecha devolución *</mat-label>
@@ -93,6 +101,7 @@
             <input matInput type="time" atp-time-picker value="00:00" formControlName="tHoraDevolucion"/>
             <mat-error>La hora del devolución no es valida ej. 28/11/2020</mat-error>
         </mat-form-field>
+
 
         <mat-form-field  *ngIf="this.prestamo.id" appearance="outline" fxFlex="1 0 auto" class="pl-4">
             <mat-label>Fecha entrega de documento *</mat-label>

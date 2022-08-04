@@ -25,7 +25,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 
 const routes = [
     {
-        path     : 'tablero-de-búsqueda',
+        path     : 'búsqueda-de-documentos',
         component: TableroDeBusquedaComponent,
         canActivate: [SeguridadGuard],
         

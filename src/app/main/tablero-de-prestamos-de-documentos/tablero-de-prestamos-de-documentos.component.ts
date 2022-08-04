@@ -78,7 +78,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
             if (this.optConsultar) {
                 if (resp) {
                     for (const prestamos of resp) {
-                        console.log(prestamos);
+                       
                         let cDescripcionTipoExpediente = "";
                         let tipoExpediente: any;
                         if (prestamos.tipo_de_expediente) {
@@ -92,6 +92,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
                                 cDescripcionTipoExpediente = tipoExpediente.cDescripcionTipoExpediente;
                             }
                         }
+                       
                         prestamosTemp.push({
                             id: prestamos.id,
                             dFechaSolicitud: prestamos.dFechaSolicitud,
@@ -112,7 +113,8 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
                             cTipoDanio: prestamos.cTipoDanio,
                             tipo_de_expediente: prestamos.tipo_de_expediente,
                             cDescripcionTipoExpediente: cDescripcionTipoExpediente,
-                            cTipoExpediente: prestamos.cTipoExpediente
+                            cTipoExpediente: prestamos.cTipoExpediente,
+                            cDetallePrestamo: prestamos.cDetallePrestamo
                         });
                     }
                 }
@@ -204,8 +206,9 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
                 d.tHoraDevolucion.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.cEstatus.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.cIdExpediente.toLowerCase().indexOf(val) !== -1 ||
+                d.cDetallePrestamo.toLowerCase().indexOf(val) !== -1 ||
                 d.id.toLowerCase().indexOf(val) !== -1);
-
+                
             this.prestamoDocumentos = temp;
         }
     }
@@ -225,7 +228,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
                 await this.tipoExpedientesService.obtenerTipoExpedientes().subscribe(
                     (resp: any) => {
                         this.tipoExpedientes = resp;
-                        console.log(this.tipoExpedientes);
+                     
                         resolve(this.tipoExpedientes);
                         this.spinner.hide();
                     },
@@ -421,7 +424,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
     buildTableBody(data: any[], columns: any[]) {
         const body = [];
         // Fecha, acción, documento (nombre del documento), tipo de documento, 
-        // fecha de creación, fecha de carga, fecha de ultima modificación, 
+        // fecha de ingreso, fecha de carga, fecha de ultima modificación, 
         // tipo de información, tipo de documento, tipo de expediente, 
         // folio de expediente y estatus
         body.push([{ text: 'Fecha', style: 'tableHeader' },
@@ -429,7 +432,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
         { text: 'Usuario', style: 'tableHeader' },
         { text: 'Documento', style: 'tableHeader' },
         { text: 'Tipo de documento', style: 'tableHeader' },
-        { text: 'Fecha de creación', style: 'tableHeader' },
+        { text: 'Fecha de ingreso', style: 'tableHeader' },
         { text: 'Fecha de carga', style: 'tableHeader' },
         { text: 'Fecha de modificación', style: 'tableHeader' },
         { text: 'Tipo de información', style: 'tableHeader' },

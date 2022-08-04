@@ -65,8 +65,8 @@ export class TableroDeDocumentosComponent implements OnInit {
 
     }
 
-    ngOnInit() {
-
+    async ngOnInit() {
+        await this.obtenerDepartamentos();
         this.obtenerDocumentos(0);
 
     }
@@ -173,12 +173,16 @@ export class TableroDeDocumentosComponent implements OnInit {
         this.valueBuscador = '';
         let countFecha = 0;
         let cFolioExpediente = '';
+       
+        let pasillo = '';
+        let estante = '';
+        let nivel = '';
+        let seccion = '';
         let filtro = '_limit=' + this.size + '&_sort=id%3AASC&_start=' + (numeroPagina * this.size).toString()
         // Obtenemos los documentos
         try {
             // obtenerDocumentoReporte
-            console.log(filtro);
-            await this.obtenerDepartamentos();
+            
             await this.documentoService.obtenerDocumentoReporte(filtro).subscribe((resp: any) => {
                 // await this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
 
@@ -201,7 +205,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                         }
                         idDocumento = '';
                         // Validamos permisos
-                        console.log(documento.tipo_de_documento);
+
                         if (documento.tipo_de_documento) {
                             const encontro = this.menuService.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento.id);
 
@@ -267,12 +271,12 @@ export class TableroDeDocumentosComponent implements OnInit {
                                             documento.fechaCarga = '';
                                         }
 
-                                        console.log(this.arrDepartamentos);
+
                                         let departamento = ""
-                                        if (documento.tipo_de_documento.departamento){
+                                        if (documento.tipo_de_documento.departamento) {
                                             departamento = this.arrDepartamentos.find((depto: { id: string; }) => depto.id === documento.tipo_de_documento.departamento).cDescripcionDepartamento;
                                         }
-                                        
+
                                         // tslint:disable-next-line: no-unused-expression
                                         /*   if (documento.legislatura) {
                                               if (documento.legislatura.cLegislatura) {
@@ -284,7 +288,22 @@ export class TableroDeDocumentosComponent implements OnInit {
 
                                         cFolioExpediente = documento.folioExpediente
                                         // Seteamos valores y permisos
-
+                                          
+                                        if(documento.pasillo=== undefined){
+                                            documento.pasillo = '';
+                                        }
+                                        if(documento.estante=== undefined){
+                                            documento.estante = ''; 
+                                        }
+                                        if(documento.nivel=== undefined){
+                                            documento.nivel = '';
+                                        }
+                                        if(documento.seccion=== undefined){
+                                            documento.seccion = ''; 
+                                        }
+                                        if(documento.plazoDeConservacion=== undefined){
+                                            documento.plazoDeConservacion = ''; 
+                                        }
                                         if (eliminar >= 0) {
                                             documentosTemp[eliminar] =
                                             {
@@ -302,7 +321,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                 Editar: encontro.Editar,
                                                 Consultar: encontro.Consultar,
                                                 idDocumento: idDocumento,
-                                                version: parseFloat(documento.version).toFixed(1),
+                                                version: String(parseFloat(documento.version).toFixed(1)),
                                                 documento: documento.documento,
                                                 //ente: documento.ente,
                                                 // secretaria: documento.secretaria,
@@ -317,12 +336,30 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                 tipo_de_expediente: documento.tipo_de_expediente,
                                                 usuario: this.menuService.usuario,
                                                 numeroPagina: numeroPagina,
-                                                plazoDeConservacion: documento.plazoDeConservacion,
+                                                plazoDeConservacion: String(documento.plazoDeConservacion),
                                                 clave: documento.clave,
-                                                departamento: departamento
+                                                departamento: departamento,
+                                                pasillo: String(documento.pasillo),
+                                                estante: String(documento.estante),
+                                                nivel: String(documento.nivel),
+                                                seccion: String(documento.seccion)
                                             }
                                         } else {
-
+                                            if(documento.pasillo=== undefined){
+                                                documento.pasillo = '';
+                                            }
+                                            if(documento.estante=== undefined){
+                                                documento.estante = ''; 
+                                            }
+                                            if(documento.nivel=== undefined){
+                                                documento.nivel = '';
+                                            }
+                                            if(documento.seccion=== undefined){
+                                                documento.seccion = ''; 
+                                            }
+                                            if(documento.plazoDeConservacion=== undefined){
+                                                documento.plazoDeConservacion = ''; 
+                                            }
                                             //  this.documentos.splice(eliminar,1);
                                             documentosTemp.push({
                                                 id: documento.id,
@@ -339,7 +376,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                 Editar: encontro.Editar,
                                                 Consultar: encontro.Consultar,
                                                 idDocumento: idDocumento,
-                                                version: parseFloat(documento.version).toFixed(1),
+                                                version: String(parseFloat(documento.version).toFixed(1)),
                                                 documento: documento.documento,
                                                 //ente: documento.ente,
                                                 // secretaria: documento.secretaria,
@@ -354,9 +391,13 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                 tipo_de_expediente: documento.tipo_de_expediente,
                                                 usuario: this.menuService.usuario,
                                                 numeroPagina: numeroPagina,
-                                                plazoDeConservacion: documento.plazoDeConservacion,
+                                                plazoDeConservacion: String(documento.plazoDeConservacion),
                                                 clave: documento.clave,
-                                                departamento: departamento
+                                                departamento: departamento,
+                                                pasillo: String(documento.pasillo),
+                                                estante: String(documento.estante),
+                                                nivel: String(documento.nivel),
+                                                seccion: String(documento.seccion)
                                             });
 
                                         }
@@ -424,7 +465,7 @@ export class TableroDeDocumentosComponent implements OnInit {
             cancelButtonText: 'No'
         }).then((result) => {
             if (result.value) {
-                row.documento = '';
+                row.bActivo = false;
                 row.usuario = this.menuService.usuario;
                 // realizamos delete
 
@@ -449,12 +490,12 @@ export class TableroDeDocumentosComponent implements OnInit {
     async descargarDocumento(row: any): Promise<void> {
         // Descargamos el documento
 
-
+        
         if (row.documento.url) { }
         this.spinner.show();
-        await this.documentoService.dowloadDocument(row.idDocumento, row.id, this.menuService.usuario, row.cNombreDocumento).subscribe((resp: any) => {
-
-            const filePath = window.URL.createObjectURL(new Blob([new Uint8Array(resp.data.data, resp.data.data.byteOffset, resp.data.data.length)]));
+        await this.documentoService.dowloadDocument(row.idDocumento, row.id, row.cNombreDocumento).subscribe((resp: any) => {
+           
+            const filePath = window.URL.createObjectURL(resp);
 
             const downloadLink = document.createElement('a');
             const fileName = row.idDocumento;
@@ -482,21 +523,25 @@ export class TableroDeDocumentosComponent implements OnInit {
     }
 
     async obtenerDepartamentos(): Promise<void> {
-        // Obtenemos departamentos
-        this.usuariosService.obtenerDepartamentos().subscribe(
-            (resp: any) => {
-                this.arrDepartamentos = resp;
-               
-               
-            },
-            (err) => {
-                Swal.fire(
-                    "Error",
-                    "Ocurrió un error obtener el documento." + err,
-                    "error"
-                );
-            }
-        );
+        return new Promise(resolve => {
+            // Obtenemos departamentos
+            this.usuariosService.obtenerDepartamentos().subscribe(
+                (resp: any) => {
+                    this.arrDepartamentos = resp;
+                    resolve(resp)
+
+                },
+                (err) => {
+                    Swal.fire(
+                        "Error",
+                        "Ocurrió un error obtener el documento." + err,
+                        "error"
+                    );
+                    resolve(err)
+                }
+            );
+        })
+
     }
 
     clasificarDocumento(result: any, numeroPagina: number): void {
@@ -564,7 +609,13 @@ export class TableroDeDocumentosComponent implements OnInit {
             const temp = this.documentos.filter((d) => d.cNombreDocumento.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.clasificacion.toLowerCase().indexOf(val) !== - 1 || d.tipoDocumento.toLowerCase().indexOf(val) !== - 1 ||
                 d.informacion.toLowerCase().indexOf(val) !== - 1 || d.fechaCarga.toLowerCase().indexOf(val) !== - 1
-                || d.cFolioExpediente.toLowerCase().indexOf(val) !== - 1);
+                || d.cFolioExpediente.toLowerCase().indexOf(val) !== - 1
+                || d.version.toLowerCase().indexOf(val) !== - 1
+                || d.departamento.toLowerCase().indexOf(val) !== - 1
+                || d.pasillo.toLowerCase().indexOf(val) !== - 1
+                || d.estante.toLowerCase().indexOf(val) !== - 1
+                || d.seccion.toLowerCase().indexOf(val) !== - 1
+                || d.plazoDeConservacion.toLowerCase().indexOf(val) !== - 1);
             this.documentos = temp;
         }
     }

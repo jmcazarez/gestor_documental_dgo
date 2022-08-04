@@ -171,7 +171,7 @@ export class IniciativaModificadaSuspendidaComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public iniciativa: IniciativasModel,
     ) {
        
-      console.log('2');
+    
         this.tipoSesion = [];
 
         this.tipoSesion.push({

@@ -190,7 +190,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     }
 
     uploadFiles() {
-
+        
         for (let i = 0; i < this.selectedFiles.length; i++) {
 
             this.upload(i, this.selectedFiles[i]);
@@ -205,6 +205,9 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     }
 
     async upload(index, file) {
+      
+
+
         this.documentos[index].progress = { value: 0, fileName: file.name }
         return new Promise<string>(async (resolve) => {
             await this.uploadService.upload(file).subscribe(
@@ -216,8 +219,8 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
 
                         }
                     } else if (event instanceof HttpResponse) {
-                        console.log('response');
-                        resolve(event.body[0].id)
+                       
+                        resolve(event.body[0])
                     }
                 },
                 err => {
@@ -247,7 +250,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                         tempHistorial[0].historial_carga_detalles.forEach(async (element) => {
                             if (element.documento && element.bCargado === false) {
                                 const doc: any = await this.obtenerDocumento(element.documento.id);
-                                console.log(doc);
+                               
                                 let documento = new DocumentoFormatoExcelModel();
                                 documento.id = element.documento.id;
                                 documento.cNombreDocumento = element.documento.name;
@@ -304,7 +307,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     async obtenerDocumento(id: any) {
         return new Promise((resolve) => {
             this.documentoService.obtenerDocumentoById(id).subscribe((resp: any) => {
-                console.log(resp);
+                
                 resolve(resp.data);
             },
                 (err) => {
@@ -591,8 +594,16 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                             }
 
 
-                            if (_.has(row, 'NUMERO DE CAJA') && row['NUMERO DE CAJA'].length > 0) {
-                                documento.folioExpediente = row['NUMERO DE CAJA'].trim();
+                            if (_.has(row, 'NUMERO DE CAJA')) {
+
+                                if (Number(row['NUMERO DE CAJA'])) {
+                                    documento.folioExpediente = String(row['NUMERO DE CAJA']);
+                                } else {
+                                    documento.folioExpediente = String(row['NUMERO DE CAJA'].trim());
+                                }
+
+
+
                             } else {
                                 if (textError.length == 0) {
                                     textError =
@@ -604,6 +615,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                 }
                             }
                             if (_.has(row, 'TIPO DOCUMENTAL') && row['TIPO DOCUMENTAL'].length > 0) {
+
                                 const encontro = this.menuService.tipoDocumentos.find(
                                     (tipo: { cDescripcionTipoDocumento: any; }) =>
                                         this.normalize(tipo.cDescripcionTipoDocumento.trim().toLowerCase()) == row['TIPO DOCUMENTAL'].trim().toLowerCase()
@@ -622,6 +634,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                         documento.tipoDocumento = row['TIPO DOCUMENTAL'];
                                         documento.tipo_de_documento = encontro.id;
                                         this.arrMetacatalogos = encontro.metacatalogos;
+                                        documento.visibilidade = encontro.visibilidade;
 
                                         if (this.arrMetacatalogos.length > 0) {
                                             for (let i = 0; i < this.arrMetacatalogos.length; i++) {
@@ -646,6 +659,8 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                     textError = textError + ", el tipo de documento es obligatorio";
                                 }
                             }
+
+
                             /*       if (_.has(row, 'FOLIO EXPEDIENTE') && Number(row['FOLIO EXPEDIENTE'])) {
                                       if (_.has(row, 'TIPO DOCUMENTAL') && row['TIPO DOCUMENTAL'].length > 0 &&
                                           this.normalize(row['TIPO DOCUMENTAL'].toUpperCase()) === 'ACTA') {
@@ -681,13 +696,14 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                             } else {
                                 if (textError.length == 0) {
                                     textError =
-                                        "La fecha de creación obligatorio";
+                                        "La fecha de ingreso obligatorio";
                                 } else {
                                     textError =
                                         textError +
-                                        ", la fecha de creación obligatorio";
+                                        ", la fecha de ingreso obligatorio";
                                 }
                             }
+
                             documento.paginas = 0;
                             documento.fechaCarga = this.datePipe.transform(fechaHoy, "yyyy-MM-dd") + "T06:00:00.000Z";
                             documento.fechaCargaDate = this.datePipe.transform(fechaHoy, "dd-MM-yyyy");
@@ -712,6 +728,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                         ", el plazo de conservación es obligatorio";
                                 }
                             }
+
 
                             if (_.has(row, 'CLAVE') && (row['CLAVE'].length > 0 || isNumber(row['CLAVE']))) {
                                 if (isNumber(row['CLAVE'])) {
@@ -840,11 +857,10 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                             let meta = "";
 
                             const keys = Object.keys(row);
-                            ;
                             let iMeta = 0;
                             for (let i = 10; i < keys.length; i++) {
 
-                                documento.metacatalogos[iMeta].text = row[keys[i]]
+                                documento.metacatalogos[iMeta].text = String(row[keys[i]]);
                                 iMeta++
                             };
 
@@ -890,6 +906,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
 
 
                                 } else {
+
                                     if (i.bOligatorio && i.text == '') {
                                         meta = meta + i.cDescripcionMetacatalogo + ": " + '';
                                         if (textError.length == 0) {
@@ -941,13 +958,18 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                             documento.clasificacion = meta;
                             /* console.log( documento.clasificacion); */
                             let arrExpedienteTipo: any[]
+
                             if (row["TIPO DOCUMENTAL"]) {
                                 arrExpedienteTipo = this.arrExpediente.filter(
                                     (d) =>
+
                                         this.normalize(d.descripcionTiposDocumentos
-                                            .toLowerCase()
-                                            .indexOf(row["TIPO DOCUMENTAL"].toLowerCase())) !== -1
+                                            .toLowerCase())
+                                            .indexOf(this.normalize(row["TIPO DOCUMENTAL"]).toLowerCase()) !== -1
+
+
                                 );
+
                             } else {
                                 if (textError.length > 0) {
                                     textError =
@@ -977,7 +999,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                                 }
                                             }); */
 
-
+                         
 
                             documento.progress = { value: 0, fileName: '' }
                             if (arrExpedienteTipo.length > 0) {
@@ -1013,7 +1035,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                         }
                     } catch (error) {
                         this.spinner.hide();
-                        Swal.fire("Error", error, "error");
+                        console.log(error);
                     }
                 });
                 this.documentos = [...this.documentos];
@@ -1141,110 +1163,135 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             this.loadingIndicator = true;
             const fecha = new Date(); // Fecha actual
             let index = 0;
+            let resp: any;
+        
             for (const row of this.documentos) {
+                /*             const idx = this.documentos.findIndex(object => {
+                      return object.cNombreDocumento === file.name;
+                    }); */
+
+
                 // Agregamos elemento file
                 row.usuario = this.menuService.usuario;
                 row.idEncabezado = idHistorial;
-                const hCarga = await this.historialCarga.guardarHistorialDetalle(
-                    {
-                        documento: '',
-                        historial_carga_encabezados: [
-                            idHistorial,
-                        ],
-                    });
-                if (hCarga.error) {
-                    console.log("Error al guardar detalle del historial: " + idHistorial);
-                } else {
-                    row.documento = '';
-                    row.version = '';
-                    row.fechaCarga = this.datePipe.transform(fecha, "yyyy-MM-dd") + "T06:00:00.000Z";
-                    row.idDetalle = hCarga.data.id;
-                    if (row.bActivo) {
-                        //heber
-                        let resp = await this.upload(index, this.selectedFiles[index]);
-                        if (resp) {
-                            row.documento = resp;
-                            row.version = 1;
-                            this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
-                                // Actualizamos el detalle del historial de carga
-                                this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
-                                    (resp: any) => { });
-                            },
-                                (err: any) => {
-                                    console.log('Error al guardar documento ' + row.cNombreDocumento);
-                                    this.historialCarga.actualizarDetalle({ bCargado: false }, row.idDetalle).subscribe(
-                                        (resp: any) => { });
-                                });
-                        } else {
+                /*     const hCarga = await this.historialCarga.guardarHistorialDetalle(
+                        {
+                            documento: '',
+                            historial_carga_encabezados: [
+                                idHistorial,
+                            ],
+                        }); */
+                /*   if (hCarga.error) {
+                      console.log("Error al guardar detalle del historial: " + idHistorial);
+                  } else {
+                     
+                  } */
 
-                            Swal.fire(
-                                "Error",
-                                "Ocurrió un error al subir el documento.",
-                                "error"
-                            );
+                row.documento = '';
+                row.version = '';
+                row.fechaCarga = this.datePipe.transform(fecha, "yyyy-MM-dd") + "T06:00:00.000Z";
+                /*   row.idDetalle = hCarga.data.id; */
+                if (row.bActivo) {
+                    //heber
+                    for (let i = 0; i < this.selectedFiles.length; i++) {
+                        if (this.selectedFiles[i].name.trim() == row.cNombreDocumento.trim()) {
+                            resp = await this.upload(index, this.selectedFiles[i]);
+
+
+                            break;
                         }
-                        /*   this.upload(index, row.filePDF); */
-                        /*     const resultado = await this.uploadService.subirArchivo(
-                                { name: row.filePDF.name },
-                                row.fileBase.data
-                            );
-                            setTimeout(() => {
-                            }, 1500);
-                            if (resultado.error) {
-                                console.log("Error upload archivo: " + row.filePDF.name);
-                            } */
+                    }
 
+                    if (resp) {
+                        row.documento = resp.id;
+                        row.version = 1;
 
+                        this.uploadService.subirOCR(resp);
+                        await this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
+                            // Actualizamos el detalle del historial de carga
+                            /*    this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
+                                   (resp: any) => { }); */
+                        },
+                            (err: any) => {
+                                console.log('Error al guardar documento ' + row.cNombreDocumento);
+                                /*  this.historialCarga.actualizarDetalle({ bCargado: false }, row.idDetalle).subscribe(
+                                     (resp: any) => { }); */
+                            });
 
                     } else {
-                        /*   this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
-                              // Actualizamos el detalle del historial de carga
-                              this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
-                                  (resp: any) => { });
-                          },
-                              (err: any) => {
-                                  console.log('Error al guardar documento ' + row.cNombreDocumento);
-                                  this.historialCarga.actualizarDetalle({ bCargado: false }, row.idDetalle).subscribe(
-                                      (resp: any) => { });
-                              }); */
+
+                        Swal.fire(
+                            "Error",
+                            "Ocurrió un error al subir el documento.",
+                            "error"
+                        );
                     }
-                    /* row.fileBase.data = ''; */
+                    /*   this.upload(index, row.filePDF); */
+                    /*     const resultado = await this.uploadService.subirArchivo(
+                            { name: row.filePDF.name },
+                            row.fileBase.data
+                        );
+                        setTimeout(() => {
+                        }, 1500);
+                        if (resultado.error) {
+                            console.log("Error upload archivo: " + row.filePDF.name);
+                        } */
+
+
+
+                } else {
+                    /*   this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
+                          // Actualizamos el detalle del historial de carga
+                          this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
+                              (resp: any) => { });
+                      },
+                          (err: any) => {
+                              console.log('Error al guardar documento ' + row.cNombreDocumento);
+                              this.historialCarga.actualizarDetalle({ bCargado: false }, row.idDetalle).subscribe(
+                                  (resp: any) => { });
+                          }); */
                 }
+                /* row.fileBase.data = ''; */
                 index++
             };
 
-          
-       
-            this.historialCarga.actualizarHistorial({ bCompletado: true }, idHistorial)
-                .subscribe(async (resp: any) => {
-                    this.loadingIndicator = false;
-                    this.spinner.hide();
-                    this.arrHistorialCarga = [];
-                    this.limpiar();
-                    await this.obtenerHistorialCarga();
-                    this.limpiar();
-                    Swal.fire(
-                        "Éxito",
-                        "Documentos guardados. ",
-                        "success"
-                    );
-                    resolve(true);
-                },
-                    async (err) => {
-                        this.loadingIndicator = false;
-                        this.spinner.hide();
-                        this.selectedHistorial = "";
-                        this.arrHistorialCarga = [];
-                        this.limpiar();
-                        await this.obtenerHistorialCarga();
-                        this.limpiar();
-                        Swal.fire(
-                            "Error",
-                            "Ocurrió un error al actualizar el historial.",
-                            "error"
-                        );
-                        resolve(true);
-                    });
+            Swal.fire(
+                "Éxito",
+                "Documentos guardados. ",
+                "success"
+            );
+            resolve(true);
+
+            /*    this.historialCarga.actualizarHistorial({ bCompletado: true }, idHistorial)
+                   .subscribe(async (resp: any) => {
+                       this.loadingIndicator = false;
+                       this.spinner.hide();
+                       this.arrHistorialCarga = [];
+                       this.limpiar();
+                       await this.obtenerHistorialCarga();
+                       this.limpiar();
+                       Swal.fire(
+                           "Éxito",
+                           "Documentos guardados. ",
+                           "success"
+                       );
+                       resolve(true);
+                   },
+                       async (err) => {
+                           this.loadingIndicator = false;
+                           this.spinner.hide();
+                           this.selectedHistorial = "";
+                           this.arrHistorialCarga = [];
+                           this.limpiar();
+                           await this.obtenerHistorialCarga();
+                           this.limpiar();
+                           Swal.fire(
+                               "Error",
+                               "Ocurrió un error al actualizar el historial.",
+                               "error"
+                           );
+                           resolve(true);
+                       }); */
 
         });
     }
@@ -1617,6 +1664,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                         idEnte = documento.ente.id;
                                     }
                                     idExpediente = "";
+                                    
                                     if (documento.tipo_de_expediente) {
                                         idExpediente =
                                             documento.tipo_de_expediente.id;
@@ -1657,6 +1705,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                             Editar: encontro.Editar,
                                             Consultar: encontro.Consultar,
                                             idDocumento: idDocumento,
+                                            progress: { value: 0, fileName: '' },
                                             version: parseFloat(
                                                 documento.version
                                             ).toFixed(1),
@@ -1674,7 +1723,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                             tipo_de_expediente:
                                                 documento.tipo_de_expediente,
                                             descripcionExpediente: cDescripcionTipoExpediente,
-                                            idExpediente,
+                                            idExpediente
                                         });
                                     }
                                     meta = "";
@@ -1764,75 +1813,98 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
         );
     }
 
-    descargarDocumento(row: any): void {
+    async descargarDocumento(row: any): Promise<void> {
         // Descargamos el documento
-        this.documentoService
-            .dowloadDocument(
-                row.idDocumento,
-                row.id,
-                this.menuService.usuario,
-                row.cNombreDocumento
-            )
-            .subscribe(
-                (resp: any) => {
-                    const linkSource =
-                        "data:application/octet-stream;base64," + resp.data;
-                    const downloadLink = document.createElement("a");
+     
+        let idx = this.documentos.findIndex(
+            (doc) => doc.id === row.id
+        );
+
+        this.uploadService.download(row.idDocumento).subscribe(
+            event => {
+
+
+                if (event.type === HttpEventType.DownloadProgress) {
+                    
+                    if (this.documentos[idx]) {
+                        this.documentos[idx].progress.value = Math.round(100 * event.loaded / event.total);
+                    }
+                } else if (event instanceof HttpResponse) {
+                    const filePath = window.URL.createObjectURL(event.body);
+
+                    const downloadLink = document.createElement('a');
                     const fileName = row.idDocumento;
 
-                    downloadLink.href = linkSource;
+                    downloadLink.href = filePath;
                     downloadLink.download = fileName;
                     downloadLink.click();
-                },
-                (err) => {
-                    this.loadingIndicator = false;
-                    Swal.fire(
-                        "Error",
-                        "Ocurrió un error al descargar el documento." + err,
-                        "error"
-                    );
                 }
-            );
+            },
+            err => {
+                console.log(err);
+            });
     }
 
     descargarDocumentos(): void {
-        this.documentos.forEach((element) => {
-            this.spinner.show();
+        this.spinner.show();
+        let index = 0;
+        this.documentos.forEach(async (element) => {
+            this.documentos[index].progress = { value: 0, fileName: '' }
+
             if (element.selected && String(element.idDocumento).length > 0) {
-                this.documentoService
-                    .dowloadDocument(
-                        element.idDocumento,
-                        element.id,
-                        this.menuService.usuario,
-                        element.cNombreDocumento
-                    )
-                    .subscribe(
-                        (resp: any) => {
-                            const linkSource =
-                                "data:application/octet-stream;base64," +
-                                resp.data;
-                            const downloadLink = document.createElement("a");
+                let idx = index
+
+                //this.documentoService.dowloadDocumentStrapi('http://138.185.2.214:64082/uploads/53_42_01_01_2017_FERIAS_Y_ESPECTACULOS_85ee493739.pdf')
+                this.uploadService.download(element.idDocumento).subscribe(
+                    event => {
+
+
+                        if (event.type === HttpEventType.DownloadProgress) {
+                        
+                            if (this.documentos[idx]) {
+                                this.documentos[idx].progress.value = Math.round(100 * event.loaded / event.total);
+                            }
+                        } else if (event instanceof HttpResponse) {
+                            
+                            const filePath = window.URL.createObjectURL(event.body);
+
+                            const downloadLink = document.createElement('a');
                             const fileName = element.idDocumento;
 
-                            downloadLink.href = linkSource;
+                            downloadLink.href = filePath;
                             downloadLink.download = fileName;
                             downloadLink.click();
-                            this.spinner.hide();
-                        },
-                        (err) => {
-                            this.loadingIndicator = false;
-                            this.spinner.hide();
-                            Swal.fire(
-                                "Error",
-                                "Ocurrió un error al descargar documento." +
-                                err.error,
-                                "error"
-                            );
                         }
-                    );
+                    },
+                    err => {
+                        console.log(err);
+                    });
+
+                /*  await this.documentoService.dowloadDocument(element.idDocumento, element.id, this.menuService.usuario, element.cNombreDocumento).subscribe((resp: any) => {
+ 
+                     const filePath = window.URL.createObjectURL(resp);
+         
+                     const downloadLink = document.createElement('a');
+                     const fileName = element.idDocumento;
+         
+                     downloadLink.href = filePath;
+                     downloadLink.download = fileName;
+                     downloadLink.click();
+                  
+                 }, err => {
+                     this.spinner.hide();
+                     Swal.fire(
+                         'Error',
+                         'Ocurrió un error al descargar el documento.' + err,
+                         'error'
+                     );
+                     this.loadingIndicator = false;
+                 }); */
             } else {
                 this.spinner.hide();
             }
+            index++
+            this.spinner.hide();
         });
     }
 

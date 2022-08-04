@@ -125,15 +125,17 @@ export class GuardarUsuarioFinanzasComponent implements OnInit, OnDestroy {
             primerApellido: [this.usuario.cApellidoPaterno, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
             segundoApellido: [this.usuario.cApellidoMaterno],
             usuario: [this.usuario.cUsuario, [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
-            password: [this.usuario.cPassword, [Validators.required, Validators.pattern("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%¡¿_:;=?&])[A-Za-z\d@$!%*?&*-¡¿_:;=].{8,}"), Validators.maxLength(100), confirmPasswordValidator]],
-            passwordConfirm: [this.passwordConfirm, [Validators.required, Validators.pattern("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%¡¿_:;=?&])[A-Za-z\d@$!%*?&*-¡¿_:;=].{8,}"), Validators.maxLength(100), confirmPasswordValidator]],
+            /* Validators.pattern("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%¡¿_:;=?&])[A-Za-z\d@$!%*?&*-¡¿_:;=].{8,}") */
+      /*       Validators.pattern("(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%¡¿_:;=?&])[A-Za-z\d@$!%*?&*-¡¿_:;=].{8,}") */
+            password: [this.usuario.cPassword, [Validators.required, Validators.maxLength(100), confirmPasswordValidator]],
+            passwordConfirm: [this.passwordConfirm, [Validators.required , Validators.maxLength(100), confirmPasswordValidator]],
             correo: [this.usuario.cCorreo, [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
 
             telefono: [this.usuario.cTelefono, [RxwebValidators.mask({ mask: '(999)-999 9999' }), Validators.required]],
             estatus: [this.usuario.bActivo],
-            secretarias: [this.usuario.secretaria, [Validators.required]],
-            direcciones: [this.usuario.direccione, [Validators.required]],
-            departamentos: [this.usuario.departamento, [Validators.required]],
+            secretarias: [this.usuario.secretaria],
+            direcciones: [this.usuario.direccione],
+            departamentos: [this.usuario.departamento],
             perfiles: [this.rows],
             avatar: [null],
             administrador: [this.usuario.administrador],
@@ -174,7 +176,7 @@ export class GuardarUsuarioFinanzasComponent implements OnInit, OnDestroy {
 
             this.arrDepartamentos = [...this.arrDepartamentos];
 
-            console.log('entro');
+          
         } else {
             this.form.get('direcciones').setValidators([Validators.required]);
             this.form.get('direcciones').updateValueAndValidity();
@@ -222,8 +224,7 @@ export class GuardarUsuarioFinanzasComponent implements OnInit, OnDestroy {
                 this.form.controls['departamentos'].enable();
                 if (this.arrDepartamentosFilter) {
                     this.arrDepartamentos = this.arrDepartamentosFilter.filter(item => item['direccionId'] === val);
-                    console.log(this.arrDepartamentos)
-
+                   
                     if (this.arrDirecciones.length === 0) {
                         this.arrDepartamentos = [];
 
@@ -254,7 +255,7 @@ export class GuardarUsuarioFinanzasComponent implements OnInit, OnDestroy {
                     }
                 }
 
-                console.log(this.form.controls)
+            
 
             }
         });
@@ -324,9 +325,9 @@ export class GuardarUsuarioFinanzasComponent implements OnInit, OnDestroy {
             this.usuario.cCorreo = this.form.get('correo').value;
             this.usuario.bActivo = this.form.get('estatus').value;
             this.usuario.administrador = this.form.get('administrador').value;
-            this.usuario.secretaria = this.form.get('secretarias').value;
+           /*  this.usuario.secretaria = this.form.get('secretarias').value;
             this.usuario.direccione = this.form.get('direcciones').value;
-            this.usuario.departamento = this.form.get('departamentos').value;
+            this.usuario.departamento = this.form.get('departamentos').value; */
            /*  this.usuario.empleado = this.form.get('empleado').value; */
             this.usuario.perfiles_de_usuarios = [];
             let permisosIniciativas = this.rowsPermisos.filter( val => val.Agregar === true);
@@ -767,7 +768,7 @@ export class GuardarUsuarioFinanzasComponent implements OnInit, OnDestroy {
 
         if (this.usuario.cImagen) {
 
-            await this.usuariosService.dowloadDocument(this.usuario.cImagen.hash + this.usuario.cImagen.ext, '', '', '').subscribe((resp: any) => {
+            await this.usuariosService.dowloadDocument(this.usuario.cImagen.hash + this.usuario.cImagen.ext, '', '').subscribe((resp: any) => {
 
                 const linkSource = 'data:application/octet-stream;base64,' + resp.data;
                 this.imageURL = linkSource;

@@ -1,43 +1,63 @@
 <ngx-spinner type="timer"></ngx-spinner>
+<fuse-progress-bar></fuse-progress-bar>
 <mat-drawer-container class="example-container">
-    <mat-drawer  mode="side" opened position="start" [style.width]="'55%'">
-       <!--  <object  *ngIf="this.documento.autorizacion_iniciativas.length === 0" [data]="this.pdfSrc | safePipe" type="application/pdf" width="100%" height="100%"></object> -->
-          <object  *ngIf="this.documento.autorizacion_iniciativas.length > 0" [data]="this.pdfSrc | safePipe" type="application/pdf" width="100%" height="100%"></object>
-            <pdf-viewer *ngIf=" this.ocultarPreview === false && this.documento.autorizacion_iniciativas.length  === 0 "
-            [render-text]="true" [original-size]="false" [autoresize]="true" [rotation]="true" [src]="pdfSrc"></pdf-viewer>
-      
+    <mat-drawer mode="side" opened position="start" [style.width]="'55%'">
+        <!--  <object  *ngIf="this.documento.autorizacion_iniciativas.length === 0" [data]="this.pdfSrc | safePipe" type="application/pdf" width="100%" height="100%"></object> -->
+        <!--  <object  *ngIf="this.documento.autorizacion_iniciativas.length > 0" [data]="this.pdfSrc | safePipe" type="application/pdf" width="100%" height="100%"></object>
+           -->
+
+        <div class="logo" *ngIf="!this.bMostarPdf">
+            <img  src="assets/images/loading/spinner.gif">
+        </div>
+        <pdf-viewer [render-text]="true" [original-size]="false" [autoresize]="true" [rotation]="true" [src]="pdfSrc"
+            (on-progress)="onProgress($event)"></pdf-viewer>
+
 
         <div *ngIf="this.ocultarPreview" class="container">
             <div class="lista">
                 <h3 class="encabezado">Hoy</h3>
 
-                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="hoy" [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [reorderable]="reorderable">
+                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="hoy"
+                    [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50"
+                    rowHeight="auto" [reorderable]="reorderable">
                 </ngx-datatable>
                 <h3 class="encabezado">Ayer</h3>
 
-                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="ayer" [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [reorderable]="reorderable">
+                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="ayer"
+                    [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50"
+                    rowHeight="auto" [reorderable]="reorderable">
                 </ngx-datatable>
                 <h3 class="encabezado">Esta semana</h3>
 
-                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="semanaActual" [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [reorderable]="reorderable">
+                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="semanaActual"
+                    [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50"
+                    rowHeight="auto" [reorderable]="reorderable">
                 </ngx-datatable>
                 <h3 class="encabezado">La semana pasada</h3>
 
-                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="semanaPasada" [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [reorderable]="reorderable">
+                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="semanaPasada"
+                    [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50"
+                    rowHeight="auto" [reorderable]="reorderable">
                 </ngx-datatable>
 
                 <h3 class="encabezado">Hace dos semanas</h3>
 
-                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="semanaAntepasada" [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [reorderable]="reorderable">
+                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="semanaAntepasada"
+                    [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50"
+                    rowHeight="auto" [reorderable]="reorderable">
                 </ngx-datatable>
 
                 <h3 class="encabezado">El mes pasado</h3>
 
-                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="mesPasado" [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [reorderable]="reorderable">
+                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="mesPasado"
+                    [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50"
+                    rowHeight="auto" [reorderable]="reorderable">
                 </ngx-datatable>
                 <h3 class="encabezado">Más antiguo</h3>
 
-                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="masAntiguo" [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [reorderable]="reorderable">
+                <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="masAntiguo"
+                    [loadingIndicator]="loadingIndicator" [columns]="columns" [headerHeight]="50" [footerHeight]="50"
+                    rowHeight="auto" [reorderable]="reorderable">
                 </ngx-datatable>
             </div>
         </div>
@@ -45,12 +65,14 @@
     <mat-drawer-content>
 
         <mat-dialog-actions align="end" class="mat-dialog-icons">
-            <button *ngIf="this.documento.iniciativas" mat-raised-button color="warn" [matMenuTriggerFor]="menu">Documento</button>
+            <button *ngIf="this.documento.iniciativas" mat-raised-button color="warn"
+                [matMenuTriggerFor]="menu">Documento</button>
 
             <mat-menu #menu="matMenu">
-               
-                
-                <button *ngIf="!this.pasarAAutorizacion && this.documento.iniciativa && !this.autorizacionPendiente" mat-menu-item (click)="pasarAutorizacion()">
+
+
+                <button *ngIf="!this.pasarAAutorizacion && this.documento.iniciativa && !this.autorizacionPendiente"
+                    mat-menu-item (click)="pasarAutorizacion()">
                     <mat-icon>arrow_right_alt</mat-icon>
                     <span>Autorización</span>
                 </button>
@@ -87,7 +109,8 @@
                     matTooltip="Clic ver la trazabilidad del documento">
                     timeline</mat-icon>
             </button>
-            <button *ngIf="!this.documento.iniciativas" mat-fab color="accent" (click)="historialVersionamiento()" class="button">
+            <button *ngIf="!this.documento.iniciativas" mat-fab color="accent" (click)="historialVersionamiento()"
+                class="button">
                 <mat-icon color="primary" class="material-icons pointer"
                     matTooltip="Clic ver el historial de versionamiento">
                     history</mat-icon>
@@ -99,8 +122,9 @@
             <!--<button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
         </mat-dialog-actions>
         <div class="contentInfo border-button">
-            <form class="mat-card " fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form" [formGroup]="form">
-             
+            <form class="mat-card " fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form"
+                [formGroup]="form">
+
                 <h3>Información general</h3>
                 <div fxLayout="row" fxFlex="100">
                     <div fxLayout="row" fxFlex="20">
@@ -123,8 +147,8 @@
                         <p class="info">Estatus:</p>
                     </div>
                     <div fxFlex="30">
-                        <p *ngIf="this.documento.bActivo">Vigente</p>
-                        <p *ngIf="!this.documento.bActivo">No Vigente</p>
+                        <p *ngIf="this.documento.bActivo">Activo</p>
+                        <p *ngIf="!this.documento.bActivo">Inactivo</p>
                     </div>
                     <div fxLayout="row" fxFlex="20">
                         <p class="info">Formato:</p>
@@ -135,14 +159,14 @@
                 </div>
 
                 <div fxLayout="row" fxFlex="100">
-                  <!--   <div fxLayout="row" fxFlex="20">
+                    <!--   <div fxLayout="row" fxFlex="20">
                         <p class="info">Páginas:</p>
                     </div>
                     <div fxLayout="row" fxFlex="30">
                         <p>{{this.documento.paginas}}</p>
                     </div>
  -->
-                    
+
                     <div fxLayout="row" fxFlex="20">
                         <p class="info">Versión:</p>
                     </div>
@@ -166,10 +190,10 @@
                         <p> {{this.documento.visibilidade.cDescripcionVisibilidad}}</p>
                     </div>
                 </div>
-           
+
                 <div fxLayout="row" fxFlex="100">
                     <div fxLayout="row" fxFlex="40">
-                        <p class="info">Fecha de creación:</p>
+                        <p class="info">Fecha de ingreso:</p>
                     </div>
                     <div fxLayout="row" fxFlex="60">
                         <p> {{this.fechaCreacionView}}</p>
@@ -187,7 +211,8 @@
         </div>
 
         <div class="contentInfo">
-            <form class="mat-card " fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form" [formGroup]="form">
+            <form class="mat-card " fxLayout="column" fxLayoutAlign="start" fxFlex="1 0 auto" name="form"
+                [formGroup]="form">
                 <h1>Clasificación de documentos</h1>
                 <!--   
                 <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
@@ -239,7 +264,7 @@
                     </mat-form-field>
                 </div>
                 -->
-          <!--       <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                <!--       <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="100">
                         <mat-label>Legislatura *</mat-label>
                         <mat-select formControlName="legislatura" [(ngModel)]="selectedLegislaturas" name="legislatura">
@@ -262,7 +287,7 @@
                     </mat-form-field>
                 </div>
  -->
-           <!--      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                <!--      <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="100">
                         <mat-label>Tipo de expediente *</mat-label>
                         <mat-select formControlName="expediente" [(ngModel)]="selectedExpediente" name="expediente">
@@ -274,35 +299,35 @@
                     </mat-form-field>
                 </div> -->
 
-                <div fxLayout="row"  fxLayoutAlign="start center" fxFlex="1 0 auto">
+                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="50" class="pl-4">
                         <mat-label>Pasillo *</mat-label>
-                        <input matInput formControlName="pasillo" type="text"    name="pasillo" >
+                        <input matInput formControlName="pasillo" type="text" name="pasillo">
                         <mat-error>El pasillo es requerido</mat-error>
                     </mat-form-field>
                     <mat-form-field appearance="outline" fxFlex="50" class="pl-4">
                         <mat-label>Estante *</mat-label>
-                        <input matInput formControlName="estante" type="text"    name="estante" >
+                        <input matInput formControlName="estante" type="text" name="estante">
                         <mat-error>El estante es requerido</mat-error>
                     </mat-form-field>
                 </div>
 
-                <div fxLayout="row"  fxLayoutAlign="start center" fxFlex="1 0 auto">
-                  
+                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
+
                 </div>
 
-                <div fxLayout="row"  fxLayoutAlign="start center" fxFlex="1 0 auto">
+                <div fxLayout="row" fxLayoutAlign="start center" fxFlex="1 0 auto">
                     <mat-form-field appearance="outline" fxFlex="50" class="pl-4">
                         <mat-label>Nivel *</mat-label>
-                        <input matInput formControlName="nivel" type="text"    name="nivel" >
+                        <input matInput formControlName="nivel" type="text" name="nivel">
                         <mat-error>El nivel es requerido</mat-error>
                     </mat-form-field>
                     <mat-form-field appearance="outline" fxFlex="50" class="pl-4">
                         <mat-label>Sección *</mat-label>
-                        <input matInput formControlName="seccion" type="text"    name="seccion" >
+                        <input matInput formControlName="seccion" type="text" name="seccion">
                         <mat-error>La seccion es requerida</mat-error>
                     </mat-form-field>
-                  
+
                 </div>
 
                 <!-- <div fxLayout="row" *ngIf="this.descriptionTipoDocumento !== 'Acta'" fxLayoutAlign="start center" fxFlex="1 0 auto">
@@ -312,17 +337,20 @@
                         <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
                     </mat-form-field>
                 </div> -->
-               
-                <div fxLayout="row" *ngIf="this.descriptionTipoDocumento !== 'Acta'" fxLayoutAlign="start center" fxFlex="1 0 auto">
-             <!--        <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
+
+                <div fxLayout="row" *ngIf="this.descriptionTipoDocumento !== 'Acta'" fxLayoutAlign="start center"
+                    fxFlex="1 0 auto">
+                    <!--        <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
                         <mat-label>Número de caja *</mat-label>
                         <input matInput formControlName="numeroDeCaja" type="number"   name="numeroDeCaja" >                
                         <mat-error>El Número de caja es requerido</mat-error>
                     </mat-form-field> -->
-                    
+
                     <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
                         <mat-label>Número de caja *</mat-label>
-                        <input matInput formControlName="folioExpediente" type="number"  [(ngModel)]="this.selectedFolioExpediente" pattern="[0-9]+" name="folioExpediente" [disabled]="disableFolioExpediente">
+                        <input matInput formControlName="folioExpediente" type="number"
+                            [(ngModel)]="this.selectedFolioExpediente" pattern="[0-9]+" name="folioExpediente"
+                            [disabled]="disableFolioExpediente">
                         <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>
                         <mat-error>El Número de caja es requerido</mat-error>
                     </mat-form-field>
@@ -343,22 +371,31 @@
                       </mat-chip-list>
                 </div>
  -->
-            <h1>Metadatos</h1>
+                <h1>Metadatos</h1>
                 <form #formRef="ngForm">
                     <div *ngFor="let meta of arrMetacatalogos; let in=index" class="col-sm-1">
                         <div class="form-group">
-                            <div fxLayout="row" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Numérico'" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                            <div fxLayout="row" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Numérico'"
+                                fxLayoutAlign="start center" fxFlex="1 0 auto">
                                 <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
                                     <mat-label>{{arrMetacatalogos[in].cDescripcionMetacatalogo}}</mat-label>
-                                    <input [disabled]="this.documento.iniciativas" type="number" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Numérico'" matInput [(ngModel)]="meta.text" name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}" [required]="arrMetacatalogos[in].bOligatorio"
+                                    <input [disabled]="this.documento.iniciativas" type="number"
+                                        *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Numérico'" matInput
+                                        [(ngModel)]="meta.text" name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}"
+                                        [required]="arrMetacatalogos[in].bOligatorio"
                                         [disabled]="this.documento.disabled">
 
                                 </mat-form-field>
                             </div>
-                            <div fxLayout="row" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Texto'" fxLayoutAlign="start center" fxFlex="1 0 auto">
+                            <div fxLayout="row" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Texto'"
+                                fxLayoutAlign="start center" fxFlex="1 0 auto">
                                 <mat-form-field appearance="outline" fxFlex="100" class="pl-4">
                                     <mat-label>{{arrMetacatalogos[in].cDescripcionMetacatalogo}}</mat-label>
-                                    <input [disabled]="this.documento.iniciativas" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Texto'" matInput [(ngModel)]="meta.text" name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}" [required]="arrMetacatalogos[in].bOligatorio" [disabled]="this.documento.disabled">
+                                    <input [disabled]="this.documento.iniciativas"
+                                        *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Texto'" matInput
+                                        [(ngModel)]="meta.text" name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}"
+                                        [required]="arrMetacatalogos[in].bOligatorio"
+                                        [disabled]="this.documento.disabled">
 
                                 </mat-form-field>
                             </div>
@@ -371,22 +408,25 @@
                                     <mat-datepicker #picker2></mat-datepicker>
                                 </mat-form-field>
                             </div> -->
-                            <div fxLayout="row" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Sí o no'" fxLayoutAlign="center" fxFlex="30">
+                            <div fxLayout="row" *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Sí o no'"
+                                fxLayoutAlign="center" fxFlex="30">
                                 <section class="example-section">
-                                    <mat-slide-toggle *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Sí o no'" [(ngModel)]="meta.text" name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}" class="example-margin" [disabled]="this.documento.disabled">
+                                    <mat-slide-toggle *ngIf="arrMetacatalogos[in].cTipoMetacatalogo==='Sí o no'"
+                                        [(ngModel)]="meta.text" name="{{arrMetacatalogos[in].cDescripcionMetacatalogo}}"
+                                        class="example-margin" [disabled]="this.documento.disabled">
                                         {{arrMetacatalogos[in].cDescripcionMetacatalogo}}
                                     </mat-slide-toggle>
                                 </section>
                             </div>
-                         
+
                             <!--<p [hidden]="words2[in].value">Field is required</p>
                           {{formRef.form.name1}}-->
                         </div>
-                   
+
                     </div>
-           
+
                 </form>
-                
+
             </form>
         </div>
 
@@ -396,7 +436,7 @@
                 [disabled]="!formRef.form.valid ||  form.invalid || disabledGuardar || this.documento.disabled || !this.form.touched "
                 mat-raised-button color="accent" (click)="guardar()">Guardar</button>
             <!--  <button  mat-raised-button color="accent" (click)="pruebaForm()">Upload</button> -->
-        <!-- {{formRef.form.valid }} , {{form.invalid}} , {{disabledGuardar}}, {{this.documento.disabled}} , {{this.form.touched}}  -->
+            <!-- {{formRef.form.valid }} , {{form.invalid}} , {{disabledGuardar}}, {{this.documento.disabled}} , {{this.form.touched}}  -->
         </mat-dialog-actions>
     </mat-drawer-content>
 
