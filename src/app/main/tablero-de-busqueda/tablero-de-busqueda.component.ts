@@ -257,7 +257,7 @@ export class TableroDeBusquedaComponent implements OnInit {
 
                                                     if (x.cTipoMetacatalogo === 'Fecha') {
                                                         if (x.text) {
-                                                            meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'MM-dd-yyyy');
+                                                            meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
                                                         }
                                                     } else {
                                                         if (x.text) {
@@ -267,7 +267,7 @@ export class TableroDeBusquedaComponent implements OnInit {
                                                 } else {
                                                     if (x.cTipoMetacatalogo === 'Fecha') {
                                                         if (x.text) {
-                                                            meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'MM-dd-yyyy');
+                                                            meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
                                                         }
                                                     } else if (x.cTipoMetacatalogo === 'Sí o no') {
                                                         if (x.text) { meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': Sí'; } else {
@@ -308,14 +308,14 @@ export class TableroDeBusquedaComponent implements OnInit {
                                         cNombreDocumento: documento.cNombreDocumento,
                                         tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
                                         tipo_de_documento: documento.tipo_de_documento.id,
-                                        fechaCargaView: this.datePipe.transform(documento.fechaCarga, 'MM-dd-yyyy'),
-                                        fechaCreacionView: this.datePipe.transform(documento.fechaCreacion, 'MM-dd-yyyy'),
+                                        fechaCargaView: this.datePipe.transform(documento.fechaCarga, 'yyyy-MM-dd'),
+                                        fechaCreacionView: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
                                         fechaCarga: documento.fechaCarga,
-                                        fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyy-MM-dd'),
+                                        fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
                                         paginas: documento.paginas,
                                         bActivo: documento.bActivo,
                                         fechaModificacion: documento.updatedAt,
-                                        fechaModificacionView: this.datePipe.transform(documento.updatedAt, 'MM-dd-yyyy'),
+                                        fechaModificacionView: this.datePipe.transform(documento.updatedAt, 'yyyy-MM-dd'),
                                         Agregar: encontro.Agregar,
                                         Eliminar: encontro.Eliminar,
                                         Editar: encontro.Editar,
@@ -566,7 +566,7 @@ export class TableroDeBusquedaComponent implements OnInit {
 
                     if (this.fechaCreacion !== '' && this.fechaCreacion !== undefined && this.fechaCreacion !== null) {
                         let fecha: string;
-                        fecha = this.datePipe.transform(this.fechaCreacion, 'MM-dd-yyyy');
+                        fecha = this.datePipe.transform(this.fechaCreacion, 'yyyy-MM-dd');
 
                         temp = this.documentos.filter((d) => d.fechaCreacionView === fecha);
                         this.documentos = temp;
@@ -574,14 +574,14 @@ export class TableroDeBusquedaComponent implements OnInit {
 
                     if (this.fechaCarga !== '' && this.fechaCarga !== undefined && this.fechaCarga !== null) {
                         let fecha: string;
-                        fecha = this.datePipe.transform(this.fechaCarga, 'MM-dd-yyyy');
+                        fecha = this.datePipe.transform(this.fechaCarga, 'yyyy-MM-dd');
                         temp = this.documentos.filter((d) => d.fechaCargaView === fecha);
                         this.documentos = temp;
                     }
 
                     if (this.fechaModificacion !== '' && this.fechaModificacion !== undefined && this.fechaModificacion !== null) {
                         let fecha: string;
-                        fecha = this.datePipe.transform(this.fechaModificacion, 'MM-dd-yyyy');
+                        fecha = this.datePipe.transform(this.fechaModificacion, 'yyyy-MM-dd');
                         temp = this.documentos.filter((d) => d.fechaModificacionView === fecha);
                         this.documentos = temp;
                     }
@@ -593,7 +593,7 @@ export class TableroDeBusquedaComponent implements OnInit {
                             if (i['cTipoMetacatalogo'] === 'Fecha') {
                                 let fecha: string;
 
-                                fecha = this.datePipe.transform(i['text'], 'MM-dd-yyyy');
+                                fecha = this.datePipe.transform(i['text'], 'yyyy-MM-dd');
 
                                 if (fecha) {
                                     temp = this.documentos.filter((d) => d.clasificacion.indexOf(i['cDescripcionMetacatalogo'] + ': ' + fecha) !== -1 || !fecha);
@@ -675,21 +675,21 @@ export class TableroDeBusquedaComponent implements OnInit {
 
             if (this.fechaCreacion !== '' && this.fechaCreacion !== undefined && this.fechaCreacion !== null) {
                 let fecha: string;
-                fecha = this.datePipe.transform(this.fechaCreacion, 'MM-dd-yyyy');
+                fecha = this.datePipe.transform(this.fechaCreacion, 'yyyy-MM-dd');
                 temp = this.documentos.filter((d) => d.fechaCreacionView === fecha);
                 this.documentos = temp;
             }
 
             if (this.fechaCarga !== '' && this.fechaCarga !== undefined && this.fechaCarga !== null) {
                 let fecha: string;
-                fecha = this.datePipe.transform(this.fechaCarga, 'MM-dd-yyyy');
+                fecha = this.datePipe.transform(this.fechaCarga, 'yyyy-MM-dd');
                 temp = this.documentos.filter((d) => d.fechaCargaView === fecha);
                 this.documentos = temp;
             }
 
             if (this.fechaModificacion !== '' && this.fechaModificacion !== undefined && this.fechaModificacion !== null) {
                 let fecha: string;
-                fecha = this.datePipe.transform(this.fechaModificacion, 'MM-dd-yyyy');
+                fecha = this.datePipe.transform(this.fechaModificacion, 'yyyy-MM-dd');
                 temp = this.documentos.filter((d) => d.fechaModificacionView === fecha);
                 this.documentos = temp;
             }
@@ -701,7 +701,7 @@ export class TableroDeBusquedaComponent implements OnInit {
                     if (i['cTipoMetacatalogo'] === 'Fecha') {
                         let fecha: string;
 
-                        fecha = this.datePipe.transform(i['text'], 'MM-dd-yyyy');
+                        fecha = this.datePipe.transform(i['text'], 'yyyy-MM-dd');
 
                         if (fecha) {
                             temp = this.documentos.filter((d) => d.clasificacion.indexOf(i['cDescripcionMetacatalogo'] + ': ' + fecha) !== -1 || !fecha);

@@ -9,6 +9,7 @@
         <div class="logo" *ngIf="!this.bMostarPdf">
             <img  src="assets/images/loading/spinner.gif">
         </div>
+       
         <pdf-viewer [render-text]="true" [original-size]="false" [autoresize]="true" [rotation]="true" [src]="pdfSrc"
             (on-progress)="onProgress($event)"></pdf-viewer>
 

@@ -39,9 +39,10 @@ export class TipoDeExpedientesComponent implements OnInit {
     async ngOnInit(): Promise<void> {
        /*  await this.menuService.limpiarMenu();
         await this.menuService.crearMenu(); */
-        this.privilegios = await this.menuService.obtenerPrivilegios();
         await this.obtenerDepartamentos();
-        this.obtenerTiposExpedientes();
+        this.privilegios = await this.menuService.obtenerPrivilegios();
+        
+        await this.obtenerTiposExpedientes();
       
       
     }
@@ -52,7 +53,7 @@ export class TipoDeExpedientesComponent implements OnInit {
                 this.cargando = true;
                 // Obtenemos departamentos
                 const departamentosTemp: any[] = [];
-                this.usuarioService.obtenerDepartamentos().subscribe((resp: any) => {
+               await this.usuarioService.obtenerDepartamentos().subscribe((resp: any) => {
                
                   
                     this.arrDepartamentosnew = resp;
@@ -88,9 +89,10 @@ export class TipoDeExpedientesComponent implements OnInit {
                    
                  
                     resp.forEach( tipoExpediente =>{
+                        console.log(tipoExpediente.idDepartamento);
                         const departamento = this.arrDepartamentosnew.find((opcion: { id: string; }) => opcion.id === tipoExpediente.idDepartamento);
              
-                      
+                        console.log(departamento);
                         tempTipoExpediente.push(
                             {id:tipoExpediente.id,
                                 cDescripcionTipoExpediente: tipoExpediente.cDescripcionTipoExpediente,

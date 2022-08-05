@@ -484,6 +484,8 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                         "warning"
                     );
                 } else {
+                    this.validarGuardado = false;
+                    this.loadingIndicator = false;
                     Swal.fire(
                         "Exito",
                         "Los archivos subidos fueron validados exitosamente con los documentos.",
@@ -1254,7 +1256,8 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                 /* row.fileBase.data = ''; */
                 index++
             };
-
+            this.validarGuardado = false
+            this.loadingIndicator = false;
             Swal.fire(
                 "Éxito",
                 "Documentos guardados. ",
@@ -1407,12 +1410,12 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
         ) {
             if (filtroReporte === "") {
                 filtroReporte =
-                    "visibilidade.cDescripcionVisibilidad=" +
+                    "visibilidade.cDescripcionVisibilidad_contains=" +
                     this.selectedInformacion;
             } else {
                 filtroReporte =
                     filtroReporte +
-                    "&visibilidade.cDescripcionVisibilidad=" +
+                    "&visibilidade.cDescripcionVisibilidad_contains=" +
                     this.selectedInformacion;
             }
         }
@@ -1422,11 +1425,11 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             this.documentoBusqueda !== ""
         ) {
             if (filtroReporte === "") {
-                filtroReporte = "cNombreDocumento=" + this.documentoBusqueda;
+                filtroReporte = "cNombreDocumento_contains=" + this.documentoBusqueda;
             } else {
                 filtroReporte =
                     filtroReporte +
-                    "&cNombreDocumento=" +
+                    "&cNombreDocumento_contains=" +
                     this.documentoBusqueda;
             }
         }
@@ -1688,17 +1691,19 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                                 documento.tipo_de_documento.id,
                                             fechaCarga: this.datePipe.transform(
                                                 documento.fechaCarga,
-                                                "MM-dd-yyyy"
+                                                "yyyy-MM-dd"
                                             ),
+
+                                            
                                             fechaCreacion: this.datePipe.transform(
                                                 documento.fechaCreacion,
-                                                "MM-dd-yyyy"
+                                                "yyyy-MM-dd"
                                             ),
                                             paginas: documento.paginas,
                                             bActivo: documento.bActivo,
                                             fechaModificacion: this.datePipe.transform(
                                                 documento.updatedAt,
-                                                "MM-dd-yyyy"
+                                                "yyyy-MM-dd"
                                             ),
                                             Agregar: encontro.Agregar,
                                             Eliminar: encontro.Eliminar,
@@ -1906,6 +1911,14 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             index++
             this.spinner.hide();
         });
+
+
+        Swal.fire(
+            "Exito",
+            "Los archivos seleccionados fueron descargados correctamente.",
+            "success"
+        );
+        //heber
     }
 
     convertFile(buf: any): string {
@@ -1969,7 +1982,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             this.fechaCreacion !== null
         ) {
             let fecha: string;
-            fecha = this.datePipe.transform(this.fechaCreacion, "MM-dd-yyyy");
+            fecha = this.datePipe.transform(this.fechaCreacion, "yyyy-MM-dd");
             temp = this.documentos.filter((d) => d.fechaCreacion === fecha);
             this.documentos = temp;
         }
@@ -1980,7 +1993,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             this.fechaCarga !== null
         ) {
             let fecha: string;
-            fecha = this.datePipe.transform(this.fechaCarga, "MM-dd-yyyy");
+            fecha = this.datePipe.transform(this.fechaCarga, "yyyy-MM-dd");
             temp = this.documentos.filter((d) => d.fechaCarga === fecha);
             this.documentos = temp;
         }
@@ -1993,7 +2006,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             let fecha: string;
             fecha = this.datePipe.transform(
                 this.fechaModificacion,
-                "MM-dd-yyyy"
+                "yyyy-MM-dd"
             );
             temp = this.documentos.filter((d) => d.fechaModificacion === fecha);
             this.documentos = temp;

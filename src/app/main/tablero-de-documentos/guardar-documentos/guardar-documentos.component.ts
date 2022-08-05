@@ -93,8 +93,21 @@ export class GuardarDocumentosComponent implements OnInit {
     async ngOnInit(): Promise<void> {
         this.spinner.show();
 
-
+        console.log(this.documentos);
         this.fileName = '';
+        this.form = this.formBuilder.group({
+            tipoDocumentos: [{ value: this.documentos.tipo_de_documento, disabled: this.documentos.disabled }, Validators.required],
+            nombreDocumento: [{ value: this.documentos.cNombreDocumento, disabled: this.documentos.disabled }, [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+            estatus: { value: this.documentos.bActivo, disabled: this.documentos.disabled },
+            fechaCreacion: [{ value: this.documentos.fechaCreacion, disabled: this.documentos.disabled }, [Validators.required]],
+            //fechaCreacion: [{ value: this.documentos.fechaCreacion, disabled: this.documentos.disabled }, [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
+            fechaCarga: [{ value: this.documentos.fechaCarga, disabled: true }],
+            paginas: [{ value: this.documentos.paginas, disabled: this.paginasEditar }, [Validators.pattern("^[0-9]*$")]],
+            plazoDeConservacion: [{ value: this.documentos.plazoDeConservacion, disabled: this.paginasEditar }, [Validators.required, Validators.max(50), Validators.min(0), Validators.pattern("^[0-9]*$")]],
+            clave: [{ value: this.documentos.clave, disabled: this.paginasEditar }, Validators.required]
+        });
+
+        
         const fecha = new Date(); // Fecha actual
         let mes: any = fecha.getMonth() + 1; // obteniendo mes
         let dia: any = fecha.getDate(); // obteniendo dia
@@ -173,18 +186,7 @@ export class GuardarDocumentosComponent implements OnInit {
 
         this.cambioDocumento = false;
         // Form reativo
-        this.form = this.formBuilder.group({
-            tipoDocumentos: [{ value: this.documentos.tipo_de_documento, disabled: this.documentos.disabled }, Validators.required],
-            nombreDocumento: [{ value: this.documentos.cNombreDocumento, disabled: this.documentos.disabled }, [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
-            estatus: { value: this.documentos.bActivo, disabled: this.documentos.disabled },
-            fechaCreacion: [{ value: this.documentos.fechaCreacion, disabled: this.documentos.disabled }, [Validators.required]],
-            //fechaCreacion: [{ value: this.documentos.fechaCreacion, disabled: this.documentos.disabled }, [Validators.required, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$')]],
-            fechaCarga: [{ value: this.documentos.fechaCarga, disabled: true }],
-            paginas: [{ value: this.documentos.paginas, disabled: this.paginasEditar }, [Validators.pattern("^[0-9]*$")]],
-            plazoDeConservacion: [{ value: this.documentos.plazoDeConservacion, disabled: this.paginasEditar }, [Validators.required, Validators.max(50), Validators.min(0), Validators.pattern("^[0-9]*$")]],
-            clave: [{ value: this.documentos.clave, disabled: this.paginasEditar }, Validators.required]
-        });
-
+       
 
 
         this.form.get('fechaCreacion').valueChanges.subscribe(val => {

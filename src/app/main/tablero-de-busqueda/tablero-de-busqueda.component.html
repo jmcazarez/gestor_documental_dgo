@@ -156,18 +156,7 @@
                             </mat-form-field>
                         </div>
                     -->
-                        <div class="select">
-                            <p class="tag">Tipo de expediente</p>
-                            <mat-form-field appearance="fill" class="input">
-                                <mat-label>Seleccionar</mat-label>
-                                <mat-select formControlName="expediente" [(ngModel)]="selectedExpediente"
-                                    name="expediente">
-                                    <mat-option *ngFor="let expediente of arrExpediente" [value]="expediente.id">
-                                        {{expediente.cDescripcionTipoExpediente}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
+                       
 
                <!--          <div class="select">
                             <p class="tag">Legislatura</p>
@@ -181,6 +170,18 @@
                                 </mat-select>
                             </mat-form-field>
                         </div> -->
+                        <div class="select">
+                            <p class="tag">Tipo de expediente</p>
+                            <mat-form-field appearance="fill" class="input">
+                                <mat-label>Seleccionar</mat-label>
+                                <mat-select formControlName="expediente" [(ngModel)]="selectedExpediente"
+                                    name="expediente">
+                                    <mat-option *ngFor="let expediente of arrExpediente" [value]="expediente.id">
+                                        {{expediente.cDescripcionTipoExpediente}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
 
                         <div class="select">
                             <p class="tag">Numero de caja</p>
@@ -285,9 +286,9 @@
                             <ngx-datatable-column name="Versión" prop="version" [width]="100"></ngx-datatable-column>
                             <ngx-datatable-column name="Clasificación(Meta catalogo)" prop="clasificacion"></ngx-datatable-column>
                             <!-- <ngx-datatable-column name="Ente" prop="ente.cDescripcionEnte"></ngx-datatable-column>-->
-                            <!--<ngx-datatable-column name="Tipo de expediente"
+                            <ngx-datatable-column name="Tipo de expediente"
                                 prop="tipo_de_expediente.cDescripcionTipoExpediente"></ngx-datatable-column>
-                                -->
+                               
                           <!--   <ngx-datatable-column name="Legislatura" prop="legislatura.cLegislatura">
                             </ngx-datatable-column> -->                         
                             <ngx-datatable-column name="Nro. caja" prop="folioExpediente" [width]="80"></ngx-datatable-column>

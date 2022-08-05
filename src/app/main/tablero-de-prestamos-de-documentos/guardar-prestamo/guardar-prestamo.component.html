@@ -75,8 +75,7 @@
                 <input matInput formControlName="cIdExpediente" >
                 <mat-icon matSuffix class="secondary-text">insert_drive_file</mat-icon>          
                 <mat-error *ngIf="form.get('cIdExpediente').hasError('required')">El identificador del expediente es requerido</mat-error>
-                <mat-error *ngIf="form.get('cIdExpediente').hasError('minlength') || form.get('cIdExpediente').hasError('maxlength')">Valor invalido, el mínimo de caracteres es 3
-                    y el máximo son 50 </mat-error>
+               
             </mat-form-field>
         </div>
 

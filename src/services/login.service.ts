@@ -35,7 +35,15 @@ export class LoginService {
     }
 
     obtenerDepartamentos(): any {
-        return this.http.get(this.baseUrl + this.urlDepartamentos, this.httpOptions);
+       let tokenTemp = localStorage.getItem('token');
+        console.log(tokenTemp);
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: tokenTemp,
+            }),
+        };
+    
+        return this.http.get(this.baseUrl + this.urlDepartamentos, httpOptions);
     }
 
     refrescUsuario(): any {
