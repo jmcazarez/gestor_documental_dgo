@@ -237,7 +237,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                                 if (countFecha >= 2) {
                                                                     x.text = x.text.replace('T16:00:00.000ZT16:00:00.000Z', 'T16:00:00.000Z')
                                                                 }
-                                                                meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                                                meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'dd-MM-yyyy');
                                                             }
                                                         } else {
                                                             if (x.text) {
@@ -247,7 +247,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                     } else {
                                                         if (x.cTipoMetacatalogo === 'Fecha') {
                                                             if (x.text) {
-                                                                meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'yyyy-MM-dd');
+                                                                meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'dd-MM-yyyy');
                                                             }
                                                         } else {
                                                             if (x.text) {
@@ -285,7 +285,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                   
                                               }
                                           } */
-
+                                          console.log(documento.fechaCreacion);
                                         cFolioExpediente = documento.folioExpediente
                                         // Seteamos valores y permisos
                                           
@@ -311,11 +311,14 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                 cNombreDocumento: documento.cNombreDocumento,
                                                 tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
                                                 tipo_de_documento: documento.tipo_de_documento.id,
-                                                fechaCarga: this.datePipe.transform(documento.fechaCarga, 'yyyy-MM-dd'),
+                                                fechaCarga: this.datePipe.transform(documento.fechaCarga,'yyyy-MM-dd'),
                                                 fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
                                                 paginas: documento.paginas,
                                                 bActivo: documento.bActivo,
-                                                fechaModificacion: this.datePipe.transform(documento.updatedAt, 'yyyy-MM-dd'),
+                                                fechaModificacion: this.datePipe.transform(documento.updatedAt, 'dd-MM-yyyy'),
+                                                fechaCargaView: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
+                                                fechaCreacionView: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
+                                                fechaModificacionView: this.datePipe.transform(documento.updatedAt, 'dd-MM-yyyy'),
                                                 Agregar: encontro.Agregar,
                                                 Eliminar: encontro.Eliminar,
                                                 Editar: encontro.Editar,
@@ -368,6 +371,9 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                 tipo_de_documento: documento.tipo_de_documento.id,
                                                 fechaCarga: this.datePipe.transform(documento.fechaCarga, 'yyyy-MM-dd'),
                                                 fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
+                                                fechaCargaView: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
+                                                fechaCreacionView: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
+                                                fechaModificacionView: this.datePipe.transform(documento.updatedAt, 'dd-MM-yyyy'),
                                                 paginas: documento.paginas,
                                                 bActivo: documento.bActivo,
                                                 fechaModificacion: this.datePipe.transform(documento.updatedAt, 'yyyy-MM-dd'),
@@ -432,6 +438,11 @@ export class TableroDeDocumentosComponent implements OnInit {
 
 
     editarDocumento(documento: DocumentosModel): void {
+/*         console.log  (new Date(documento.fechaCarga));
+        console.log  (new Date(documento.fechaCreacion)); */
+       /*  documento.fechaCarga =  this.datePipe.transform( new Date(documento.fechaCarga), 'yyyy-MM-dd'),
+        documento.fechaCreacion = this.datePipe.transform(new Date(documento.fechaCreacion), 'yyyy-MM-dd') */
+      
         // Abrimos modal de guardar perfil
         const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
             width: '60%',

@@ -100,7 +100,7 @@
                 <mat-icon color="primary" class="material-icons pointer" matTooltip="Clic para descargar">
                     cloud_download</mat-icon>
             </button>
-            <button *ngIf="!this.documento.iniciativas" mat-fab color="green" (click)="linkPublico()" class="button">
+            <button *ngIf="this.documento.visibilidade.cDescripcionVisibilidad !='Confidenciales'" mat-fab color="green" (click)="linkPublico()" class="button">
                 <mat-icon color="primary" class="material-icons pointer"
                     matTooltip="Clic ver el historial de versionamiento">
                     folder_shared</mat-icon>

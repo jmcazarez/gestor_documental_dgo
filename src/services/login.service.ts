@@ -27,16 +27,30 @@ export class LoginService {
     }
 
     obtenerSecretarias(): any {
-        return this.http.get(this.baseUrl + this.urlSecretarias, this.httpOptions);
+        let tokenTemp = localStorage.getItem('token');
+      
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: tokenTemp,
+            }),
+        };
+        return this.http.get(this.baseUrl + this.urlSecretarias, httpOptions);
     }
 
     obtenerDirecciones(): any {
-        return this.http.get(this.baseUrl + this.urlDirecciones, this.httpOptions);
+        let tokenTemp = localStorage.getItem('token');
+      
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: tokenTemp,
+            }),
+        };
+        return this.http.get(this.baseUrl + this.urlDirecciones,httpOptions);
     }
 
     obtenerDepartamentos(): any {
        let tokenTemp = localStorage.getItem('token');
-        console.log(tokenTemp);
+      
         let httpOptions = {
             headers: new HttpHeaders({
                 Authorization: tokenTemp,

@@ -98,9 +98,9 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
                             dFechaSolicitud: prestamos.dFechaSolicitud,
                             dFechaDevolucion: prestamos.dFechaDevolucion,
                             dFechaDocEntregado: prestamos.dFechaDocEntregado,
-                            dFechaSolicitudT: this.datePipe.transform(prestamos.dFechaSolicitud, 'yyyy-MM-dd'),
-                            dFechaDevolucionT: this.datePipe.transform(prestamos.dFechaDevolucion, 'yyyy-MM-dd'),
-                            dFechaDocEntregadoT: this.datePipe.transform(prestamos.dFechaDevolucion, 'yyyy-MM-dd'),
+                            dFechaSolicitudT: this.datePipe.transform(prestamos.dFechaSolicitud, 'dd-MM-yyyy'),
+                            dFechaDevolucionT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
+                            dFechaDocEntregadoT: this.datePipe.transform(prestamos.dFechaDevolucion, 'dd-MM-yyyy'),
                             cSolicitante: prestamos.cSolicitante,
                             cTipoPrestamo: prestamos.cTipoPrestamo,
 

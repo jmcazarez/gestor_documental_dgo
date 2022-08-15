@@ -107,7 +107,7 @@ export class GuardarDocumentosComponent implements OnInit {
             clave: [{ value: this.documentos.clave, disabled: this.paginasEditar }, Validators.required]
         });
 
-        
+
         const fecha = new Date(); // Fecha actual
         let mes: any = fecha.getMonth() + 1; // obteniendo mes
         let dia: any = fecha.getDate(); // obteniendo dia
@@ -147,7 +147,13 @@ export class GuardarDocumentosComponent implements OnInit {
             if (this.documentos.fechaCreacion instanceof Date) {
 
             }
-            this.documentos.fechaCreacion = this.documentos.fechaCreacion + 'T16:00:00.000Z';
+        
+            if (String(this.documentos.fechaCreacion).includes('T16:00:00.000Z')) {
+                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+            } else {
+                console.log(this.documentos.fechaCreacion);
+                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+            }
             this.documentos.fechaCarga = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
             this.bActivo = this.documentos.bActivo;
             this.paginas = this.documentos.paginas;
@@ -155,6 +161,8 @@ export class GuardarDocumentosComponent implements OnInit {
             // Seteamos la fecha de carga con la fecha actual
             this.documentos.fechaCarga = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
             this.documentos.fechaCreacion = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
+
+            
             this.documentos.bActivo = true;
             if (this.documentos.tipo_de_documento) {
                 this.tipoDocumento = this.documentos.tipo_de_documento;
@@ -186,7 +194,7 @@ export class GuardarDocumentosComponent implements OnInit {
 
         this.cambioDocumento = false;
         // Form reativo
-       
+
 
 
         this.form.get('fechaCreacion').valueChanges.subscribe(val => {
@@ -285,30 +293,30 @@ export class GuardarDocumentosComponent implements OnInit {
                     } else {
 
                         this.documentos.usuario = this.menu.usuario;
-                        
-                       /*  console.log(this.documentos.cNombreDocumento)
-                        console.log(this.cNombreDocumento)
 
-                        console.log(this.documentos.documento)
-                        console.log(this.documento)
-
-                        console.log(this.documentos.tipo_de_documento)
-                        console.log(this.tipoDocumento)
-
-                        console.log(this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd'))
-                        console.log(this.datePipe.transform(this.fechaCreacion, 'yyyy-MM-dd'))
-
-                        console.log(String(this.documentos.paginas))
-                        console.log(String(this.paginas))
-
-                        console.log(this.documentos.bActivo)
-                        console.log(this.bActivo)
-
-                        console.log(this.documentos.plazoDeConservacion)
-                        console.log(this.plazo)
-
-                        console.log(this.documentos.clave)
-                        console.log(this.clave) */
+                        /*  console.log(this.documentos.cNombreDocumento)
+                         console.log(this.cNombreDocumento)
+ 
+                         console.log(this.documentos.documento)
+                         console.log(this.documento)
+ 
+                         console.log(this.documentos.tipo_de_documento)
+                         console.log(this.tipoDocumento)
+ 
+                         console.log(this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd'))
+                         console.log(this.datePipe.transform(this.fechaCreacion, 'yyyy-MM-dd'))
+ 
+                         console.log(String(this.documentos.paginas))
+                         console.log(String(this.paginas))
+ 
+                         console.log(this.documentos.bActivo)
+                         console.log(this.bActivo)
+ 
+                         console.log(this.documentos.plazoDeConservacion)
+                         console.log(this.plazo)
+ 
+                         console.log(this.documentos.clave)
+                         console.log(this.clave) */
                         // tslint:disable-next-line: no-bitwise
 
                         if (this.documentos.cNombreDocumento !== this.cNombreDocumento || this.documentos.documento !== this.documento ||
@@ -317,14 +325,24 @@ export class GuardarDocumentosComponent implements OnInit {
                             String(this.documentos.paginas) !== String(this.paginas) || this.documentos.bActivo !== this.bActivo
                             || this.documentos.plazoDeConservacion !== this.plazo
                             || this.documentos.clave !== this.clave) {
-                           
+
                             this.documentos.version = Number(this.documentos.version) + .1;
                             this.documentoService.actualizarDocumentos(this.documentos).subscribe((resp: any) => {
                                 if (resp) {
 
                                     this.documentos = resp.data;
-                                    this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd') + 'T16:00:00.000Z';
-                                    this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+                                    if (String(this.documentos.fechaCarga).includes('T16:00:00.000Z')) {
+                                        this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                                    } else {
+                                        this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+                                    }
+
+                                    if (String(this.documentos.fechaCreacion).includes('T16:00:00.000Z')) {
+                                        this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+                                    } else {
+                                        this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+                                    }
+
 
                                     this.spinner.hide();
                                     this.cerrar(this.documentos);
@@ -343,14 +361,24 @@ export class GuardarDocumentosComponent implements OnInit {
                             });
                         } else {
                             this.documentos.tipo_de_documento = this.selectTipoDocument;
-                            
+
                             this.documentoService.actualizarDocumentosSinVersion(this.documentos).subscribe((resp: any) => {
 
                                 if (resp) {
 
                                     this.documentos = resp.data;
-                                    this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd') + 'T16:00:00.000Z';
-                                    this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+                               
+                                    if (String(this.documentos.fechaCarga).includes('T16:00:00.000Z')) {
+                                        this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                                    } else {
+                                        this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+                                    }
+
+                                    if (String(this.documentos.fechaCreacion).includes('T16:00:00.000Z')) {
+                                        this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+                                    } else {
+                                        this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+                                    }
                                     this.spinner.hide();
                                     this.cerrar(this.documentos);
                                 } else {
@@ -381,8 +409,17 @@ export class GuardarDocumentosComponent implements OnInit {
                         if (resp) {
                             this.documentos = resp.data;
 
-                            this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd') + 'T16:00:00.000Z';
-                            this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+                            if (String(this.documentos.fechaCarga).includes('T16:00:00.000Z')) {
+                                this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
+                            } else {
+                                this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+                            }
+
+                            if (String(this.documentos.fechaCreacion).includes('T16:00:00.000Z')) {
+                                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
+                            } else {
+                                this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
+                            }
                             this.spinner.hide();
                             Swal.fire('Éxito', 'Documento guardado correctamente.', 'success');
 
@@ -449,7 +486,7 @@ export class GuardarDocumentosComponent implements OnInit {
                 reader2.readAsDataURL(file);
                 reader2.onloadend = () => {
                     //me.modelvalue = reader.result;
-                  
+
                     this.base64 = reader2.result.toString();
                 };
 
@@ -496,10 +533,10 @@ export class GuardarDocumentosComponent implements OnInit {
         } else {
             // La peticion nos retorna el id del documento y lo seteamos al usuario
             if (resp) {
-              
+
                 this.documentos.documento = resp[0].id;
                 let ocr = await this.uploadService.subirOCR(resp[0]);
-              
+
                 if (!ocr) {
                     Swal.fire('Error', 'Ocurrió un error al subir el OCR. ', 'error');
                 }

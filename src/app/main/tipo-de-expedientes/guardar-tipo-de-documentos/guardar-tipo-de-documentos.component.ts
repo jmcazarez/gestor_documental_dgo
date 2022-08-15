@@ -115,7 +115,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         if (this.documento.tipos_de_formato) {
             this.selectedFormato = this.documento.tipos_de_formato.id;
         }
-        
+
         this.arrInformacion = this.menuService.tipoInformacion;
         this.form = this.formBuilder.group({
             cDescripcionTipoDocumento: [
@@ -155,29 +155,31 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
             direcciones: [this.documento.direccione, [Validators.required]],
             departamentos: [this.documento.departamento, [Validators.required]],
         });
-
-        await this.obtenerDirecciones();
         // Obtenemos las secretarias
         await this.obtenerSecretarias();
+        await this.obtenerDirecciones();
+
         // Obtenemos los departamentos
         await this.obtenerDepartamentos();
-
+        console.log(this.arrSecretarias);
+        console.log(this.arrDepartamentos);
+        console.log(this.arrDirecciones);
         if (this.documento.secretaria) {
             this.selectedSecretaria = this.documento.secretaria;
         }
-        
+
 
         // Seteamos valores
         if (this.documento.direccione) {
             this.selectedDireccion = this.documento.direccione;
         }
 
-            // Seteamos valores
-            if (this.documento.departamento) {
-                this.selectedDepartamento = this.documento.departamento;
-            }
+        // Seteamos valores
+        if (this.documento.departamento) {
+            this.selectedDepartamento = this.documento.departamento;
+        }
 
-      
+
         if (this.arrDirecciones.length === 0) {
             this.form.get('direcciones').clearValidators();
             this.form.get('direcciones').updateValueAndValidity();
@@ -203,65 +205,65 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
 
         // Si el valor cambia filtramos el resultado
         this.form.get('secretarias').valueChanges.subscribe(val => {
-         if (val){
-            if (val.length > 0) {
+            if (val) {
+                if (val.length > 0) {
 
-                this.form.controls['direcciones'].enable();
-                if (this.arrDireccionesFilter) {
-                    this.arrDirecciones = this.arrDireccionesFilter.filter(item => item['secretariaId'] === val);
+                    this.form.controls['direcciones'].enable();
+                    if (this.arrDireccionesFilter) {
+                        this.arrDirecciones = this.arrDireccionesFilter.filter(item => item['secretariaId'] === val);
 
-                    if (this.arrDirecciones.length === 0) {
-                        this.form.get('direcciones').clearValidators();
-                        this.form.get('direcciones').updateValueAndValidity();
+                        if (this.arrDirecciones.length === 0) {
+                            this.form.get('direcciones').clearValidators();
+                            this.form.get('direcciones').updateValueAndValidity();
 
-                        this.form.get('departamentos').clearValidators();
-                        this.form.get('departamentos').updateValueAndValidity();
+                            this.form.get('departamentos').clearValidators();
+                            this.form.get('departamentos').updateValueAndValidity();
 
-                        this.arrDepartamentos = [];
-                    } else {
-                        this.form.get('direcciones').setValidators([Validators.required]);
-                        this.form.get('direcciones').updateValueAndValidity();
-                    }
-                }/* 
+                            this.arrDepartamentos = [];
+                        } else {
+                            this.form.get('direcciones').setValidators([Validators.required]);
+                            this.form.get('direcciones').updateValueAndValidity();
+                        }
+                    }/* 
                 this.selectedDepartamento = ''; */
+                }
             }
-        }
         });
 
-    
+
         // Si el valor cambia filtramos el resultado
         this.form.get('direcciones').valueChanges.subscribe(val => {
-            if (val){
-            if (val.length > 0) {
+            if (val) {
+                if (val.length > 0) {
 
-                this.form.controls['departamentos'].enable();
-                if (this.arrDepartamentosFilter) {
-                    this.arrDepartamentos = this.arrDepartamentosFilter.filter(item => item['direccionId'] === val);
-                   
+                    this.form.controls['departamentos'].enable();
+                    if (this.arrDepartamentosFilter) {
+                        this.arrDepartamentos = this.arrDepartamentosFilter.filter(item => item['direccionId'] === val);
 
-                    if (this.arrDirecciones.length === 0) {
-                        this.arrDepartamentos = [];
 
-                        this.arrDepartamentos = [...this.arrDepartamentos];
+                        if (this.arrDirecciones.length === 0) {
+                            this.arrDepartamentos = [];
 
-                    }
-                    if (this.arrDepartamentos.length === 0) {
-                        this.form.get('departamentos').clearValidators();
-                        this.form.get('departamentos').updateValueAndValidity();
-                    } else {
-                        this.form.get('departamentos').setValidators([Validators.required]);
-                        this.form.get('departamentos').updateValueAndValidity();
+                            this.arrDepartamentos = [...this.arrDepartamentos];
+
+                        }
+                        if (this.arrDepartamentos.length === 0) {
+                            this.form.get('departamentos').clearValidators();
+                            this.form.get('departamentos').updateValueAndValidity();
+                        } else {
+                            this.form.get('departamentos').setValidators([Validators.required]);
+                            this.form.get('departamentos').updateValueAndValidity();
+                        }
                     }
                 }
             }
-        }
         });
 
-            // Seteamos valores
-            if (this.documento.departamento) {
-                this.selectedDepartamento = this.documento.departamento;
-            }
-           
+        // Seteamos valores
+        if (this.documento.departamento) {
+            this.selectedDepartamento = this.documento.departamento;
+        }
+
         this.obtenerFormatos();
 
         // Seteamos valores
@@ -307,8 +309,10 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                         }
 
                     }
-                    this.arrDirecciones = direccionesTemp;
-                    this.arrDireccionesFilter = direccionesTemp;
+                    console.log(direccionesTemp);
+                   
+                    this.arrDirecciones =  [...direccionesTemp];;
+                    this.arrDireccionesFilter =  [...direccionesTemp];;
 
                     // Si tenemos informacion ya guardada filtramos
                     if (this.selectedSecretaria) {
@@ -346,8 +350,9 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                         }
 
                     }
-                    this.arrDepartamentos = departamentosTemp;
-                    this.arrDepartamentosFilter = departamentosTemp;
+                   
+                    this.arrDepartamentos = [...departamentosTemp]; departamentosTemp;
+                    this.arrDepartamentosFilter =  [...departamentosTemp];
                     // Si tenemos informacion ya guardada filtramos
                     if (this.selectedDireccion) {
                         this.arrDepartamentos = this.arrDepartamentosFilter.filter(item => item['direccionId'] === this.selectedDireccion);
@@ -369,8 +374,9 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                 // Obtenemos secretarias
                 const secretariasTemp: any[] = [];
                 this.cargando = true;
+                console.log('entro');
                 await this.usuarioService.obtenerSecretarias().subscribe((resp: any) => {
-                    console.log(resp);
+                    console.log('obtener',resp);
                     for (const secretaria of resp) {
 
                         if (secretaria.bActivo) {
@@ -387,7 +393,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                         }
 
                     }
-                    this.arrSecretarias = secretariasTemp;
+                    this.arrSecretarias = [...secretariasTemp];
 
                     this.cargando = false;
                     resolve(resp)
@@ -407,7 +413,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
         }
     }
 
-    
+
     async guardar(): Promise<void> {
         // Guardamos documento
         let tipoFormato = "";
@@ -429,24 +435,24 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
 
 
 
-        if(this.selectedSecretaria !== ''){
+        if (this.selectedSecretaria !== '') {
             this.documento.secretaria = this.selectedSecretaria;
-        }else{
+        } else {
             delete this.documento['secretaria']
         }
 
-        if(this.selectedDireccion !== ''){
+        if (this.selectedDireccion !== '') {
             this.documento.direccione = this.selectedDireccion;
-        }else{
+        } else {
             delete this.documento['direccione']
         }
-       
-        if(this.selectedDepartamento !== ''){
+
+        if (this.selectedDepartamento !== '') {
             this.documento.departamento = this.selectedDepartamento;
-        }else{
+        } else {
             delete this.documento['departamento']
         }
-       
+
         const usuario = localStorage.getItem("usr");
         const usr = JSON.parse(usuario);
         if (this.documento.id) {
@@ -882,7 +888,7 @@ export class GuardarTipoDeDocumentosComponent implements OnInit {
                                 }
                             }
                         } else {
-                           
+
                             this.rows.push({
                                 cDescripcionMetacatalogo: metacatalogo,
                                 bOligatorio: metacatalogoObligatorio,

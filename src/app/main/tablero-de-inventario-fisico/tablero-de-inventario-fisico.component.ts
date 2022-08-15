@@ -87,6 +87,7 @@ export class TableroDeInventarioFisicoComponent implements OnInit {
                                 cIdExpedienteIni: inventario.cIdExpedienteIni,
                                 cIdExpedienteFin: inventario.cIdExpedienteFin,
                                 dFechaAuditoria: this.datePipe.transform( inventario.dFechaAuditoria, 'yyyy-MM-dd'),
+                                dFechaAuditoriaView: this.datePipe.transform( inventario.dFechaAuditoria, 'dd-MM-yyyy'),
                                 notas: inventario.notas,
                                 dFechaAuditoriaText: this.datePipe.transform(
                                     inventario.dFechaAuditoria,

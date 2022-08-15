@@ -130,7 +130,7 @@ export class GuardarInventarioFisicoComponent implements OnInit {
 
         this.inventario.cIdExpedienteFin = this.form.get("expedienteFin").value;
 
-        this.inventario.dFechaAuditoria = this.datePipe.transform(this.form.get("fechaAuditoria").value, 'yyyy-MM-dd');
+        this.inventario.dFechaAuditoria = this.datePipe.transform(this.form.get("fechaAuditoria").value, 'dd-MM-yyyy');
 
         this.inventario.notas = this.form.get("notas").value;
 

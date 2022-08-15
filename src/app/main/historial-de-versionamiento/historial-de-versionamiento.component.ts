@@ -265,11 +265,11 @@ export class HistorialDeVersionamientoComponent implements OnInit {
                                     cNombreDocumento: documento.cNombreDocumento,
                                     tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
                                     tipo_de_documento: documento.tipo_de_documento.id,
-                                    fechaCarga: this.datePipe.transform(documento.fechaCarga, 'MM-dd-yyyy'),
-                                    fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'MM-dd-yyyy'),
+                                    fechaCarga: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
+                                    fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
                                     paginas: documento.paginas,
                                     bActivo: documento.bActivo,
-                                    fechaModificacion: this.datePipe.transform(documento.updatedAt, 'MM-dd-yyyy'),
+                                    fechaModificacion: this.datePipe.transform(documento.updatedAt, 'dd-MM-yyyy'),
                                     Agregar: encontro.Agregar,
                                     Eliminar: encontro.Eliminar,
                                     Editar: encontro.Editar,
@@ -456,21 +456,21 @@ export class HistorialDeVersionamientoComponent implements OnInit {
 
         if (this.fechaCreacion !== '' && this.fechaCreacion !== undefined && this.fechaCreacion !== null) {
             let fecha: string;
-            fecha = this.datePipe.transform(this.fechaCreacion, 'MM-dd-yyyy');
+            fecha = this.datePipe.transform(this.fechaCreacion, 'dd-MM-yyyy');
             temp = this.documentos.filter((d) => d.fechaCreacion === fecha);
             this.documentos = temp;
         }
 
         if (this.fechaCarga !== '' && this.fechaCarga !== undefined && this.fechaCarga !== null) {
             let fecha: string;
-            fecha = this.datePipe.transform(this.fechaCarga, 'MM-dd-yyyy');
+            fecha = this.datePipe.transform(this.fechaCarga, 'dd-MM-yyyy');
             temp = this.documentos.filter((d) => d.fechaCarga === fecha);
             this.documentos = temp;
         }
 
         if (this.fechaModificacion !== '' && this.fechaModificacion !== undefined && this.fechaModificacion !== null) {
             let fecha: string;
-            fecha = this.datePipe.transform(this.fechaModificacion, 'MM-dd-yyyy');
+            fecha = this.datePipe.transform(this.fechaModificacion, 'dd-MM-yyyy');
             temp = this.documentos.filter((d) => d.fechaModificacion === fecha);
             this.documentos = temp;
         }

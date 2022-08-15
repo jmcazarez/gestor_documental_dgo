@@ -6,7 +6,7 @@
 export const environment = {
     production: false,
     hmr: false,
-    apiCms: 'http://localhost:3600/',
+    apiCms: 'http://138.185.2.214:9301/',
     apiStrapi: 'http://138.185.2.214:9000/',
     apiStrapiMin: 'http://138.185.2.214:9000',
     imageBase64:
