@@ -308,8 +308,14 @@ export class TableroDeBusquedaComponent implements OnInit {
                                         cNombreDocumento: documento.cNombreDocumento,
                                         tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
                                         tipo_de_documento: documento.tipo_de_documento.id,
+<<<<<<< HEAD
                                         fechaCargaView: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
                                         fechaCreacionView: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
+=======
+                                        
+                                        fechaCargaView: this.datePipe.transform(documento.fechaCarga, 'yyyy-MM-dd'),
+                                        fechaCreacionView: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
+>>>>>>> b9735f31dc1644905d1f2a7ff9df83de59d3cf12
                                         fechaCarga: documento.fechaCarga,
                                         fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
                                         paginas: documento.paginas,
@@ -358,6 +364,8 @@ export class TableroDeBusquedaComponent implements OnInit {
 
                 this.documentos = documentosTemp;
                 this.documentosTemporal = this.documentos;
+
+                console.log(this.documentos);
                 this.filterDatatable();
                 this.spinner.hide();
             }
