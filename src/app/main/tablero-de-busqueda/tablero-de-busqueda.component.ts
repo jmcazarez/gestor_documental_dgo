@@ -307,15 +307,9 @@ export class TableroDeBusquedaComponent implements OnInit {
                                         id: documento.id,
                                         cNombreDocumento: documento.cNombreDocumento,
                                         tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
-                                        tipo_de_documento: documento.tipo_de_documento.id,
-<<<<<<< HEAD
+                                        tipo_de_documento: documento.tipo_de_documento.id,                                        
                                         fechaCargaView: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
                                         fechaCreacionView: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
-=======
-                                        
-                                        fechaCargaView: this.datePipe.transform(documento.fechaCarga, 'yyyy-MM-dd'),
-                                        fechaCreacionView: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
->>>>>>> b9735f31dc1644905d1f2a7ff9df83de59d3cf12
                                         fechaCarga: documento.fechaCarga,
                                         fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
                                         paginas: documento.paginas,
@@ -551,7 +545,7 @@ export class TableroDeBusquedaComponent implements OnInit {
 
                     });
                     this.documentos = temp;
-
+                   
                     if (this.documentoBusqueda !== '' && this.documentoBusqueda !== undefined) {
                         temp = this.documentos.filter((d) => d.cNombreDocumento.toLowerCase().indexOf(this.documentoBusqueda.toLowerCase()) !== -1 || !this.documentoBusqueda);
                         this.documentos = temp;
@@ -681,6 +675,7 @@ export class TableroDeBusquedaComponent implements OnInit {
                 this.documentos = temp;
             }
 
+            
             if (this.fechaCreacion !== '' && this.fechaCreacion !== undefined && this.fechaCreacion !== null) {
                 let fecha: string;
                 fecha = this.datePipe.transform(this.fechaCreacion, 'dd-MM-yyyy');

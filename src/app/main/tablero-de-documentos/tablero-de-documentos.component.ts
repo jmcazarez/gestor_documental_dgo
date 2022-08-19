@@ -173,7 +173,7 @@ export class TableroDeDocumentosComponent implements OnInit {
         this.valueBuscador = '';
         let countFecha = 0;
         let cFolioExpediente = '';
-       
+
         let pasillo = '';
         let estante = '';
         let nivel = '';
@@ -182,7 +182,7 @@ export class TableroDeDocumentosComponent implements OnInit {
         // Obtenemos los documentos
         try {
             // obtenerDocumentoReporte
-            
+
             await this.documentoService.obtenerDocumentoReporte(filtro).subscribe((resp: any) => {
                 // await this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
 
@@ -285,24 +285,24 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                   
                                               }
                                           } */
-                                          console.log(documento.fechaCreacion);
+                                        console.log(documento.fechaCreacion);
                                         cFolioExpediente = documento.folioExpediente
                                         // Seteamos valores y permisos
-                                          
-                                        if(documento.pasillo=== undefined){
+
+                                        if (documento.pasillo === undefined) {
                                             documento.pasillo = '';
                                         }
-                                        if(documento.estante=== undefined){
-                                            documento.estante = ''; 
+                                        if (documento.estante === undefined) {
+                                            documento.estante = '';
                                         }
-                                        if(documento.nivel=== undefined){
+                                        if (documento.nivel === undefined) {
                                             documento.nivel = '';
                                         }
-                                        if(documento.seccion=== undefined){
-                                            documento.seccion = ''; 
+                                        if (documento.seccion === undefined) {
+                                            documento.seccion = '';
                                         }
-                                        if(documento.plazoDeConservacion=== undefined){
-                                            documento.plazoDeConservacion = ''; 
+                                        if (documento.plazoDeConservacion === undefined) {
+                                            documento.plazoDeConservacion = '';
                                         }
                                         if (eliminar >= 0) {
                                             documentosTemp[eliminar] =
@@ -311,7 +311,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                 cNombreDocumento: documento.cNombreDocumento,
                                                 tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
                                                 tipo_de_documento: documento.tipo_de_documento.id,
-                                                fechaCarga: this.datePipe.transform(documento.fechaCarga,'yyyy-MM-dd'),
+                                                fechaCarga: this.datePipe.transform(documento.fechaCarga, 'yyyy-MM-dd'),
                                                 fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
                                                 paginas: documento.paginas,
                                                 bActivo: documento.bActivo,
@@ -348,20 +348,20 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                 seccion: String(documento.seccion)
                                             }
                                         } else {
-                                            if(documento.pasillo=== undefined){
+                                            if (documento.pasillo === undefined) {
                                                 documento.pasillo = '';
                                             }
-                                            if(documento.estante=== undefined){
-                                                documento.estante = ''; 
+                                            if (documento.estante === undefined) {
+                                                documento.estante = '';
                                             }
-                                            if(documento.nivel=== undefined){
+                                            if (documento.nivel === undefined) {
                                                 documento.nivel = '';
                                             }
-                                            if(documento.seccion=== undefined){
-                                                documento.seccion = ''; 
+                                            if (documento.seccion === undefined) {
+                                                documento.seccion = '';
                                             }
-                                            if(documento.plazoDeConservacion=== undefined){
-                                                documento.plazoDeConservacion = ''; 
+                                            if (documento.plazoDeConservacion === undefined) {
+                                                documento.plazoDeConservacion = '';
                                             }
                                             //  this.documentos.splice(eliminar,1);
                                             documentosTemp.push({
@@ -438,11 +438,11 @@ export class TableroDeDocumentosComponent implements OnInit {
 
 
     editarDocumento(documento: DocumentosModel): void {
-/*         console.log  (new Date(documento.fechaCarga));
-        console.log  (new Date(documento.fechaCreacion)); */
-       /*  documento.fechaCarga =  this.datePipe.transform( new Date(documento.fechaCarga), 'yyyy-MM-dd'),
-        documento.fechaCreacion = this.datePipe.transform(new Date(documento.fechaCreacion), 'yyyy-MM-dd') */
-      
+        /*         console.log  (new Date(documento.fechaCarga));
+                console.log  (new Date(documento.fechaCreacion)); */
+        /*  documento.fechaCarga =  this.datePipe.transform( new Date(documento.fechaCarga), 'yyyy-MM-dd'),
+         documento.fechaCreacion = this.datePipe.transform(new Date(documento.fechaCreacion), 'yyyy-MM-dd') */
+
         // Abrimos modal de guardar perfil
         const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
             width: '60%',
@@ -501,11 +501,11 @@ export class TableroDeDocumentosComponent implements OnInit {
     async descargarDocumento(row: any): Promise<void> {
         // Descargamos el documento
 
-        
+
         if (row.documento.url) { }
         this.spinner.show();
         await this.documentoService.dowloadDocument(row.idDocumento, row.id, row.cNombreDocumento).subscribe((resp: any) => {
-           
+
             const filePath = window.URL.createObjectURL(resp);
 
             const downloadLink = document.createElement('a');
@@ -617,15 +617,20 @@ export class TableroDeDocumentosComponent implements OnInit {
             this.documentos = this.documentosTemporal;
         } else {
             const val = value.target.value.toLowerCase();
-            const temp = this.documentos.filter((d) => d.cNombreDocumento.toLowerCase().indexOf(val) !== -1 || !val ||
-                d.clasificacion.toLowerCase().indexOf(val) !== - 1 || d.tipoDocumento.toLowerCase().indexOf(val) !== - 1 ||
-                d.informacion.toLowerCase().indexOf(val) !== - 1 || d.fechaCarga.toLowerCase().indexOf(val) !== - 1
+            const temp = this.documentos.filter((d) => 
+                d.cNombreDocumento.toLowerCase().indexOf(val) !== -1 || !val 
+                ||d.clasificacion.toLowerCase().indexOf(val) !== - 1 
+                || d.tipoDocumento.toLowerCase().indexOf(val) !== - 1 
+                || d.informacion.toLowerCase().indexOf(val) !== - 1               
                 || d.cFolioExpediente.toLowerCase().indexOf(val) !== - 1
                 || d.version.toLowerCase().indexOf(val) !== - 1
                 || d.departamento.toLowerCase().indexOf(val) !== - 1
                 || d.pasillo.toLowerCase().indexOf(val) !== - 1
                 || d.estante.toLowerCase().indexOf(val) !== - 1
                 || d.seccion.toLowerCase().indexOf(val) !== - 1
+                || d.fechaCreacionView.toLowerCase().indexOf(val) !== - 1
+                || d.fechaModificacionView.toLowerCase().indexOf(val) !== - 1
+                || d.fechaCargaView.toLowerCase().indexOf(val) !== - 1
                 || d.plazoDeConservacion.toLowerCase().indexOf(val) !== - 1);
             this.documentos = temp;
         }
