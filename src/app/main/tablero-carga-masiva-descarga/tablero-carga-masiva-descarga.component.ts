@@ -422,12 +422,14 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     }
 
     cargarDocumentos(): void {
-        this.loadingIndicator = true;
-        this.spinner.show();
+     
+        
         // Agregamos elemento file
         this.fileInput.nativeElement.click();
         let fileInput = this.fileInput.nativeElement;
         fileInput.onchange = async (event) => {
+            this.spinner.show();
+            this.loadingIndicator = true;
             let matchDocFile = 0;
             let index = 0;
             let encontrado: boolean = false;

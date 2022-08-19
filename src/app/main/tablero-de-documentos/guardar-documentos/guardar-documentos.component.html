@@ -23,7 +23,7 @@
 
         <div fxLayout="row" fxLayoutAlign="center" fxFlex="30">
             <section class="example-section">
-                <mat-slide-toggle formControlName="estatus" (change)="change()" class="example-margin">
+                <mat-slide-toggle formControlName="estatus" [disabled]="this.documentos.id" (change)="change()" class="example-margin">
                     Estatus
                 </mat-slide-toggle>
             </section>
