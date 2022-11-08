@@ -257,7 +257,7 @@
 
                 </section>
                 <div class="select buttons">
-                    <button [disabled]="documentos.length === 0 || firstFormGroup.invalid" mat-raised-button
+                    <button [disabled]="firstFormGroup.invalid" mat-raised-button
                         matStepperNext color="warn" (click)="filterDatatable()" class="btn-search">Consultar</button>
                     <button mat-raised-button color="warn" class="btn-search" (click)="borrarFiltros()">Borrar</button>
                 </div>
@@ -271,7 +271,7 @@
                         <!-- Data table-->
                         <ngx-datatable class="material shadow-none" [rows]="documentos"
                             [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50"
-                            [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable" [limit]="10"
+                            [footerHeight]="50" [rowHeight]="'auto'" [reorderable]="reorderable" [limit]="100"
                             [scrollbarH]="true">
                             <!-- <ngx-datatable-column name="Id. documento" prop="id"></ngx-datatable-column>-->
                             <ngx-datatable-column name="Documento" prop="cNombreDocumento"></ngx-datatable-column>

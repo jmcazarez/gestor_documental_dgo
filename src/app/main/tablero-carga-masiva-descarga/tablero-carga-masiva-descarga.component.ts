@@ -27,7 +27,7 @@ import { HistorialCargaService } from "services/historial-carga.service";
 import { UsuarioLoginService } from "services/usuario-login.service";
 import { LegislaturaService } from "services/legislaturas.service";
 import { Console } from "console";
-import { isNumber } from "lodash";
+import { isDate, isNumber } from "lodash";
 import { HttpEventType, HttpResponse } from "@angular/common/http";
 
 
@@ -92,6 +92,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     base64: any;
     usuario: any;
     excelSeleccionado: boolean = false;
+    cNombreDocumentoActual = '';
     /* progressInfo = [] */
     constructor(
         private datePipe: DatePipe,
@@ -154,7 +155,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             this.obtenerTiposDocumentos(),
             /*      this.obtenerLegislaturas(),
                  this.obtenerEntes(), */
-            this.obtenerTiposExpedientes(),
+            await this.obtenerTiposExpedientes(),
             this.obtenerHistorialCarga()
         ]);
 
@@ -190,7 +191,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     }
 
     uploadFiles() {
-        
+
         for (let i = 0; i < this.selectedFiles.length; i++) {
 
             this.upload(i, this.selectedFiles[i]);
@@ -205,21 +206,17 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     }
 
     async upload(index, file) {
-      
-
-
         this.documentos[index].progress = { value: 0, fileName: file.name }
         return new Promise<string>(async (resolve) => {
             await this.uploadService.upload(file).subscribe(
                 event => {
-
                     if (event.type === HttpEventType.UploadProgress) {
                         this.documentos[index].progress.value = Math.round(100 * event.loaded / event.total);
                         if (this.documentos[index].progress.value == 100) {
-
+                            //quitar de la lista
+                          /*   this.documentos.splice(index, 1); */
                         }
                     } else if (event instanceof HttpResponse) {
-                       
                         resolve(event.body[0])
                     }
                 },
@@ -250,7 +247,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                         tempHistorial[0].historial_carga_detalles.forEach(async (element) => {
                             if (element.documento && element.bCargado === false) {
                                 const doc: any = await this.obtenerDocumento(element.documento.id);
-                               
+
                                 let documento = new DocumentoFormatoExcelModel();
                                 documento.id = element.documento.id;
                                 documento.cNombreDocumento = element.documento.name;
@@ -307,7 +304,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     async obtenerDocumento(id: any) {
         return new Promise((resolve) => {
             this.documentoService.obtenerDocumentoById(id).subscribe((resp: any) => {
-                
+
                 resolve(resp.data);
             },
                 (err) => {
@@ -335,9 +332,10 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     }
 
     obtenerTiposExpedientes(): Promise<any> {
-        return new Promise((resolve) => {
+        return new Promise(async (resolve) => {
             // Obtenemos los documentos
-            this.tipoExpedientesService.obtenerTipoExpedientes().subscribe(
+            this.spinner.show();
+            await this.tipoExpedientesService.obtenerTipoExpedientes().subscribe(
                 (resp: any) => {
                     // Buscamos permisos
                     // tslint:disable-next-line: max-line-length
@@ -349,12 +347,12 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                     this.optConsultar = opciones.Consultar;
                     this.optEliminar = opciones.Eliminar;
                     // Si tiene permisos para consultar
-                    if (this.optAgregar) {
-                        this.arrExpediente = resp;
-                    }
+                    this.arrExpediente = resp;
+                    this.spinner.hide();
                     resolve(this.arrExpediente);
                 },
                 (err) => {
+                    this.spinner.hide();
                     Swal.fire(
                         "Error",
                         "Ocurrió un error al obtener los tipos de expedientes.",
@@ -422,8 +420,8 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     }
 
     cargarDocumentos(): void {
-     
-        
+
+
         // Agregamos elemento file
         this.fileInput.nativeElement.click();
         let fileInput = this.fileInput.nativeElement;
@@ -466,6 +464,9 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                     encontrado = false;
                     index = index + 1;
                 }
+
+                //FILTRAMOS COINCIDENCIAS
+                this.documentos = this.documentos.filter(doc=> doc.bActivo == true);
                 this.loadingIndicator = false;
                 this.spinner.hide();
                 this.validarGuardado = (matchDocFile > 0) ? true : false;
@@ -486,7 +487,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                         "warning"
                     );
                 } else {
-                    this.validarGuardado = false;
+                   // this.validarGuardado = false;
                     this.loadingIndicator = false;
                     Swal.fire(
                         "Exito",
@@ -577,7 +578,6 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                     try {
 
 
-
                         let textError = "";
                         this.arrMetacatalogos = [];
                         let documento = new DocumentoFormatoExcelModel;
@@ -603,7 +603,12 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                 if (Number(row['NUMERO DE CAJA'])) {
                                     documento.folioExpediente = String(row['NUMERO DE CAJA']);
                                 } else {
-                                    documento.folioExpediente = String(row['NUMERO DE CAJA'].trim());
+                                    if(row['NUMERO DE CAJA'] == 0){
+                                        documento.folioExpediente = '0';
+                                    }else{
+                                        documento.folioExpediente = String(row['NUMERO DE CAJA']).trim();
+                                    }
+                                    
                                 }
 
 
@@ -622,7 +627,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
 
                                 const encontro = this.menuService.tipoDocumentos.find(
                                     (tipo: { cDescripcionTipoDocumento: any; }) =>
-                                        this.normalize(tipo.cDescripcionTipoDocumento.trim().toLowerCase()) == row['TIPO DOCUMENTAL'].trim().toLowerCase()
+                                        this.normalize(tipo.cDescripcionTipoDocumento.trim().toLowerCase()) == this.normalize(row['TIPO DOCUMENTAL'].trim().toLowerCase())
                                 );
                                 if (encontro) {
                                     if (encontro.Agregar === "undefined") {
@@ -792,8 +797,8 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                 }
                             }
 
-                            if (_.has(row, 'NIVEL') && (row['NIVEL'].length > 0 || isNumber(row['NIVEL']))) {
-                                if (isNumber(row['NIVEL'])) {
+                            if (_.has(row, 'NIVEL') && (row['NIVEL'].length > 0 || row['NIVEL'])) {
+                                if (row['NIVEL']) {
                                     documento.nivel = String(
                                         row["NIVEL"]
                                     );
@@ -863,14 +868,15 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                             const keys = Object.keys(row);
                             let iMeta = 0;
                             for (let i = 10; i < keys.length; i++) {
-
-                                documento.metacatalogos[iMeta].text = String(row[keys[i]]);
+                                if (row[keys[i]] && documento.metacatalogos[iMeta]) {
+                                    documento.metacatalogos[iMeta].text = String(row[keys[i]]);
+                                }
                                 iMeta++
                             };
 
 
                             for (const i of documento.metacatalogos) {
-
+                                console.log(i);
                                 if (meta === "") {
                                     if (i.bOligatorio && i.text == '') {
                                         meta = meta + i.cDescripcionMetacatalogo + ": " + '';
@@ -885,25 +891,28 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
 
                                     } else {
                                         if (i.cTipoMetacatalogo === "Fecha") {
-
-                                            if (new Date(i.text)) {
-                                                meta = meta + i.cDescripcionMetacatalogo + ": " +
-                                                    this.datePipe.transform(i.text, "yyyy-MM-dd") + "T06:00:00.000Z";
-                                            } else {
-                                                if (textError.length == 0) {
-                                                    textError =
-                                                        "El metacatalogo " + i.cDescripcionMetacatalogo + " tiene un valor no valido";
+                                            if (isDate(i.text)) {
+                                                if (new Date(i.text)) {
+                                                    meta = meta + i.cDescripcionMetacatalogo + ": " +
+                                                        this.datePipe.transform(i.text, "yyyy-MM-dd") + "T06:00:00.000Z";
                                                 } else {
-                                                    textError =
-                                                        textError +
-                                                        ", el metacatalogo " + i.cDescripcionMetacatalogo + " tiene un valor no valido";
+                                                    if (textError.length == 0) {
+                                                        textError =
+                                                            "El metacatalogo " + i.cDescripcionMetacatalogo + " tiene un valor no valido";
+                                                    } else {
+                                                        textError =
+                                                            textError +
+                                                            ", el metacatalogo " + i.cDescripcionMetacatalogo + " tiene un valor no valido";
+                                                    }
                                                 }
+
+                                            } else {
+
+                                                meta = meta + i.cDescripcionMetacatalogo + ": " + i.text;
+
                                             }
-
                                         } else {
-
                                             meta = meta + i.cDescripcionMetacatalogo + ": " + i.text;
-
                                         }
                                     }
 
@@ -925,19 +934,27 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                     } else {
                                         if (i.cTipoMetacatalogo === "Fecha") {
 
-                                            if (new Date(i.text)) {
-                                                meta = meta + " , " + i.cDescripcionMetacatalogo + ": " +
-                                                    this.datePipe.transform(i.text, "yyyy-MM-dd") + "T06:00:00.000Z";
+                                            if (isDate(i.text)) {
 
-                                            } else {
-                                                if (textError.length == 0) {
-                                                    textError =
-                                                        "El metacatalogo " + i.cDescripcionMetacatalogo + " tiene un valor no valido";
+
+                                                if (new Date(i.text)) {
+                                                    meta = meta + " , " + i.cDescripcionMetacatalogo + ": " +
+                                                        this.datePipe.transform(i.text, "yyyy-MM-dd") + "T06:00:00.000Z";
+
                                                 } else {
-                                                    textError =
-                                                        textError +
-                                                        ", el metacatalogo " + i.cDescripcionMetacatalogo + " tiene un valor no valido";
+                                                    if (textError.length == 0) {
+                                                        textError =
+                                                            "El metacatalogo " + i.cDescripcionMetacatalogo + " tiene un valor no valido";
+                                                    } else {
+                                                        textError =
+                                                            textError +
+                                                            ", el metacatalogo " + i.cDescripcionMetacatalogo + " tiene un valor no valido";
+                                                    }
                                                 }
+                                            } else {
+                                                textError =
+                                                    textError +
+                                                    ", el metacatalogo " + i.cDescripcionMetacatalogo + " tiene un valor no valido";
                                             }
 
                                         } else if (i.cTipoMetacatalogo === "Sí o no") {
@@ -1003,9 +1020,10 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                                 }
                                             }); */
 
-                         
+
 
                             documento.progress = { value: 0, fileName: '' }
+                            console.log(arrExpedienteTipo);
                             if (arrExpedienteTipo.length > 0) {
                                 documento.tipo_de_expediente =
                                     arrExpedienteTipo[0].id;
@@ -1039,7 +1057,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                         }
                     } catch (error) {
                         this.spinner.hide();
-                        console.log(error);
+
                     }
                 });
                 this.documentos = [...this.documentos];
@@ -1168,7 +1186,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
             const fecha = new Date(); // Fecha actual
             let index = 0;
             let resp: any;
-        
+
             for (const row of this.documentos) {
                 /*             const idx = this.documentos.findIndex(object => {
                       return object.cNombreDocumento === file.name;
@@ -1212,6 +1230,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
 
                         this.uploadService.subirOCR(resp);
                         await this.documentoService.guardarDocumento(row).subscribe((resp: any) => {
+                            this.cNombreDocumentoActual = row.cNombreDocumento
                             // Actualizamos el detalle del historial de carga
                             /*    this.historialCarga.actualizarDetalle({ bCargado: true }, row.idDetalle).subscribe(
                                    (resp: any) => { }); */
@@ -1669,7 +1688,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                         idEnte = documento.ente.id;
                                     }
                                     idExpediente = "";
-                                    
+
                                     if (documento.tipo_de_expediente) {
                                         idExpediente =
                                             documento.tipo_de_expediente.id;
@@ -1696,7 +1715,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                                                 "yyyy-MM-dd"
                                             ),
 
-                                            
+
                                             fechaCreacion: this.datePipe.transform(
                                                 documento.fechaCreacion,
                                                 "yyyy-MM-dd"
@@ -1822,7 +1841,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
 
     async descargarDocumento(row: any): Promise<void> {
         // Descargamos el documento
-     
+
         let idx = this.documentos.findIndex(
             (doc) => doc.id === row.id
         );
@@ -1832,8 +1851,13 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
 
 
                 if (event.type === HttpEventType.DownloadProgress) {
-                    
+
                     if (this.documentos[idx]) {
+                        /*     if (Math.round(100 * event.loaded / event.total) == 100) {
+                                this.documentos.splice(idx, 1);
+                            } else {
+                                this.documentos[idx].progress.value = Math.round(100 * event.loaded / event.total);
+                            } */
                         this.documentos[idx].progress.value = Math.round(100 * event.loaded / event.total);
                     }
                 } else if (event instanceof HttpResponse) {
@@ -1867,12 +1891,12 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
 
 
                         if (event.type === HttpEventType.DownloadProgress) {
-                        
+
                             if (this.documentos[idx]) {
                                 this.documentos[idx].progress.value = Math.round(100 * event.loaded / event.total);
                             }
                         } else if (event instanceof HttpResponse) {
-                            
+
                             const filePath = window.URL.createObjectURL(event.body);
 
                             const downloadLink = document.createElement('a');

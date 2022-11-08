@@ -13,7 +13,7 @@
                 <mat-label>Tipo de documento *</mat-label>
                 <mat-select formControlName="tipoDocumentos" [(ngModel)]="selectTipoDocument" (change)="change()" name="tipoDocumento">
                     <mat-option *ngFor="let tipoDocumento of arrTipoDocumentos" [value]="tipoDocumento.id">
-                        {{tipoDocumento.cDescripcionTipoDocumento}}
+                        {{tipoDocumento.cDescripcionTipoDocumento}}   
                     </mat-option>
                 </mat-select>
                 <mat-error>El tipo del documento es requerido</mat-error>
@@ -23,7 +23,7 @@
 
         <div fxLayout="row" fxLayoutAlign="center" fxFlex="30">
             <section class="example-section">
-                <mat-slide-toggle formControlName="estatus" [disabled]="this.documentos.id" (change)="change()" class="example-margin">
+                <mat-slide-toggle formControlName="estatus" [disabled]="this.documentos.id && this.documentos.bActivo === true" (change)="change()" class="example-margin">
                     Estatus
                 </mat-slide-toggle>
             </section>
@@ -131,6 +131,7 @@
 <mat-dialog-actions align="end" class="buttons">
     <button mat-raised-button color="warn" (click)="cerrar('')">Cerrar</button>
 <!--     <button mat-raised-button color="warn" (click)="upload()">subir</button> -->
+
     <button [disabled]="form.invalid || fileName.length === 0" mat-raised-button color="accent" (click)="guardar()">Siguiente</button>
     <!--<button  mat-raised-button color="accent" (click)="clasificarDocumento()">Upload</button> -->
 </mat-dialog-actions>

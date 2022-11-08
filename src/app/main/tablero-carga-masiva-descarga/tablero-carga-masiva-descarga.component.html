@@ -37,7 +37,7 @@
                                 </div> -->
                             <div>
                                 <button mat-raised-button color="accent" class="btn-search" (click)="subirExcel()"
-                                    [disabled]="excelSeleccionado || selectedHistorial !== ''">
+                                   >
                                     Cargar formato&nbsp;<mat-icon>add</mat-icon>
                                 </button>
                                 <input type="file" (change)="onFileChange($event)" #excelInput id="excelUpload"
@@ -53,10 +53,10 @@
                             <ng-template matStepLabel>Listado de documentos</ng-template>
                             <div class="content p-24" align="center" style="border: 1px">
                                 <div class="content">
-
+                                    <h5>{{this.cNombreDocumentoActual}}</h5>
                                     <ngx-datatable class="material shadow-none" [rows]="documentos"
                                         [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50"
-                                        [footerHeight]="50" [rowHeight]="80" [reorderable]="reorderable" [limit]="10"
+                                        [footerHeight]="50" [rowHeight]="80" [reorderable]="reorderable" [limit]="1000"
                                         [scrollbarH]="true" [scrollbarV]="true">
                                         <ngx-datatable-column name="Valido" [sortable]="false" [width]="100"
                                             [canAutoResize]="false" [resizeable]="false" [contentEditable]="false">
@@ -83,9 +83,7 @@
                                                         </mat-progress-bar>
                                                     </div>
                                                 </div>
-
                                             </ng-template>
-
                                         </ngx-datatable-column>
                                         <ngx-datatable-column name="PDF" prop="cNombreDocumento" [minWidth]="200">
                                         </ngx-datatable-column>

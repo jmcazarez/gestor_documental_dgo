@@ -100,7 +100,7 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
         let idDocumento: any;
         this.spinner.show();
         let cFolioExpediente = '';
-        const filtroReporte = 'trazabilidads.usuario=' + this.selectedUsuario;
+        const filtroReporte = this.selectedUsuario;
 
         // Obtenemos los documentos
         this.documentoService.obtenerDocumentoReportePorFecha(filtroReporte).subscribe((resp: any) => {
@@ -209,11 +209,11 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
         };
     }
 
-    generaReport(): void {
+    async generaReport(): Promise<void> {
         const value = [];
 
         // Creamos el reporte
-        this.documentos.forEach(row => {
+      await  this.documentos.forEach(row => {
             let fecha = '';
             let accion = '';
             let nombreDocumento = '';

@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TrazabilidadService } from 'services/trazabilidad.service';
@@ -6,7 +7,8 @@ import { ClasficacionDeDocumentosComponent } from '../clasficacion-de-documentos
 @Component({
     selector: 'app-historial-de-versionamiento',
     templateUrl: './historial-de-versionamiento.component.html',
-    styleUrls: ['./historial-de-versionamiento.component.scss']
+    styleUrls: ['./historial-de-versionamiento.component.scss'],
+    providers: [DatePipe]
 })
 export class HistorialDeVersionamientoComponent implements OnInit {
     historial = [];
@@ -16,6 +18,7 @@ export class HistorialDeVersionamientoComponent implements OnInit {
     columns = [{ name: 'Versión' }, { name: 'Fecha' }, { name: 'Hora' }, { name: 'Usuario' }, { name: 'Movimiento' }];
     constructor(private trazabilidadService: TrazabilidadService,
                 private dialogRef: MatDialogRef<ClasficacionDeDocumentosComponent>,
+                private datePipe: DatePipe,
                 @Inject(MAT_DIALOG_DATA) public documento) { }
 
     ngOnInit(): void {
@@ -25,7 +28,30 @@ export class HistorialDeVersionamientoComponent implements OnInit {
     obtenerTrazabilidad(): void {
 
         this.trazabilidadService.obtenerTrazabilidadHistorial(this.documento.id).subscribe((resp: any) => {
-            this.historial = resp.historial;
+            let historialTemp = [];
+            for (const historial of resp.historial) {
+     
+                var date = new Date(historial.fechaUTC);
+                let horaCreacion = '';
+                if (date.getMinutes() < 10) {
+                    horaCreacion = date.getHours() + ':0' + date.getMinutes();
+                } else {
+                    horaCreacion = date.getHours() + ':' + date.getMinutes();
+                }                       
+
+                    historialTemp.push({
+                        cNombreDocumento: historial.cNombreDocumento,
+                        documentoId: historial.documentoId,
+                        fecha: this.datePipe.transform(date, 'dd-MM-yyyy'),                      
+                        hora: horaCreacion,
+                        id: historial.id,
+                        movimiento: historial.movimiento,
+                        tipoDeDocumento: historial.tipoDeDocumento,
+                        usuario: historial.usuario,
+                        version: historial.version
+                    });
+            }
+            this.historial = [...historialTemp];
             this.loadingIndicator = false;
         }, err => {
             this.loadingIndicator = false;

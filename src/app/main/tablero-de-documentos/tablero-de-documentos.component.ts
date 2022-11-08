@@ -15,6 +15,7 @@ import { Page } from 'models/page.models';
 import { Console } from 'console';
 import { environment } from 'environments/environment';
 import { UsuariosService } from 'services/usuarios.service';
+import { isNumber } from 'lodash';
 interface PageInfo {
     offset: number;
     pageSize: number;
@@ -51,6 +52,8 @@ export class TableroDeDocumentosComponent implements OnInit {
     cache: any = {};
     isLoading = 0;
     size = 20
+    privilegios: any
+    url: string;
     constructor(
         private spinner: NgxSpinnerService,
         private datePipe: DatePipe,
@@ -62,11 +65,12 @@ export class TableroDeDocumentosComponent implements OnInit {
         private usuariosService: UsuariosService,
     ) {
         // Obtenemos documentos
-
+        this.url = 'tablero-de-documentos';
     }
 
     async ngOnInit() {
         await this.obtenerDepartamentos();
+        this.privilegios = await this.menuService.obtenerPrivilegios();
         this.obtenerDocumentos(0);
 
     }
@@ -285,7 +289,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                                                   
                                               }
                                           } */
-                                        console.log(documento.fechaCreacion);
+
                                         cFolioExpediente = documento.folioExpediente
                                         // Seteamos valores y permisos
 
@@ -610,14 +614,14 @@ export class TableroDeDocumentosComponent implements OnInit {
         });
     }
 
-    filterDatatable(value): void {
+    async filterDatatable(value): Promise<void> {
         // Filtramos tabla
         this.documentos = this.documentosTemporal;
         if (value.target.value === '') {
             this.documentos = this.documentosTemporal;
         } else {
-            const val = value.target.value.toLowerCase();
-            const temp = this.documentos.filter((d) => 
+            const val = value.target.value;
+            /* const temp = this.documentos.filter((d) => 
                 d.cNombreDocumento.toLowerCase().indexOf(val) !== -1 || !val 
                 ||d.clasificacion.toLowerCase().indexOf(val) !== - 1 
                 || d.tipoDocumento.toLowerCase().indexOf(val) !== - 1 
@@ -631,22 +635,205 @@ export class TableroDeDocumentosComponent implements OnInit {
                 || d.fechaCreacionView.toLowerCase().indexOf(val) !== - 1
                 || d.fechaModificacionView.toLowerCase().indexOf(val) !== - 1
                 || d.fechaCargaView.toLowerCase().indexOf(val) !== - 1
-                || d.plazoDeConservacion.toLowerCase().indexOf(val) !== - 1);
-            this.documentos = temp;
+                || d.plazoDeConservacion.toLowerCase().indexOf(val) !== - 1); */
+
+            const documentosTemp: any[] = [];
+            let idDocumento: any;
+            this.loadingIndicator = true;
+            let meta = '';
+            let visibilidad = '';
+            let idEnte = '';
+            let idExpediente = '';
+            let info: any;
+            // Obtenemos los documentos
+            let bActivo: any;
+
+
+            let filtro = []
+
+
+
+            if (val !== '' && val !== undefined) {
+                filtro.push({ cNombreDocumento: { $regex: '.*' + val + '.*' } })
+                filtro.push({ metacatalogos: { $elemMatch: { text: { $regex: '.*' + val + '.*' } } } })
+                filtro.push({ folioExpediente: Number(val) })
+            }
+
+
+
+                await this.documentoService.obtenerDocumentosFiltrados(filtro).subscribe((resp: any) => {
+
+                    // Buscamos permisos
+                    const opciones = this.privilegios.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.url);
+
+                    if (opciones) {
+                        this.optAgregar = opciones.Agregar;
+                        this.optEditar = opciones.Editar;
+                        this.optConsultar = opciones.Consultar;
+                        this.optEliminar = opciones.Eliminar;
+                    } else {
+                        this.optAgregar = false;
+                        this.optEditar = false;
+                        this.optConsultar = false;
+                        this.optEliminar = false;
+                    }
+
+                    // Si tiene permisos para consultar
+                    if (this.optConsultar) {
+                        for (const documento of resp.data) {
+                            let idIniciativa = '';
+                            idDocumento = '';
+                            // Validamos permisos
+                            if (documento.tipo_de_documento) {
+                                const encontro = this.privilegios.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento._id);
+
+                                /*  if (documento.visibilidade) {
+                                     info = this.privilegios.tipoInformacion.find((tipo: { id: string; }) => tipo.id === documento.visibilidade.id);
+                                 } */
+                                if (encontro) {
+                                    if (documento.tipo_de_documento.bActivo && encontro.Consultar) {
+
+                                        if (documento.documento) {
+                                            idDocumento = documento.documento.hash + documento.documento.ext;
+
+                                            if (documento.metacatalogos) {
+                                                meta = '';
+                                                if (documento.metacatalogos) {
+                                                    for (const x of documento.metacatalogos) {
+
+                                                        if (meta === '') {
+
+                                                            if (x.cTipoMetacatalogo === 'Fecha') {
+                                                                if (x.text) {
+                                                                    meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'dd-MM-yyyy');
+                                                                }
+                                                            } else {
+                                                                if (x.text) {
+                                                                    meta = meta + x.cDescripcionMetacatalogo + ': ' + x.text;
+                                                                }
+                                                            }
+                                                        } else {
+                                                            if (x.cTipoMetacatalogo === 'Fecha') {
+                                                                if (x.text) {
+                                                                    meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'dd-MM-yyyy');
+                                                                }
+                                                            } else if (x.cTipoMetacatalogo === 'Sí o no') {
+                                                                if (x.text) { meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': Sí'; } else {
+                                                                    meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': No';
+                                                                }
+                                                            } else {
+                                                                if (x.text) {
+                                                                    meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + x.text;
+                                                                }
+                                                            }
+
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            visibilidad = '';
+                                            if (documento.visibilidade) {
+                                                visibilidad = 'Confidencial';
+                                            }
+                                            idEnte = '';
+                                            if (documento.ente) {
+
+                                                idEnte = documento.ente.id;
+                                            }
+                                            idExpediente = '';
+                                            if (documento.tipo_de_expediente) {
+
+                                                idExpediente = documento.tipo_de_expediente.id;
+                                            }
+                                            if (documento.legislatura) {
+                                                idIniciativa = documento.legislatura.id;
+                                            }
+
+                                            let departamento = ""
+                                            if (documento.tipo_de_documento.departamento) {
+                                                departamento = this.arrDepartamentos.find((depto: { id: string; }) => depto.id === documento.tipo_de_documento.departamento).cDescripcionDepartamento;
+                                            }
+                                            // tslint:disable-next-line: no-unused-expression
+                                            // Seteamos valores y permisos
+                                            documentosTemp.push({
+                                                id: documento._id,
+                                                cNombreDocumento: documento.cNombreDocumento,
+                                                tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
+                                                tipo_de_documento: documento.tipo_de_documento._id,
+                                                fechaCargaView: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
+                                                fechaCreacionView: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
+                                                fechaCarga: documento.fechaCarga,
+                                                fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
+                                                paginas: documento.paginas,
+                                                bActivo: documento.bActivo,
+                                                fechaModificacion: documento.updatedAt,
+                                                fechaModificacionView: this.datePipe.transform(documento.updatedAt, 'dd-MM-yyyy'),
+                                                Agregar: encontro.Agregar,
+                                                Eliminar: encontro.Eliminar,
+                                                Editar: encontro.Editar,
+                                                Consultar: encontro.Consultar,
+                                                idDocumento: idDocumento,
+                                                idDocumentoFiltro: documento.documento.id,
+                                                version: parseFloat(documento.version).toFixed(1),
+                                                documento: documento.documento,
+                                                ente: documento.ente,
+                                                secretaria: documento.secretaria,
+                                                direccione: documento.direccione,
+                                                departamento: departamento,
+                                                cFolioExpediente: documento.folioExpediente,
+                                                clasificacion: meta,
+                                                metacatalogos: documento.metacatalogos,
+                                                informacion: visibilidad,
+                                                visibilidade: documento.visibilidade,
+                                                idEnte,
+                                                tipo_de_expediente: documento.tipo_de_expediente,
+                                                idExpediente,
+                                                legislatura: documento.legislatura,
+                                                legislaturaid: idIniciativa,
+                                                autorizacion_iniciativas: documento.autorizacion_iniciativas,
+                                                plazoDeConservacion: documento.plazoDeConservacion,
+                                                clave: documento.clave,
+                                                pasillo: documento.pasillo,
+                                                estante: documento.estante,
+                                                nivel: documento.nivel,
+                                                seccion: documento.seccion,
+                                                numeroDeCaja: documento.numeroDeCaja,
+
+                                            });
+
+                                            meta = '';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        this.documentos = [...documentosTemp];
+                        this.documentosTemporal = this.documentos;
+
+
+                        this.spinner.hide();
+                    }
+                    this.loadingIndicator = false;
+                    this.spinner.hide();
+                }, err => {
+                    this.spinner.hide();
+                    this.loadingIndicator = false;
+                });
+            }
         }
+
+        onFooterPage(event): void {
+            console.log(event);
+        }
+
+        keytab(event, row) {
+            let element = event.srcElement.nextElementSibling; // get the sibling element
+
+            if (element == null)  // check if its null
+                return;
+            else
+                element.focus();   // focus if not null
+        }
+
     }
-
-    onFooterPage(event): void {
-        console.log(event);
-    }
-
-    keytab(event, row) {
-        let element = event.srcElement.nextElementSibling; // get the sibling element
-
-        if (element == null)  // check if its null
-            return;
-        else
-            element.focus();   // focus if not null
-    }
-
-}

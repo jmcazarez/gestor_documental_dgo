@@ -57,7 +57,8 @@ export class GuardarTipoDeExpedientesComponent implements OnInit {
             
         });
         this.rows = [];
-
+        console.log(this.expediente);
+        console.log(this.menuService.tipoDocumentos);
         this.documentosPerfil = this.menuService.tipoDocumentos;
 
 

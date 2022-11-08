@@ -61,7 +61,7 @@ export class GuardarInventarioFisicoComponent implements OnInit {
     async ngOnInit(): Promise<void> {
         this.spinner.show();
 
-        await this.obtenerTiposLegislaturas();
+       // await this.obtenerTiposLegislaturas();
         await this.obtenerTiposExpedientes();
 
 

@@ -67,7 +67,7 @@ export class GuardarRecepcionDeExpedienteComponent implements OnInit {
             descripcion: 'completo'
         });
 
-        await this.obtenerTiposLegislaturas();
+        //await this.obtenerTiposLegislaturas();
         await this.obtenerEmpleados();
 
         // Validamos si es un documento nuevo

@@ -12,6 +12,7 @@ export class DocumentosService {
     private baseUrl: string;
     private baseUrlStrapi: string;
     private urlDocumentos = "documentos";
+    private urlDocumentosFiltro = "documentos-filtrados";
     private urlDocumentosConsulto = "documentos-consulto";
     private urlDocumentosSinVersion = "documentos-sinVersion";
     private urlDocumentosBorrar = "documentos-borrar";
@@ -52,28 +53,61 @@ export class DocumentosService {
         return this.http.get(this.baseUrl + this.urlDocumentos, httpOptions);
     }
 
+    obtenerDocumentosFiltrados(filtro: any): any {
+        this.TOKEN = localStorage.getItem("token");
+        console.log('filtro');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
+        return this.http.post(this.baseUrl + this.urlDocumentosFiltro, filtro, httpOptions);
+    }
+
     obtenerDocumento(id: string): any {
+        this.TOKEN = localStorage.getItem("token");
+
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
         return this.http.get(
-            this.baseUrl + this.urlDocumentos + "/" + id ,
-            this.httpOptions
+            this.baseUrl + this.urlDocumentos + "/" + id,
+            httpOptions
         );
     }
 
     obtenerDocumentoConsulto(id: string): any {
+        this.TOKEN = localStorage.getItem("token");
+
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
         return this.http.get(
-            this.baseUrl + this.urlDocumentosConsulto + "/" + id ,
-            this.httpOptions
+            this.baseUrl + this.urlDocumentosConsulto + "/" + id,
+            httpOptions
         );
     }
 
     obtenerDocumentoById(id: string): any {
+        this.TOKEN = localStorage.getItem("token");
+
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
         return this.http.get(
-            this.baseUrl + this.urlDocumentos + "/" + id ,
-            this.httpOptions
+            this.baseUrl + this.urlDocumentos + "/" + id,
+            httpOptions
         );
     }
 
     obtenerDocumentoReporte(filtro: string): any {
+
         this.TOKEN = localStorage.getItem("token");
 
         let httpOptions = {
@@ -162,7 +196,7 @@ export class DocumentosService {
                 Authorization: this.TOKEN,
             }),
         };
-        
+
         documento.fechaCarga = documento.fechaCarga;
         documento.fechaCreacion = documento.fechaCreacion;
         return this.http.put(
@@ -215,35 +249,35 @@ export class DocumentosService {
         };
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/pdf');
-        return  this.http.get(this.baseUrlStrapi+'uploads'+ "/" + idFile, { headers: headers, responseType: 'blob' });
-      /*   console.log(this.baseUrl + this.urlDowloadDocument + "/" + idFile);
-        return this.http.get(
-            this.baseUrl + this.urlDowloadDocument + "/" + idFile,
-            options
-        ); */
+        return this.http.get(this.baseUrlStrapi + 'uploads' + "/" + idFile, { headers: headers, responseType: 'blob' });
+        /*   console.log(this.baseUrl + this.urlDowloadDocument + "/" + idFile);
+          return this.http.get(
+              this.baseUrl + this.urlDowloadDocument + "/" + idFile,
+              options
+          ); */
     }
 
-     dowloadDocumentStrapi(
+    dowloadDocumentStrapi(
         url: string
     ): Observable<any> {
 
         let headers = new HttpHeaders();
         headers = headers.set('Accept', 'application/pdf');
 
-        return  this.http.get(url, { headers: headers, responseType: 'blob' });
+        return this.http.get(url, { headers: headers, responseType: 'blob' });
 
-       
-    /*     let options = {
-            headers: new HttpHeaders({
-                Authorization: localStorage.getItem("token"),
-            }),
-        };
 
-        return this.http.get(
-            url,
-            options
-        );*/
-    } 
+        /*     let options = {
+                headers: new HttpHeaders({
+                    Authorization: localStorage.getItem("token"),
+                }),
+            };
+    
+            return this.http.get(
+                url,
+                options
+            );*/
+    }
 
     documentoFileSinVersion(
         idFile: string,
@@ -256,7 +290,7 @@ export class DocumentosService {
                 Authorization: localStorage.getItem("token"),
             }),
         };
-        console.log( this.baseUrl +
+        console.log(this.baseUrl +
             this.urlDescargarDocumentoSinVersion +
             "/" +
             idFile +
@@ -267,18 +301,18 @@ export class DocumentosService {
             "/" +
             nombreDocumento,)
 
-            console.log(localStorage.getItem("token"));
+        console.log(localStorage.getItem("token"));
         return this.http.get(
             this.baseUrl +
-                this.urlDescargarDocumentoSinVersion +
-                "/" +
-                idFile +
-                "/" +
-                idDocumento +
-                "/" +
-                usuario +
-                "/" +
-                nombreDocumento,
+            this.urlDescargarDocumentoSinVersion +
+            "/" +
+            idFile +
+            "/" +
+            idDocumento +
+            "/" +
+            usuario +
+            "/" +
+            nombreDocumento,
             options
         );
     }
@@ -295,13 +329,13 @@ export class DocumentosService {
         };
         return this.http.get(
             this.baseUrl +
-                this.urlDescargarDocumentoClasificacion +
-                "/" +
-                idFile +
-                "/" +
-                idDocumento +
-                "/" +
-                nombreDocumento,
+            this.urlDescargarDocumentoClasificacion +
+            "/" +
+            idFile +
+            "/" +
+            idDocumento +
+            "/" +
+            nombreDocumento,
             options
         );
     }
@@ -332,6 +366,24 @@ export class DocumentosService {
         });
     }
 
+    obtenerUpload(id: any) {
+      
+        return new Promise((resolve) => {
+            {
+           
+                this.http
+                    .get(this.baseUrlStrapi + this.urlUpload + '/files/' + id)
+                    .subscribe(
+                        (res) => {
+                            resolve(res);
+                        },
+                        (err) => {
+                            resolve(err);
+                        }
+                    );
+            }
+        });
+    }
     printPdf() {
         setTimeout(() => {
             window.print();

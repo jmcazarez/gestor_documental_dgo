@@ -24,7 +24,7 @@
             <div class="buscador">
                 <mat-form-field class="buscar">
                     <mat-label>Buscar un documento</mat-label>
-                    <input type='text' matInput placeholder='' (keyup)='filterDatatable($event)'
+                    <input type='text' matInput placeholder='' (keyup.enter)='filterDatatable($event)'
                         [(ngModel)]="valueBuscador">
                 </mat-form-field>
            

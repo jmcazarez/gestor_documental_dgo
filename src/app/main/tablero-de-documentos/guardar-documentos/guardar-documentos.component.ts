@@ -92,8 +92,6 @@ export class GuardarDocumentosComponent implements OnInit {
     }
     async ngOnInit(): Promise<void> {
         this.spinner.show();
-
-        console.log(this.documentos);
         this.fileName = '';
         this.form = this.formBuilder.group({
             tipoDocumentos: [{ value: this.documentos.tipo_de_documento, disabled: this.documentos.disabled }, Validators.required],
@@ -107,6 +105,12 @@ export class GuardarDocumentosComponent implements OnInit {
             clave: [{ value: this.documentos.clave, disabled: this.paginasEditar }, Validators.required]
         });
 
+        if (this.documentos.documento.id === undefined){
+            let documentoFile = await this.documentoService.obtenerUpload(this.documentos.documento)
+            if(documentoFile){
+                this.documentos.documento = documentoFile
+            }
+        }
 
         const fecha = new Date(); // Fecha actual
         let mes: any = fecha.getMonth() + 1; // obteniendo mes
@@ -203,7 +207,9 @@ export class GuardarDocumentosComponent implements OnInit {
                 this.cambioFecha = true;
             }
         });
-
+        ///upload/files/
+   
+       
         await this.obtenerTiposExpedientes();
         this.spinner.hide();
 

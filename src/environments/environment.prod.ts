@@ -2,9 +2,11 @@ export const environment = {
     production: true,
     hmr: false,
     //apiCms: 'http://45.230.172.75:3600/',
-    apiCms: 'http://138.185.2.214:9301/',
-    apiStrapi: 'http://138.185.2.214:9000/',
-    apiStrapiMin: 'http://138.185.2.214:9000',
+   
+    //apiCms: 'http://138.185.2.214:9301/',
+    apiCms: 'http://10.1.4.152:3600/',
+    apiStrapi: 'http://10.1.4.152:3601/',
+    apiStrapiMin: 'http://10.1.4.152:3601',
     imageBase64: '',
     widgets: {
         widget1: {
