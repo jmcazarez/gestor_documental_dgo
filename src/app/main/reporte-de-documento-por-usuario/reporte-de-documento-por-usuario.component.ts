@@ -38,6 +38,11 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
     arr: any[] = [];
     imageBase64: any;
     arrDepartamentos = [];
+    totalItems = 0;
+    currentPage = 1;
+    itemsPerPage = 10;
+    currentVisible: number = 3;
+    currenPage = 1;
 
 
     constructor(private _formBuilder: FormBuilder, private datePipe: DatePipe,
@@ -69,6 +74,15 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
         await this.obtenerDepartamentos();
     }
 
+    onPageChange(event: any) {
+        this.currentPage = event.offset;
+        console.log(this.currentPage);  
+        this.obtenerDocumentos(this.currentPage + 1);
+        // Realiza una consulta a tu fuente de datos para obtener los datos de la página actual
+        // y actualiza this.pagedData y this.totalItems en consecuencia.
+    }
+
+
     async obtenerDepartamentos(): Promise<void> {
         return new Promise(resolve => {
             // Obtenemos departamentos
@@ -95,16 +109,17 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
         this.selectedUsuario = '';
     }
 
-    obtenerDocumentos(): void {
+    obtenerDocumentos(pange: number): void {
         const documentosTemp: any[] = [];
         let idDocumento: any;
         this.spinner.show();
         let cFolioExpediente = '';
-        const filtroReporte = this.selectedUsuario;
+        const idUsuario = this.selectedUsuario;
 
         // Obtenemos los documentos
-        this.documentoService.obtenerDocumentoReporte(filtroReporte).subscribe((resp: any) => {
-
+        this.documentoService.obtenerDocumentoReportePorUsuario(idUsuario,pange).subscribe((resp: any) => {
+            this.totalItems = resp.pageCount;
+            console.log(resp.pageCount);
             if (resp.listado && resp.listado.length > 0) {
 
                 // Buscamos permisos
@@ -120,7 +135,6 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
                         idDocumento = '';
                         cFolioExpediente = documento.folioExpediente
                         let departamento
-                        console.log('tipo_de_documento', documento.tipo_de_documento);
                         /*  if (documento.tipo_de_documento.departamento) {
                              departamento = this.arrDepartamentos.find((depto: { id: string; }) => depto.id === documento.tipo_de_documento.departamento).cDescripcionDepartamento;
                          } */

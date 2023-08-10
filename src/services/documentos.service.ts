@@ -20,6 +20,8 @@ export class DocumentosService {
     private urlDescargarDocumentoClasificacion = "documento-file-clasificacion";
     private urlDescargarDocumentoSinVersion = "documento-file-sin-version";
     private urlDocumentosFiltrados = "documentos-filtro";
+    private urlDocumentosVersionados = "versionamiento";
+    private urlDocumentosPorUsuario = "versionamiento-usuario";
     private urlDocumentosPorFecha = "versionamiento-rango";
     private urlDocumentoPublico = "compartir";
     private urlDocumentosPorTexto = "documentos-text";
@@ -117,6 +119,21 @@ export class DocumentosService {
         };
         return this.http.get(
             this.baseUrl + this.urlDocumentosFiltrados + "/" + filtro,
+            httpOptions
+        );
+    }
+
+    obtenerDocumentoReportePorUsuario(idUsuario: string, page: number): any {
+
+        this.TOKEN = localStorage.getItem("token");
+
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
+        return this.http.get(
+            this.baseUrl + this.urlDocumentosPorUsuario + "/" + idUsuario+ "/" + page,
             httpOptions
         );
     }
