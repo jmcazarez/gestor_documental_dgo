@@ -12,6 +12,7 @@ export class TrazabilidadService {
     private urlTrazabilidad = 'trazabilidad';
     private urlTrazabilidadId = 'trazabilidad-id';
     private urlTrazabilidadHistorial = 'trazabilidad-historial';
+    private urlTrazabilidadHistorialPage = 'trazabilidad-historial-page';
     private urlTrazabilidadFiltrado = 'trazabilidad-filtrado';
     private TOKEN = localStorage.getItem('token');
 
@@ -59,6 +60,19 @@ export class TrazabilidadService {
         }
         return this.http.get(this.baseUrl + this.urlTrazabilidadHistorial + '/' + idDocumento, httpOptions);
     }
+
+    obtenerTrazabilidadHistorialPage(nPage: number): any {
+        this.TOKEN = localStorage.getItem('token');
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        }
+        return this.http.get(this.baseUrl + this.urlTrazabilidadHistorialPage + '/' + nPage, httpOptions);
+    }
+
+
+    
 
     actualizarTrazabilidad(trazabilidad: any): any {
         this.TOKEN = localStorage.getItem('token');

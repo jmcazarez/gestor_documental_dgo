@@ -20,7 +20,7 @@ export class DocumentosService {
     private urlDescargarDocumentoClasificacion = "documento-file-clasificacion";
     private urlDescargarDocumentoSinVersion = "documento-file-sin-version";
     private urlDocumentosFiltrados = "documentos-filtro";
-    private urlDocumentosPorFecha = "versionamiento";
+    private urlDocumentosPorFecha = "versionamiento-rango";
     private urlDocumentoPublico = "compartir";
     private urlDocumentosPorTexto = "documentos-text";
     private TOKEN = localStorage.getItem("token");
@@ -121,7 +121,7 @@ export class DocumentosService {
         );
     }
 
-    obtenerDocumentoReportePorFecha(filtro: string): any {
+    obtenerDocumentoReportePorFecha(cFechaInicial: string,cFechaFinal: string): any {
         this.TOKEN = localStorage.getItem("token");
 
         let httpOptions = {
@@ -131,7 +131,7 @@ export class DocumentosService {
         };
 
         return this.http.get(
-            this.baseUrl + this.urlDocumentosPorFecha + "/" + filtro,
+            this.baseUrl + this.urlDocumentosPorFecha + "/" + cFechaInicial+ "/" + cFechaFinal,
             httpOptions
         );
     }

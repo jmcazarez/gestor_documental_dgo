@@ -16,11 +16,24 @@ export class NotificacionesComponent implements OnInit {
     arrDepartamentos = [];
     loadingIndicator = true;
     reorderable = true;
+    totalItems = 0;
+    currentPage = 1;
+    itemsPerPage = 10;
+    currentVisible: number = 3;
+    currenPage = 1;
     constructor(private trazabilidadService: TrazabilidadService, private usuariosService: UsuariosService, private datePipe: DatePipe, private menuService: MenuService,) { }
 
     async ngOnInit(): Promise<void> {
         await this.obtenerDepartamentos();
-        this.obtenerTrazabilidad();
+        this.obtenerTrazabilidad(1);
+    }
+
+    onPageChange(event: any) {
+        this.currentPage = event.offset;
+        console.log(this.currentPage);
+        this.obtenerTrazabilidad(this.currentPage + 1);
+        // Realiza una consulta a tu fuente de datos para obtener los datos de la página actual
+        // y actualiza this.pagedData y this.totalItems en consecuencia.
     }
 
 
@@ -74,17 +87,21 @@ export class NotificacionesComponent implements OnInit {
             }
         })
     }
-    obtenerTrazabilidad(): void {
+    obtenerTrazabilidad(nPage: number): void {
         let historialTemp = [];
         // Obtenemos la lista historica de notificaciones.
         this.loadingIndicator = true;
-        this.trazabilidadService.obtenerTrazabilidadHistorial('').subscribe((resp: any) => {
-            console.log(resp.historial);
+        this.trazabilidadService.obtenerTrazabilidadHistorialPage(nPage).subscribe((resp: any) => {
+            this.totalItems = resp.pageCount;
             for (const historial of resp.historial) {
                 let aDepartamento: any;
+                let tipoDocumento = ''
 
-                const encontro = this.menuService.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === historial.tipoDeDocumento);
-                var date = new Date(historial.fechaUTC);
+                if (historial.documento) {
+                    tipoDocumento = historial.documento.tipo_de_documento;
+                }
+                const encontro = this.menuService.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === tipoDocumento);
+                var date = new Date(historial.createdAt);
                 let horaCreacion = '';
                 if (date.getMinutes() < 10) {
                     horaCreacion = date.getHours() + ':0' + date.getMinutes();
@@ -101,17 +118,17 @@ export class NotificacionesComponent implements OnInit {
                     }
 
                     historialTemp.push({
-                        cNombreDocumento: historial.cNombreDocumento,
-                        documentoId: historial.documentoId,
+                        cNombreDocumento: historial.documento.cNombreDocumento,
+                        documentoId: historial.documento.id,
                         fecha: this.datePipe.transform(date, 'dd-MM-yyyy'),
                         fechaFiltro: this.datePipe.transform(date, 'dd-MM-yyyy'),
                         hora: horaCreacion,
                         id: historial.id,
-                        movimiento: historial.movimiento,
+                        movimiento: historial.cTipoMovimiento,
                         tipoDeDocumento: historial.tipoDeDocumento,
                         cDepartamento: cDepartamento,
-                        usuario: historial.usuario,
-                        version: historial.version
+                        usuario: historial.usuario.cNombre,
+                        version: historial.documento.version
                     });
                 } else {
                     historialTemp.push({
@@ -137,6 +154,7 @@ export class NotificacionesComponent implements OnInit {
             this.loadingIndicator = false;
         }, err => {
             this.loadingIndicator = false;
+            console.log(err);
             Swal.fire(
                 'Error',
                 'Ocurrió un error al obtener las notificación.' + err,
@@ -158,7 +176,7 @@ export class NotificacionesComponent implements OnInit {
                 // realizamos delete
                 this.trazabilidadService.actualizarTrazabilidad({ id: row.id, excluirNotificacion: true }).subscribe((resp: any) => {
                     Swal.fire('Eliminado', 'La notificación ha sido eliminada.', 'success');
-                    this.obtenerTrazabilidad();
+                    this.obtenerTrazabilidad(this.currentPage + 1);
                 }, err => {
                     this.loadingIndicator = false;
                     Swal.fire(

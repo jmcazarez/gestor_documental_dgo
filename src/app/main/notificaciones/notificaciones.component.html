@@ -1,5 +1,3 @@
-
-
 <div id="clientes" class="page-layout simple fullwidth docs">
 
     <!-- HEADER -->
@@ -13,46 +11,45 @@
     </div>
     <!-- / HEADER -->
 
-   
+
 
 
     <div class="content p-24" align="center" style="border: 1px">
         <div class="content">
             <!-- Data table-->
 
-      
+
 
             <ngx-datatable class="material table-trazabilidad shadow-none" [rows]="historial"
-            [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50"
-            rowHeight="auto" [reorderable]="reorderable" [limit]="10">
-            <ngx-datatable-column name="Fecha" prop="fecha"></ngx-datatable-column>
-            <ngx-datatable-column name="Hora" prop="hora"></ngx-datatable-column>
-        
-            <ngx-datatable-column name="Autor" prop="usuario"></ngx-datatable-column>
-            <ngx-datatable-column name="Acción" prop="movimiento"></ngx-datatable-column>
-            <ngx-datatable-column name="Nombre del documento" prop="cNombreDocumento"></ngx-datatable-column>
-            <ngx-datatable-column name="Departamento" prop="cDepartamento"></ngx-datatable-column>
-            <ngx-datatable-column name="Acciones" sortable="false" prop="id">
-                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                [loadingIndicator]="loadingIndicator" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50"
+                rowHeight="auto" [reorderable]="reorderable" [limit]="10" [count]="totalItems" [externalPaging]="true"
+                (page)="onPageChange($event)">
+                <ngx-datatable-column name="Fecha" prop="fecha"></ngx-datatable-column>
+                <ngx-datatable-column name="Hora" prop="hora"></ngx-datatable-column>
 
-                    <a (click)="borrarNotificacion(row)">
-                        <mat-icon color="warn" class="material-icons" matTooltip="Clic para eliminar">delete
-                        </mat-icon>
-                    </a>
+                <ngx-datatable-column name="Autor" prop="usuario"></ngx-datatable-column>
+                <ngx-datatable-column name="Acción" prop="movimiento"></ngx-datatable-column>
+                <ngx-datatable-column name="Nombre del documento" prop="cNombreDocumento"></ngx-datatable-column>
+                <ngx-datatable-column name="Departamento" prop="cDepartamento"></ngx-datatable-column>
+                <ngx-datatable-column name="Acciones" sortable="false" prop="id">
+                    <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
 
-                    <!-- <a *ngIf="row.movimiento!='Actual'" (click)="restaurarVersion(row)">
+                        <a (click)="borrarNotificacion(row)">
+                            <mat-icon color="warn" class="material-icons" matTooltip="Clic para eliminar">delete
+                            </mat-icon>
+                        </a>
+
+                        <!-- <a *ngIf="row.movimiento!='Actual'" (click)="restaurarVersion(row)">
                         <mat-icon color="primary" class="material-icons" matTooltip="Clic para editar">swap_vert
                         </mat-icon>
-                    </a>
-                    -->
-                </ng-template>
-            </ngx-datatable-column>
-        </ngx-datatable>
+                    </a>                    -->
+                    </ng-template>
+                </ngx-datatable-column>
+                <datatable-pager [pagerLeftArrowIcon]="'datatable-icon-left'"
+                    [pagerRightArrowIcon]="'datatable-icon-right'" [pagerPreviousIcon]="'datatable-icon-prev'"
+                    [pagerNextIcon]="'datatable-icon-skip'" [page]="100" [size]="10" [count]="totalItems">
+                </datatable-pager>
+            </ngx-datatable>
         </div>
     </div>
 </div>
-
-
-
-
-

@@ -219,9 +219,9 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
                                     // tslint:disable-next-line: no-unused-expression
                                     // Seteamos valores y permisos
                                     let departamento = ""                                
-                                    if (documento.tipo_de_documento.departamento) {
+                                  /*   if (documento.tipo_de_documento.departamento) {
                                         departamento = this.arrDepartamentos.find((depto: { id: string; }) => depto.id === documento.tipo_de_documento.departamento).cDescripcionDepartamento;
-                                    }
+                                    } */
                                     const vigencia = new Date(documento.fechaCreacion);
                                     const fechaActual = new Date();
                                     let bActivo = false;

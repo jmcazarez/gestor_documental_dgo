@@ -105,10 +105,12 @@ export class GuardarDocumentosComponent implements OnInit {
             clave: [{ value: this.documentos.clave, disabled: this.paginasEditar }, Validators.required]
         });
 
-        if (this.documentos.documento.id === undefined){
-            let documentoFile = await this.documentoService.obtenerUpload(this.documentos.documento)
-            if(documentoFile){
-                this.documentos.documento = documentoFile
+        if (this.documentos.documento) {
+            if (this.documentos.documento.id === undefined) {
+                let documentoFile = await this.documentoService.obtenerUpload(this.documentos.documento)
+                if (documentoFile) {
+                    this.documentos.documento = documentoFile
+                }
             }
         }
 
@@ -151,7 +153,7 @@ export class GuardarDocumentosComponent implements OnInit {
             if (this.documentos.fechaCreacion instanceof Date) {
 
             }
-        
+
             if (String(this.documentos.fechaCreacion).includes('T16:00:00.000Z')) {
                 this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
             } else {
@@ -166,7 +168,7 @@ export class GuardarDocumentosComponent implements OnInit {
             this.documentos.fechaCarga = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
             this.documentos.fechaCreacion = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';
 
-            
+
             this.documentos.bActivo = true;
             if (this.documentos.tipo_de_documento) {
                 this.tipoDocumento = this.documentos.tipo_de_documento;
@@ -208,8 +210,8 @@ export class GuardarDocumentosComponent implements OnInit {
             }
         });
         ///upload/files/
-   
-       
+
+
         await this.obtenerTiposExpedientes();
         this.spinner.hide();
 
@@ -373,7 +375,7 @@ export class GuardarDocumentosComponent implements OnInit {
                                 if (resp) {
 
                                     this.documentos = resp.data;
-                               
+
                                     if (String(this.documentos.fechaCarga).includes('T16:00:00.000Z')) {
                                         this.documentos.fechaCarga = this.datePipe.transform(this.documentos.fechaCarga, 'yyyy-MM-dd');
                                     } else {

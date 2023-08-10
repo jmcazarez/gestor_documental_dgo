@@ -103,7 +103,7 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
         const filtroReporte = this.selectedUsuario;
 
         // Obtenemos los documentos
-        this.documentoService.obtenerDocumentoReportePorFecha(filtroReporte).subscribe((resp: any) => {
+        this.documentoService.obtenerDocumentoReporte(filtroReporte).subscribe((resp: any) => {
 
             if (resp.listado && resp.listado.length > 0) {
 
@@ -120,9 +120,10 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
                         idDocumento = '';
                         cFolioExpediente = documento.folioExpediente
                         let departamento
-                        if (documento.tipo_de_documento.departamento) {
-                            departamento = this.arrDepartamentos.find((depto: { id: string; }) => depto.id === documento.tipo_de_documento.departamento).cDescripcionDepartamento;
-                        }
+                        console.log('tipo_de_documento', documento.tipo_de_documento);
+                        /*  if (documento.tipo_de_documento.departamento) {
+                             departamento = this.arrDepartamentos.find((depto: { id: string; }) => depto.id === documento.tipo_de_documento.departamento).cDescripcionDepartamento;
+                         } */
                         documentosTemp.push({
                             id: documento.id,
                             tipoDocumento: documento.tipoDocumento,
@@ -213,7 +214,7 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
         const value = [];
 
         // Creamos el reporte
-      await  this.documentos.forEach(row => {
+        await this.documentos.forEach(row => {
             let fecha = '';
             let accion = '';
             let nombreDocumento = '';
@@ -387,7 +388,7 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
     async obtenerListaUsuarios(): Promise<void> {
         this.spinner.show();
         // Obtenemos la lista de usuarios
-      await  this.usuariosService.obtenerUsuarios().subscribe((resp: any) => {
+        await this.usuariosService.obtenerUsuarios().subscribe((resp: any) => {
             this.arrUsuarios = resp;
             this.spinner.hide();
         }, err => {

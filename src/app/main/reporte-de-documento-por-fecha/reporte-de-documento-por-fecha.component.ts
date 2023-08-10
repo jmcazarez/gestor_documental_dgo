@@ -171,7 +171,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
                 const filtroReporte = `createdAt_gte=${cFechaInicial}&createdAt_lte=${cFechaFinal}`;
 
                 // Obtenemos los documentos
-                this.documentoService.obtenerDocumentoReportePorFecha(filtroReporte).subscribe((resp: any) => {
+                this.documentoService.obtenerDocumentoReportePorFecha(cFechaInicial,cFechaFinal).subscribe((resp: any) => {
 
                     if (resp.listado && resp.listado.length > 0) {
 
@@ -188,9 +188,9 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
                                 cFolioExpediente = documento.folioExpediente;
                                 let departamento = ""
 
-                                if (documento.tipo_de_documento.departamento) {
+                              /*   if (documento.tipo_de_documento.departamento) {
                                     departamento = this.arrDepartamentos.find((depto: { id: string; }) => depto.id === documento.tipo_de_documento.departamento).cDescripcionDepartamento;
-                                }
+                                } */
                                 idDocumento = '';
                                 documentosTemp.push({
                                     id: documento.id,
