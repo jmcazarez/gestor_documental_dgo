@@ -15,7 +15,7 @@ export class UsuariosService {
 
   private baseUrl: string;
   private urlUsuarios = 'usuarios-lista';
-  private urlUsuariosGuardar = 'usuarios';
+  private urlUsuariosGuardar = 'usuarios-guardar';
   private urlSecretarias = 'secretarias';
   private urlDirecciones = 'direcciones';
   private urlDepartamentos = 'departamentos';
