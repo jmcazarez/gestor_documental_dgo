@@ -165,7 +165,7 @@ export class GuardarUsuarioFinanzasComponent implements OnInit, OnDestroy {
         // Obtenermos los empleados
         await this.obtenerEmpleados();
 
-        await this.obtenerPermisosIniciativas();
+        //await this.obtenerPermisosIniciativas();
 
         if (this.arrDirecciones.length === 0) {
             this.form.get('direcciones').clearValidators();

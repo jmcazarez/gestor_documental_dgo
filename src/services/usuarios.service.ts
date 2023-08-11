@@ -67,7 +67,6 @@ export class UsuariosService {
 }
 
   obtenerUsuariosAuth(): any {
-    console.log('entro');
     return this.http.get(this.baseUrl + this.urlUsuariosAuth, this.httpOptions);
 }
 

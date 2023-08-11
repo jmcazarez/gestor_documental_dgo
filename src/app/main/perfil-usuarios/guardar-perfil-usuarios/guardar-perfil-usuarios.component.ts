@@ -318,7 +318,7 @@ export class GuardarPerfilUsuariosComponent implements OnInit {
                         }
                         this.rowVisibilidad = this.visibilidadModel;
                         this.rowVisibilidadTemp = this.rowVisibilidad;
-                      
+
                         resolve(resp)
                     } else {
                         this.rowVisibilidad = this.visibilidadModel;
@@ -339,14 +339,12 @@ export class GuardarPerfilUsuariosComponent implements OnInit {
     async obtenerUsuarios(): Promise<void> {
         return new Promise(async (resolve) => {
             {
-
                 let idUsuario: string;
                 this.cargando = true;
                 let respuesta: any;
                 // Obtenemos usuarios
-                await this.usuariosService.obtenerUsuariosPerfil().subscribe((resp: any) => {
-                   
-                    respuesta = resp.data.filter((d) => d.bActivo === true);;
+                await this.usuariosService.obtenerUsuariosAuth().subscribe((resp: any) => {                   
+                    respuesta = resp.filter((d) => d.bActivo === true);                  
                     if (this.perfilUsuario.id && this.perfilUsuario.id.length > 0) {
                         // tslint:disable-next-line: forin
                         for (const i in respuesta) {
@@ -361,7 +359,6 @@ export class GuardarPerfilUsuariosComponent implements OnInit {
 
                         }
                     }
-
 
                     this.rowUsuarios = respuesta;
                     this.rowUsuariosTemp = this.rowUsuarios;
@@ -383,7 +380,7 @@ export class GuardarPerfilUsuariosComponent implements OnInit {
             width: '60%',
             // height: '75%',
             // height: '100%',
-     
+
             disableClose: true,
             data: new PermisosUsuarioModel(),
         });
@@ -400,7 +397,7 @@ export class GuardarPerfilUsuariosComponent implements OnInit {
     guardarOpcion(permisosUsuario: PermisosUsuarioModel): void {
         // abrimos modal de permisos         
         permisosUsuario.idTipoPermiso = 'Opcion del sistema';
-      
+
         const dialogRef = this.dialog2.open(GuardarPermisosUsuariosComponent, {
             width: '60%',
             // height: '75%',
