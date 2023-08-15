@@ -93,6 +93,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     usuario: any;
     excelSeleccionado: boolean = false;
     cNombreDocumentoActual = '';
+    privilegios: any
     /* progressInfo = [] */
     constructor(
         private datePipe: DatePipe,
@@ -114,6 +115,7 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
+        this.privilegios = await this.menuService.obtenerPrivilegios();
         this.usuario = await this.usuarioLoginService.obtenerUsuario();
 
         this.selectedHistorial = "";
@@ -1389,455 +1391,239 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
         });
     }
 
-    obtenerDocumentos(): void {
+    async obtenerDocumentos(): Promise<void> {
         this.spinner.show();
-        const documentosTemp: any[] = [];
-        let idDocumento: any;
-        this.loadingIndicator = true;
-        let meta = "";
-        let visibilidad = "";
-        let idEnte = "";
-        let idExpediente = "";
-        let cDescripcionTipoExpediente = "";
-        let info: any;
-        let filtroReporte = "";
-        let temp = [];
-        const fechaIniCreacion =
-            this.datePipe.transform(this.fechaCreacion, "yyyy-MM-dd") +
-            "T00:00:00.000Z";
-        const fechaFinCreacion =
-            this.datePipe.transform(this.fechaCreacion, "yyyy-MM-dd") +
-            "T24:00:00.000Z";
-        const fechaIniCarga =
-            this.datePipe.transform(this.fechaCarga, "yyyy-MM-dd") +
-            "T00:00:00.000Z";
-        const fechaFinCarga =
-            this.datePipe.transform(this.fechaCarga, "yyyy-MM-dd") +
-            "T24:00:00.000Z";
-        const fechaIniModificacion =
-            this.datePipe.transform(this.fechaModificacion, "yyyy-MM-dd") +
-            "T00:00:00.000Z";
-        const fechaFinModificacion =
-            this.datePipe.transform(this.fechaModificacion, "yyyy-MM-dd") +
-            "T24:00:00.000Z";
+        return new Promise(async resolve => {
 
-        // Obtenemos los documentos
-        if (this.vigenteBusqueda !== undefined && this.vigenteBusqueda !== "") {
-            filtroReporte = "bActivo=" + this.vigenteBusqueda + "&";
-        }
-        if (
-            this.selectedInformacion !== undefined &&
-            this.selectedInformacion !== ""
-        ) {
-            if (filtroReporte === "") {
-                filtroReporte =
-                    "visibilidade.cDescripcionVisibilidad_contains=" +
-                    this.selectedInformacion;
-            } else {
-                filtroReporte =
-                    filtroReporte +
-                    "&visibilidade.cDescripcionVisibilidad_contains=" +
-                    this.selectedInformacion;
-            }
-        }
 
-        if (
-            this.documentoBusqueda !== undefined &&
-            this.documentoBusqueda !== ""
-        ) {
-            if (filtroReporte === "") {
-                filtroReporte = "cNombreDocumento_contains=" + this.documentoBusqueda;
-            } else {
-                filtroReporte =
-                    filtroReporte +
-                    "&cNombreDocumento_contains=" +
-                    this.documentoBusqueda;
-            }
-        }
 
-        if (this.fechaCreacion !== undefined && this.fechaCreacion !== "") {
-            if (filtroReporte === "") {
-                filtroReporte =
-                    "fechaCreacion_gte=" +
-                    fechaIniCreacion +
-                    "&fechaCreacion_lte=" +
-                    fechaFinCreacion;
-            } else {
-                filtroReporte =
-                    filtroReporte +
-                    "&fechaCreacion_gte=" +
-                    fechaIniCreacion +
-                    "&fechaCreacion_lte=" +
-                    fechaFinCreacion;
-            }
-        }
+            const documentosTemp: any[] = [];
+            let idDocumento: any;
+            this.loadingIndicator = true;
+            let meta = '';
+            let visibilidad = '';
+            let idEnte = '';
+            let idExpediente = '';
+            let info: any;
+            // Obtenemos los documentos
+            let bActivo: any;
 
-        if (this.fechaCarga !== undefined && this.fechaCarga !== "") {
-            if (filtroReporte === "") {
-                filtroReporte =
-                    "fechaCarga_gte=" +
-                    fechaIniCarga +
-                    "&fechaCarga_lte=" +
-                    fechaFinCarga;
+            if (this.vigenteBusqueda === 'false') {
+                bActivo = false;
             } else {
-                filtroReporte =
-                    filtroReporte +
-                    "&fechaCarga_gte=" +
-                    fechaIniCarga +
-                    "&fechaCarga_lte=" +
-                    fechaIniCarga;
+                bActivo = true;
             }
-        }
+            let filtro: any = {}
 
-        if (
-            this.fechaModificacion !== undefined &&
-            this.fechaModificacion !== ""
-        ) {
-            if (filtroReporte === "") {
-                filtroReporte =
-                    "updatedAt_gte=" +
-                    fechaIniModificacion +
-                    "&updatedAt_lte=" +
-                    fechaFinModificacion;
-            } else {
-                filtroReporte =
-                    filtroReporte +
-                    "&updatedAt_gte=" +
-                    fechaIniModificacion +
-                    "&updatedAt_lte=" +
-                    fechaFinModificacion;
-            }
-        }
 
-        if (
-            this.selectTipoDocumento !== undefined &&
-            this.selectTipoDocumento !== ""
-        ) {
-            if (filtroReporte === "") {
-                filtroReporte =
-                    "tipo_de_documento.id=" + this.selectTipoDocumento;
-            } else {
-                filtroReporte =
-                    filtroReporte +
-                    "&tipo_de_documento.id=" +
-                    this.selectTipoDocumento;
+            if (this.documentoBusqueda !== '' && this.documentoBusqueda !== undefined) {
+                filtro.cNombreDocumento = { $regex: '.*' + this.documentoBusqueda + '.*' }
             }
-        }
-        /*
-                if (this.selectedEntes !== undefined && this.selectedEntes !== '') {
-                    if (filtroReporte === '') {
-                        filtroReporte = 'ente.id=' + this.selectedEntes;
-                    } else {
-                        filtroReporte = filtroReporte + '&ente.id=' + this.selectedEntes;
-                    }
-                }
-        */
-        if (
-            this.selectedExpediente !== undefined &&
-            this.selectedExpediente !== ""
-        ) {
-            if (filtroReporte === "") {
-                filtroReporte =
-                    "tipo_de_expediente.id=" + this.selectedExpediente;
-            } else {
-                filtroReporte =
-                    filtroReporte +
-                    "&tipo_de_expediente.id=" +
-                    this.selectedExpediente;
-            }
-        }
 
-        if (
-            this.selectedFolioExpediente !== undefined &&
-            this.selectedFolioExpediente !== ""
-        ) {
-            if (filtroReporte === "") {
-                filtroReporte =
-                    "folioExpediente=" + this.selectedFolioExpediente;
-            } else {
-                filtroReporte =
-                    filtroReporte +
-                    "&folioExpediente=" +
-                    this.selectedFolioExpediente;
+
+
+
+            if (bActivo !== '' && bActivo !== undefined) {
+                filtro.bActivo = bActivo;
             }
-        }
-        this.documentoService.obtenerDocumentoReporte(filtroReporte).subscribe(
-            (resp: any) => {
+
+            if (this.selectedFolioExpediente !== '' && this.selectedFolioExpediente !== undefined) {
+                filtro.folioExpediente = Number(this.selectedFolioExpediente);
+
+            }
+         
+
+            if (this.selectTipoDocumento !== '' && this.selectTipoDocumento !== undefined) {
+                filtro.tipo_de_documento = this.selectTipoDocumento;
+            }
+
+            if (this.selectedExpediente !== '' && this.selectedExpediente !== undefined) {
+                filtro.tipo_de_expediente = this.selectedExpediente;
+            }
+
+            console.log('this.fechaCarga',this.fechaCarga);
+            if (this.fechaCarga !== '' && this.fechaCarga !== undefined && filtro.fechaCarga !== null) {
+
+                filtro.fechaCarga = this.datePipe.transform(this.fechaCarga, 'yyyy-MM-dd')
+            }
+            if (this.fechaCreacion !== '' && this.fechaCreacion !== undefined && filtro.fechaCreacion !== null) {
+
+                filtro.fechaCreacion = this.datePipe.transform(this.fechaCreacion, 'yyyy-MM-dd')
+            }
+
+            if (this.fechaModificacion !== '' && this.fechaModificacion !== undefined && filtro.fechaModificacion !== null) {
+
+                filtro.updatedAt = this.datePipe.transform(this.fechaModificacion, 'yyyy-MM-dd')
+            }
+
+
+
+
+            await this.documentoService.obtenerDocumentosFiltrados(filtro).subscribe(async (resp: any) => {
+
                 // Buscamos permisos
-                const opciones = this.menuService.opcionesPerfil.find(
-                    (opcion: { cUrl: string }) =>
-                        opcion.cUrl ===
-                        this.router.routerState.snapshot.url.replace("/", "")
-                );
-                this.optAgregar = opciones.Agregar;
-                this.optEditar = opciones.Editar;
-                this.optConsultar = opciones.Consultar;
-                this.optEliminar = opciones.Eliminar;
+                const opciones = await this.privilegios.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.url);
+
+                if (opciones) {
+                    this.optAgregar = opciones.Agregar;
+                    this.optEditar = opciones.Editar;
+                    this.optConsultar = opciones.Consultar;
+                    this.optEliminar = opciones.Eliminar;
+                } else {
+                    this.optAgregar = false;
+                    this.optEditar = false;
+                    this.optConsultar = false;
+                    this.optEliminar = false;
+                }
 
                 // Si tiene permisos para consultar
                 if (this.optConsultar) {
                     for (const documento of resp.data) {
-                        idDocumento = "";
+                        let idIniciativa = '';
+                        idDocumento = '';
                         // Validamos permisos
                         if (documento.tipo_de_documento) {
-                            const encontro = this.menuService.tipoDocumentos.find(
-                                (tipo: { id: string }) =>
-                                    tipo.id === documento.tipo_de_documento.id
-                            );
+                            const encontro = await this.privilegios.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento._id);
 
-                            if (documento.visibilidade) {
-                                info = this.menuService.tipoInformacion.find(
-                                    (tipo: { id: string }) =>
-                                        tipo.id === documento.visibilidade.id
-                                );
-                            }
+                            /*  if (documento.visibilidade) {
+                                 info = this.privilegios.tipoInformacion.find((tipo: { id: string; }) => tipo.id === documento.visibilidade.id);
+                             } */
                             if (encontro) {
-                                if (
-                                    documento.tipo_de_documento.bActivo &&
-                                    encontro.Consultar &&
-                                    info
-                                ) {
+                                if (documento.tipo_de_documento.bActivo && encontro.Consultar) {
+
                                     if (documento.documento) {
-                                        idDocumento =
-                                            documento.documento.hash +
-                                            documento.documento.ext;
-                                    }
-                                    if (documento.metacatalogos) {
-                                        meta = "";
+                                        idDocumento = documento.documento.hash + documento.documento.ext;
+
                                         if (documento.metacatalogos) {
-                                            for (const x of documento.metacatalogos) {
-                                                if (meta === "") {
-                                                    if (
-                                                        x.cTipoMetacatalogo ===
-                                                        "Fecha"
-                                                    ) {
-                                                        if (x.text) {
-                                                            meta =
-                                                                meta +
-                                                                x.cDescripcionMetacatalogo +
-                                                                ": " +
-                                                                this.datePipe.transform(
-                                                                    x.text,
-                                                                    "yyyy-MM-dd"
-                                                                );
-                                                        }
-                                                    } else {
-                                                        if (x.text) {
-                                                            meta =
-                                                                meta +
-                                                                x.cDescripcionMetacatalogo +
-                                                                ": " +
-                                                                x.text;
-                                                        }
-                                                    }
-                                                } else {
-                                                    if (
-                                                        x.cTipoMetacatalogo ===
-                                                        "Fecha"
-                                                    ) {
-                                                        if (x.text) {
-                                                            meta =
-                                                                meta +
-                                                                " , " +
-                                                                x.cDescripcionMetacatalogo +
-                                                                ": " +
-                                                                this.datePipe.transform(
-                                                                    x.text,
-                                                                    "yyyy-MM-dd"
-                                                                );
-                                                        }
-                                                    } else if (
-                                                        x.cTipoMetacatalogo ===
-                                                        "Sí o no"
-                                                    ) {
-                                                        if (x.text) {
-                                                            meta =
-                                                                meta +
-                                                                " , " +
-                                                                x.cDescripcionMetacatalogo +
-                                                                ": Sí";
+                                            meta = '';
+                                            if (documento.metacatalogos) {
+                                                for (const x of documento.metacatalogos) {
+
+                                                    if (meta === '') {
+
+                                                        if (x.cTipoMetacatalogo === 'Fecha') {
+                                                            if (x.text) {
+                                                                meta = meta + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'dd-MM-yyyy');
+                                                            }
                                                         } else {
-                                                            meta =
-                                                                meta +
-                                                                " , " +
-                                                                x.cDescripcionMetacatalogo +
-                                                                ": No";
+                                                            if (x.text) {
+                                                                meta = meta + x.cDescripcionMetacatalogo + ': ' + x.text;
+                                                            }
                                                         }
                                                     } else {
-                                                        if (x.text) {
-                                                            meta =
-                                                                meta +
-                                                                " , " +
-                                                                x.cDescripcionMetacatalogo +
-                                                                ": " +
-                                                                x.text;
+                                                        if (x.cTipoMetacatalogo === 'Fecha') {
+                                                            if (x.text) {
+                                                                meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + this.datePipe.transform(x.text, 'dd-MM-yyyy');
+                                                            }
+                                                        } else if (x.cTipoMetacatalogo === 'Sí o no') {
+                                                            if (x.text) { meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': Sí'; } else {
+                                                                meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': No';
+                                                            }
+                                                        } else {
+                                                            if (x.text) {
+                                                                meta = meta + ' , ' + x.cDescripcionMetacatalogo + ': ' + x.text;
+                                                            }
                                                         }
+
                                                     }
                                                 }
                                             }
                                         }
-                                    }
+                                        visibilidad = '';
+                                        if (documento.visibilidade) {
+                                            visibilidad = 'Confidencial';
+                                        }
+                                        idEnte = '';
+                                        if (documento.ente) {
 
-                                    if (documento.visibilidade) {
-                                        visibilidad =
-                                            documento.visibilidade
-                                                .cDescripcionVisibilidad;
-                                    }
-                                    idEnte = "";
-                                    if (documento.ente) {
-                                        idEnte = documento.ente.id;
-                                    }
-                                    idExpediente = "";
+                                            idEnte = documento.ente.id;
+                                        }
+                                        idExpediente = '';
+                                        if (documento.tipo_de_expediente) {
 
-                                    if (documento.tipo_de_expediente) {
-                                        idExpediente =
-                                            documento.tipo_de_expediente.id;
-                                        cDescripcionTipoExpediente =
-                                            documento.tipo_de_expediente
-                                                .cDescripcionTipoExpediente;
-                                    }
+                                            idExpediente = documento.tipo_de_expediente.id;
+                                        }
+                                        if (documento.legislatura) {
+                                            idIniciativa = documento.legislatura.id;
+                                        }
 
-                                    // tslint:disable-next-line: no-unused-expression
-                                    // Seteamos valores y permisos
-                                    if (documento.documento) {
+                                        // tslint:disable-next-line: no-unused-expression
+                                        // Seteamos valores y permisos
                                         documentosTemp.push({
-                                            selected: false,
-                                            id: documento.id,
-                                            cNombreDocumento:
-                                                documento.cNombreDocumento,
-                                            tipoDocumento:
-                                                documento.tipo_de_documento
-                                                    .cDescripcionTipoDocumento,
-                                            tipo_de_documento:
-                                                documento.tipo_de_documento.id,
-                                            fechaCarga: this.datePipe.transform(
-                                                documento.fechaCarga,
-                                                "yyyy-MM-dd"
-                                            ),
-
-
-                                            fechaCreacion: this.datePipe.transform(
-                                                documento.fechaCreacion,
-                                                "yyyy-MM-dd"
-                                            ),
+                                            id: documento._id,
+                                            cNombreDocumento: documento.cNombreDocumento,
+                                            tipoDocumento: documento.tipo_de_documento.cDescripcionTipoDocumento,
+                                            tipo_de_documento: documento.tipo_de_documento._id,
+                                            fechaCargaView: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
+                                            fechaCreacionView: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
+                                            fechaCarga: documento.fechaCarga,
+                                            fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'yyyy-MM-dd'),
                                             paginas: documento.paginas,
                                             bActivo: documento.bActivo,
-                                            fechaModificacion: this.datePipe.transform(
-                                                documento.updatedAt,
-                                                "yyyy-MM-dd"
-                                            ),
+                                            fechaModificacion: documento.updatedAt,
+                                            fechaModificacionView: this.datePipe.transform(documento.updatedAt, 'dd-MM-yyyy'),
                                             Agregar: encontro.Agregar,
                                             Eliminar: encontro.Eliminar,
                                             Editar: encontro.Editar,
                                             Consultar: encontro.Consultar,
                                             idDocumento: idDocumento,
-                                            progress: { value: 0, fileName: '' },
-                                            version: parseFloat(
-                                                documento.version
-                                            ).toFixed(1),
+                                            idDocumentoFiltro: documento.documento.id,
+                                            version: parseFloat(documento.version).toFixed(1),
                                             documento: documento.documento,
                                             ente: documento.ente,
-                                            folioExpediente:
-                                                documento.folioExpediente,
+                                            secretaria: documento.secretaria,
+                                            direccione: documento.direccione,
+                                            departamento: documento.departamento,
+                                            folioExpediente: documento.folioExpediente,
                                             clasificacion: meta,
-                                            metacatalogos:
-                                                documento.metacatalogos,
+                                            metacatalogos: documento.metacatalogos,
                                             informacion: visibilidad,
-                                            visibilidade:
-                                                documento.visibilidade,
+                                            visibilidade: documento.visibilidade,
                                             idEnte,
-                                            tipo_de_expediente:
-                                                documento.tipo_de_expediente,
-                                            descripcionExpediente: cDescripcionTipoExpediente,
-                                            idExpediente
+                                            tipo_de_expediente: documento.tipo_de_expediente,
+                                            idExpediente,
+                                            legislatura: documento.legislatura,
+                                            legislaturaid: idIniciativa,
+                                            autorizacion_iniciativas: documento.autorizacion_iniciativas,
+                                            plazoDeConservacion: documento.plazoDeConservacion,
+                                            clave: documento.clave,
+                                            pasillo: documento.pasillo,
+                                            estante: documento.estante,
+                                            nivel: documento.nivel,
+                                            seccion: documento.seccion,
+                                            numeroDeCaja: documento.numeroDeCaja,
+                                            progress: 100
+
                                         });
+
+                                        meta = '';
                                     }
-                                    meta = "";
                                 }
                             }
                         }
                     }
 
-                    if (
-                        this.selectTipoDocumento !== "" &&
-                        this.selectTipoDocumento !== undefined &&
-                        this.selectTipoDocumento !== null
-                    ) {
-                        temp = documentosTemp.filter(
-                            (d) =>
-                                d.tipo_de_documento
-                                    .toLowerCase()
-                                    .indexOf(
-                                        this.selectTipoDocumento.toLowerCase()
-                                    ) !== -1 || !this.selectTipoDocumento
-                        );
-                        this.documentos = temp;
-                        for (const i of this.arrMetacatalogosFiltro) {
-                            if (i["cTipoMetacatalogo"] === "Fecha") {
-                                let fecha: string;
-                                fecha = this.datePipe.transform(
-                                    i["text"],
-                                    "yyyy-MM-dd"
-                                );
-                                if (fecha) {
-                                    temp = this.documentos.filter(
-                                        (d) =>
-                                            d.clasificacion.indexOf(
-                                                i["cDescripcionMetacatalogo"] +
-                                                ": " +
-                                                fecha
-                                            ) !== -1 || !fecha
-                                    );
-                                    this.documentos = temp;
-                                }
-                            } else if (i["cTipoMetacatalogo"] === "Sí o no") {
-                                // fecha = this.datePipe.transform(i['text'], 'yyyy-MM-dd');
-                                if (i["text"]) {
-                                    temp = this.documentos.filter(
-                                        (d) =>
-                                            d.clasificacion.indexOf(
-                                                i["cDescripcionMetacatalogo"] +
-                                                ": " +
-                                                i["text"]
-                                            ) !== -1 || !i["text"]
-                                    );
-                                    this.documentos = temp;
-                                }
-                            } else {
-                                if (i["text"]) {
-                                    temp = this.documentos.filter(
-                                        (d) =>
-                                            d.clasificacion.indexOf(
-                                                i["cDescripcionMetacatalogo"] +
-                                                ": " +
-                                                i["text"]
-                                            ) !== -1 || !i["text"]
-                                    );
-                                    this.documentos = temp;
-                                }
-                            }
-                        }
-                        this.documentos = temp;
-                        this.documentosTemporal = this.documentos;
-                    } else {
-                        this.documentos = documentosTemp;
-                        this.documentosTemporal = this.documentos;
-                    }
+
+
                 }
-                this.loadingIndicator = false;
+                console.log('salio', documentosTemp.length);
+
+                this.documentos = documentosTemp;
+                this.documentosTemporal = documentosTemp;
                 this.spinner.hide();
-            },
-            (err) => {
                 this.loadingIndicator = false;
+                resolve()
+            }, err => {
+                console.log('err');
                 this.spinner.hide();
-                Swal.fire(
-                    "Error",
-                    "Ocurrió un error obtener los documentos." + err,
-                    "error"
-                );
-            }
-        );
+                this.loadingIndicator = false;
+
+            });
+
+
+        });
     }
+
 
     async descargarDocumento(row: any): Promise<void> {
         // Descargamos el documento
