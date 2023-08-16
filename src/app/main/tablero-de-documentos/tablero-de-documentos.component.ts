@@ -156,6 +156,7 @@ export class TableroDeDocumentosComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
+                console.log('this.pageNumber',this.pageNumber);
                 this.obtenerDocumentos(this.pageNumber);
                 if (result.documento) {
                     this.clasificarDocumento(result, this.pageNumber);
@@ -182,6 +183,10 @@ export class TableroDeDocumentosComponent implements OnInit {
         let estante = '';
         let nivel = '';
         let seccion = '';
+        console.log(numeroPagina);
+        if(numeroPagina == undefined){
+            numeroPagina = 0;
+        }
         let filtro = '_limit=' + this.size + '&_sort=id%3AASC&_start=' + (numeroPagina * this.size).toString()
         // Obtenemos los documentos
         try {
