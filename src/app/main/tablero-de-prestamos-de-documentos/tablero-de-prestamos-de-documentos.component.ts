@@ -17,6 +17,7 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 pdfMake.vfs = pdfFonts.pdfMake.vfs;  // fonts provided for pdfmake
 import { environment } from '../../../environments/environment';
+import { ExportService } from 'services/export.service';
 
 @Component({
     selector: 'app-tablero-de-prestamos-de-documentos',
@@ -47,7 +48,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
         private tipoExpedientesService: TipoExpedientesService,
         private prestamosDeDocumentosService: PrestamosDeDocumentosService,
         private menuService: MenuService,
-
+        private exportService: ExportService
     ) {
         // Obtenemos recepcion de actas
         this.imageBase64 = environment.imageBase64;
@@ -246,7 +247,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
         });
     }
 
-    generaReport(): void {
+    async generaReport(): Promise<void> {
         const value = [];
 
 
@@ -330,7 +331,7 @@ export class TableroDePrestamosDeDocumentosComponent implements OnInit {
         const dd = {
             header: {
                 columns: [{
-                    image: 'data:image/jpeg;base64,' + this.imageBase64,
+                    image: await this.exportService.getBase64ImageFromURL('/assets/images/logos/logo.png'),
                     width: 120,
                     margin: [20, 5, 5, 5],
                 }, {

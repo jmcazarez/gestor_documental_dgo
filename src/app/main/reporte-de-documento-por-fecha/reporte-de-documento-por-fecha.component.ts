@@ -16,6 +16,7 @@ import Swal from 'sweetalert2';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import * as moment from 'moment';
 import { date } from '@rxweb/reactive-form-validators';
+import { ExportService } from 'services/export.service';
 @Component({
     selector: 'app-reporte-de-documento-por-fecha',
     templateUrl: './reporte-de-documento-por-fecha.component.html',
@@ -59,7 +60,8 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
         private spinner: NgxSpinnerService,
         private documentoService: DocumentosService,
         private usuariosService: UsuariosService,
-        private menuService: MenuService) {
+        private menuService: MenuService,
+        private exportService: ExportService) {
         this.imageBase64 = environment.imageBase64;
     }
 
@@ -294,7 +296,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
         };
     }
 
-    generaReport(): void {
+    async generaReport(): Promise<void> {
         const value = [];
 
 
@@ -378,7 +380,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
         const dd = {
             header: {
                 columns: [{
-                    image: 'data:image/jpeg;base64,' + this.imageBase64,
+                    image: await this.exportService.getBase64ImageFromURL('/assets/images/logos/logo.png'),
                     width: 120,
                     margin: [20, 5, 5, 5],
                 }, {

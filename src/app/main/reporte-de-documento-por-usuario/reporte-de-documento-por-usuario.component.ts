@@ -13,7 +13,7 @@ import { environment } from '../../../environments/environment';
 import Swal from 'sweetalert2';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { NgxSpinnerService } from 'ngx-spinner';
-
+import { ExportService } from 'services/export.service';
 @Component({
     selector: 'app-reporte-de-documento-por-usuario',
     templateUrl: './reporte-de-documento-por-usuario.component.html',
@@ -50,7 +50,8 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
         private router: Router,
         private spinner: NgxSpinnerService,
         private documentoService: DocumentosService,
-        private menuService: MenuService) {
+        private menuService: MenuService,
+        private exportService: ExportService) {
         this.imageBase64 = environment.imageBase64;
     }
 
@@ -76,7 +77,7 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
 
     onPageChange(event: any) {
         this.currentPage = event.offset;
-        console.log(this.currentPage);  
+        console.log(this.currentPage);
         this.obtenerDocumentos(this.currentPage + 1);
         // Realiza una consulta a tu fuente de datos para obtener los datos de la página actual
         // y actualiza this.pagedData y this.totalItems en consecuencia.
@@ -117,7 +118,7 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
         const idUsuario = this.selectedUsuario;
 
         // Obtenemos los documentos
-        this.documentoService.obtenerDocumentoReportePorUsuario(idUsuario,pange).subscribe((resp: any) => {
+        this.documentoService.obtenerDocumentoReportePorUsuario(idUsuario, pange).subscribe((resp: any) => {
             this.totalItems = resp.pageCount;
             console.log(resp.pageCount);
             if (resp.listado && resp.listado.length > 0) {
@@ -224,6 +225,8 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
         };
     }
 
+
+
     async generaReport(): Promise<void> {
         const value = [];
 
@@ -301,7 +304,7 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
         const dd = {
             header: {
                 columns: [{
-                    image: 'data:image/jpeg;base64,' + this.imageBase64,
+                    image: await this.exportService.getBase64ImageFromURL('/assets/images/logos/logo.png'),
                     width: 120,
                     margin: [20, 5, 5, 5],
                 }, {
@@ -357,7 +360,8 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
             }
         };
 
-        pdfMake.createPdf(dd).open();
+
+        pdfMake.createPdf(dd).download('documentos_por_usuario.pdf');
     }
 
     configuraHeaderReport(): any {

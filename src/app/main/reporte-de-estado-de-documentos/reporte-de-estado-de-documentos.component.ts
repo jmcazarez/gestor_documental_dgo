@@ -11,6 +11,7 @@ pdfMake.vfs = pdfFonts.pdfMake.vfs;  // fonts provided for pdfmake
 import { EncabezadoReporte1Model } from 'models/encabezadoReporte1';
 import { environment } from '../../../environments/environment';
 import Swal from 'sweetalert2';
+import { ExportService } from 'services/export.service';
 @Component({
     selector: 'app-reporte-de-estado-de-documentos',
     templateUrl: './reporte-de-estado-de-documentos.component.html',
@@ -45,7 +46,8 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
         private usuariosService: UsuariosService,
         private router: Router,
         private documentoService: DocumentosService,
-        private menuServices: MenuService) {
+        private menuServices: MenuService,
+        private exportService: ExportService) {
         this.imageBase64 = environment.imageBase64;
     }
 
@@ -347,7 +349,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
             }
         };
     }
-    generaReport(): void {
+    async generaReport(): Promise<void> {
         const value = [];
         this.documentos.forEach(row => {
             let nombreDocumento = '';
@@ -417,7 +419,7 @@ export class ReporteDeEstadoDeDocumentosComponent implements OnInit {
             header: {
 
                 columns: [{
-                    image: 'data:image/jpeg;base64,' + this.imageBase64,
+                    image: await this.exportService.getBase64ImageFromURL('/assets/images/logos/logo.png'),
                     width: 120,
                     margin: [20, 5, 5, 5],
                 }, {
