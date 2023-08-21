@@ -23,6 +23,7 @@ export class DocumentosService {
     private urlDocumentosReporte = "documentos-reporte";
     private urlDocumentosVersionados = "versionamiento";
     private urlDocumentosPorUsuario = "versionamiento-usuario";
+    private urlDocumentosPorUsuarioReporte = "versionamiento-usuario-reporte";
     private urlDocumentosPorFecha = "versionamiento-rango";
     private urlDocumentoPublico = "compartir";
     private urlDocumentosPorTexto = "documentos-text";
@@ -149,12 +150,27 @@ export class DocumentosService {
             }),
         };
         return this.http.get(
-            this.baseUrl + this.urlDocumentosPorUsuario + "/" + idUsuario+ "/" + page,
+            this.baseUrl + this.urlDocumentosPorUsuario + "/" + idUsuario + "/" + page,
             httpOptions
         );
     }
 
-    obtenerDocumentoReportePorFecha(cFechaInicial: string,cFechaFinal: string): any {
+    obtenerDocumentoReportePorUsuarioReporte(idUsuario: string): any {
+
+        this.TOKEN = localStorage.getItem("token");
+
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
+        return this.http.get(
+            this.baseUrl + this.urlDocumentosPorUsuarioReporte + "/" + idUsuario,
+            httpOptions
+        );
+    }
+
+    obtenerDocumentoReportePorFecha(cFechaInicial: string, cFechaFinal: string): any {
         this.TOKEN = localStorage.getItem("token");
 
         let httpOptions = {
@@ -164,7 +180,7 @@ export class DocumentosService {
         };
 
         return this.http.get(
-            this.baseUrl + this.urlDocumentosPorFecha + "/" + cFechaInicial+ "/" + cFechaFinal,
+            this.baseUrl + this.urlDocumentosPorFecha + "/" + cFechaInicial + "/" + cFechaFinal,
             httpOptions
         );
     }
@@ -400,10 +416,10 @@ export class DocumentosService {
     }
 
     obtenerUpload(id: any) {
-      
+
         return new Promise((resolve) => {
             {
-           
+
                 this.http
                     .get(this.baseUrlStrapi + this.urlUpload + '/files/' + id)
                     .subscribe(

@@ -453,6 +453,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
                     },
                     tableExample: {
                         margin: 0,
+                        
 
                     },
                     tableOpacityExample: {

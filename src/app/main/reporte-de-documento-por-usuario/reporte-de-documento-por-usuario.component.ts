@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
 import { MatDatepicker } from '@angular/material/datepicker';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ExportService } from 'services/export.service';
+import { HttpErrorResponse } from '@angular/common/http';
 @Component({
     selector: 'app-reporte-de-documento-por-usuario',
     templateUrl: './reporte-de-documento-por-usuario.component.html',
@@ -77,7 +78,8 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
 
     onPageChange(event: any) {
         this.currentPage = event.offset;
-        
+        console.log(this.currentPage);
+        this.obtenerDocumentos(this.currentPage + 1);
         // Realiza una consulta a tu fuente de datos para obtener los datos de la página actual
         // y actualiza this.pagedData y this.totalItems en consecuencia.
     }
@@ -110,71 +112,77 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
     }
 
     obtenerDocumentos(pange: number): void {
-        const documentosTemp: any[] = [];
-        let idDocumento: any;
-        this.spinner.show();
-        let cFolioExpediente = '';
-        const idUsuario = this.selectedUsuario;
 
-        // Obtenemos los documentos
-        this.documentoService.obtenerDocumentoReportePorUsuario(idUsuario, pange).subscribe((resp: any) => {
-            this.totalItems = resp.pageCount;
-            console.log(resp.pageCount);
-            if (resp.listado && resp.listado.length > 0) {
+        try {
+            const documentosTemp: any[] = [];
+            let idDocumento: any;
+            this.spinner.show();
+            let cFolioExpediente = '';
+            const idUsuario = this.selectedUsuario;
 
-                // Buscamos permisos
-                const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
-                this.optAgregar = opciones.Agregar;
-                this.optEditar = opciones.Editar;
-                this.optConsultar = opciones.Consultar;
-                this.optEliminar = opciones.Eliminar;
+            // Obtenemos los documentos
+            this.documentoService.obtenerDocumentoReportePorUsuario(idUsuario, pange).subscribe((resp: any) => {
+                this.totalItems = resp.pageCount[0].pageCount
+                console.log(resp.pageCount);
+                if (resp.listado && resp.listado.length > 0) {
 
-                // Si tiene permisos para consultar
-                if (this.optConsultar) {
-                    for (const documento of resp.listado) {
-                        idDocumento = '';
-                        cFolioExpediente = documento.folioExpediente
-                        let departamento
-                        /*  if (documento.tipo_de_documento.departamento) {
-                             departamento = this.arrDepartamentos.find((depto: { id: string; }) => depto.id === documento.tipo_de_documento.departamento).cDescripcionDepartamento;
-                         } */
-                        documentosTemp.push({
-                            id: documento.id,
-                            tipoDocumento: documento.tipoDocumento,
-                            tipoExpediente: documento.tipoExpediente,
-                            tipoInformacion: documento.tipoInformacion,
-                            fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
-                            folioExpediente: cFolioExpediente,
-                            fechaCarga: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
-                            fechaModificacion: this.datePipe.transform(documento.fechaModificacion, 'dd-MM-yyyy'),
-                            cNombreDocumento: documento.cNombreDocumento,
-                            bActivo: documento.estatus,
-                            ente: documento.ente,
-                            version: parseFloat(documento.version).toFixed(1),
-                            cAccion: documento.accion,
-                            departamento: documento.departamento,
-                            pasillo: documento.pasillo,
-                            estante: documento.estante,
-                            nivel: documento.nivel,
-                            seccion: documento.seccion
-                        });
+                    // Buscamos permisos
+                    const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
+                    this.optAgregar = opciones.Agregar;
+                    this.optEditar = opciones.Editar;
+                    this.optConsultar = opciones.Consultar;
+                    this.optEliminar = opciones.Eliminar;
 
+                    // Si tiene permisos para consultar
+                    if (this.optConsultar) {
+                        for (const documento of resp.listado) {
+                            idDocumento = '';
+                            cFolioExpediente = documento.folioExpediente
+                            let departamento
+                            /*  if (documento.tipo_de_documento.departamento) {
+                                 departamento = this.arrDepartamentos.find((depto: { id: string; }) => depto.id === documento.tipo_de_documento.departamento).cDescripcionDepartamento;
+                             } */
+                            documentosTemp.push({
+                                id: documento.id,
+                                tipoDocumento: documento.tipoDocumento,
+                                tipoExpediente: documento.tipoExpediente,
+                                tipoInformacion: documento.tipoInformacion,
+                                fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
+                                folioExpediente: cFolioExpediente,
+                                fechaCarga: this.datePipe.transform(documento.fechaCarga, 'dd-MM-yyyy'),
+                                fechaModificacion: this.datePipe.transform(documento.fechaModificacion, 'dd-MM-yyyy'),
+                                cNombreDocumento: documento.cNombreDocumento,
+                                bActivo: documento.estatus,
+                                ente: documento.ente,
+                                version: parseFloat(documento.version).toFixed(1),
+                                cAccion: documento.accion,
+                                departamento: documento.departamento,
+                                pasillo: documento.pasillo,
+                                estante: documento.estante,
+                                nivel: documento.nivel,
+                                seccion: documento.seccion
+                            });
+
+                        }
+                        this.documentos = [...documentosTemp];
+                        //this.documentos = documentosTemp;
+                        this.spinner.hide();
                     }
 
-                    this.documentos = documentosTemp;
+                } else {
+                    Swal.fire('Alerta', 'No existen movimientos para el usuario seleccionado.', 'warning');
                     this.spinner.hide();
                 }
 
-            } else {
-                Swal.fire('Alerta', 'No existen movimientos para el usuario seleccionado.', 'warning');
+
+            }, err => {
+                Swal.fire('Error', 'Ocurrió un problema al consultar la información.', 'error');
                 this.spinner.hide();
-            }
-
-
-        }, err => {
-            Swal.fire('Error', 'Ocurrió un problema al consultar la información.', 'error');
+            });
+        } catch (err) {
             this.spinner.hide();
-        });
+            Swal.fire('Error', 'Ocurrio un error obtener los registros.', 'error');
+        }
     }
 
     // tslint:disable-next-line: typedef
@@ -192,9 +200,8 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
         { text: 'Fecha de carga', style: 'tableHeader' },
         { text: 'Fecha de modificación', style: 'tableHeader' },
         /*   { text: 'Tipo de información', style: 'tableHeader' }, */
-        { text: 'Tipo de documento', style: 'tableHeader' },
         { text: 'Tipo de expediente', style: 'tableHeader' },
-        { text: 'Folio de expediente', style: 'tableHeader' },
+        { text: 'Numbero de caja', style: 'tableHeader' },
         { text: 'Estatus', style: 'tableHeader' },
         ]);
 
@@ -219,6 +226,7 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
             layout: 'lightHorizontalLines',
             table: {
                 headerRows: 1,
+                widths: [50, 50, 100, 100, 50, 50, 60, 50, 50, 50, 50],
                 body: this.buildTableBody(data, columns)
             }
         };
@@ -226,144 +234,166 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
 
 
 
-    async generaReport(): Promise<void> {
+    generaReport(): void {
         const value = [];
 
         try {
             this.spinner.show();
             // Creamos el reporte
-            await this.documentos.forEach(row => {
-                let fecha = '';
-                let accion = '';
-                let nombreDocumento = '';
-                let tipoDocumento = '';
-                let fechaCreacion = '';
-                let fechaCarga = '';
-                let fechaModificacion = '';
-                let tipoInformacion = '';
-                let tipoExpediente = '';
-                let folioExpediente = '';
-                let estatus = '';
+            /*  await this.documentos.forEach(row => {
+                 let fecha = '';
+                 let accion = '';
+                 let nombreDocumento = '';
+                 let tipoDocumento = '';
+                 let fechaCreacion = '';
+                 let fechaCarga = '';
+                 let fechaModificacion = '';
+                 let tipoInformacion = '';
+                 let tipoExpediente = '';
+                 let folioExpediente = '';
+                 let estatus = '';
+ 
+                 if (row.fechaModificacion) {
+                     fecha = row.fechaModificacion;
+                 }
+                 if (row.cAccion) {
+                     accion = row.cAccion;
+                 }
+                 if (row.cNombreDocumento) {
+                     nombreDocumento = row.cNombreDocumento;
+                 }
+                 if (row.tipoDocumento) {
+                     tipoDocumento = row.tipoDocumento;
+                 }
+                 if (row.fechaCreacion) {
+                     fechaCreacion = row.fechaCreacion;
+                 }
+                 if (row.fechaCarga) {
+                     fechaCarga = row.fechaCarga;
+                 }
+                 if (row.fechaModificacion) {
+                     fechaModificacion = row.fechaModificacion;
+                 }
+                 if (row.tipoInformacion) {
+                     tipoInformacion = row.tipoInformacion;
+                 }
+                 if (row.tipoDocumento) {
+                     tipoDocumento = row.tipoDocumento;
+                 }
+                 if (row.tipoExpediente) {
+                     tipoExpediente = row.tipoExpediente;
+                 }
+                 if (row.folioExpediente) {
+                     folioExpediente = row.folioExpediente.toString();
+                 }
+                 if (row.bActivo) {
+                     estatus = 'Vigente';
+                 } else {
+                     estatus = 'No vigente';
+                 }
+ 
+                 value.push({
+                     fecha,
+                     accion,
+                     nombreDocumento,
+                     tipo: tipoDocumento,
+                     fechaCreacion,
+                     fechaCarga,
+                     fechaModificacion,
+                     tipoInformacion,
+                     tipoDocumento,
+                     tipoExpediente,
+                     folioExpediente,
+                     estatus
+                 });
+ 
+ 
+             }); */
 
-                if (row.fechaModificacion) {
-                    fecha = row.fechaModificacion;
-                }
-                if (row.cAccion) {
-                    accion = row.cAccion;
-                }
-                if (row.cNombreDocumento) {
-                    nombreDocumento = row.cNombreDocumento;
-                }
-                if (row.tipoDocumento) {
-                    tipoDocumento = row.tipoDocumento;
-                }
-                if (row.fechaCreacion) {
-                    fechaCreacion = row.fechaCreacion;
-                }
-                if (row.fechaCarga) {
-                    fechaCarga = row.fechaCarga;
-                }
-                if (row.fechaModificacion) {
-                    fechaModificacion = row.fechaModificacion;
-                }
-                if (row.tipoInformacion) {
-                    tipoInformacion = row.tipoInformacion;
-                }
-                if (row.tipoDocumento) {
-                    tipoDocumento = row.tipoDocumento;
-                }
-                if (row.tipoExpediente) {
-                    tipoExpediente = row.tipoExpediente;
-                }
-                if (row.folioExpediente) {
-                    folioExpediente = row.folioExpediente.toString();
-                }
-                if (row.bActivo) {
-                    estatus = 'Vigente';
+            const idUsuario = this.selectedUsuario;
+            this.documentoService.obtenerDocumentoReportePorUsuarioReporte(idUsuario).subscribe(async (resp: any) => {
+                console.log(resp);
+                if (resp.data.length > 0) {
+                    const dd = {
+                        header: {
+                            columns: [{
+                                image: await this.exportService.getBase64ImageFromURL('/assets/images/logos/logo.png'),
+                                width: 120,
+                                margin: [20, 5, 5, 5],
+                            }, {
+                                nodeName: 'DIV',
+                                stack: [
+                                    this.configuraHeaderReport()
+                                ]
+                            },
+                            ],
+
+                        },
+                        pageOrientation: 'landscape',
+                        pageSize: 'A4',
+                        fontSize: 7,
+                        pageMargins: [40, 100, 40, 50],
+                        content: [
+                            { text: '', style: 'tableExample' },
+                            this.table({
+
+                                data: resp.data, columns: [
+                                    'fechaModificacion', 'accion', 'nombreDocumento', 'tipoDocumento',
+                                    'fechaCreacion', 'fechaCarga', 'fechaModificacion',
+                                    'tipoExpediente', 'folioExpediente', 'estatus',
+                                ]
+                            })
+                        ],
+                        styles: {
+                            header: {
+                                fontSize: 8,
+                                bold: true,
+                                margin: 0
+                            },
+                            subheader: {
+                                fontSize: 8,
+                                margin: 0
+                            },
+                            tableExample: {
+                                margin: 0,
+
+                            },
+                            tableOpacityExample: {
+                                margin: [0, 5, 0, 15],
+                                fillColor: 'blue',
+                                fillOpacity: 0.3
+                            },
+                            tableHeader: {
+                                bold: true,
+                                fontSize: 9,
+                                color: 'black'
+                            },
+                            tableHeaderNombreDocumento: {
+                                bold: true,
+                                fontSize: 9,
+                                color: 'black'
+                            }
+                        },
+                        defaultStyle: {
+                            // alignment: 'justify'
+                        }
+                    };
+
+
+                    pdfMake.createPdf(dd).download('documentos_por_usuario.pdf');
+                    this.spinner.hide();
                 } else {
-                    estatus = 'No vigente';
+                    this.spinner.hide();
                 }
-
-                value.push({
-                    fecha,
-                    accion,
-                    nombreDocumento,
-                    tipo: tipoDocumento,
-                    fechaCreacion,
-                    fechaCarga,
-                    fechaModificacion,
-                    tipoInformacion,
-                    tipoDocumento,
-                    tipoExpediente,
-                    folioExpediente,
-                    estatus
+            },
+                (error: HttpErrorResponse) => {
+                    console.error('An error occurred:', error.message);
+                    console.log('Status code:', error.status);
+                    console.log('Error details:', error.error);
+                    Swal.fire('Error', error.error.error, 'error');
+                    this.spinner.hide();
                 });
 
-
-            });
-
-            const dd = {
-                header: {
-                    columns: [{
-                        image: await this.exportService.getBase64ImageFromURL('/assets/images/logos/logo.png'),
-                        width: 120,
-                        margin: [20, 5, 5, 5],
-                    }, {
-                        nodeName: 'DIV',
-                        stack: [
-                            this.configuraHeaderReport()
-                        ]
-                    },
-                    ],
-
-                },
-                pageOrientation: 'landscape',
-                pageSize: 'A4',
-                fontSize: 8,
-                pageMargins: [40, 100, 40, 50],
-                content: [
-                    { text: '', style: 'tableExample' },
-                    this.table({
-                        data: value, columns: [
-                            'fechaModificacion', 'accion', 'nombreDocumento', 'tipoDocumento',
-                            'fechaCreacion', 'fechaCarga', 'fechaModificacion',
-                            'tipoDocumento', 'tipoExpediente', 'folioExpediente', 'estatus',
-                        ]
-                    })
-                ],
-                styles: {
-                    header: {
-                        fontSize: 8,
-                        bold: true,
-                        margin: 0
-                    },
-                    subheader: {
-                        fontSize: 8,
-                        margin: 0
-                    },
-                    tableExample: {
-                        margin: 0,
-
-                    },
-                    tableOpacityExample: {
-                        margin: [0, 5, 0, 15],
-                        fillColor: 'blue',
-                        fillOpacity: 0.3
-                    },
-                    tableHeader: {
-                        bold: true,
-                        fontSize: 9,
-                        color: 'black'
-                    }
-                },
-                defaultStyle: {
-                    // alignment: 'justify'
-                }
-            };
-
-
-            pdfMake.createPdf(dd).download('documentos_por_usuario.pdf');
-            this.spinner.hide();
         } catch (err) {
             this.spinner.hide();
             Swal.fire('Error', 'Ocurrio un error generar el reporte.', 'error');
