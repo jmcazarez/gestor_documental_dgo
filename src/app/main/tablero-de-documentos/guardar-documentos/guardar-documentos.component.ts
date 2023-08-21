@@ -157,7 +157,6 @@ export class GuardarDocumentosComponent implements OnInit {
             if (String(this.documentos.fechaCreacion).includes('T16:00:00.000Z')) {
                 this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd');
             } else {
-                console.log(this.documentos.fechaCreacion);
                 this.documentos.fechaCreacion = this.datePipe.transform(this.documentos.fechaCreacion, 'yyyy-MM-dd') + 'T16:00:00.000Z';
             }
             this.documentos.fechaCarga = moment().format('YYYY-MM-DD') + 'T16:00:00.000Z';

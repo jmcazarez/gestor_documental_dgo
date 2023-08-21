@@ -46,6 +46,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
     fechaIni: Date;
     fechaFin: Date;
     arrDepartamentos = [];
+    arrReporte = [];
     externalDataRetrievedFromServer = [
         { name: 'Bartek', age: 34 },
         { name: 'John', age: 27 },
@@ -173,7 +174,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
                 const filtroReporte = `createdAt_gte=${cFechaInicial}&createdAt_lte=${cFechaFinal}`;
 
                 // Obtenemos los documentos
-                this.documentoService.obtenerDocumentoReportePorFecha(cFechaInicial,cFechaFinal).subscribe((resp: any) => {
+                this.documentoService.obtenerDocumentoReportePorFecha(cFechaInicial, cFechaFinal).subscribe((resp: any) => {
 
                     if (resp.listado && resp.listado.length > 0) {
 
@@ -188,11 +189,7 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
                         if (this.optConsultar) {
                             for (const documento of resp.listado) {
                                 cFolioExpediente = documento.folioExpediente;
-                                let departamento = ""
 
-                              /*   if (documento.tipo_de_documento.departamento) {
-                                    departamento = this.arrDepartamentos.find((depto: { id: string; }) => depto.id === documento.tipo_de_documento.departamento).cDescripcionDepartamento;
-                                } */
                                 idDocumento = '';
                                 documentosTemp.push({
                                     id: documento.id,
@@ -210,11 +207,47 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
                                     ente: documento.ente,
                                     version: parseFloat(documento.version).toFixed(1),
                                     cAccion: documento.accion,
-                                    departamento,
+                                    departamento: documento.departamento,
                                     pasillo: documento.pasillo,
                                     estante: documento.estante,
                                     nivel: documento.nivel,
                                     seccion: documento.seccion
+                                });
+
+                                let fecha = '';
+                                let accion = '';
+                                let nombreDocumento = '';
+                                let tipoDocumento = '';
+                                let fechaCreacion = '';
+                                let fechaCarga = '';
+                                let fechaModificacion = '';
+                                let tipoInformacion = '';
+                                let tipoExpediente = '';
+                                let folioExpediente = '';
+                                let estatus = '';
+                                let nombreUsuario = '';
+
+
+                                if (documento.estatus) {
+                                    estatus = 'Vigente';
+                                } else {
+                                    estatus = 'No vigente';
+                                }
+
+                                this.arrReporte.push({
+                                    fecha: this.datePipe.transform(documento.fechaModificacion, 'dd-MM-yyyy'),
+                                    accion,
+                                    nombreUsuario: documento.nombreUsuario,
+                                    nombreDocumento: documento.cNombreDocumento,
+                                    tipo: tipoDocumento,
+                                    fechaCreacion: this.datePipe.transform(documento.fechaCreacion, 'dd-MM-yyyy'),
+                                    fechaCarga,
+                                    fechaModificacion,
+                                    tipoInformacion,
+                                    tipoDocumento,
+                                    tipoExpediente,
+                                    folioExpediente,
+                                    estatus
                                 });
 
                             }
@@ -299,144 +332,152 @@ export class ReporteDeDocumentoPorFechaComponent implements OnInit {
     async generaReport(): Promise<void> {
         const value = [];
 
+        try {
+            console.log('entro');
+            this.spinner.show();
+            this.documentos.forEach(row => {
+                let fecha = '';
+                let accion = '';
+                let nombreDocumento = '';
+                let tipoDocumento = '';
+                let fechaCreacion = '';
+                let fechaCarga = '';
+                let fechaModificacion = '';
+                let tipoInformacion = '';
+                let tipoExpediente = '';
+                let folioExpediente = '';
+                let estatus = '';
+                let nombreUsuario = '';
 
-        this.documentos.forEach(row => {
-            let fecha = '';
-            let accion = '';
-            let nombreDocumento = '';
-            let tipoDocumento = '';
-            let fechaCreacion = '';
-            let fechaCarga = '';
-            let fechaModificacion = '';
-            let tipoInformacion = '';
-            let tipoExpediente = '';
-            let folioExpediente = '';
-            let estatus = '';
-            let nombreUsuario = '';
+                if (row.fechaModificacion) {
+                    fecha = row.fechaModificacion;
+                }
+                if (row.cAccion) {
+                    accion = row.cAccion;
+                }
+                if (row.cNombreDocumento) {
+                    nombreDocumento = row.cNombreDocumento;
+                }
 
-            if (row.fechaModificacion) {
-                fecha = row.fechaModificacion;
-            }
-            if (row.cAccion) {
-                accion = row.cAccion;
-            }
-            if (row.cNombreDocumento) {
-                nombreDocumento = row.cNombreDocumento;
-            }
+                if (row.cNombreUsuario) {
+                    nombreUsuario = row.cNombreUsuario;
+                }
 
-            if (row.cNombreUsuario) {
-                nombreUsuario = row.cNombreUsuario;
-            }
+                if (row.tipoDocumento) {
+                    tipoDocumento = row.tipoDocumento;
+                }
+                if (row.fechaCreacion) {
+                    fechaCreacion = row.fechaCreacion;
+                }
+                if (row.fechaCarga) {
+                    fechaCarga = row.fechaCarga;
+                }
+                if (row.fechaModificacion) {
+                    fechaModificacion = row.fechaModificacion;
+                }
+                if (row.tipoInformacion) {
+                    tipoInformacion = row.tipoInformacion;
+                }
+                if (row.tipoDocumento) {
+                    tipoDocumento = row.tipoDocumento;
+                }
+                if (row.tipoExpediente) {
+                    tipoExpediente = row.tipoExpediente;
+                }
+                if (row.folioExpediente) {
+                    folioExpediente = row.folioExpediente.toString();
+                }
+                if (row.bActivo) {
+                    estatus = 'Vigente';
+                } else {
+                    estatus = 'No vigente';
+                }
 
-            if (row.tipoDocumento) {
-                tipoDocumento = row.tipoDocumento;
-            }
-            if (row.fechaCreacion) {
-                fechaCreacion = row.fechaCreacion;
-            }
-            if (row.fechaCarga) {
-                fechaCarga = row.fechaCarga;
-            }
-            if (row.fechaModificacion) {
-                fechaModificacion = row.fechaModificacion;
-            }
-            if (row.tipoInformacion) {
-                tipoInformacion = row.tipoInformacion;
-            }
-            if (row.tipoDocumento) {
-                tipoDocumento = row.tipoDocumento;
-            }
-            if (row.tipoExpediente) {
-                tipoExpediente = row.tipoExpediente;
-            }
-            if (row.folioExpediente) {
-                folioExpediente = row.folioExpediente.toString();
-            }
-            if (row.bActivo) {
-                estatus = 'Vigente';
-            } else {
-                estatus = 'No vigente';
-            }
+                value.push({
+                    fecha,
+                    accion,
+                    nombreUsuario,
+                    nombreDocumento,
+                    tipo: tipoDocumento,
+                    fechaCreacion,
+                    fechaCarga,
+                    fechaModificacion,
+                    tipoInformacion,
+                    tipoDocumento,
+                    tipoExpediente,
+                    folioExpediente,
+                    estatus
+                });
 
-            value.push({
-                fecha,
-                accion,
-                nombreUsuario,
-                nombreDocumento,
-                tipo: tipoDocumento,
-                fechaCreacion,
-                fechaCarga,
-                fechaModificacion,
-                tipoInformacion,
-                tipoDocumento,
-                tipoExpediente,
-                folioExpediente,
-                estatus
+
             });
 
-
-        });
-
-        const dd = {
-            header: {
-                columns: [{
-                    image: await this.exportService.getBase64ImageFromURL('/assets/images/logos/logo.png'),
-                    width: 120,
-                    margin: [20, 5, 5, 5],
-                }, {
-                    nodeName: 'DIV',
-                    stack: [
-                        this.configuraHeaderReport()
-                    ]
-                },
-                ],
-
-            },
-            pageOrientation: 'landscape',
-            pageSize: 'A4',
-            fontSize: 6,
-            pageMargins: [2, 100, 40, 50],
-            content: [
-                { text: '', style: 'tableExample' },
-                this.table({
-                    data: value, columns: [
-                        'fechaModificacion', 'accion', 'nombreUsuario', 'nombreDocumento', 'tipoDocumento',
-                        'fechaCreacion', 'fechaCarga', 'fechaModificacion',
-                        'tipoDocumento', 'tipoExpediente', 'folioExpediente', 'estatus',
-                    ]
-                })
-            ],
-            styles: {
+            const dd = {
                 header: {
-                    fontSize: 8,
-                    bold: true,
-                    margin: 0
-                },
-                subheader: {
-                    fontSize: 8,
-                    margin: 0
-                },
-                tableExample: {
-                    margin: 0,
+                    columns: [{
+                        image: await this.exportService.getBase64ImageFromURL('/assets/images/logos/logo.png'),
+                        width: 120,
+                        margin: [20, 5, 5, 5],
+                    }, {
+                        nodeName: 'DIV',
+                        stack: [
+                            this.configuraHeaderReport()
+                        ]
+                    },
+                    ],
 
                 },
-                tableOpacityExample: {
-                    margin: [0, 5, 0, 15],
-                    fillColor: 'blue',
-                    fillOpacity: 0.3
+                pageOrientation: 'landscape',
+                pageSize: 'A4',
+                fontSize: 6,
+                pageMargins: [2, 100, 40, 50],
+                content: [
+                    { text: '', style: 'tableExample' },
+                    this.table({
+                        data: value, columns: [
+                            'fechaModificacion', 'accion', 'nombreUsuario', 'nombreDocumento', 'tipoDocumento',
+                            'fechaCreacion', 'fechaCarga', 'fechaModificacion',
+                            'tipoDocumento', 'tipoExpediente', 'folioExpediente', 'estatus',
+                        ]
+                    })
+                ],
+                styles: {
+                    header: {
+                        fontSize: 8,
+                        bold: true,
+                        margin: 0
+                    },
+                    subheader: {
+                        fontSize: 8,
+                        margin: 0
+                    },
+                    tableExample: {
+                        margin: 0,
+
+                    },
+                    tableOpacityExample: {
+                        margin: [0, 5, 0, 15],
+                        fillColor: 'blue',
+                        fillOpacity: 0.3
+                    },
+                    tableHeader: {
+                        bold: true,
+                        fontSize: 9,
+                        color: 'black'
+                    }
                 },
-                tableHeader: {
-                    bold: true,
-                    fontSize: 9,
-                    color: 'black'
+                defaultStyle: {
+                    // alignment: 'justify'
                 }
-            },
-            defaultStyle: {
-                // alignment: 'justify'
-            }
-        };
+            };
 
-        pdfMake.createPdf(dd).open();
+
+            pdfMake.createPdf(dd).download('documentos_por_rango.pdf');
+            this.spinner.hide();
+        } catch (err) {
+            this.spinner.hide();
+            Swal.fire('Error', 'Ocurrio un error generar el reporte.', 'error');
+        }
     }
 
     configuraHeaderReport(): any {

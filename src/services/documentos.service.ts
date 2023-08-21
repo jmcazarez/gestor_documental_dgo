@@ -20,6 +20,7 @@ export class DocumentosService {
     private urlDescargarDocumentoClasificacion = "documento-file-clasificacion";
     private urlDescargarDocumentoSinVersion = "documento-file-sin-version";
     private urlDocumentosFiltrados = "documentos-filtro";
+    private urlDocumentosReporte = "documentos-reporte";
     private urlDocumentosVersionados = "versionamiento";
     private urlDocumentosPorUsuario = "versionamiento-usuario";
     private urlDocumentosPorFecha = "versionamiento-rango";
@@ -118,7 +119,22 @@ export class DocumentosService {
             }),
         };
         return this.http.get(
-            this.baseUrl + this.urlDocumentosFiltrados + "/" + filtro,
+            this.baseUrl + this.urlDocumentosFiltrados + "/" + String(filtro),
+            httpOptions
+        );
+    }
+
+    obtenerDocumentoReporteDeDocumentos(filtro: number): any {
+
+        this.TOKEN = localStorage.getItem("token");
+
+        let httpOptions = {
+            headers: new HttpHeaders({
+                Authorization: this.TOKEN,
+            }),
+        };
+        return this.http.get(
+            this.baseUrl + this.urlDocumentosReporte + "/" + filtro,
             httpOptions
         );
     }

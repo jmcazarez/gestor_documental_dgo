@@ -1441,7 +1441,6 @@ export class TableroCargaMasivaDescargaComponent implements OnInit {
                 filtro.tipo_de_expediente = this.selectedExpediente;
             }
 
-            console.log('this.fechaCarga',this.fechaCarga);
             if (this.fechaCarga !== '' && this.fechaCarga !== undefined && filtro.fechaCarga !== null) {
 
                 filtro.fechaCarga = this.datePipe.transform(this.fechaCarga, 'yyyy-MM-dd')

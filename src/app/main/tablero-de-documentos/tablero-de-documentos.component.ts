@@ -183,32 +183,30 @@ export class TableroDeDocumentosComponent implements OnInit {
         let estante = '';
         let nivel = '';
         let seccion = '';
-        console.log(numeroPagina,this.size);
+        console.log(numeroPagina, this.size);
         if (numeroPagina == undefined) {
             numeroPagina = 0;
         }
-        let filtro = '_limit=' + this.size + '&_sort=id%3AASC&_start=' + (numeroPagina * this.size).toString()
+        let filtro = (numeroPagina * this.size)
         // Obtenemos los documentos
         try {
             // obtenerDocumentoReporte
 
-            await this.documentoService.obtenerDocumentoReporte(filtro).subscribe((resp: any) => {
+            await this.documentoService.obtenerDocumentoReporteDeDocumentos(filtro).subscribe((resp: any) => {
                 // await this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
 
                 // Buscamos permisos
 
                 const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
-                console.log(opciones);
                 this.optAgregar = opciones.Agregar;
                 this.optEditar = opciones.Editar;
                 this.optConsultar = opciones.Consultar;
                 this.optEliminar = opciones.Eliminar;
-                console.log('this.menuService.tipoDocumentos',this.menuService.tipoDocumentos);
                 // Si tiene permisos para consultar
                 if (this.optConsultar) {
 
                     for (const documento of resp.data) {
-                        let eliminar = documentosTemp.findIndex(p => p.id == documento.id)
+                        let eliminar = documentosTemp.findIndex(p => p.id == documento._id)
                         if (eliminar >= 0) {
                             // this.documentos.splice(eliminar, 1)
                         }
@@ -217,10 +215,10 @@ export class TableroDeDocumentosComponent implements OnInit {
 
                         if (documento.tipo_de_documento) {
 
-                            const encontro = this.menuService.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento.id);
-                            console.log(encontro);
+                            const encontro = this.menuService.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === documento.tipo_de_documento._id);
+
                             if (documento.visibilidade) {
-                                info = this.menuService.tipoInformacion.find((tipo: { id: string; }) => tipo.id === documento.visibilidade.id);
+                                info = this.menuService.tipoInformacion.find((tipo: { id: string; }) => tipo.id === documento.visibilidade._id);
                             }
 
                             if (encontro) {
