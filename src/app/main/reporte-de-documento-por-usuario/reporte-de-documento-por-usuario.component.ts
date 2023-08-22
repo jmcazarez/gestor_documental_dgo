@@ -77,9 +77,12 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
     }
 
     onPageChange(event: any) {
+        let paginaActual = this.currentPage;
         this.currentPage = event.offset;
         console.log(this.currentPage);
-        this.obtenerDocumentos(this.currentPage + 1);
+        if (paginaActual !== this.currentPage) {
+            this.obtenerDocumentos(this.currentPage + 1);
+        }
         // Realiza una consulta a tu fuente de datos para obtener los datos de la página actual
         // y actualiza this.pagedData y this.totalItems en consecuencia.
     }
