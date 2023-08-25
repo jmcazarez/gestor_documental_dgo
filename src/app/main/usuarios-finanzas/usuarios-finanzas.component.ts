@@ -39,7 +39,7 @@ export class UsuariosFinanzasComponent implements OnInit {
             // height: '100%',
             disableClose: true,
             data: new UsuarioModel(),
-            
+
         });
 
         dialogRef.afterClosed().subscribe(result => {
@@ -50,7 +50,7 @@ export class UsuariosFinanzasComponent implements OnInit {
     }
 
     guardarUsuario(usuario: any): void {
-        
+
         // Abrimos modal de guardar usuario
         const dialogRef = this.dialog.open(GuardarUsuarioFinanzasComponent, {
             width: '40%',
@@ -73,15 +73,15 @@ export class UsuariosFinanzasComponent implements OnInit {
         this.cargando = true;
         this.loadingIndicator = true;
         // Obtenemos usuarios
-        this.usuariosService.obtenerUsuariosAuth().subscribe((resp: any) => {            
-            this.rows = resp;  
-            this.rowsTemp = this.rows;      
-         
+        this.usuariosService.obtenerUsuariosAuth().subscribe((resp: any) => {
+            this.rows = resp;
+            this.rowsTemp = this.rows;
+
             this.loadingIndicator = false;
             this.valueBuscador = '';
             this.spinner.hide();
         }, err => {
-          
+
             this.loadingIndicator = false;
             this.valueBuscador = '';
             this.spinner.hide();
@@ -105,32 +105,42 @@ export class UsuariosFinanzasComponent implements OnInit {
                     this.obtener();
                 }, err => {
                     this.cargando = false;
-                    Swal.fire(
-                        'Error',
-                        'Ocurrió un error al eliminar el usuario.' + err,
-                        'error'
-                    );
+                    //console.log(err.error.error);
+                    if (err.error.error) {
+                        Swal.fire(
+                            'Error',
+                            'Ocurrió un error al eliminar el usuario.' + err.error.error,
+                            'error'
+                        );
+                    } else {
+                        Swal.fire(
+                            'Error',
+                            'Ocurrió un error al eliminar el usuario.' + err,
+                            'error'
+                        );
+                    }
+
                 });
 
             }
         });
     }
 
-    filterDatatable(value): void{
-            // Filtramos tabla
+    filterDatatable(value): void {
+        // Filtramos tabla
+        this.rows = this.rowsTemp;
+        if (value.target.value === '') {
             this.rows = this.rowsTemp;
-            if (value.target.value === '') {
-                this.rows = this.rowsTemp;
-            } else {
-                const val = value.target.value.toLowerCase();
-                const temp = this.rows.filter((d) => d.cUsuario.toLowerCase().indexOf(val) !== -1 || !val ||
+        } else {
+            const val = value.target.value.toLowerCase();
+            const temp = this.rows.filter((d) => d.cUsuario.toLowerCase().indexOf(val) !== -1 || !val ||
                 d.cNombre.toLowerCase().indexOf(val) !== - 1 || d.cCorreo.toLowerCase().indexOf(val) !== - 1 ||
                 d.cApellidoPaterno.toLowerCase().indexOf(val) !== - 1 || d.cApellidoMaterno.toLowerCase().indexOf(val) !== - 1);
 
-                
-                this.rows = temp;
-            }
-    }   
 
- 
+            this.rows = temp;
+        }
+    }
+
+
 }

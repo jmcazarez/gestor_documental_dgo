@@ -44,7 +44,7 @@
             </ngx-datatable-column>
             <ngx-datatable-column name="Acciones" sortable="false" prop="id">
                 <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                    <a (click)="eliminarUsuario(row)">
+                    <a (click)="eliminarUsuario(row)" *ngIf="!row.administrador" >
                         <mat-icon color="warn" class="material-icons pointer" matTooltip="Clic para eliminar">delete</mat-icon>
                     </a>
           
