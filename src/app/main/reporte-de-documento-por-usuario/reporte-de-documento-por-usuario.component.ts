@@ -125,7 +125,12 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
 
             // Obtenemos los documentos
             this.documentoService.obtenerDocumentoReportePorUsuario(idUsuario, pange).subscribe((resp: any) => {
-                this.totalItems = resp.pageCount[0].pageCount
+                if (resp.pageCount.length <= 0) {
+                    this.totalItems = 0;
+                } else {
+                    this.totalItems = resp.pageCount[0].pageCount
+                }
+
                 console.log(resp.pageCount);
                 if (resp.listado && resp.listado.length > 0) {
 
@@ -172,6 +177,7 @@ export class ReporteDeDocumentoPorUsuarioComponent implements OnInit {
                         this.spinner.hide();
                     }
 
+                    this.spinner.hide();
                 } else {
                     Swal.fire('Alerta', 'No existen movimientos para el usuario seleccionado.', 'warning');
                     this.spinner.hide();
