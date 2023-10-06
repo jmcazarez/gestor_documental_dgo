@@ -84,7 +84,7 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
         if (mes < 10) {
             mes = '0' + mes; // agrega cero si el menor de 10
         }
-    
+
         // Validamos si es un documento nuevo
         if (this.recepcion.id) {
             this.selectLegislatura = this.recepcion.legislatura.id;
@@ -195,12 +195,9 @@ export class GuardarRecepcionDeActasComponent implements OnInit {
         this.spinner.show();
         await this.legislaturasService.obtenerLegislatura().subscribe((resp: any) => {
 
-            /*
-            .filter(
+            this.arrLegislaturas = resp.filter(
                 (item) => item["bActivo"] === true
-            )
-             */
-            this.arrLegislaturas = resp;
+            );
             this.spinner.hide();
         }, err => {
             Swal.fire('Error', 'Ocurrió un error obtener las legislaturas.' + err, 'error');

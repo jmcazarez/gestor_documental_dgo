@@ -325,7 +325,9 @@ export class GuardarMesaComponent implements OnInit {
         this.spinner.show();
         await this.legislaturasService.obtenerLegislatura().subscribe(
             (resp: any) => {
-                this.arrLegislaturas = resp;
+                this.arrLegislaturas = resp.filter(
+                    (item) => item["bActivo"] === true
+                );
                 this.spinner.hide();
             },
             (err) => {

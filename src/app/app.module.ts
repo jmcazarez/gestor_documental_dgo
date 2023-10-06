@@ -87,6 +87,7 @@ import { DashboardDeIndicadoresDeSesionesModule } from './main/dashboard-de-indi
 import { DashboardDeIndicadoresIniciativasModule } from './main/dashboard-de-indicadores-iniciativas/dashboard-de-indicadores-iniciativas.module';
 import { IniciativasPendientesPorFirmarModule } from './main/tipo-de-iniciativas-pendientes-por-firmar/tipo-de-iniciativas-pendientes-por-firmar.module';
 import { TableroCargaMasivaDescargaModule } from './main/tablero-carga-masiva-descarga/tablero-carga-masiva-descarga.module';
+import { TableroDeCargaMasivaModule } from './main/tablero-de-carga-masiva/tablero-de-carga-masiva.module';
 
 const appRoutes: Routes = [
     {
@@ -147,7 +148,7 @@ const appRoutes: Routes = [
         HistorialDeVersionamientoDocumentosModule,
         //HistorialDeVersionamientoModule,
         DashboardDeIndicadoresModule,
-        // TableroDeCargaMasivaModule,
+        TableroDeCargaMasivaModule,
         ReporteDeDocumentoPorFechaModule,
         ReporteDeDocumentoPorUsuarioModule,
         // SecretariasModule,

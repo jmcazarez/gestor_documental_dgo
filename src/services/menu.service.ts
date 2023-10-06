@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'environments/environment';
 import Swal from 'sweetalert2';
+import { Console } from 'console';
 
 @Injectable({
     providedIn: 'root'
@@ -188,7 +189,7 @@ export class MenuService {
                                                 const resultado = this.opcionesPerfil.find(opcion => opcion.id === opciones.opciones_del_sistema.id);
 
                                                 const cUrl = opciones.opciones_del_sistema.cNombreOpcion.toLowerCase().replace(/ /g, '-');
-
+                                                console.log(cUrl);
                                                 if (!resultado) {
 
                                                     // Agregamos la opcion al Menu

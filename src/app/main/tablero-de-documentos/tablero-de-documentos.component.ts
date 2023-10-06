@@ -44,7 +44,7 @@ export class TableroDeDocumentosComponent implements OnInit {
     optEliminar: boolean;
     fileBase64: any;
     valueBuscador: string;
-    pageNumber: number;
+    pageNumber: number= 0;
     cache: any = {};
     isLoading = 0;
     size = 20
@@ -63,6 +63,7 @@ export class TableroDeDocumentosComponent implements OnInit {
 
     ngOnInit() {
 
+        console.log("entro");
         this.obtenerDocumentos( 0);
 
     }
@@ -135,6 +136,7 @@ export class TableroDeDocumentosComponent implements OnInit {
           }); */
     }
     nuevoDocumento(): void {
+        console.log('this.pageNumber',this.pageNumber)
         // Abrimos modal de guardar usuario
         const dialogRef = this.dialog.open(GuardarDocumentosComponent, {
             width: '50%',
@@ -147,8 +149,11 @@ export class TableroDeDocumentosComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
+            console.log('nuevo');
+            this.obtenerDocumentos( this.pageNumber);
+            
             if (result) {
-                this.obtenerDocumentos( this.pageNumber);
+              
                 if (result.documento) {
                     this.clasificarDocumento(result,this.pageNumber);
                 }
@@ -160,6 +165,7 @@ export class TableroDeDocumentosComponent implements OnInit {
     async obtenerDocumentos( numeroPagina: number): Promise<void> {
 
         this.spinner.show();
+        this.documentos =[];
         const documentosTemp: any[] = this.documentos;
         let idDocumento: any;
         this.loadingIndicator = true;
@@ -169,14 +175,14 @@ export class TableroDeDocumentosComponent implements OnInit {
         this.valueBuscador = '';
         let countFecha = 0;
         let cFolioExpediente = '';
-        let filtro = '_limit=' + this.size +'&_sort=id%3AASC&_start=' + (numeroPagina * this.size).toString()
+        let filtro = '_limit=-1'
         // Obtenemos los documentos
         try {
             // obtenerDocumentoReporte
             console.log(filtro);
             await this.documentoService.obtenerDocumentoReporte(filtro).subscribe((resp: any) => {
                 // await this.documentoService.obtenerDocumentos().subscribe((resp: any) => {
-
+                console.log(resp);
                 // Buscamos permisos
 
                 const opciones = this.menuService.opcionesPerfil.find((opcion: { cUrl: string; }) => opcion.cUrl === this.router.routerState.snapshot.url.replace('/', ''));
@@ -360,6 +366,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                 this.documentos = [...documentosTemp];
                 this.documentosTemporal = [...documentosTemp];
                 this.loadingIndicator = false;
+                console.log('this.documentos',this.documentos);
                 this.spinner.hide();
             }, err => {
                 console.log(err);
@@ -382,10 +389,9 @@ export class TableroDeDocumentosComponent implements OnInit {
         });
 
         dialogRef.afterClosed().subscribe(result => {
-
-            if (result) {
-
-                this.obtenerDocumentos( documento.numeroPagina);
+            console.log('editar');
+            this.obtenerDocumentos( documento.numeroPagina);
+            if (result) {               
                 if (result.documento) {
                     this.valueBuscador = '';
                     this.clasificarDocumento(result,documento.numeroPagina);
@@ -397,6 +403,7 @@ export class TableroDeDocumentosComponent implements OnInit {
 
 
     eliminarDocumento(row): void {
+        console.log('eliminar');
         // Eliminamos documento
         Swal.fire({
             title: '¿Está seguro que desea eliminar este documento?',
@@ -415,6 +422,7 @@ export class TableroDeDocumentosComponent implements OnInit {
                     let eliminar = this.documentos.findIndex(p => p.id == row.id)
                     this.documentos.splice(eliminar, 1);
                     // this.obtenerDocumentos('_limit=-1');
+                    this.obtenerDocumentos( this.pageNumber);
                 }, err => {
                     this.cargando = false;
                     Swal.fire(
@@ -441,6 +449,11 @@ export class TableroDeDocumentosComponent implements OnInit {
             downloadLink.click();
         }, err => {
             this.loadingIndicator = false;
+            Swal.fire(
+                'Alerta',
+                'Ocurrió un problema al descargar el documento.',
+                'warning'
+            );
         });
     }
 
@@ -452,6 +465,7 @@ export class TableroDeDocumentosComponent implements OnInit {
     }
 
     clasificarDocumento(result: any, numeroPagina: number): void {
+        console.log('this.pageNumber',this.pageNumber);
         let encontro: any;
         encontro = this.menuService.tipoDocumentos.find((tipo: { id: string; }) => tipo.id === result.tipo_de_documento.id);
         if (encontro) {
@@ -472,11 +486,11 @@ export class TableroDeDocumentosComponent implements OnInit {
 
         // tslint:disable-next-line: no-shadowed-variable
         dialogRef.afterClosed().subscribe(result => {
-
+            console.log('clasificar');
             if (result) {
                 
                 this.valueBuscador = '';
-                this.obtenerDocumentos( numeroPagina);
+                this.obtenerDocumentos( this.pageNumber);
             }
         });
     }
@@ -491,13 +505,13 @@ export class TableroDeDocumentosComponent implements OnInit {
             disableClose: true,
             data: documento,
         });
-
+        console.log('consultar');
         dialogRef.afterClosed().subscribe(result => {
-
+            this.obtenerDocumentos(documento.numeroPagina);
             if (result) {
                 this.valueBuscador = '';
                 result.disabled = true;
-                // this.obtenerDocumentos();
+                
                 //  if (result.documento.ext === '.pdf') {
                 this.clasificarDocumento(result,documento.numeroPagina);
                 // }
@@ -507,6 +521,8 @@ export class TableroDeDocumentosComponent implements OnInit {
     }
 
     filterDatatable(value): void {
+
+        console.log('filtering')
         // Filtramos tabla
         this.documentos = this.documentosTemporal;
         if (value.target.value === '') {
