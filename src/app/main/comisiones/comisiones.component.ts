@@ -151,6 +151,8 @@ export class ComisionesComponent implements OnInit {
                     );
                 });
 
+            }else{
+                this.spinner.hide();
             }
         });
     }

@@ -111,6 +111,8 @@ export class GuardarIniciativasComponent implements OnInit {
         private empleadosService: EmpleadosDelCongresoService,
         @Inject(MAT_DIALOG_DATA) public iniciativa: IniciativasModel
     ) {
+debugger
+        console.log('iniciativa',this.iniciativa);
         dateAdapter.setLocale("en-in"); // DD/MM/YYYY
         if (this.iniciativa.documentos == undefined) {
             this.iniciativa.documentos = [];
@@ -310,6 +312,7 @@ export class GuardarIniciativasComponent implements OnInit {
                 }
                 this.files = documentosTemp;
                 this.fileCheck = documentosTemp;
+                debugger
                 this.filesTemp = this.files;
 
 
@@ -1333,6 +1336,7 @@ export class GuardarIniciativasComponent implements OnInit {
             let parametrosTipoDocumentos = await this.obtenerParametros("Tipo-de-documento-complementario");
             let legislaturas = await this.obtenerLegislatura();
             let tipoDocumento: any = parametrosTipoDocumentos;
+            debugger
             let tipoExpediente = parametrosSSP001.filter(
                 (d) =>
                     d["cParametroAdministrado"] === "SSP-001-Tipo-de-Expediente"
