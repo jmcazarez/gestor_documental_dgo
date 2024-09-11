@@ -66,34 +66,53 @@
 
 
             try {
-                //Getting password and hash to sign
+                // Getting password and hash to sign
                 var hashAlgorithm = 3;
                 var cerBase64 = document.getElementById("certificado").value;
                 var keyBase64 = document.getElementById("llave").value;
                 var password = document.getElementById("password").value;
                 var hashToSign = document.getElementById("hashToSign").value;
-              
-                var pKey = keyBase64.replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
-                var cipheredKey = window.atob(pKey);
 
-                var pCer = cerBase64.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, '');
-                var certX509 = window.atob(pCer);
-                // Signing hash
-                if (window.Promise) {
-                    var signPromise = pkcs7FromHash(password, cipheredKey, certX509, hashAlgorithm, hashToSign);
+                try {
+                    var pKey = keyBase64.replace(/(-----(BEGIN|END) PRIVATE KEY-----|\n)/g, '');
+                    var cipheredKey = window.atob(pKey);
+                } catch (err) {
+                    throw new Error("Error processing private key: " + err.message);
+                }
 
-                    signPromise.then(function (Signature) {
-                        document.getElementById("signature").innerHTML = btoa(arrayBufferToString(Signature), false, true);
-                       
-                    }, function (error) {
-                        document.getElementById("signature").innerHTML = "";
-                        alert("[SgDataCrypto][pkcs7FromHash] " + error.message);
-                    });
-                } else {
-                    alert("Your current browser does not support Promises! This page will not work.");
+                try {
+                    var pCer = cerBase64.replace(/(-----(BEGIN|END) CERTIFICATE-----|\n)/g, '');
+                    var certX509 = window.atob(pCer);
+                } catch (err) {
+                    throw new Error("Error processing certificate: " + err.message);
+                }
+
+                try {
+                    // Signing hash
+                    if (window.Promise) {
+                        var signPromise = pkcs7FromHash(password, cipheredKey, certX509, hashAlgorithm, hashToSign);
+                        // alert("signPromise object: " + JSON.stringify(signPromise, null, 2));
+
+                        signPromise.then(function (Signature) {
+                            try {
+                               // alert("Signature 1.0 " + Signature);
+                                document.getElementById("signature").innerHTML = btoa(arrayBufferToString(Signature), false, true);
+                               // alert("Signature 1.0 " + Signature);
+                            } catch (err) {
+                                throw new Error("Error processing signature: " + err.message);
+                            }
+                        }, function (error) {
+                            document.getElementById("signature").innerHTML = "";
+                            alert("[SgDataCrypto][pkcs7FromHash] " + error.message);
+                        });
+                    } else {
+                        alert("Your current browser does not support Promises! This page will not work.");
+                    }
+                } catch (err) {
+                    throw new Error("Error during the signing process: " + err.message);
                 }
             } catch (err) {
-                alert("SgDataCrypto Error:\n " + err.message + "\n" + err.stack);
+                alert("SgDataCrypto Error:\n" + err.message + "\n" + err.stack);
             }
         } //End of signData 
 

@@ -309,7 +309,6 @@ export class MenuService {
                             }
                         }
 
-
                         if(usuarioLogin[0].data.empleado){
                             const itemMenu: ItemMenuModel = {
                                 id: 'modulo-autoriza-iniciativas',
